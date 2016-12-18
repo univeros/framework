@@ -4,7 +4,7 @@ namespace Altair\Container\Builder;
 use Altair\Container\Contracts\BuilderInterface;
 use Altair\Container\Definition;
 use Altair\Container\Exception\InjectionException;
-use Altair\Container\Injector;
+use Altair\Container\Container;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -12,11 +12,11 @@ use ReflectionParameter;
 class ArgumentsBuilder implements BuilderInterface
 {
 
-    protected $injector;
+    protected $container;
 
-    public function __construct(Injector $injector)
+    public function __construct(Container $container)
     {
-        $this->injector = $injector;
+        $this->container = $container;
     }
 
     public function build(
@@ -35,7 +35,7 @@ class ArgumentsBuilder implements BuilderInterface
             if ($definition->hasIndex($position)) {
                 $argument = $definition->getIndexed($position);
             } elseif ($definition->has($name)) {
-                $argument = $this->injector->make($definition->get($name));
+                $argument = $this->container->make($definition->get($name));
             } elseif ($definition->hasRaw($name)) {
                 $argument = $definition->getRaw($name);
             } elseif ($definition->hasDelegate($name)) {
@@ -64,16 +64,16 @@ class ArgumentsBuilder implements BuilderInterface
         ReflectionFunctionAbstract $reflectionFunction,
         ReflectionParameter $reflectionParameter
     ) {
-        $typeHint = $this->injector->getReflector()->getParameterTypeHint($reflectionFunction, $reflectionParameter);
+        $typeHint = $this->container->getReflector()->getParameterTypeHint($reflectionFunction, $reflectionParameter);
 
         if (!$typeHint) {
             $object = null;
         } elseif ($reflectionParameter->isDefaultValueAvailable()) {
-            $object = $this->injector->isset($typeHint)
-                ? $this->injector->make($typeHint)
+            $object = $this->container->isset($typeHint)
+                ? $this->container->make($typeHint)
                 : $reflectionParameter->getDefaultValue();
         } else {
-            $object = $this->injector->make($typeHint);
+            $object = $this->container->make($typeHint);
         }
 
         return $object;
@@ -87,8 +87,8 @@ class ArgumentsBuilder implements BuilderInterface
      */
     protected function buildArgumentFromReflectionParameter(ReflectionParameter $reflectionParameter)
     {
-        if($this->injector->getParameterDefinitions()->hasKey($reflectionParameter->name)) {
-            $argument = $this->injector->getParameterDefinitions()->get($reflectionParameter->name);
+        if($this->container->getParameterDefinitions()->hasKey($reflectionParameter->name)) {
+            $argument = $this->container->getParameterDefinitions()->get($reflectionParameter->name);
         } elseif($reflectionParameter->isDefaultValueAvailable()) {
             $argument = $reflectionParameter->getDefaultValue();
         } elseif($reflectionParameter->isOptional()) {
@@ -116,13 +116,13 @@ class ArgumentsBuilder implements BuilderInterface
 
     protected function buildArgumentFromDelegate(string $name, $callableOrMethodString)
     {
-        if ($this->injector->getExecutableBuilder()->isExecutable($callableOrMethodString) === false) {
+        if ($this->container->getExecutableBuilder()->isExecutable($callableOrMethodString) === false) {
             throw new InjectionException("Unable to create argument '$name' from delegate.");
         }
 
-        $executable = $this->injector->getExecutableBuilder()->build($callableOrMethodString);
+        $executable = $this->container->getExecutableBuilder()->build($callableOrMethodString);
 
-        return $executable($name, $this->injector);
+        return $executable($name, $this->container);
     }
 
     protected function buildArgumentFromClassDefinition(array $definition)
@@ -133,6 +133,6 @@ class ArgumentsBuilder implements BuilderInterface
             $definition = new Definition($definition);
         }
 
-        return $this->injector->make($class, $definition);
+        return $this->container->make($class, $definition);
     }
 }

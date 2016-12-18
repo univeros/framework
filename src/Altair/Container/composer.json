@@ -1,6 +1,6 @@
 {
-    "name": "univeros/structure",
-    "description": "The Altair Structure package.",
+    "name": "univeros/container",
+    "description": "The Altair Container package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Structure\\": ""
+            "Altair\\Container\\": ""
         }
     },
     "minimum-stability": "dev"

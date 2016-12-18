@@ -19,7 +19,7 @@ use Altair\Structure\Map;
 use ReflectionFunctionAbstract;
 use ReflectionException;
 
-class Injector
+class Container
 {
     use NameNormalizerTrait;
 
@@ -59,7 +59,7 @@ class Injector
     protected $argumentsBuilder;
 
     /**
-     * Injector constructor.
+     * Container constructor.
      *
      * @param ReflectionInterface|null $reflector
      * @param AliasesCollection|null $aliasesCollection
@@ -101,7 +101,7 @@ class Injector
      *
      * @return self
      */
-    public function define($name, Definition $definition): Injector
+    public function define($name, Definition $definition): Container
     {
         list(, $normalizedClass) = $this->aliases->resolve($name);
         $this->classDefinitions->put($normalizedClass, $definition);
@@ -120,7 +120,7 @@ class Injector
      *
      * @return self
      */
-    public function defineParameter($paramName, $value): Injector
+    public function defineParameter($paramName, $value): Container
     {
         $this->parameterDefinitions->put($paramName, $value);
 
@@ -146,7 +146,7 @@ class Injector
     }
 
     /**
-     * Share the specified class/instance across the Injector context
+     * Share the specified class/instance across the Container context
      *
      * @param mixed $nameOrInstance The class or object to share
      *
@@ -174,7 +174,7 @@ class Injector
      * Register a prepare callable to modify/prepare objects of type $name after instantiation
      *
      * Any callable or provisionable invokable may be specified. Preparers are passed two
-     * arguments: the instantiated object to be mutated and the current Injector instance.
+     * arguments: the instantiated object to be mutated and the current Container instance.
      *
      * @param string $name
      * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
@@ -183,7 +183,7 @@ class Injector
      *
      * @return self
      */
-    public function prepare(string $name, $callableOrMethodStr): Injector
+    public function prepare(string $name, $callableOrMethodStr): Container
     {
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             throw new InvalidArgumentException('Invalid invokable: callable or provisional string required');
@@ -203,7 +203,7 @@ class Injector
      * @throws InvalidArgumentException if $callableOrMethodStr is not a callable.
      * @return self
      */
-    public function delegate(string $name, $callableOrMethodStr): Injector
+    public function delegate(string $name, $callableOrMethodStr): Container
     {
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             $errorDetail = '';

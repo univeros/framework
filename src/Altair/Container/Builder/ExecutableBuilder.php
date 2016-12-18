@@ -4,17 +4,17 @@ namespace Altair\Container\Builder;
 use Altair\Container\Contracts\ExecutableBuilderInterface;
 use Altair\Container\Exception\InjectionException;
 use Altair\Container\Executable;
-use Altair\Container\Injector;
+use Altair\Container\Container;
 use ReflectionException;
 use Closure;
 
 class ExecutableBuilder implements ExecutableBuilderInterface
 {
-    protected $injector;
+    protected $container;
 
-    public function __construct(Injector $injector)
+    public function __construct(Container $container)
     {
-        $this->injector = $injector;
+        $this->container = $container;
     }
 
     public function build($callableOrMethodString): Executable
@@ -43,11 +43,11 @@ class ExecutableBuilder implements ExecutableBuilderInterface
             if (is_string($callableOrMethodString)) {
                 $executableStructure = $this->buildExecutableStructureFromString($callableOrMethodString);
             } elseif ($callableOrMethodString instanceof Closure) {
-                $callableReflection = $this->injector->getReflector()->getFunction($callableOrMethodString);
+                $callableReflection = $this->container->getReflector()->getFunction($callableOrMethodString);
                 $executableStructure = [$callableReflection, null];
             } elseif (is_object($callableOrMethodString) && is_callable($callableOrMethodString)) {
                 $invocationObject = $callableOrMethodString;
-                $callableReflection = $this->injector->getReflector()->getMethod($invocationObject, '__invoke');
+                $callableReflection = $this->container->getReflector()->getMethod($invocationObject, '__invoke');
                 $executableStructure = [$callableReflection, $invocationObject];
             } elseif (is_array($callableOrMethodString)
                 && isset($callableOrMethodString[0], $callableOrMethodString[1])
@@ -67,12 +67,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     protected function buildExecutableStructureFromString(string $executableString): array
     {
         if (function_exists($executableString)) {
-            $callableReflection = $this->injector->getReflector()->getFunction($executableString);
+            $callableReflection = $this->container->getReflector()->getFunction($executableString);
             $executableStructure = [$callableReflection, null];
 
         } elseif (method_exists($executableString, '__invoke')) {
-            $invocationObject = $this->injector->make($executableString);
-            $callableReflection = $this->injector->getReflector()->getMethod($invocationObject, '__invoke');
+            $invocationObject = $this->container->make($executableString);
+            $callableReflection = $this->container->getReflector()->getMethod($invocationObject, '__invoke');
             $executableStructure = [$callableReflection, $invocationObject];
 
         } elseif (strpos($executableString, '::') !== false) {
@@ -91,21 +91,21 @@ class ExecutableBuilder implements ExecutableBuilderInterface
         $relativeStaticMethodStartPos = strpos($method, 'parent::');
 
         if ($relativeStaticMethodStartPos === 0) {
-            $childReflection = $this->injector->getReflector()->getClass($class);
+            $childReflection = $this->container->getReflector()->getClass($class);
             $class = $childReflection->getParentClass()->name;
             $method = substr($method, $relativeStaticMethodStartPos + 8);
         }
-        list($className,) = $this->injector->getAliases()->resolve($class);
-        $reflectionMethod = $this->injector->getReflector()->getMethod($className, $method);
+        list($className,) = $this->container->getAliases()->resolve($class);
+        $reflectionMethod = $this->container->getReflector()->getMethod($className, $method);
 
         if ($reflectionMethod->isStatic()) {
             return [$reflectionMethod, null];
         }
-        $instance = $this->injector->make($className);
+        $instance = $this->container->make($className);
         // If the class was delegated, the instance may not be of the type
         // $class but some other type. We need to get the reflection on the
         // actual class to be able to call the method correctly.
-        $reflectionMethod = $this->injector->getReflector()->getMethod($instance, $method);
+        $reflectionMethod = $this->container->getReflector()->getMethod($instance, $method);
 
         return [$reflectionMethod, $instance];
     }
@@ -114,7 +114,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     {
         list($classOrObject, $method) = $executableArray;
         if (is_object($classOrObject) && method_exists($classOrObject, $method)) {
-            $callableReflection = $this->injector->getReflector()->getMethod($classOrObject, $method);
+            $callableReflection = $this->container->getReflector()->getMethod($classOrObject, $method);
             $executableStructure = [$callableReflection, $classOrObject];
         } elseif (is_string($classOrObject)) {
             $executableStructure = $this->buildExecutableStructureFromClassMethodCallable($classOrObject, $method);
