@@ -56,9 +56,9 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getFunction(string $functionName): ReflectionFunction
+    public function getFunction($name): ReflectionFunction
     {
-        return new ReflectionFunction($functionName);
+        return new ReflectionFunction($name);
     }
 
     /**

@@ -53,11 +53,11 @@ interface ReflectionInterface
     /**
      * Retrieves and caches a reflection for the specified function
      *
-     * @param string $functionName
+     * @param mixed $name
      *
      * @return ReflectionFunction
      */
-    public function getFunction(string $functionName): ReflectionFunction;
+    public function getFunction($name): ReflectionFunction;
 
     /**
      * Retrieves and caches a reflection for the specified class method

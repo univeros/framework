@@ -1,12 +1,12 @@
 <?php
 namespace Altair\Container\Builder;
 
+use Altair\Container\Container;
 use Altair\Container\Contracts\ExecutableBuilderInterface;
 use Altair\Container\Exception\InjectionException;
 use Altair\Container\Executable;
-use Altair\Container\Container;
-use ReflectionException;
 use Closure;
+use ReflectionException;
 
 class ExecutableBuilder implements ExecutableBuilderInterface
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure;
+namespace Altair\Tests\Structure;
 
 use Altair\Structure\Stack as StackObject;
 use Altair\Tests\Structure\AbstractCollectionTest;

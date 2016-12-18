@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure;
+namespace Altair\Tests\Structure;
 
 use Altair\Structure\Contracts\HashableInterface;
 

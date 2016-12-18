@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Map;
+namespace Altair\Tests\Structure\Map;
 
 trait isEmpty
 {

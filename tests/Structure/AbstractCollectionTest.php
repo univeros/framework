@@ -1,6 +1,6 @@
 <?php
 
-namespace Altair\tests\Structure;
+namespace Altair\Tests\Structure;
 
 abstract class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
 {

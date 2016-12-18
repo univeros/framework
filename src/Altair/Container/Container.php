@@ -254,6 +254,7 @@ class Container
                 )
             );
         }
+        $definition = $definition?? new Definition([]);
 
         $this->making[$normalizedClass] = count($this->making);
 
@@ -281,6 +282,24 @@ class Container
         unset($this->making[$normalizedClass]);
 
         return $object;
+    }
+
+    /**
+     * Invoke the specified callable or class::method string, provisioning dependencies along the way
+     *
+     * @param mixed $callableOrMethodString A valid PHP callable or a provisionable ClassName::methodName string
+     * @param Definition $definition Optional definition specifying params with which to invoke the provisioned callable
+     *
+     * @throws InjectionException
+     * @return mixed Returns the invocation result returned from calling the generated executable
+     */
+    public function execute($callableOrMethodString, Definition $definition = null)
+    {
+        $executable = $this->executableBuilder->build($callableOrMethodString);
+        $definition = $definition?? new Definition([]);
+        $arguments = $this->provisionFunctionArguments($executable->getCallableReflection(), $definition);
+
+        return call_user_func_array([$executable, '__invoke'], $arguments);
     }
 
     /**

@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Deque;
+namespace Altair\Tests\Structure\Deque;
 
 trait slice
 {

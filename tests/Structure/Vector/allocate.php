@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Vector;
+namespace Altair\Tests\Structure\Vector;
 
 use Altair\Structure\Contracts\VectorInterface;
 

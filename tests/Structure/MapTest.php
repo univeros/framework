@@ -1,6 +1,6 @@
 <?php
 
-namespace Altair\tests\Structure;
+namespace Altair\Tests\Structure;
 
 class MapTest extends AbstractCollectionTest
 {

@@ -76,7 +76,7 @@ class Definition
 
     public function get($name)
     {
-        if (!isset($this->arguments[$name])) {
+        if (!isset($this->arguments[$name]) && !array_key_exists($name, $this->arguments)) {
             throw new OutOfBoundsException("'$name' not found in definition.");
         }
 

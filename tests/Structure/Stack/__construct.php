@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Stack;
+namespace Altair\Tests\Structure\Stack;
 
 use Altair\Structure\Stack;
 

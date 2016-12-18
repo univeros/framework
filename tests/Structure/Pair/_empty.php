@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Pair;
+namespace Altair\Tests\Structure\Pair;
 
 trait _empty
 {

@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Queue;
+namespace Altair\Tests\Structure\Queue;
 
 trait _foreach
 {

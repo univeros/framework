@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Sequence;
+namespace Altair\Tests\Structure\Sequence;
 
 trait _empty
 {

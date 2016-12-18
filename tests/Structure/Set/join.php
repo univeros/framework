@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\Set;
+namespace Altair\Tests\Structure\Set;
 
 trait join
 {

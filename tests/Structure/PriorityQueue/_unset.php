@@ -1,5 +1,5 @@
 <?php
-namespace Altair\tests\Structure\PriorityQueue;
+namespace Altair\Tests\Structure\PriorityQueue;
 
 trait _unset
 {

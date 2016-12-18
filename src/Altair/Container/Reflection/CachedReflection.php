@@ -117,14 +117,16 @@ class CachedReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getFunction(string $functionName): ReflectionFunction
+    public function getFunction($name): ReflectionFunction
     {
-        $key = ReflectionCacheInterface::FUNCTIONS_KEY_PREFIX . strtolower($functionName);
+        $key = is_string($name)
+            ? ReflectionCacheInterface::FUNCTIONS_KEY_PREFIX . strtolower($name)
+            : ReflectionCacheInterface::FUNCTIONS_KEY_PREFIX . spl_object_hash($name);
 
         $reflectionFunction = $this->cache->get($key);
 
         if (false === $reflectionFunction) {
-            $reflectionFunction = $this->reflector->getFunction($functionName);
+            $reflectionFunction = $this->reflector->getFunction($name);
             $this->cache->put($key, $reflectionFunction);
         }
 

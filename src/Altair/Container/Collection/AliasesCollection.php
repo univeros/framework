@@ -18,6 +18,7 @@ class AliasesCollection extends Map
      * @param string $original The typehint to replace
      * @param string $alias The implementation name
      * @param SharesCollection $sharesCollection
+     *
      * @throws \InvalidArgumentException if any argument is empty or not a string
      * @return self
      */
@@ -26,6 +27,7 @@ class AliasesCollection extends Map
         if ((empty($original) || !is_string($original)) || (empty($alias) || !is_string($alias))) {
             throw new InvalidArgumentException('"$original" and/or "$alias" cannot be empty.');
         }
+
         $original = $this->normalizeName($original);
 
         if (isset($sharesCollection[$original])) {
@@ -52,7 +54,7 @@ class AliasesCollection extends Map
 
         if (isset($this[$normalizedName])) {
             $name = $this->get($normalizedName);
-            $normalizedName = $this->get($name);
+            $normalizedName = $this->normalizeName($name);
         }
 
         return [$name, $normalizedName];
