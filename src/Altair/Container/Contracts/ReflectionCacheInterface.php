@@ -21,7 +21,7 @@ interface ReflectionCacheInterface
      * @param string $key
      * @param $data
      *
-     * @return mixed
+     * @return ReflectionCacheInterface
      */
-    public function put(string $key, $data);
+    public function put(string $key, $data): ReflectionCacheInterface;
 }

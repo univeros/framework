@@ -22,11 +22,12 @@ class ArrayCache implements ReflectionCacheInterface
     }
 
     /**
-     * @param string $key
-     * @param $data
+     * @inheritdocs
      */
-    public function put(string $key, $data)
+    public function put(string $key, $data): ReflectionCacheInterface
     {
         $this->cache[$key] = $data;
+
+        return $this;
     }
 }

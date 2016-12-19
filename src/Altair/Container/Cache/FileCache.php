@@ -37,11 +37,13 @@ class FileCache implements ReflectionCacheInterface
     /**
      * @inheritdoc
      */
-    public function put(string $key, $data)
+    public function put(string $key, $data): ReflectionCacheInterface
     {
         $value = var_export($data, true);
         // HHVM fails at __set_state, so just use object cast for now
         $val = str_replace('stdClass::__set_state', '(object)', $value);
         file_put_contents("{$this->path}/{$key}", '<?php $value = ' . $val . ';');
+
+        return $this;
     }
 }
