@@ -16,7 +16,6 @@ use Altair\Container\Reflection\CachedReflection;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
 use ReflectionException;
-use ReflectionFunctionAbstract;
 
 class Container
 {
