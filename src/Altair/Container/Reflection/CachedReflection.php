@@ -51,7 +51,7 @@ class CachedReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getConstructor(string $class)
+    public function getConstructor(string $class):? ReflectionMethod
     {
         $key = ReflectionCacheInterface::CONSTRUCTORS_KEY_PREFIX . strtolower($class);
         $reflectionConstructor = $this->cache->get($key);
@@ -66,7 +66,7 @@ class CachedReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getConstructorParameters(string $class)
+    public function getConstructorParameters(string $class):? array
     {
         $key = ReflectionCacheInterface::CONSTRUCTOR_PARAMETERS_KEY_PREFIX . strtolower($class);
         $reflectionConstructorParameters = $this->cache->get($key);
@@ -82,7 +82,7 @@ class CachedReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter)
+    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter):? string
     {
         $name = strtolower($parameter->getName());
         $method = strtolower($function->name);

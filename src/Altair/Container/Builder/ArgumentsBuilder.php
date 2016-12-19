@@ -29,7 +29,7 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param ReflectionFunctionAbstract $reflectionFunction
      * @param Definition $definition
-     * @param array|null $reflectionParameters
+     * @param ReflectionParameter[]|null $reflectionParameters
      *
      * @return array
      */

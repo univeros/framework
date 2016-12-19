@@ -25,7 +25,7 @@ interface ReflectionInterface
      *
      * @return \ReflectionMethod|null
      */
-    public function getConstructor(string $class);
+    public function getConstructor(string $class):? ReflectionMethod;
 
     /**
      * Retrieves and caches an array of constructor parameters for the given class
@@ -34,7 +34,7 @@ interface ReflectionInterface
      *
      * @return ReflectionParameter[]|null
      */
-    public function getConstructorParameters(string $class);
+    public function getConstructorParameters(string $class):? array;
 
     /**
      * Retrieves the class type-hint from a given ReflectionParameter
@@ -47,8 +47,10 @@ interface ReflectionInterface
      *
      * @param ReflectionFunctionAbstract $function
      * @param ReflectionParameter $parameter
+     *
+     * @return null|string
      */
-    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter);
+    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter):? string;
 
     /**
      * Retrieves and caches a reflection for the specified function

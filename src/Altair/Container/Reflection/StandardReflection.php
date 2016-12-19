@@ -21,7 +21,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getConstructor(string $class)
+    public function getConstructor(string $class):? ReflectionMethod
     {
         $reflectionClass = $this->getClass($class);
 
@@ -31,7 +31,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getConstructorParameters(string $class)
+    public function getConstructorParameters(string $class):? array
     {
         $reflectionConstructor = $this->getConstructor($class);
 
@@ -43,7 +43,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter)
+    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter):? string
     {
         $reflectionClass = $parameter->getClass();
 
@@ -63,7 +63,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getFunctionParameters(ReflectionFunction $reflectionFunction)
+    public function getFunctionParameters(ReflectionFunction $reflectionFunction):? array
     {
         return $reflectionFunction->getParameters();
     }
