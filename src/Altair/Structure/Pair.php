@@ -53,6 +53,24 @@ class Pair implements PairInterface, JsonSerializable
     }
 
     /**
+     * Debug Info.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * To String.
+     */
+    public function __toString()
+    {
+        return 'object(' . get_class($this) . ')';
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function equalsKey($key): bool
@@ -88,23 +106,5 @@ class Pair implements PairInterface, JsonSerializable
     public function jsonSerialize()
     {
         return $this->toArray();
-    }
-
-    /**
-     * Debug Info.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * To String.
-     */
-    public function __toString()
-    {
-        return 'object(' . get_class($this) . ')';
     }
 }

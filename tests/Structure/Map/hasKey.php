@@ -15,6 +15,7 @@ trait hasKey
 
     /**
      * @dataProvider hasKeyDataProvider
+     * @param mixed $key
      */
     public function testHasKey(array $initial, $key, bool $has)
     {

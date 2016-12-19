@@ -7,7 +7,6 @@ trait _isset
     {
         // initial, index, isset
         return [
-
             [[0], 0, true],
 
             [[null], 0, false],
@@ -35,6 +34,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessIsset($initial, $index, bool $isset)
     {
@@ -44,6 +45,8 @@ trait _isset
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessIssetIndexBadIndex($initial, $index)
     {
@@ -53,6 +56,8 @@ trait _isset
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessIssetIndexOutOfRange($initial, $index)
     {
@@ -62,6 +67,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessIssetByReference($initial, $index, bool $isset)
     {

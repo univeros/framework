@@ -53,9 +53,8 @@ trait apply
             $instance->apply(function ($key, $value) {
                 if ($value === 3) {
                     throw new \Exception();
-                } else {
-                    return '*';
                 }
+                return '*';
             });
         } catch (\Exception $e) {
             $this->assertToArray(['*', '*', 3], $instance);

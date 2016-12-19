@@ -17,6 +17,7 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
+     * @param mixed $key
      */
     public function testArrayAccessIsset(array $initial, $key, bool $isset)
     {
@@ -31,6 +32,7 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
+     * @param mixed $key
      */
     public function testArrayAccessIssetByReference(array $initial, $key, bool $isset)
     {

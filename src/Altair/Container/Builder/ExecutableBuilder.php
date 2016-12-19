@@ -10,16 +10,28 @@ use ReflectionException;
 
 class ExecutableBuilder implements ExecutableBuilderInterface
 {
+    /**
+     * @var Container
+     */
     protected $container;
 
+    /**
+     * ExecutableBuilder constructor.
+     *
+     * @param Container $container
+     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param $callableOrMethodString
+     *
+     * @return Executable
+     */
     public function build($callableOrMethodString): Executable
     {
-
         list($reflectionFunction, $invocationObject) = $this->buildExecutableStructure($callableOrMethodString);
 
         return new Executable($reflectionFunction, $invocationObject);
@@ -37,6 +49,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
                 && method_exists($executable[0], $executable[1]));
     }
 
+    /**
+     * @param $callableOrMethodString
+     *
+     * @return array
+     * @throws InjectionException
+     */
     protected function buildExecutableStructure($callableOrMethodString): array
     {
         try {
@@ -64,21 +82,24 @@ class ExecutableBuilder implements ExecutableBuilderInterface
         return $executableStructure;
     }
 
+    /**
+     * @param string $executableString
+     *
+     * @return array
+     * @throws InjectionException
+     */
     protected function buildExecutableStructureFromString(string $executableString): array
     {
         if (function_exists($executableString)) {
             $callableReflection = $this->container->getReflector()->getFunction($executableString);
             $executableStructure = [$callableReflection, null];
-
         } elseif (method_exists($executableString, '__invoke')) {
             $invocationObject = $this->container->make($executableString);
             $callableReflection = $this->container->getReflector()->getMethod($invocationObject, '__invoke');
             $executableStructure = [$callableReflection, $invocationObject];
-
         } elseif (strpos($executableString, '::') !== false) {
             list($class, $method) = explode('::', $executableString, 2);
             $executableStructure = $this->buildExecutableStructureFromClassMethodCallable($class, $method);
-
         } else {
             throw new InjectionException('Invalid callable string');
         }
@@ -86,6 +107,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
         return $executableStructure;
     }
 
+    /**
+     * @param $class
+     * @param $method
+     *
+     * @return array
+     */
     protected function buildExecutableStructureFromClassMethodCallable($class, $method): array
     {
         $relativeStaticMethodStartPos = strpos($method, 'parent::');
@@ -95,7 +122,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
             $class = $childReflection->getParentClass()->name;
             $method = substr($method, $relativeStaticMethodStartPos + 8);
         }
-        list($className,) = $this->container->getAliases()->resolve($class);
+        list($className, ) = $this->container->getAliases()->resolve($class);
         $reflectionMethod = $this->container->getReflector()->getMethod($className, $method);
 
         if ($reflectionMethod->isStatic()) {
@@ -110,6 +137,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
         return [$reflectionMethod, $instance];
     }
 
+    /**
+     * @param array $executableArray
+     *
+     * @return array
+     * @throws InjectionException
+     */
     protected function buildExecutableStructureFromArray(array $executableArray): array
     {
         list($classOrObject, $method) = $executableArray;
@@ -123,6 +156,5 @@ class ExecutableBuilder implements ExecutableBuilderInterface
         }
 
         return $executableStructure;
-
     }
 }

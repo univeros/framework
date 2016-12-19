@@ -1,12 +1,11 @@
 <?php
 namespace Altair\Container;
 
-use ReflectionFunction;
-use InvalidArgumentException;
-use ReflectionMethod;
 use Closure;
+use InvalidArgumentException;
+use ReflectionFunction;
 use ReflectionFunctionAbstract;
-
+use ReflectionMethod;
 
 class Executable
 {
@@ -38,22 +37,6 @@ class Executable
     }
 
     /**
-     * @return ReflectionFunctionAbstract
-     */
-    public function getCallableReflection(): ReflectionFunctionAbstract
-    {
-        return $this->callableReflection;
-    }
-
-    /**
-     * @return mixed|null
-     */
-    public function getObject()
-    {
-        return $this->object;
-    }
-
-    /**
      * @return mixed
      */
     public function __invoke()
@@ -67,6 +50,22 @@ class Executable
         return $this->callableReflection->isClosure()
             ? $this->invokeClosure($reflection, $args)
             : $reflection->invokeArgs($args);
+    }
+
+    /**
+     * @return ReflectionFunctionAbstract
+     */
+    public function getCallableReflection(): ReflectionFunctionAbstract
+    {
+        return $this->callableReflection;
+    }
+
+    /**
+     * @return mixed|null
+     */
+    public function getObject()
+    {
+        return $this->object;
     }
 
     /**
@@ -93,7 +92,6 @@ class Executable
      */
     protected function invokeClosure(ReflectionFunction $reflection, array $args)
     {
-
         $scope = $reflection->getClosureScopeClass();
 
         $closure = Closure::bind(
@@ -103,6 +101,5 @@ class Executable
         );
 
         return call_user_func_array($closure, $args);
-
     }
 }

@@ -30,15 +30,15 @@ class QueueTest extends AbstractCollectionTest
     use Queue\push;
     use Queue\toArray;
 
-    protected function getInstance(array $values = [])
-    {
-        return new QueueObject($values);
-    }
-
     public function testArrayAccessSet()
     {
         $set = $this->getInstance();
         $this->expectOutOfBoundsException();
         $set['a'] = 1;
+    }
+
+    protected function getInstance(array $values = [])
+    {
+        return new QueueObject($values);
     }
 }

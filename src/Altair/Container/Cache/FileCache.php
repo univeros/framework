@@ -4,9 +4,9 @@ namespace Altair\Container\Cache;
 use Altair\Container\Contracts\ReflectionCacheInterface;
 
 /**
- * Class FileCache
+ * FileCache
  *
- * Make sure you have opcache configured
+ * Important: Make sure you have opcache configured
  */
 class FileCache implements ReflectionCacheInterface
 {
@@ -44,5 +44,4 @@ class FileCache implements ReflectionCacheInterface
         $val = str_replace('stdClass::__set_state', '(object)', $value);
         file_put_contents("{$this->path}/{$key}", '<?php $value = ' . $val . ';');
     }
-
 }

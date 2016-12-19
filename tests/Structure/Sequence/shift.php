@@ -17,6 +17,7 @@ trait shift
 
     /**
      * @dataProvider shiftDataProvider
+     * @param mixed $expected
      */
     public function testShift(array $initial, $expected, array $result)
     {

@@ -27,6 +27,25 @@ trait CollectionTrait
     }
 
     /**
+     * Invoked when calling var_dump.
+     *
+     * @return array
+     */
+    public function __debugInfo()
+    {
+        return $this->toArray();
+    }
+
+    /**
+     * Returns a string representation of the collection, which is invoked when
+     * the collection is converted to a string.
+     */
+    public function __toString()
+    {
+        return 'object(' . get_class($this) . ')';
+    }
+
+    /**
      * @return static
      */
     public function clear()
@@ -104,26 +123,8 @@ trait CollectionTrait
     abstract public function toArray(): array;
 
     /**
-     * Invoked when calling var_dump.
-     *
-     * @return array
-     */
-    public function __debugInfo()
-    {
-        return $this->toArray();
-    }
-
-    /**
-     * Returns a string representation of the collection, which is invoked when
-     * the collection is converted to a string.
-     */
-    public function __toString()
-    {
-        return 'object(' . get_class($this) . ')';
-    }
-
-    /**
      * Pushes all values of either an array or traversable object.
+     * @param mixed $values
      */
     protected function pushAll($values)
     {

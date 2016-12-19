@@ -1,10 +1,9 @@
 <?php
 namespace Altair\Container\Collection;
 
+use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
-use InvalidArgumentException;
-
 
 class AliasesCollection extends Map
 {
@@ -48,6 +47,11 @@ class AliasesCollection extends Map
         return $this->put($original, $alias);
     }
 
+    /**
+     * @param string $name
+     *
+     * @return array
+     */
     public function resolve(string $name): array
     {
         $normalizedName = $this->normalizeName($name);
@@ -60,6 +64,11 @@ class AliasesCollection extends Map
         return [$name, $normalizedName];
     }
 
+    /**
+     * @param $name
+     *
+     * @return string
+     */
     public function getNormalized($name)
     {
         return $this->normalizeName($this->get($name));

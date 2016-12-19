@@ -226,29 +226,6 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * Sift Down.
-     *
-     * @param int $node
-     */
-    private function siftDown(int $node)
-    {
-        $last = floor(count($this->heap) / 2);
-
-        for ($parent = $node; $parent < $last; $parent = $leaf) {
-
-            // Determine the largest leaf to potentially swap with the parent.
-            $leaf = $this->getLargestLeaf($parent);
-
-            // Done if the parent is not greater than its largest leaf
-            if ($this->compare($parent, $leaf) > 0) {
-                break;
-            }
-
-            $this->swap($parent, $leaf);
-        }
-    }
-
-    /**
      * Sift Up.
      *
      * @param int $leaf
@@ -285,5 +262,27 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     protected function getRoot(): PriorityNodeInterface
     {
         return $this->heap[0];
+    }
+
+    /**
+     * Sift Down.
+     *
+     * @param int $node
+     */
+    private function siftDown(int $node)
+    {
+        $last = floor(count($this->heap) / 2);
+
+        for ($parent = $node; $parent < $last; $parent = $leaf) {
+            // Determine the largest leaf to potentially swap with the parent.
+            $leaf = $this->getLargestLeaf($parent);
+
+            // Done if the parent is not greater than its largest leaf
+            if ($this->compare($parent, $leaf) > 0) {
+                break;
+            }
+
+            $this->swap($parent, $leaf);
+        }
     }
 }

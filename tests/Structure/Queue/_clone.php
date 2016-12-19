@@ -5,6 +5,7 @@ trait _clone
 {
     /**
      * @dataProvider basicDataProvider
+     * @param mixed $values
      */
     public function testClone($values, array $expected)
     {

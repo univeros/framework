@@ -20,6 +20,7 @@ trait __construct
     }
     /**
      * @dataProvider constructDataProvider
+     * @param mixed $values
      */
     public function testConstruct($values, array $expected)
     {

@@ -7,7 +7,6 @@ trait ksort
     {
         return [
             [[
-
             ]],
             [[
                 'a' => 3,

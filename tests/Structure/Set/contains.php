@@ -9,7 +9,6 @@ trait contains
 
         // initial, values, contains
         return [
-
             // Test empty set is a subset of any other set.
             [[],      [], true],
             [$sample, [], true],

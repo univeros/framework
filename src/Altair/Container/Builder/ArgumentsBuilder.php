@@ -1,24 +1,38 @@
 <?php
 namespace Altair\Container\Builder;
 
+use Altair\Container\Container;
 use Altair\Container\Contracts\BuilderInterface;
 use Altair\Container\Definition;
 use Altair\Container\Exception\InjectionException;
-use Altair\Container\Container;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionParameter;
 
 class ArgumentsBuilder implements BuilderInterface
 {
-
+    /**
+     * @var Container
+     */
     protected $container;
 
+    /**
+     * ArgumentsBuilder constructor.
+     *
+     * @param Container $container
+     */
     public function __construct(Container $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * @param ReflectionFunctionAbstract $reflectionFunction
+     * @param Definition $definition
+     * @param array|null $reflectionParameters
+     *
+     * @return array
+     */
     public function build(
         ReflectionFunctionAbstract $reflectionFunction,
         Definition $definition,
@@ -87,11 +101,11 @@ class ArgumentsBuilder implements BuilderInterface
      */
     protected function buildArgumentFromReflectionParameter(ReflectionParameter $reflectionParameter)
     {
-        if($this->container->getParameterDefinitions()->hasKey($reflectionParameter->name)) {
+        if ($this->container->getParameterDefinitions()->hasKey($reflectionParameter->name)) {
             $argument = $this->container->getParameterDefinitions()->get($reflectionParameter->name);
-        } elseif($reflectionParameter->isDefaultValueAvailable()) {
+        } elseif ($reflectionParameter->isDefaultValueAvailable()) {
             $argument = $reflectionParameter->getDefaultValue();
-        } elseif($reflectionParameter->isOptional()) {
+        } elseif ($reflectionParameter->isOptional()) {
             $argument = null;
         } else {
             $reflectionFunction = $reflectionParameter->getDeclaringFunction();
@@ -114,6 +128,13 @@ class ArgumentsBuilder implements BuilderInterface
         return $argument;
     }
 
+    /**
+     * @param string $name
+     * @param $callableOrMethodString
+     *
+     * @return mixed
+     * @throws InjectionException
+     */
     protected function buildArgumentFromDelegate(string $name, $callableOrMethodString)
     {
         if ($this->container->getExecutableBuilder()->isExecutable($callableOrMethodString) === false) {
@@ -125,6 +146,11 @@ class ArgumentsBuilder implements BuilderInterface
         return $executable($name, $this->container);
     }
 
+    /**
+     * @param array $definition
+     *
+     * @return mixed|null|object
+     */
     protected function buildArgumentFromClassDefinition(array $definition)
     {
         list($class, $definition) = $definition;

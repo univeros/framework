@@ -1,23 +1,22 @@
 <?php
 namespace Altair\Container;
 
-
+use Altair\Container\Builder\ArgumentsBuilder;
+use Altair\Container\Builder\ExecutableBuilder;
 use Altair\Container\Collection\AliasesCollection;
 use Altair\Container\Collection\ClassDefinitionsCollection;
 use Altair\Container\Collection\DelegatesCollection;
 use Altair\Container\Collection\ParameterDefinitionsCollection;
 use Altair\Container\Collection\PreparesCollection;
 use Altair\Container\Collection\SharesCollection;
-use Altair\Container\Builder\ExecutableBuilder;
-use Altair\Container\Builder\ArgumentsBuilder;
 use Altair\Container\Contracts\ReflectionInterface;
 use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Reflection\CachedReflection;
 use Altair\Container\Traits\NameNormalizerTrait;
-use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Structure\Map;
-use ReflectionFunctionAbstract;
 use ReflectionException;
+use ReflectionFunctionAbstract;
 
 class Container
 {
@@ -55,7 +54,13 @@ class Container
      * @var array
      */
     protected $making = [];
+    /**
+     * @var ExecutableBuilder|null
+     */
     protected $executableBuilder;
+    /**
+     * @var ArgumentsBuilder|null
+     */
     protected $argumentsBuilder;
 
     /**
@@ -91,6 +96,14 @@ class Container
         $this->delegates = $delegatesCollection?? new DelegatesCollection();
         $this->executableBuilder = $executableBuilder?? new ExecutableBuilder($this);
         $this->argumentsBuilder = $argumentsBuilder?? new ArgumentsBuilder($this);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function __clone()
+    {
+        $this->making = [];
     }
 
     /**
@@ -135,7 +148,7 @@ class Container
      * @param string $original The typehint to replace
      * @param string $alias The implementation name
      *
-     * @throws \InvalidArgumentException if any argument is empty or not a string
+     * @throws InvalidArgumentException if any argument is empty or not a string
      * @return self
      */
     public function alias(string $original, string $alias)
@@ -153,12 +166,12 @@ class Container
      * @throws InvalidArgumentException if $nameOrInstance is not a string or an object
      * @return self
      */
-    public function share($nameOrInstance)
+    public function share($nameOrInstance): Container
     {
         if (is_string($nameOrInstance)) {
             $this->shares->shareClass($nameOrInstance, $this->aliases);
         } elseif (is_object($nameOrInstance)) {
-            $this->shares->shareClass($nameOrInstance, $this->aliases);
+            $this->shares->shareInstance($nameOrInstance, $this->aliases);
         } else {
             throw new InvalidArgumentException(
                 sprintf(
@@ -168,6 +181,8 @@ class Container
                 )
             );
         }
+
+        return $this;
     }
 
     /**
@@ -217,7 +232,6 @@ class Container
                 if (is_string($callableOrMethodStr[0]) && is_string($callableOrMethodStr[1])) {
                     $errorDetail = " but received ['" . $callableOrMethodStr[0] . "', '" . $callableOrMethodStr[1] . "']";
                 }
-
             }
             throw new InvalidArgumentException(
                 sprintf(
@@ -303,118 +317,6 @@ class Container
     }
 
     /**
-     * @param $object
-     * @param $normalizedClass
-     *
-     * @return mixed
-     * @throws InjectionException
-     */
-    protected function prepareInstance($object, $normalizedClass)
-    {
-        if (isset($this->prepares[$normalizedClass])) {
-            $callableOrMethodString = $this->prepares->get($normalizedClass);
-            $executable = $this->executableBuilder->build($callableOrMethodString);
-            $result = $executable($object, $this);
-            if ($result instanceof $normalizedClass) {
-                $object = $result;
-            }
-        }
-        $interfaces = @class_implements($object);
-        if ($interfaces === false) {
-            throw new InjectionException(
-                sprintf(
-                    "Making %s did not result in an object, instead result is of type '%s'",
-                    $normalizedClass,
-                    gettype($object)
-                )
-            );
-        }
-        if (empty($interfaces)) {
-            return $object;
-        }
-        $interfaces = array_flip(array_map([$this, 'normalizeName'], $interfaces));
-        $prepares = $this->prepares->intersect(new Map($interfaces));
-
-        foreach ($prepares as $interfaceName => $callableOrMethodString) {
-            $executable = $this->executableBuilder->build($callableOrMethodString);
-            $result = $executable($object, $this);
-            if ($result instanceof $normalizedClass) {
-                $object = $result;
-            }
-        }
-
-        return $object;
-    }
-
-
-    /**
-     * @param $className
-     * @param $normalizedClass
-     * @param Definition $definition
-     *
-     * @return mixed|object
-     * @throws InjectionException
-     */
-    protected function provisionInstance($className, $normalizedClass, Definition $definition)
-    {
-        try {
-            $constructor = $this->reflector->getConstructor($className);
-
-            if (!$constructor) {
-                $object = $this->instantiateWithoutConstructorParameters($className);
-            } elseif (!$constructor->isPublic()) {
-                throw new InjectionException("'$className' does not have public constructor.");
-            } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
-                $reflectionClass = $this->reflector->getClass($className);
-                $definition = isset($this->classDefinitions[$normalizedClass])
-                    ? $definition->replace($this->classDefinitions->get($normalizedClass))
-                    : $definition;
-                $arguments = $this->provisionFunctionArguments($constructor, $definition, $constructorParameters);
-                $object = $reflectionClass->newInstanceArgs($arguments);
-            } else {
-                $object = $this->instantiateWithoutConstructorParameters($className);
-            }
-
-        } catch (ReflectionException $e) {
-            throw new InjectionException('Unable to provision an instance for ' . $className);
-        }
-
-        return $object;
-    }
-
-    /**
-     * @param $className
-     *
-     * @return mixed
-     * @throws InjectionException
-     */
-    protected function instantiateWithoutConstructorParameters($className)
-    {
-        $reflectionClass = $this->reflector->getClass($className);
-        if (!$reflectionClass->isInstantiable()) {
-            throw new InjectionException($className . ' is not instantiable');
-        }
-
-        return new $className;
-    }
-
-    /**
-     * @param ReflectionFunctionAbstract $reflectionFunction
-     * @param Definition $definition
-     * @param array|null $reflectionParameters
-     *
-     * @return array
-     */
-    protected function provisionFunctionArguments(
-        ReflectionFunctionAbstract $reflectionFunction,
-        Definition $definition,
-        array $reflectionParameters = null
-    ): array {
-
-        return $this->argumentsBuilder->build($reflectionFunction, $definition, $reflectionParameters);
-    }
-
-    /**
      * @return ReflectionInterface
      */
     public function getReflector(): ReflectionInterface
@@ -492,4 +394,112 @@ class Container
         return $this->argumentsBuilder;
     }
 
+    /**
+     * @param $object
+     * @param $normalizedClass
+     *
+     * @return mixed
+     * @throws InjectionException
+     */
+    protected function prepareInstance($object, $normalizedClass)
+    {
+        if (isset($this->prepares[$normalizedClass])) {
+            $callableOrMethodString = $this->prepares->get($normalizedClass);
+            $executable = $this->executableBuilder->build($callableOrMethodString);
+            $result = $executable($object, $this);
+            if ($result instanceof $normalizedClass) {
+                $object = $result;
+            }
+        }
+        $interfaces = @class_implements($object);
+        if ($interfaces === false) {
+            throw new InjectionException(
+                sprintf(
+                    "Making %s did not result in an object, instead result is of type '%s'",
+                    $normalizedClass,
+                    gettype($object)
+                )
+            );
+        }
+        if (empty($interfaces)) {
+            return $object;
+        }
+        $interfaces = array_flip(array_map([$this, 'normalizeName'], $interfaces));
+        $prepares = $this->prepares->intersect(new Map($interfaces));
+
+        foreach ($prepares as $interfaceName => $callableOrMethodString) {
+            $executable = $this->executableBuilder->build($callableOrMethodString);
+            $result = $executable($object, $this);
+            if ($result instanceof $normalizedClass) {
+                $object = $result;
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param $className
+     * @param $normalizedClass
+     * @param Definition $definition
+     *
+     * @return mixed|object
+     * @throws InjectionException
+     */
+    protected function provisionInstance($className, $normalizedClass, Definition $definition)
+    {
+        try {
+            $constructor = $this->reflector->getConstructor($className);
+
+            if (!$constructor) {
+                $object = $this->instantiateWithoutConstructorParameters($className);
+            } elseif (!$constructor->isPublic()) {
+                throw new InjectionException("'$className' does not have public constructor.");
+            } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
+                $reflectionClass = $this->reflector->getClass($className);
+                $definition = isset($this->classDefinitions[$normalizedClass])
+                    ? $definition->replace($this->classDefinitions->get($normalizedClass))
+                    : $definition;
+                $arguments = $this->provisionFunctionArguments($constructor, $definition, $constructorParameters);
+                $object = $reflectionClass->newInstanceArgs($arguments);
+            } else {
+                $object = $this->instantiateWithoutConstructorParameters($className);
+            }
+        } catch (ReflectionException $e) {
+            throw new InjectionException('Unable to provision an instance for ' . $className);
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param $className
+     *
+     * @return mixed
+     * @throws InjectionException
+     */
+    protected function instantiateWithoutConstructorParameters($className)
+    {
+        $reflectionClass = $this->reflector->getClass($className);
+        if (!$reflectionClass->isInstantiable()) {
+            throw new InjectionException($className . ' is not instantiable');
+        }
+
+        return new $className;
+    }
+
+    /**
+     * @param ReflectionFunctionAbstract $reflectionFunction
+     * @param Definition $definition
+     * @param array|null $reflectionParameters
+     *
+     * @return array
+     */
+    protected function provisionFunctionArguments(
+        ReflectionFunctionAbstract $reflectionFunction,
+        Definition $definition,
+        array $reflectionParameters = null
+    ): array {
+        return $this->argumentsBuilder->build($reflectionFunction, $definition, $reflectionParameters);
+    }
 }

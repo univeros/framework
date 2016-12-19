@@ -7,7 +7,6 @@ trait apply
     {
         // values, callback
         return [
-
             //
             [[], function () {
             }],
@@ -63,9 +62,8 @@ trait apply
             $instance->apply(function ($value) {
                 if ($value === 3) {
                     throw new \Exception();
-                } else {
-                    return $value * 2;
                 }
+                return $value * 2;
             });
         } catch (\Exception $e) {
             $this->assertToArray([2, 4, 3], $instance);

@@ -10,18 +10,6 @@ trait SquaredCapacityTrait
     use CapacityTrait;
 
     /**
-     * Rounds an integer to the next power of two if not already a power of two.
-     *
-     * @param int $capacity
-     *
-     * @return int
-     */
-    private function square(int $capacity): int
-    {
-        return pow(2, ceil(log($capacity, 2)));
-    }
-
-    /**
      * Ensures that enough memory is allocated for a specified capacity. This potentially reduces the number of
      * reallocations as the size increases.
      *
@@ -47,5 +35,17 @@ trait SquaredCapacityTrait
         $this->capacity = $this->square(max(count($this), $this->capacity + 1));
 
         return $this;
+    }
+
+    /**
+     * Rounds an integer to the next power of two if not already a power of two.
+     *
+     * @param int $capacity
+     *
+     * @return int
+     */
+    private function square(int $capacity): int
+    {
+        return pow(2, ceil(log($capacity, 2)));
     }
 }

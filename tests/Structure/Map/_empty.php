@@ -17,6 +17,7 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
+     * @param mixed $key
      */
     public function testArrayAccessEmpty(array $initial, $key, bool $empty)
     {
@@ -31,6 +32,7 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
+     * @param mixed $key
      */
     public function testArrayAccessEmptyByReference(array $initial, $key, bool $empty)
     {

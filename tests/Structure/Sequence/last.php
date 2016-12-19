@@ -15,6 +15,8 @@ trait last
 
     /**
      * @dataProvider lastDataProvider
+     * @param mixed $initial
+     * @param mixed $expected
      */
     public function testLast($initial, $expected)
     {

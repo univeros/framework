@@ -6,7 +6,6 @@ trait sum
     public function sumDataProvider()
     {
         return [
-
             // Empty
             [[]],
 
@@ -32,6 +31,7 @@ trait sum
 
     /**
      * @dataProvider sumDataProvider
+     * @param mixed $values
      */
     public function testSum($values)
     {

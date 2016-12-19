@@ -43,11 +43,6 @@ class SetTest extends AbstractCollectionTest
     use Set\union;
     use Set\xor_;
 
-    protected function getInstance(array $values = [])
-    {
-        return new SetObject($values);
-    }
-
     public function getUniqueAndDuplicateData()
     {
         $sample = $this->sample();
@@ -71,5 +66,10 @@ class SetTest extends AbstractCollectionTest
         $set = $this->getInstance();
         $this->expectOutOfBoundsException();
         $set['a'] = 1;
+    }
+
+    protected function getInstance(array $values = [])
+    {
+        return new SetObject($values);
     }
 }

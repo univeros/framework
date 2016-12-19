@@ -9,6 +9,6 @@ trait __construct
     {
         $pair = new Pair('a', 1);
         $this->assertEquals('a', $pair->key);
-        $this->assertEquals(1,  $pair->value);
+        $this->assertEquals(1, $pair->value);
     }
 }

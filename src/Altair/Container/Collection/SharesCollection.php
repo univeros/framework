@@ -1,10 +1,9 @@
 <?php
 namespace Altair\Container\Collection;
 
-
+use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
-use InvalidArgumentException;
 
 class SharesCollection extends Map
 {

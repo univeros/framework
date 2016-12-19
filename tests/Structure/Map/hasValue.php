@@ -16,6 +16,7 @@ trait hasValue
 
     /**
      * @dataProvider hasValueDataProvider
+     * @param mixed $value
      */
     public function testHasValue(array $initial, $value, bool $expected)
     {

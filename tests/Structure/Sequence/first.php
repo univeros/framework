@@ -15,6 +15,7 @@ trait first
 
     /**
      * @dataProvider firstDataProvider
+     * @param mixed $expected
      */
     public function testFirst(array $initial, $expected)
     {

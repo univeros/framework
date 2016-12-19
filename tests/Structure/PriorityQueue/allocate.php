@@ -7,7 +7,6 @@ trait allocate
     {
         // initial, allocation, expected capacity
         return [
-
             // Test minimum capacity (8)
             [0, 0, 8],
             [8, 0, 8],

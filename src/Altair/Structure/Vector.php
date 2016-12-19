@@ -48,7 +48,6 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
         if ($size < $this->capacity / 4) {
             $this->capacity = max(VectorInterface::MIN_VECTOR_CAPACITY, $this->capacity / 2);
         } else {
-
             // Also check if we should increase capacity when the size changes.
             if ($size >= $this->capacity) {
                 $this->increaseCapacity();

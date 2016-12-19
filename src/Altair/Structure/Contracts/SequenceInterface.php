@@ -2,7 +2,6 @@
 
 namespace Altair\Structure\Contracts;
 
-
 interface SequenceInterface extends CollectionInterface
 {
     /**

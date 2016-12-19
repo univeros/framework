@@ -294,18 +294,6 @@ trait SequenceTrait
     }
 
     /**
-     *
-     *
-     * @param int $index
-     */
-    protected function checkRange(int $index)
-    {
-        if ($index < 0 || $index >= count($this->internal)) {
-            throw new OutOfRangeException();
-        }
-    }
-
-    /**
      * @return \Generator
      */
     public function getIterator()
@@ -358,6 +346,18 @@ trait SequenceTrait
         }
 
         return $this->get($offset) !== null;
+    }
+
+    /**
+     *
+     *
+     * @param int $index
+     */
+    protected function checkRange(int $index)
+    {
+        if ($index < 0 || $index >= count($this->internal)) {
+            throw new OutOfRangeException();
+        }
     }
 
     /**

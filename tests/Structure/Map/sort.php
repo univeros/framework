@@ -7,7 +7,6 @@ trait sort
     {
         return [
             [[
-
             ]],
             [[
                 'a' => 3,

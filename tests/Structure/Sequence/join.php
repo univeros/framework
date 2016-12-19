@@ -25,6 +25,7 @@ trait join
 
     /**
      * @dataProvider joinDataProvider
+     * @param mixed $glue
      */
     public function testJoin(array $values, $glue)
     {
@@ -35,6 +36,7 @@ trait join
 
     /**
      * @dataProvider joinDataProvider
+     * @param mixed $glue
      */
     public function testJoinWithoutGlue(array $values, $glue)
     {

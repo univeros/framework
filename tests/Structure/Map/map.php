@@ -7,7 +7,6 @@ trait map
     {
         // values, callback
         return [
-
             // Test mapping an empty map produces an empty map.
             [[], function () {
             }],

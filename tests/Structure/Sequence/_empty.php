@@ -7,7 +7,6 @@ trait _empty
     {
         // initial, index, empty
         return [
-
             [[0], 0, true],
 
             [[null], 0, true],
@@ -38,6 +37,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessEmpty($initial, $index, bool $empty)
     {
@@ -47,6 +48,8 @@ trait _empty
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessEmptyIndexBadIndex($initial, $index)
     {
@@ -56,6 +59,8 @@ trait _empty
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessEmptyIndexOutOfRange($initial, $index)
     {
@@ -65,6 +70,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessEmptyByReference($initial, $index, bool $empty)
     {

@@ -8,7 +8,6 @@ trait values
     public function valuesDataProvider()
     {
         return [
-
             [[], []],
 
             [['a' => 1, 'b' => 2], [1, 2]],

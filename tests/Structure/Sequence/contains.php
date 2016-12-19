@@ -29,6 +29,7 @@ trait contains
 
     /**
      * @dataProvider containsDataProvider
+     * @param mixed $initial
      */
     public function testContains($initial, array $values, bool $expected)
     {

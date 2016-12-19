@@ -5,6 +5,9 @@ trait _unset
 {
     /**
      * @dataProvider removeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
+     * @param mixed $return
      */
     public function testArrayAccessUnset($initial, $index, $return, array $expected)
     {
@@ -16,6 +19,8 @@ trait _unset
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessUnsetIndexBadIndex($initial, $index)
     {
@@ -25,6 +30,8 @@ trait _unset
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessUnsetIndexOutOfRange($initial, $index)
     {

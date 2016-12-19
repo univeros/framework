@@ -7,7 +7,6 @@ trait reduce
     {
         // values, initial, callback
         return [
-
             // Test reducing an empty sequence returns the initial
             [[], 1, function () {
             }],
@@ -26,6 +25,7 @@ trait reduce
 
     /**
      * @dataProvider reduceDataProvider
+     * @param mixed $initial
      */
     public function testReduce(array $values, $initial, callable $callback)
     {
@@ -40,6 +40,7 @@ trait reduce
 
     /**
      * @dataProvider reduceDataProvider
+     * @param mixed $initial
      */
     public function testReduceWithoutInitial(array $values, $initial, callable $callback)
     {

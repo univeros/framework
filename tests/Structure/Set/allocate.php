@@ -11,7 +11,6 @@ trait allocate
 
         // initial, allocation, expected capacity
         return [
-
             // Test minimum capacity
             [0,       0, $m],
             [$m,      0, $m],

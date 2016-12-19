@@ -1,13 +1,12 @@
 <?php
 namespace Altair\Container\Reflection;
 
-
 use Altair\Container\Contracts\ReflectionInterface;
-use ReflectionFunctionAbstract;
-use ReflectionParameter;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionFunction;
+use ReflectionFunctionAbstract;
+use ReflectionMethod;
+use ReflectionParameter;
 
 class StandardReflection implements ReflectionInterface
 {
@@ -64,8 +63,8 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getFunctionParameters(ReflectionFunction $reflectionFunction) {
-
+    public function getFunctionParameters(ReflectionFunction $reflectionFunction)
+    {
         return $reflectionFunction->getParameters();
     }
 
@@ -80,5 +79,4 @@ class StandardReflection implements ReflectionInterface
 
         return new ReflectionMethod($className, $methodName);
     }
-
 }

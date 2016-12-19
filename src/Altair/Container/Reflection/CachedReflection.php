@@ -151,6 +151,4 @@ class CachedReflection implements ReflectionInterface
 
         return $reflectionMethod;
     }
-
-
 }

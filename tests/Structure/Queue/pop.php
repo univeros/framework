@@ -14,6 +14,8 @@ trait pop
 
     /**
      * @dataProvider popDataProvider
+     * @param mixed $initial
+     * @param mixed $returned
      */
     public function testPop($initial, $returned, array $expected)
     {

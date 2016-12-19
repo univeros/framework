@@ -10,6 +10,7 @@ trait _clone
 
     /**
      * @dataProvider cloneDataProvider
+     * @param mixed $values
      */
     public function testClone($values, array $expected)
     {

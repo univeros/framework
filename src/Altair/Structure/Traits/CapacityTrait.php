@@ -15,11 +15,6 @@ trait CapacityTrait
     protected $capacity = CapacityInterface::MIN_CAPACITY;
 
     /**
-     * Called when capacity should be increased to accommodate new values.
-     */
-    abstract protected function increaseCapacity();
-
-    /**
      * Returns the current capacity.
      *
      * @return int
@@ -46,6 +41,11 @@ trait CapacityTrait
     }
 
     /**
+     * Called when capacity should be increased to accommodate new values.
+     */
+    abstract protected function increaseCapacity();
+
+    /**
      * Adjusts the structure's capacity according to its current size.
      */
     protected function adjustCapacity()
@@ -57,7 +57,6 @@ trait CapacityTrait
         if ($size < $this->capacity / 4) {
             $this->capacity = max(CapacityInterface::MIN_CAPACITY, $this->capacity / 2);
         } else {
-
             // Also check if we should increase capacity when the size changes.
             if ($size >= $this->capacity) {
                 $this->increaseCapacity();

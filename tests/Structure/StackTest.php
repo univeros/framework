@@ -30,11 +30,6 @@ class StackTest extends AbstractCollectionTest
     use Stack\push;
     use Stack\toArray;
 
-    protected function getInstance(array $values = [])
-    {
-        return new StackObject($values);
-    }
-
     public function basicDataProvider()
     {
         // Stack should produce values in reverse order.
@@ -55,5 +50,10 @@ class StackTest extends AbstractCollectionTest
         $set = $this->getInstance();
         $this->expectOutOfBoundsException();
         $set['a'] = 1;
+    }
+
+    protected function getInstance(array $values = [])
+    {
+        return new StackObject($values);
     }
 }

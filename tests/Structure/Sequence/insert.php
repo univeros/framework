@@ -31,6 +31,7 @@ trait insert
 
     /**
      * @dataProvider insertDataProvider
+     * @param mixed $index
      */
     public function testInsertVariadic(array $initial, $index, array $values)
     {
@@ -46,6 +47,7 @@ trait insert
 
     /**
      * @dataProvider insertDataProvider
+     * @param mixed $index
      */
     public function testInsert(array $initial, $index, array $values)
     {
@@ -64,6 +66,8 @@ trait insert
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testInsertIndexOutOfRange($initial, $index)
     {
@@ -74,6 +78,8 @@ trait insert
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testInsertIndexBadIndex($initial, $index)
     {

@@ -50,11 +50,6 @@ class DequeTest extends AbstractCollectionTest
     use Sequence\toArray;
     use Sequence\unshift;
 
-    protected function getInstance(array $values = [])
-    {
-        return new \Altair\Structure\Deque($values);
-    }
-
     public function testReallocatingWhenHeadNotAtZero()
     {
         $instance = $this->getInstance();
@@ -155,5 +150,10 @@ class DequeTest extends AbstractCollectionTest
         $this->assertToArray($expected, $instance->sort(function ($a, $b) {
             return $b <=> $a; // Reverse
         }));
+    }
+
+    protected function getInstance(array $values = [])
+    {
+        return new \Altair\Structure\Deque($values);
     }
 }

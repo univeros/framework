@@ -1,15 +1,15 @@
 <?php
 namespace Altair\Tests\Container;
 
+use Altair\Container\Container;
 
 class InaccessibleExecutableClassMethod
 {
-    private function doSomethingPrivate()
+    protected function doSomethingProtected()
     {
         return 42;
     }
-
-    protected function doSomethingProtected()
+    private function doSomethingPrivate()
     {
         return 42;
     }
@@ -17,12 +17,11 @@ class InaccessibleExecutableClassMethod
 
 class InaccessibleStaticExecutableClassMethod
 {
-    private static function doSomethingPrivate()
+    protected static function doSomethingProtected()
     {
         return 42;
     }
-
-    protected static function doSomethingProtected()
+    private static function doSomethingPrivate()
     {
         return 42;
     }
@@ -699,7 +698,7 @@ class CloneTest
 {
     public $injector;
 
-    public function __construct(\Auryn\Injector $injector)
+    public function __construct(Container $injector)
     {
         $this->injector = clone $injector;
     }
@@ -732,7 +731,7 @@ class ParentWithConstructor
 {
     public $foo;
 
-    function __construct($foo)
+    public function __construct($foo)
     {
         $this->foo = $foo;
     }

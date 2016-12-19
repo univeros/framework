@@ -13,6 +13,8 @@ trait get
 
     /**
      * @dataProvider getDataProvider
+     * @param mixed $key
+     * @param mixed $expected
      */
     public function testGet(array $initial, $key, $expected)
     {

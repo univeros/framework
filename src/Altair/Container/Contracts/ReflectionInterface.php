@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Container\Contracts;
 
-use ReflectionFunctionAbstract;
-use ReflectionParameter;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionFunction;
+use ReflectionFunctionAbstract;
+use ReflectionMethod;
+use ReflectionParameter;
 
 interface ReflectionInterface
 {

@@ -11,7 +11,6 @@ trait remove
 
         // initial pairs, key, return, result
         return [
-
             // Test basic removal
             [[['a', 1], ['b', 2]], 'a', 1, ['b' => 2]],
 
@@ -37,6 +36,8 @@ trait remove
 
     /**
      * @dataProvider removeHashableDataProvider
+     * @param mixed $key
+     * @param mixed $expected
      */
     public function testRemoveHashable(array $initial, $key, $expected, array $result)
     {
@@ -92,8 +93,7 @@ trait remove
             for ($i = 0; $i < self::MANY; $i++) {
                 $k = rand(0, self::MANY * 2);
 
-                unset($reference[$k]);
-                unset($instance[$k]);
+                unset($reference[$k], $instance[$k]);
             }
         }
 
@@ -102,6 +102,8 @@ trait remove
 
     /**
      * @dataProvider removeDataProvider
+     * @param mixed $key
+     * @param mixed $expected
      */
     public function testRemove(array $initial, $key, $expected, array $result)
     {

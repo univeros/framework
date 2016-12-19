@@ -7,7 +7,6 @@ trait find
     {
         // initial, value, expected
         return [
-
             [[], 0, false],
 
             [['a'], 'a', 0],
@@ -26,6 +25,9 @@ trait find
 
     /**
      * @dataProvider findDataProvider
+     * @param mixed $initial
+     * @param mixed $value
+     * @param mixed $expected
      */
     public function testFind($initial, $value, $expected)
     {

@@ -7,7 +7,6 @@ trait filter
     {
         // values, callback
         return [
-
             // Test filtering an empty sequence produces an empty sequence.
             [[], function () {
             }],

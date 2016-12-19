@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Container\Contracts;
 
-
 interface ReflectionCacheInterface
 {
     const CLASSES_KEY_PREFIX = 'class.';
@@ -11,7 +10,18 @@ interface ReflectionCacheInterface
     const FUNCTION_PARAMETERS_KEY_PREFIX = 'func-params.';
     const METHODS_KEY_PREFIX = 'method.';
 
+    /**
+     * @param string $key
+     *
+     * @return mixed
+     */
     public function get(string $key);
 
+    /**
+     * @param string $key
+     * @param $data
+     *
+     * @return mixed
+     */
     public function put(string $key, $data);
 }

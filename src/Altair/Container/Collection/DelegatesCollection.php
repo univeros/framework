@@ -5,5 +5,4 @@ use Altair\Structure\Map;
 
 class DelegatesCollection extends Map
 {
-
 }

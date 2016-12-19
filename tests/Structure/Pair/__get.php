@@ -8,7 +8,7 @@ trait __get
         $pair = $this->getPair('a', 1);
 
         $this->assertEquals('a', $pair->key);
-        $this->assertEquals(1,  $pair->value);
+        $this->assertEquals(1, $pair->value);
     }
 
     public function testBadPropertyAccess()

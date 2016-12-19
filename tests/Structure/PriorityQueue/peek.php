@@ -15,6 +15,7 @@ trait peek
 
     /**
      * @dataProvider peekDataProvider
+     * @param mixed $expected
      */
     public function testPeek(array $initial, $expected)
     {

@@ -7,7 +7,6 @@ trait remove
     {
         // initial, index, return, expected
         return [
-
             [['a'], 0, 'a', []],
 
             [['a', 'b'], 0, 'a', ['b']],
@@ -21,6 +20,9 @@ trait remove
 
     /**
      * @dataProvider removeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
+     * @param mixed $return
      */
     public function testRemove($initial, $index, $return, array $expected)
     {
@@ -34,6 +36,8 @@ trait remove
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testRemoveIndexOutOfRange($initial, $index)
     {
@@ -44,6 +48,8 @@ trait remove
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testRemoveIndexBadIndex($initial, $index)
     {

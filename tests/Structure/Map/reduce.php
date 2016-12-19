@@ -7,7 +7,6 @@ trait reduce
     {
         // values, initial, callback, expected
         return [
-
             // Test reducing an empty map returns the initial
             [
                 [],
@@ -43,7 +42,6 @@ trait reduce
     {
         // values, callback, expected
         return [
-
             // Test reducing an empty map returns the initial
             [
                 [],
@@ -74,6 +72,8 @@ trait reduce
 
     /**
      * @dataProvider reduceDataProvider
+     * @param mixed $initial
+     * @param mixed $expected
      */
     public function testReduce(array $values, $initial, callable $callback, $expected)
     {
@@ -87,6 +87,7 @@ trait reduce
 
     /**
      * @dataProvider reduceWithoutInitialDataProvider
+     * @param mixed $expected
      */
     public function testReduceWithoutInitial(array $values, callable $callback, $expected)
     {

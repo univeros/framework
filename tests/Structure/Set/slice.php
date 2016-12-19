@@ -81,7 +81,7 @@ trait slice
         $instance = $this->getInstance(range(0, $n));
 
         $this->assertToArray(range($x, $y - 1), $instance->slice($x, $y));
-        $this->assertToArray(range($y, $n),     $instance->slice($y));
+        $this->assertToArray(range($y, $n), $instance->slice($y));
     }
 
     public function testLargeSliceOffset()

@@ -49,11 +49,6 @@ class MapTest extends AbstractCollectionTest
     use Map\values;
     use Map\xor_;
 
-    protected function getInstance(array $values = [])
-    {
-        return new \Altair\Structure\Map($values);
-    }
-
     public function testCollisionChain()
     {
         $instance = $this->getInstance();
@@ -135,8 +130,7 @@ class MapTest extends AbstractCollectionTest
         for ($i = 0; $i < self::MANY; $i++) {
             $key = rand(0, $i);
 
-            unset($instance[$key]);
-            unset($reference[$key]);
+            unset($instance[$key], $reference[$key]);
         }
 
         foreach ($reference as $key => $value) {
@@ -157,13 +151,17 @@ class MapTest extends AbstractCollectionTest
                 $instance[$key] = $val;
                 $reference[$key] = $val;
             } else {
-                unset($instance[$key]);
-                unset($reference[$key]);
+                unset($instance[$key], $reference[$key]);
             }
         }
 
         foreach ($reference as $key => $value) {
             $this->assertEquals($value, $instance->get($key));
         }
+    }
+
+    protected function getInstance(array $values = [])
+    {
+        return new \Altair\Structure\Map($values);
     }
 }

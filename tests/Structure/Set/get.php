@@ -7,7 +7,6 @@ trait get
     {
         // initial, index, return
         return [
-
             [[0], 0, 0],
 
             [['a'], 0, 'a'],
@@ -23,6 +22,8 @@ trait get
 
     /**
      * @dataProvider getDataProvider
+     * @param mixed $index
+     * @param mixed $return
      */
     public function testGet(array $initial, $index, $return)
     {
@@ -36,6 +37,8 @@ trait get
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testGetIndexOutOfRange($initial, $index)
     {
@@ -46,6 +49,8 @@ trait get
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testGetIndexBadIndex($initial, $index)
     {
@@ -56,6 +61,8 @@ trait get
 
     /**
      * @dataProvider getDataProvider
+     * @param mixed $index
+     * @param mixed $return
      */
     public function testArrayAccessGet(array $initial, $index, $return)
     {
@@ -65,6 +72,8 @@ trait get
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessGetIndexBadIndex($initial, $index)
     {
@@ -75,6 +84,8 @@ trait get
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessGetIndexOutOfRange($initial, $index)
     {

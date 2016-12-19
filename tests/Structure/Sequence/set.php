@@ -7,7 +7,6 @@ trait set
     {
         // initial, index, value, expected
         return [
-
             [['a'], 0, 'x', ['x']],
 
             [['a', 'b'], 0, 'x', ['x', 'b']],
@@ -21,6 +20,9 @@ trait set
 
     /**
      * @dataProvider setDataProvider
+     * @param mixed $initial
+     * @param mixed $index
+     * @param mixed $value
      */
     public function testSet($initial, $index, $value, array $expected)
     {
@@ -36,6 +38,8 @@ trait set
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testSetOutOfRange($initial, $index)
     {
@@ -46,6 +50,8 @@ trait set
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testSetIndexBadIndex($initial, $index)
     {
@@ -56,6 +62,9 @@ trait set
 
     /**
      * @dataProvider setDataProvider
+     * @param mixed $initial
+     * @param mixed $index
+     * @param mixed $value
      */
     public function testArrayAccessSet($initial, $index, $value, array $expected)
     {
@@ -67,6 +76,8 @@ trait set
 
     /**
      * @dataProvider badIndexDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessSetIndexBadIndex($initial, $index)
     {
@@ -77,6 +88,8 @@ trait set
 
     /**
      * @dataProvider outOfRangeDataProvider
+     * @param mixed $initial
+     * @param mixed $index
      */
     public function testArrayAccessSetIndexOutOfRange($initial, $index)
     {

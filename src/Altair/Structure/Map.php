@@ -40,6 +40,14 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
+     * Debug Info.
+     */
+    public function __debugInfo()
+    {
+        return $this->pairs()->toArray();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function apply(callable $callback): MapInterface
@@ -420,14 +428,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
         foreach ($this->internal as $pair) {
             yield $pair->key => $pair->value;
         }
-    }
-
-    /**
-     * Debug Info.
-     */
-    public function __debugInfo()
-    {
-        return $this->pairs()->toArray();
     }
 
     /**
