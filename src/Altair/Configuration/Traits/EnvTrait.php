@@ -5,6 +5,9 @@ use Altair\Configuration\Support\Env;
 
 trait EnvTrait
 {
+    /**
+     * @var Env
+     */
     protected $env;
 
     /**
