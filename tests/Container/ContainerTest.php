@@ -15,15 +15,15 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testMakeInstanceReturnsNewInstanceIfClassHasNoConstructor()
     {
-        $injector = new Container();
-        $this->assertEquals(new TestNoConstructor, $injector->make(TestNoConstructor::class));
+        $container = new Container();
+        $this->assertEquals(new TestNoConstructor, $container->make(TestNoConstructor::class));
     }
 
     public function testMakeInstanceReturnsAliasInstanceOnNonConcreteTypehint()
     {
-        $injector = new Container();
-        $injector->alias(DepInterface::class, DepImplementation::class);
-        $this->assertEquals(new DepImplementation, $injector->make(DepInterface::class));
+        $container = new Container();
+        $container->alias(DepInterface::class, DepImplementation::class);
+        $this->assertEquals(new DepImplementation, $container->make(DepInterface::class));
     }
 
     /**
@@ -31,8 +31,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias()
     {
-        $injector = new Container();
-        $injector->make('Altair\Tests\DepInterface');
+        $container = new Container();
+        $container->make('Altair\Tests\DepInterface');
     }
 
     /**
@@ -40,34 +40,34 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation()
     {
-        $injector = new Container;
-        $injector->make('Altair\Tests\RequiresInterface');
+        $container = new Container;
+        $container->make('Altair\Tests\RequiresInterface');
     }
 
     public function testMakeInstanceBuildsNonConcreteCtorParamWithAlias()
     {
-        $injector = new Container;
-        $injector->alias(DepInterface::class, DepImplementation::class);
-        $this->assertInstanceOf(RequiresInterface::class, $injector->make(RequiresInterface::class));
+        $container = new Container;
+        $container->alias(DepInterface::class, DepImplementation::class);
+        $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
     }
 
     public function testMakeInstancePassesNullCtorParameterIfNoTypehintOrDefaultCanBeDetermined()
     {
-        $injector = new Container;
-        $nullCtorParamObj = $injector->make(ProvTestNoDefinitionNullDefaultClass::class);
+        $container = new Container;
+        $nullCtorParamObj = $container->make(ProvTestNoDefinitionNullDefaultClass::class);
         $this->assertEquals(new ProvTestNoDefinitionNullDefaultClass, $nullCtorParamObj);
         $this->assertEquals(null, $nullCtorParamObj->arg);
     }
 
     public function testMakeInstanceReturnsSharedInstanceIfAvailable()
     {
-        $injector = new Container;
-        $injector->define(RequiresInterface::class, new Definition(['dep' => DepImplementation::class]));
-        $injector->share(RequiresInterface::class);
-        $injected = $injector->make(RequiresInterface::class);
+        $container = new Container;
+        $container->define(RequiresInterface::class, new Definition(['dep' => DepImplementation::class]));
+        $container->share(RequiresInterface::class);
+        $injected = $container->make(RequiresInterface::class);
         $this->assertEquals('something', $injected->testDep->testProp);
         $injected->testDep->testProp = 'something else';
-        $injected2 = $injector->make(RequiresInterface::class);
+        $injected2 = $container->make(RequiresInterface::class);
         $this->assertEquals('something else', $injected2->testDep->testProp);
     }
 
@@ -76,44 +76,44 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnClassLoadFailure()
     {
-        $injector = new Container;
-        $injector->make('ClassThatDoesntExist');
+        $container = new Container;
+        $container->make('ClassThatDoesntExist');
     }
 
     public function testMakeInstanceUsesCustomDefinitionIfSpecified()
     {
-        $injector = new Container;
-        $injector->define(TestNeedsDep::class, new Definition(['testDep' => TestDependency::class]));
-        $injected = $injector->make(TestNeedsDep::class, new Definition(['testDep' => TestDependency2::class]));
+        $container = new Container;
+        $container->define(TestNeedsDep::class, new Definition(['testDep' => TestDependency::class]));
+        $injected = $container->make(TestNeedsDep::class, new Definition(['testDep' => TestDependency2::class]));
         $this->assertEquals('testVal2', $injected->testDep->testProp);
     }
 
     public function testMakeInstanceCustomDefinitionOverridesExistingDefinitions()
     {
-        $injector = new Container;
+        $container = new Container;
         $definition = (new Definition([]))
             ->addRaw('arg1', 'First argument')
             ->addRaw('arg2', 'Second argument');
-        $injector->define(InjectorTestChildClass::class, $definition);
+        $container->define(InjectorTestChildClass::class, $definition);
 
-        $injected = $injector->make(InjectorTestChildClass::class, new Definition([':arg1' => 'Override']));
+        $injected = $container->make(InjectorTestChildClass::class, new Definition([':arg1' => 'Override']));
         $this->assertEquals('Override', $injected->arg1);
         $this->assertEquals('Second argument', $injected->arg2);
     }
 
     public function testMakeInstanceStoresShareIfMarkedWithNullInstance()
     {
-        $injector = new Container();
-        $injector->share(TestDependency::class);
-        $injector->make(TestDependency::class);
+        $container = new Container();
+        $container->share(TestDependency::class);
+        $container->make(TestDependency::class);
     }
 
     public function testMakeInstanceUsesReflectionForUnknownParamsInMultiBuildWithDeps()
     {
-        $injector = new Container();
-        $object = $injector->make(TestMultiDepsWithCtor::class, new Definition(['val1' => TestDependency::class]));
+        $container = new Container();
+        $object = $container->make(TestMultiDepsWithCtor::class, new Definition(['val1' => TestDependency::class]));
         $this->assertInstanceOf(TestMultiDepsWithCtor::class, $object);
-        $object = $injector->make(
+        $object = $container->make(
             NoTypehintNoDefaultConstructorClass::class,
             new Definition(['val1' => TestDependency::class])
         );
@@ -126,8 +126,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault()
     {
-        $injector = new Container();
-        $obj = $injector->make(InjectorTestCtorParamWithNoTypehintOrDefault::class);
+        $container = new Container();
+        $obj = $container->make(InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $this->assertNull($obj->val);
     }
 
@@ -136,17 +136,17 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
     ) {
-        $injector = new Container();
-        $injector->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
-        $injector->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
+        $container = new Container();
+        $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
+        $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
     }
 
     public function testTypelessDefineForDependency()
     {
         $thumbnailSize = 128;
-        $injector = new Container();
-        $injector->defineParameter('thumbnailSize', $thumbnailSize);
-        $testClass = $injector->make(RequiresDependencyWithTypelessParameters::class);
+        $container = new Container();
+        $container->defineParameter('thumbnailSize', $thumbnailSize);
+        $testClass = $container->make(RequiresDependencyWithTypelessParameters::class);
         $this->assertEquals(
             $thumbnailSize,
             $testClass->getThumbnailSize(),
@@ -156,16 +156,16 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
 
     public function testTypelessDefineForAliasedDependency()
     {
-        $injector = new Container();
-        $injector->defineParameter('val', 42);
-        $injector->alias(TestNoExplicitDefine::class, ProviderTestCtorParamWithNoTypehintOrDefault::class);
-        $injector->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
+        $container = new Container();
+        $container->defineParameter('val', 42);
+        $container->alias(TestNoExplicitDefine::class, ProviderTestCtorParamWithNoTypehintOrDefault::class);
+        $container->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
     }
 
     public function testMakeInstanceInjectsRawParametersDirectly()
     {
-        $injector = new Container();
-        $injector->define(
+        $container = new Container();
+        $container->define(
             InjectorTestRawCtorParams::class,
             new Definition(
                 [
@@ -179,7 +179,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
                 ]
             )
         );
-        $obj = $injector->make(InjectorTestRawCtorParams::class);
+        $obj = $container->make(InjectorTestRawCtorParams::class);
         $this->assertInternalType('string', $obj->string);
         $this->assertInstanceOf('StdClass', $obj->obj);
         $this->assertInternalType('int', $obj->int);
@@ -194,26 +194,26 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionWhenDelegateDoes()
     {
-        $injector = new Container();
+        $container = new Container();
         $callable = $this->createMock(
             '\Altair\Tests\Container\CallableMock'
         );
-        $injector->delegate('TestDependency', $callable);
+        $container->delegate('TestDependency', $callable);
         $callable->expects($this->once())
             ->method('__invoke')
             ->will($this->throwException(new \Exception()));
-        $injector->make('TestDependency');
+        $container->make('TestDependency');
     }
 
     public function testMakeInstanceHandlesNamespacedClasses()
     {
-        $injector = new Container();
-        $injector->make(SomeClassName::class);
+        $container = new Container();
+        $container->make(SomeClassName::class);
     }
 
     public function testMakeInstanceDelegate()
     {
-        $injector = new Container();
+        $container = new Container();
         $callable = $this->createMock(
             '\Altair\Tests\Container\CallableMock'
         );
@@ -223,16 +223,16 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
             ->method('__invoke')
             ->will($this->returnValue(new TestDependency()));
 
-        $injector->delegate(TestDependency::class, $callable);
-        $obj = $injector->make(TestDependency::class);
+        $container->delegate(TestDependency::class, $callable);
+        $obj = $container->make(TestDependency::class);
         $this->assertInstanceOf(TestDependency::class, $obj);
     }
 
     public function testMakeInstanceWithStringDelegate()
     {
-        $injector = new Container;
-        $injector->delegate('StdClass', StringStdClassDelegateMock::class);
-        $obj = $injector->make('StdClass');
+        $container = new Container;
+        $container->delegate('StdClass', StringStdClassDelegateMock::class);
+        $obj = $container->make('StdClass');
         $this->assertEquals(42, $obj->test);
     }
 
@@ -241,8 +241,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails()
     {
-        $injector = new Container();
-        $injector->delegate('StdClass', 'SomeClassThatDefinitelyDoesNotExistForReal');
+        $container = new Container();
+        $container->delegate('StdClass', 'SomeClassThatDefinitelyDoesNotExistForReal');
     }
 
     /**
@@ -250,16 +250,16 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition()
     {
-        $injector = new Container();
-        $obj = $injector->make(RequiresInterface::class);
+        $container = new Container();
+        $obj = $container->make(RequiresInterface::class);
     }
 
     public function testDefineAssignsPassedDefinition()
     {
-        $injector = new Container();
+        $container = new Container();
         $definition = new Definition(['dep' => DepImplementation::class]);
-        $injector->define(RequiresInterface::class, $definition);
-        $this->assertInstanceOf(RequiresInterface::class, $injector->make(RequiresInterface::class));
+        $container->define(RequiresInterface::class, $definition);
+        $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
     }
 
     // TODO:  MISSING
@@ -272,8 +272,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      */
     public function testProvisionedInvokables($toInvoke, $definition, $expectedResult)
     {
-        $injector = new Container();
-        $this->assertEquals($expectedResult, $injector->execute($toInvoke, new Definition($definition)));
+        $container = new Container();
+        $this->assertEquals($expectedResult, $container->execute($toInvoke, new Definition($definition)));
     }
 
     public function provideExecutionExpectations()

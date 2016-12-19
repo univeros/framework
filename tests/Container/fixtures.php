@@ -696,11 +696,11 @@ function getDelegateClosureInGlobalScope()
 
 class CloneTest
 {
-    public $injector;
+    public $container;
 
-    public function __construct(Container $injector)
+    public function __construct(Container $container)
     {
-        $this->injector = clone $injector;
+        $this->injector = clone $container;
     }
 }
 
