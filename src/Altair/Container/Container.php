@@ -150,7 +150,7 @@ class Container
      * @throws InvalidArgumentException if any argument is empty or not a string
      * @return self
      */
-    public function alias(string $original, string $alias)
+    public function alias(string $original, string $alias): Container
     {
         $this->aliases->define($original, $alias, $this->shares);
 
@@ -460,7 +460,7 @@ class Container
                 $definition = isset($this->classDefinitions[$normalizedClass])
                     ? $definition->replace($this->classDefinitions->get($normalizedClass))
                     : $definition;
-                $arguments =  $this->argumentsBuilder->build($constructor, $definition, $constructorParameters);
+                $arguments = $this->argumentsBuilder->build($constructor, $definition, $constructorParameters);
                 $object = $reflectionClass->newInstanceArgs($arguments);
             } else {
                 $object = $this->instantiateWithoutConstructorParameters($className);
