@@ -47,8 +47,10 @@ interface ReflectionInterface
      *
      * @param ReflectionFunctionAbstract $function
      * @param ReflectionParameter $parameter
+     *
+     * @return null|string
      */
-    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter);
+    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter):? string;
 
     /**
      * Retrieves and caches a reflection for the specified function
