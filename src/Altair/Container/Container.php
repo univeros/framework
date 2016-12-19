@@ -281,7 +281,8 @@ class Container
         if (isset($this->delegates[$normalizedClass])) {
             $executable = $this->executableBuilder->build($this->delegates->get($normalizedClass));
             $reflectionFunction = $executable->getCallableReflection();
-            $arguments = $this->provisionFunctionArguments($reflectionFunction, $definition);
+
+            $arguments = $this->argumentsBuilder->build($reflectionFunction, $definition);
             $object = call_user_func_array([$executable, '__invoke'], $arguments);
         } else {
             $object = $this->provisionInstance($className, $normalizedClass, $definition);
@@ -311,7 +312,7 @@ class Container
     {
         $executable = $this->executableBuilder->build($callableOrMethodString);
         $definition = $definition?? new Definition([]);
-        $arguments = $this->provisionFunctionArguments($executable->getCallableReflection(), $definition);
+        $arguments = $this->argumentsBuilder->build($executable->getCallableReflection(), $definition);
 
         return call_user_func_array([$executable, '__invoke'], $arguments);
     }
@@ -460,7 +461,7 @@ class Container
                 $definition = isset($this->classDefinitions[$normalizedClass])
                     ? $definition->replace($this->classDefinitions->get($normalizedClass))
                     : $definition;
-                $arguments = $this->provisionFunctionArguments($constructor, $definition, $constructorParameters);
+                $arguments =  $this->argumentsBuilder->build($constructor, $definition, $constructorParameters);
                 $object = $reflectionClass->newInstanceArgs($arguments);
             } else {
                 $object = $this->instantiateWithoutConstructorParameters($className);
@@ -486,20 +487,5 @@ class Container
         }
 
         return new $className;
-    }
-
-    /**
-     * @param ReflectionFunctionAbstract $reflectionFunction
-     * @param Definition $definition
-     * @param array|null $reflectionParameters
-     *
-     * @return array
-     */
-    protected function provisionFunctionArguments(
-        ReflectionFunctionAbstract $reflectionFunction,
-        Definition $definition,
-        array $reflectionParameters = null
-    ): array {
-        return $this->argumentsBuilder->build($reflectionFunction, $definition, $reflectionParameters);
     }
 }
