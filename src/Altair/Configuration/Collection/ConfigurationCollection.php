@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Configuration;
+namespace Altair\Configuration\Collection;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Exception\InvalidConfigurationException;

@@ -135,7 +135,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Altair\Container\Exception\InjectionException
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
-    ) {
+    )
+    {
         $container = new Container();
         $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
@@ -262,10 +263,9 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
     }
 
-    // TODO:  MISSING
-
     /**
      * @dataProvider provideExecutionExpectations
+     *
      * @param mixed $toInvoke
      * @param mixed $definition
      * @param mixed $expectedResult
@@ -389,4 +389,31 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         // x -------------------------------------------------------------------------------------->
         return $return;
     }
+
+    public function testInstanceMutate()
+    {
+        $container = new Container();
+        $container->prepare(
+            '\StdClass',
+            function ($obj, $container) {
+                $obj->testval = 42;
+            }
+        );
+        $obj = $container->make('StdClass');
+        $this->assertSame(42, $obj->testval);
+    }
+
+    public function testInterfaceMutate()
+    {
+        $container = new Container();
+        $container->prepare(
+            SomeInterface::class,
+            function ($obj, $container) {
+                $obj->testProp = 42;
+            }
+        );
+        $obj = $container->make(PreparesImplementationTest::class);
+        $this->assertSame(42, $obj->testProp);
+    }
+
 }

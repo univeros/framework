@@ -42,7 +42,7 @@ class EnvironmentConfiguration implements ConfigurationInterface
                 new Definition(
                     [
                         ':filePath' => $this->filePath,
-                        'immutable' => $this->immutable
+                        ':immutable' => $this->immutable
                     ]
                 )
             )
@@ -53,8 +53,6 @@ class EnvironmentConfiguration implements ConfigurationInterface
                     // ensure Loader loads environment file prior using Env::class
                     $loader = $container->make(Loader::class);
                     $loader->load();
-
-                    return $env;
                 }
             );
 
