@@ -82,7 +82,7 @@ class CachedReflection implements ReflectionInterface
     /**
      * @inheritdoc
      */
-    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter):? string
+    public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
         $name = strtolower($parameter->getName());
         $method = strtolower($function->name);
