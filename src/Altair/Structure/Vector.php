@@ -27,12 +27,12 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
      *
      * @param array|\Traversable|Contracts\CollectionInterface|null $values
      */
-    public function __construct($values = [])
+    public function __construct($values = null)
     {
         $this->capacity = VectorInterface::MIN_VECTOR_CAPACITY;
 
         if (func_num_args()) {
-            $this->pushAll($this->normalizeItems($values));
+            $this->pushAll($this->normalizeItems(($values??[])));
         }
     }
 

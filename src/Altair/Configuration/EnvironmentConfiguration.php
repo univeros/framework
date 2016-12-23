@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Configuration;
 
-
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Exception\InvalidArgumentException;
 use Altair\Configuration\Support\Env;
@@ -22,7 +21,6 @@ class EnvironmentConfiguration implements ConfigurationInterface
      */
     public function __construct(string $filePath, bool $immutable = true)
     {
-
         if (!is_file($filePath) || !is_readable($filePath)) {
             throw new InvalidArgumentException("Invalid environment file path: '$filePath'");
         }
@@ -49,13 +47,10 @@ class EnvironmentConfiguration implements ConfigurationInterface
             ->prepare(
                 Env::class,
                 function (Env $env, Container $container) {
-
                     // ensure Loader loads environment file prior using Env::class
                     $loader = $container->make(Loader::class);
                     $loader->load();
                 }
             );
-
     }
-
 }

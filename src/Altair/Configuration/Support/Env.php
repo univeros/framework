@@ -12,7 +12,6 @@ class Env
      */
     public function get($name):? string
     {
-
         switch (true) {
             case array_key_exists($name, $_ENV):
                 $value = $_ENV[$name];
