@@ -8,19 +8,19 @@ class Action
     /**
      * The domain specification.
      *
-     * @var \Altair\Http\Contracts\DomainInterface
+     * @var string class name of \Altair\Http\Contracts\DomainInterface
      */
     protected $domain;
     /**
      * The responder specification.
      *
-     * @var \Altair\Http\Contracts\ResponderInterface
+     * @var string class name of \Altair\Http\Contracts\ResponderInterface
      */
     protected $responder;
     /**
      * The input specification.
      *
-     * @var \Altair\Http\Contracts\InputInterface
+     * @var string class name of \Altair\Http\Contracts\InputInterface
      */
     protected $input;
 
@@ -38,31 +38,31 @@ class Action
     }
 
     /**
-     * Returns the domain specification.
+     * Returns the domain specification fully qualified class name.
      *
-     * @return \Altair\Http\Contracts\DomainInterface
+     * @return string of \Altair\Http\Contracts\DomainInterface
      */
-    public function getDomain()
+    public function getDomainClassName(): string
     {
         return $this->domain;
     }
 
     /**
-     * Returns the responder specification.
+     * Returns the responder specification fully qualified class name.
      *
-     * @return \Altair\Http\Contracts\ResponderInterface
+     * @return string of \Altair\Http\Contracts\ResponderInterface
      */
-    public function getResponder()
+    public function getResponderClassName(): string
     {
         return $this->responder;
     }
 
     /**
-     * Returns the input specification.
+     * Returns the input specification fully qualified class name.
      *
-     * @return \Altair\Http\Contracts\InputInterface
+     * @return string of \Altair\Http\Contracts\InputInterface
      */
-    public function getInput()
+    public function getInputClassName(): string
     {
         return $this->input;
     }

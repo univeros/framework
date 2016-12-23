@@ -15,7 +15,7 @@ trait ResolverAwareTrait
      *
      * @return object
      */
-    protected function resolve($spec)
+    protected function resolve(string $spec)
     {
         return call_user_func($this->resolver, $spec);
     }
