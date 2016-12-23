@@ -1,6 +1,9 @@
 <?php
 namespace Altair\Http\Contracts;
 
+use Altair\Http\Collection\InputCollection;
+use Altair\Http\Collection\SettingsCollection;
+
 interface PayloadInterface extends HttpStatusInterface
 {
     /**
@@ -12,7 +15,7 @@ interface PayloadInterface extends HttpStatusInterface
      *
      * @return PayloadInterface
      */
-    public function withStatus($status): PayloadInterface;
+    public function withStatus(string $status): PayloadInterface;
 
     /**
      * Get the status of the payload.
@@ -24,20 +27,20 @@ interface PayloadInterface extends HttpStatusInterface
     public function getStatus(): int;
 
     /**
-     * Create a copy of the payload with input array.
+     * Create a copy of the payload with input collection map.
      *
-     * @param array $input
+     * @param InputCollection $inputCollection
      *
      * @return PayloadInterface
      */
-    public function withInput(array $input): PayloadInterface;
+    public function withInputCollection(InputCollection $inputCollection): PayloadInterface;
 
     /**
      * Get input array from the payload.
      *
-     * @return array
+     * @return InputCollection
      */
-    public function getInput(): array;
+    public function getInputCollection(): InputCollection;
 
     /**
      * Create a copy of the payload with output array.
@@ -79,7 +82,7 @@ interface PayloadInterface extends HttpStatusInterface
      *
      * @return PayloadInterface
      */
-    public function withSetting($name, $value): PayloadInterface;
+    public function withSetting(string $name, $value): PayloadInterface;
 
     /**
      * Create a copy of the payload without a setting.
@@ -88,21 +91,31 @@ interface PayloadInterface extends HttpStatusInterface
      *
      * @return PayloadInterface
      */
-    public function withoutSetting($name): PayloadInterface;
+    public function withoutSetting(string $name): PayloadInterface;
 
     /**
-     * Get a payload setting.
+     * Create a copy of the payload with settings collection map.
+     *
+     * @param SettingsCollection $settingsCollection
+     *
+     * @return PayloadInterface
+     */
+    public function withSettingsCollection(SettingsCollection $settingsCollection): PayloadInterface;
+
+    /**
+     * Get a payload setting. Default if not found.
      *
      * @param string $name
+     * @param mixed $default
      *
      * @return mixed
      */
-    public function getSetting($name);
+    public function getSetting(string $name, $default = null);
 
     /**
      * Get all payload settings.
      *
-     * @return array
+     * @return SettingsCollection
      */
-    public function getSettings(): array;
+    public function getSettingsCollection(): SettingsCollection;
 }
