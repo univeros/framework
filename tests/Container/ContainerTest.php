@@ -135,8 +135,7 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
      * @expectedException \Altair\Container\Exception\InjectionException
      */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
-    )
-    {
+    ) {
         $container = new Container();
         $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
@@ -415,5 +414,4 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $obj = $container->make(PreparesImplementationTest::class);
         $this->assertSame(42, $obj->testProp);
     }
-
 }

@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Configuration;
 
-
 use Altair\Configuration\Collection\ConfigurationCollection;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
@@ -33,7 +32,8 @@ class ConfigurationCollectionTest extends TestCase
         $collection->apply($container);
     }
 
-    public function testCollectionApplyWithObjectInstance() {
+    public function testCollectionApplyWithObjectInstance()
+    {
         $configuration = $this->createMock(ConfigurationInterface::class);
 
         $container = $this->createMock(Container::class);
@@ -63,5 +63,4 @@ class ConfigurationCollectionTest extends TestCase
 
         $configuration->apply($container);
     }
-
 }
