@@ -1,14 +1,16 @@
 <?php
 namespace Altair\Http\Contracts;
 
+use Altair\Http\Collection\InputCollection;
+
 interface DomainInterface
 {
     /**
      * Handle domain logic for an action.
      *
-     * @param array $input
+     * @param InputCollection $input
      *
      * @return PayloadInterface
      */
-    public function __invoke(array $input): PayloadInterface;
+    public function __invoke(InputCollection $input): PayloadInterface;
 }
