@@ -16,13 +16,14 @@ class Action
      *
      * @var \Altair\Http\Contracts\ResponderInterface
      */
-    protected $responder = CompoundResponder::class;
+    protected $responder;
     /**
      * The input specification.
      *
      * @var \Altair\Http\Contracts\InputInterface
      */
-    protected $input = Input::class;
+    protected $input;
+
     /**
      * @inheritDoc
      */
@@ -32,12 +33,8 @@ class Action
         $input = null
     ) {
         $this->domain = $domain;
-        if ($responder) {
-            $this->responder = $responder;
-        }
-        if ($input) {
-            $this->input = $input;
-        }
+        $this->responder = $responder?? CompoundResponder::class;
+        $this->input = $input?? InputParser::class;
     }
 
     /**
@@ -49,6 +46,7 @@ class Action
     {
         return $this->domain;
     }
+
     /**
      * Returns the responder specification.
      *
@@ -58,6 +56,7 @@ class Action
     {
         return $this->responder;
     }
+
     /**
      * Returns the input specification.
      *

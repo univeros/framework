@@ -11,5 +11,4 @@ class CorsMiddleware implements MiddlewareInterface
     {
         // TODO: Implement __invoke() method.
     }
-
 }

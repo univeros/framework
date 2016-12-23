@@ -11,5 +11,4 @@ class SpamBlockerMiddleware implements MiddlewareInterface
     {
         // TODO: Implement __invoke() method.
     }
-
 }

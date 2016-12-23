@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Http\Middleware;
 
-
 use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -13,6 +12,4 @@ class CsrfMiddleware implements MiddlewareInterface
     {
         // TODO: Implement __invoke() method.
     }
-
-
 }

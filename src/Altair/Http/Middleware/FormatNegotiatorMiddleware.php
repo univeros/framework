@@ -11,5 +11,4 @@ class FormatNegotiatorMiddleware implements MiddlewareInterface
     {
         // TODO: Implement __invoke() method.
     }
-
 }

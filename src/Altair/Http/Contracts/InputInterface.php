@@ -1,6 +1,7 @@
 <?php
 namespace Altair\Http\Contracts;
 
+use Altair\Http\Collection\InputCollection;
 use Psr\Http\Message\ServerRequestInterface;
 
 interface InputInterface
@@ -10,7 +11,7 @@ interface InputInterface
      *
      * @param  ServerRequestInterface $request
      *
-     * @return array
+     * @return InputCollection
      */
-    public function __invoke(ServerRequestInterface $request): array;
+    public function __invoke(ServerRequestInterface $request): InputCollection;
 }
