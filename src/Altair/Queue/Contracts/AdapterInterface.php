@@ -15,11 +15,11 @@ interface AdapterInterface
     public function getConnection(): AdapterInterface;
 
     /**
-     * @param JobInterface $mailJob
+     * @param JobInterface $job
      *
      * @return bool
      */
-    public function enqueue(JobInterface $mailJob): bool;
+    public function enqueue(JobInterface $job): bool;
 
     /**
      * @return JobInterface
@@ -27,9 +27,9 @@ interface AdapterInterface
     public function dequeue();
 
     /**
-     * @param JobInterface $mailJob
+     * @param JobInterface $job
      */
-    public function ack(JobInterface $mailJob);
+    public function ack(JobInterface $job);
 
     /**
      * @return bool
