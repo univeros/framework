@@ -30,7 +30,7 @@ class StatusResponder implements ResponderInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
-    ) {
+    ): ResponseInterface {
         if ($this->hasStatus($payload)) {
             $response = $this->status($response, $payload);
         }

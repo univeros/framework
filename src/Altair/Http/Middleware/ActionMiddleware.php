@@ -52,11 +52,11 @@ class ActionMiddleware implements MiddlewareInterface
         ResponseInterface $response
     ) {
         /** @var DomainInterface $domain */
-        $domain = $this->resolve($action->getDomain());
+        $domain = $this->resolve($action->getDomainClassName());
         /** @var InputInterface $input */
-        $input = $this->resolve($action->getInput());
+        $input = $this->resolve($action->getInputClassName());
         /** @var ResponderInterface $responder */
-        $responder = $this->resolve($action->getResponder());
+        $responder = $this->resolve($action->getResponderClassName());
         $payload = $this->payload($domain, $input, $request);
         $response = $this->response($responder, $request, $response, $payload);
 

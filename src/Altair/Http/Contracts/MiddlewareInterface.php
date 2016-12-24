@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface MiddlewareInterface
 {
+    const ATTRIBUTE_IP_ADDRESS = 'adr:ip-address';
     const ATTRIBUTE_ACTION = 'adr:action';
 
     /**

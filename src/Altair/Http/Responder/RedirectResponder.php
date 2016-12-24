@@ -15,7 +15,7 @@ class RedirectResponder implements ResponderInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
-    ) {
+    ): ResponseInterface {
         $location = $payload->getSetting('redirect');
 
         if (!empty($location)) {

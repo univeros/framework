@@ -5,6 +5,7 @@ use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+
 class FormatNegotiatorMiddleware implements MiddlewareInterface
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
