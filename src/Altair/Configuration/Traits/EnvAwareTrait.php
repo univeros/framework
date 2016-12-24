@@ -3,7 +3,7 @@ namespace Altair\Configuration\Traits;
 
 use Altair\Configuration\Support\Env;
 
-trait EnvTrait
+trait EnvAwareTrait
 {
     /**
      * @var Env

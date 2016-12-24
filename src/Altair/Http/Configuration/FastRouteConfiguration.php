@@ -25,7 +25,7 @@ class FastRouteConfiguration implements ConfigurationInterface
     }
 
     /**
-     * @param Container $container
+     * @inheritdoc
      */
     public function apply(Container $container)
     {

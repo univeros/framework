@@ -9,6 +9,7 @@ use Altair\Http\Formatter\JsonFormatter;
 use Altair\Http\Traits\ResolverAwareTrait;
 use Negotiation\AcceptEncoding;
 use Negotiation\Negotiator;
+use phpDocumentor\Reflection\DocBlock\Tags\Formatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Relay\ResolverInterface;
@@ -65,6 +66,19 @@ class FormattedResponder implements ResponderInterface
     }
 
     /**
+     * Returns a copy of FormattedResponder adding the new formatter class
+     * @param string $formatter
+     * @param float $priority
+     * @return FormattedResponder
+     */
+    public function withFormatter(string $formatter, float $priority): FormattedResponder
+    {
+        $cloned = clone $this;
+        $cloned->formatters = $this->filterFormatters(array_merge($this->formatters, [$formatter => $priority]));
+        return $cloned;
+    }
+
+    /**
      * @param array $formatters
      *
      * @return array
@@ -80,7 +94,7 @@ class FormattedResponder implements ResponderInterface
             if (!is_float($quality)) {
                 throw new InvalidFormatterException("'{$formatter}' requires a quality float number.");
             }
-            $this->formatters[$formatter] = $quality;
+            $filtered[$formatter] = $quality;
         }
 
         return $filtered;
@@ -105,6 +119,8 @@ class FormattedResponder implements ResponderInterface
     }
 
     /**
+     * Formats the response with selected formatter
+     *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @param PayloadInterface $payload
