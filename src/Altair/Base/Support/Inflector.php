@@ -149,7 +149,7 @@ class Inflector
     }
 
     /**
-    Converts number to its ordinal English form. For example, converts 13 to 13th, 2 to 2nd ...
+     * Converts number to its ordinal English form. For example, converts 13 to 13th, 2 to 2nd ...
      *
      * @param int $number the number to get its ordinal value
      * @return string
