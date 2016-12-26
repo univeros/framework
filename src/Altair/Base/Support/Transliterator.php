@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Base\Support;
 
-
 class Transliterator
 {
     /**

@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Base\Support;
 
-
 class Pluralizer
 {
     /**
@@ -243,5 +242,4 @@ class Pluralizer
         }
         return $value;
     }
-
 }

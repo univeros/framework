@@ -15,13 +15,11 @@ class CsrfMiddleware implements MiddlewareInterface
     public function __construct(MimeType $mimeType, CsrfTokenGeneratorInterface $generator = null)
     {
         $this->mimeType = $mimeType;
-        $this->generator = $generator?? function(string $uri, ServerRequestInterface $request): array {
-
-            };
+        $this->generator = $generator?? function (string $uri, ServerRequestInterface $request): array {
+        };
     }
 
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-
     }
 }

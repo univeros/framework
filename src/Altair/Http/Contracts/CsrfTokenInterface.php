@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Http\Contracts;
 
-
 interface CsrfTokenInterface
 {
     public function getToken(): string;

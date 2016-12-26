@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Http\Traits;
 
-
 use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ServerRequestInterface;
 

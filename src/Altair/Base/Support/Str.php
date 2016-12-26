@@ -108,10 +108,9 @@ class Str
                 return false;
             }
             return substr_compare($haystack, $needle, -$bytes, $bytes) === 0;
-        } else {
-            return mb_strtolower(mb_substr($haystack, -$bytes, mb_strlen($haystack, '8bit'), '8bit'),
-                    $encoding) === mb_strtolower($needle, $encoding);
         }
+        return mb_strtolower(mb_substr($haystack, -$bytes, mb_strlen($haystack, '8bit'), '8bit'),
+                    $encoding) === mb_strtolower($needle, $encoding);
     }
 
     /**
