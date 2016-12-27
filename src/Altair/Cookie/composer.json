@@ -1,0 +1,21 @@
+{
+    "name": "univeros/base",
+    "description": "The Altair Cookie package.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "psr/http-message": "^1.0",
+        "univeros/structure": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Base\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}
