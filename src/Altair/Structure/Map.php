@@ -477,7 +477,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      *
      * @return PairInterface|null
      */
-    protected function lookupKey($key)
+    protected function lookupKey($key): ?PairInterface
     {
         /** @var PairInterface $pair */
         foreach ($this->internal as $pair) {
@@ -494,7 +494,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      *
      * @return PairInterface|null
      */
-    protected function lookupValue($value)
+    protected function lookupValue($value): ?PairInterface
     {
         foreach ($this->internal as $pair) {
             if ($pair->value === $value) {
