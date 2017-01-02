@@ -40,7 +40,6 @@ class CookieFactory
     public static function createCollectionFromRequest(RequestInterface $request): CookieCollection
     {
         $string = $request->getHeaderLine(CookieInterface::HEADER);
-
         return static::createCollectionFromCookieString($string);
     }
 }
