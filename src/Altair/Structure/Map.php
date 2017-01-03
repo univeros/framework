@@ -485,6 +485,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
                 return $pair;
             }
         }
+
+        return null;
     }
 
     /**
@@ -501,6 +503,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
                 return $pair;
             }
         }
+
+        return null;
     }
 
     /**
