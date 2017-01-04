@@ -9,21 +9,43 @@ use Psr\Http\Message\ResponseInterface;
 
 class SetCookieFactory
 {
+    /**
+     * @param string $name
+     * @param string|null $value
+     *
+     * @return SetCookie
+     */
     public static function create(string $name, string $value = null): SetCookie
     {
         return new SetCookie($name, $value);
     }
 
+    /**
+     * @param string $name
+     * @param string|null $value
+     *
+     * @return SetCookie
+     */
     public static function createRemembered(string $name, string $value = null): SetCookie
     {
         return (new SetCookie($name, $value))->remember();
     }
 
+    /**
+     * @param string $name
+     *
+     * @return SetCookie
+     */
     public static function createExpired(string $name): SetCookie
     {
         return (new SetCookie($name))->expire();
     }
 
+    /**
+     * @param string $string
+     *
+     * @return SetCookie
+     */
     public static function createFromCookieString(string $string): SetCookie
     {
         $cookieStr = new CookieStr();
@@ -65,6 +87,11 @@ class SetCookieFactory
         return $cookie;
     }
 
+    /**
+     * @param array $strings
+     *
+     * @return SetCookieCollection
+     */
     public static function createCollectionFromCookieStrings(array $strings): SetCookieCollection
     {
         return new SetCookieCollection(
@@ -77,6 +104,11 @@ class SetCookieFactory
         );
     }
 
+    /**
+     * @param ResponseInterface $response
+     *
+     * @return SetCookieCollection
+     */
     public static function createCollectionFromResponse(ResponseInterface $response): SetCookieCollection
     {
         return new SetCookieCollection(

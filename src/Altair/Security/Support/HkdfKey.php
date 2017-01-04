@@ -30,7 +30,6 @@ class HkdfKey extends AbstractKey
         string $context = null,
         int $length = 0
     ) {
-
         parent::__construct($key, $salt, $length);
 
         $hash = hash_hmac($this->algorithm, '', '', true);

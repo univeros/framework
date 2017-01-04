@@ -10,13 +10,34 @@ class SetCookie implements SetCookieInterface
 {
     use NameAndValueAwareTrait;
 
+    /**
+     * @var int
+     */
     protected $expires = 0;
+    /**
+     * @var int
+     */
     protected $maxAge = 0;
+    /**
+     * @var
+     */
     protected $path;
+    /**
+     * @var
+     */
     protected $domain;
+    /**
+     * @var bool
+     */
     protected $secure = false;
+    /**
+     * @var bool
+     */
     protected $httpOnly = false;
 
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $parts = [
@@ -33,36 +54,59 @@ class SetCookie implements SetCookieInterface
         return implode('; ', array_filter($parts));
     }
 
+    /**
+     * @return int
+     */
     public function getExpires(): int
     {
         return $this->expires;
     }
 
+    /**
+     * @return int
+     */
     public function getMaxAge(): int
     {
         return $this->maxAge;
     }
 
+    /**
+     * @return null|string
+     */
     public function getPath(): ?string
     {
         return $this->path;
     }
 
+    /**
+     * @return null|string
+     */
     public function getDomain(): ?string
     {
         return $this->domain;
     }
 
+    /**
+     * @return bool
+     */
     public function getSecure(): bool
     {
         return $this->secure;
     }
 
+    /**
+     * @return bool
+     */
     public function getHttpOnly(): bool
     {
         return $this->httpOnly;
     }
 
+    /**
+     * @param $expires
+     *
+     * @return SetCookie
+     */
     public function withExpires($expires): SetCookie
     {
         $expires = $this->resolveExpires($expires);
@@ -73,6 +117,11 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @param int $maxAge
+     *
+     * @return SetCookie
+     */
     public function withMaxAge(int $maxAge): SetCookie
     {
         $clone = clone($this);
@@ -81,6 +130,11 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @param string $path
+     *
+     * @return SetCookie
+     */
     public function withPath(string $path): SetCookie
     {
         $clone = clone($this);
@@ -89,6 +143,11 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @param null $domain
+     *
+     * @return SetCookie
+     */
     public function withDomain($domain = null): SetCookie
     {
         $clone = clone($this);
@@ -97,6 +156,11 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @param bool $secure
+     *
+     * @return SetCookie
+     */
     public function withSecure(bool $secure): SetCookie
     {
         $clone = clone($this);
@@ -105,6 +169,11 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @param bool $httpOnly
+     *
+     * @return SetCookie
+     */
     public function withHttpOnly(bool $httpOnly): SetCookie
     {
         $clone = clone($this);
@@ -113,11 +182,17 @@ class SetCookie implements SetCookieInterface
         return $clone;
     }
 
+    /**
+     * @return SetCookie
+     */
     public function remember(): SetCookie
     {
         return $this->withExpires(new DateTime('+5 years'));
     }
 
+    /**
+     * @return SetCookie
+     */
     public function expire(): SetCookie
     {
         return $this->withExpires(new DateTime('-5 years'));

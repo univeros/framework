@@ -14,6 +14,13 @@ use Psr\Http\Message\ResponseInterface;
 
 class SetCookieCollection extends Map
 {
+    /**
+     * Adds a SetCookie to the collection
+     *
+     * @param SetCookie $cookie
+     *
+     * @return SetCookieCollection
+     */
     public function putSetCookie(SetCookie $cookie): SetCookieCollection
     {
         $pair = $this->lookupKey($cookie->getName());

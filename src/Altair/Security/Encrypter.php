@@ -56,7 +56,6 @@ class Encrypter implements EncrypterInterface
      */
     public function supports(string $key, string $cipher): bool
     {
-
         $length =  mb_strlen($key, '8bit');
 
         return ($cipher === EncrypterInterface::AES_128_CBC_CIPHER
