@@ -7,10 +7,11 @@ class Env
      * Returns a specific environment value.
      *
      * @param string $name the environment value name
+     * @param mixed $default
      *
-     * @return null|string
+     * @return null|string|mixed
      */
-    public function get($name):? string
+    public function get($name, $default = null)
     {
         switch (true) {
             case array_key_exists($name, $_ENV):
@@ -23,6 +24,6 @@ class Env
                 $value = getenv($name);
         }
 
-        return $value === false ? null : $value;
+        return $value === false ? $default : $value;
     }
 }
