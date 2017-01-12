@@ -46,6 +46,7 @@ class EnvironmentConfigurationTest extends TestCase
         $this->assertEquals('baz', $env->get('BAR'));
         $this->assertEquals('Hello', $env->get('NVAR1'));
         $this->assertEquals('Hello World!', $env->get('NVAR3'));
+        $this->assertEquals('This is default', $env->get('UNKWOWN', 'This is default'));
     }
 
     /**
