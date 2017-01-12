@@ -9,7 +9,7 @@ use Aws\S3\S3Client;
 use League\Flysystem\AwsS3v2\AwsS3Adapter;
 
 
-class AwsS3DriverConfiguration implements ConfigurationInterface
+class AwsS3AdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
