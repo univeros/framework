@@ -1,7 +1,9 @@
 <?php
 namespace Altair\Filesystem\Contracts;
 
-interface FilesystemAdapterInterface
+use League\Flysystem\FilesystemInterface;
+
+interface FilesystemAdapterInterface extends FilesystemInterface
 {
     /**
      * Get the Flysystem driver.
@@ -13,7 +15,8 @@ interface FilesystemAdapterInterface
     /**
      * Determine if a file exists.
      *
-     * @param  string  $path
+     * @param  string $path
+     *
      * @return bool
      */
     public function exists($path): bool;
@@ -21,10 +24,30 @@ interface FilesystemAdapterInterface
     /**
      * Prepend to a file.
      *
-     * @param  string  $path
-     * @param  string  $data
-     * @param  string  $separator
+     * @param  string $path
+     * @param  string $data
+     * @param  string $separator
+     *
      * @return bool
      */
-    public function prepend($path, $data, $separator = PHP_EOL): bool;
+    public function prepend(string $path, string $data, string $separator = PHP_EOL): bool;
+
+    /**
+     * Append to a file.
+     *
+     * @param  string $path
+     * @param  string $data
+     * @param  string $separator
+     *
+     * @return bool
+     */
+    public function append(string $path, string $data, string $separator = PHP_EOL): bool;
+
+    /**
+     * @param string $directory
+     * @param bool $recursive
+     *
+     * @return array
+     */
+    public function listDirectories(string $directory = '', bool $recursive = false): array;
 }
