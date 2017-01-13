@@ -3,6 +3,7 @@ git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.
 git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/configuration.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/container.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/cookie.git
+git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/filesystem.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/http.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/queue.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/security.git
