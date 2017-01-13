@@ -6,13 +6,12 @@ use Altair\Filesystem\Exception\InvalidArgumentException;
 use Altair\Filesystem\Exception\UnreadableFileException;
 use DirectoryIterator;
 use ErrorException;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
-use FilesystemIterator;
 
 class Filesystem
 {
-
     /**
      * Get the contents of a file.
      *
@@ -242,7 +241,6 @@ class Filesystem
                 default:
                     unlink($file->getRealPath());
             }
-
         }
 
         return true;

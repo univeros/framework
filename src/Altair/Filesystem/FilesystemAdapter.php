@@ -61,6 +61,21 @@ class FilesystemAdapter implements FilesystemAdapterInterface
     }
 
     /**
+     * Pass dynamic methods call onto Flysystem
+     *
+     * @param  string $method
+     * @param  array $parameters
+     *
+     * @return mixed
+     *
+     * @throws \BadMethodCallException
+     */
+    public function __call($method, array $parameters)
+    {
+        return call_user_func_array([$this->driver, $method], $parameters);
+    }
+
+    /**
      * Get the Flysystem driver.
      *
      * @return \League\Flysystem\FilesystemInterface
@@ -118,7 +133,6 @@ class FilesystemAdapter implements FilesystemAdapterInterface
         return $this->put($path, $data);
     }
 
-
     /**
      * @param string $directory
      * @param bool $recursive
@@ -132,27 +146,12 @@ class FilesystemAdapter implements FilesystemAdapterInterface
         return array_filter(
             array_map(
                 function ($obj) {
-                    if ($obj['type'] == 'dir') {
+                    if ($obj['type'] === 'dir') {
                         return $obj['path'];
                     }
                 },
                 $contents
             )
         );
-    }
-
-    /**
-     * Pass dynamic methods call onto Flysystem
-     *
-     * @param  string $method
-     * @param  array $parameters
-     *
-     * @return mixed
-     *
-     * @throws \BadMethodCallException
-     */
-    public function __call($method, array $parameters)
-    {
-        return call_user_func_array([$this->driver, $method], $parameters);
     }
 }
