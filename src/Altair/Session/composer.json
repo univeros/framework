@@ -1,0 +1,21 @@
+{
+    "name": "univeros/session",
+    "description": "The Altair Session package.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "nesbot/carbon": "~1.20",
+        "univeros/configuration": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Configuration\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}

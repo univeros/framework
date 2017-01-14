@@ -10,6 +10,7 @@
     "require": {
         "php": ">=7.0.0",
         "univeros/configuration": "*",
+        "univeros/filesystem": "*",
         "league/flysystem": "~1.0"
     },
     "require-dev": {

@@ -35,8 +35,10 @@ class ActionMiddleware implements MiddlewareInterface
         $action = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);
         $request = $request->withoutAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);
         $response = $this->handle($action, $request, $response);
+
         return $next($request, $response);
     }
+
     /**
      * Use the action collaborators to get a response.
      *
@@ -46,7 +48,7 @@ class ActionMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface
      */
-    private function handle(
+    protected function handle(
         Action $action,
         ServerRequestInterface $request,
         ResponseInterface $response
@@ -62,6 +64,7 @@ class ActionMiddleware implements MiddlewareInterface
 
         return $response;
     }
+
     /**
      * Execute the domain to get a payload using input from the request.
      *
@@ -71,13 +74,14 @@ class ActionMiddleware implements MiddlewareInterface
      *
      * @return PayloadInterface
      */
-    private function payload(
+    protected function payload(
         DomainInterface $domain,
         InputInterface $input,
         ServerRequestInterface $request
     ) {
         return $domain($input($request));
     }
+
     /**
      * Execute the responder to marshall the payload into the response.
      *
@@ -88,7 +92,7 @@ class ActionMiddleware implements MiddlewareInterface
      *
      * @return ResponseInterface
      */
-    private function response(
+    protected function response(
         ResponderInterface $responder,
         ServerRequestInterface $request,
         ResponseInterface $response,

@@ -6,7 +6,6 @@ use Altair\Filesystem\Exception\InvalidArgumentException;
 use Altair\Filesystem\Exception\UnreadableFileException;
 use DirectoryIterator;
 use ErrorException;
-use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
@@ -168,7 +167,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function deleteFile($paths): bool
+    public function delete($paths): bool
     {
         $paths = is_array($paths) ? $paths : func_get_args();
         $success = true;
