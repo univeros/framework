@@ -83,7 +83,6 @@ class FileSessionHandler implements SessionHandlerInterface
         && filemtime($path) >= Carbon::now()->subMinutes($this->minutes)->getTimestamp()
             ? $this->filesystem->get($path, true)
             : '';
-
     }
 
     /**

@@ -103,11 +103,11 @@ class SetCookie implements SetCookieInterface
     }
 
     /**
-     * @param $expires
+     * @param int|DateTime|DateTimeInterface|string|null $expires
      *
      * @return SetCookie
      */
-    public function withExpires($expires): SetCookie
+    public function withExpires($expires = null): SetCookie
     {
         $expires = $this->resolveExpires($expires);
 
@@ -122,7 +122,7 @@ class SetCookie implements SetCookieInterface
      *
      * @return SetCookie
      */
-    public function withMaxAge(int $maxAge): SetCookie
+    public function withMaxAge(int $maxAge = null): SetCookie
     {
         $clone = clone($this);
         $clone->maxAge = $maxAge;
@@ -135,7 +135,7 @@ class SetCookie implements SetCookieInterface
      *
      * @return SetCookie
      */
-    public function withPath(string $path): SetCookie
+    public function withPath(string $path = null): SetCookie
     {
         $clone = clone($this);
         $clone->path = $path;
@@ -161,7 +161,7 @@ class SetCookie implements SetCookieInterface
      *
      * @return SetCookie
      */
-    public function withSecure(bool $secure): SetCookie
+    public function withSecure(bool $secure = null): SetCookie
     {
         $clone = clone($this);
         $clone->secure = $secure;
