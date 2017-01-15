@@ -24,16 +24,6 @@ class SessionHeadersMiddleware implements MiddlewareInterface
      *
      */
     protected $cacheLimiter;
-    /**
-     *
-     * The cache expiration time in minutes.
-     *
-     * @var int
-     *
-     * @see session_cache_expire()
-     *
-     */
-    protected $cacheExpire;
 
     /**
      * SessionHeadersMiddleware constructor.
@@ -64,8 +54,7 @@ class SessionHeadersMiddleware implements MiddlewareInterface
 
         $response = $next($request, $response);
 
-        $this->time = time();
-
+        // is the session id still the same?
         $nextId = session_id();
 
         if ($nextId !== $prevId) {
