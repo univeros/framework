@@ -18,7 +18,7 @@ class PhpViewConfiguration implements ConfigurationInterface
     public function apply(Container $container)
     {
         $definition = new Definition([
-            ':templatePath' => $this->env->get('TEMPLATE_PATH')
+            ':templatePath' => $this->env->get('PV_TEMPLATE_PATH')
         ]);
 
         $container
