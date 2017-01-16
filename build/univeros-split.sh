@@ -7,5 +7,6 @@ git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/http.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/queue.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/security.git
+git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/session.git
 git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/structure.git
 rm -rf .subsplit/
