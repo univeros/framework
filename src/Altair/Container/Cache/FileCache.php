@@ -31,7 +31,7 @@ class FileCache implements ReflectionCacheInterface
         // https://github.com/facebook/hhvm/issues/4797
         @include "{$this->path}/{$key}";
 
-        return $value??false;
+        return $value?? false;
     }
 
     /**

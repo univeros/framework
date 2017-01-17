@@ -1,0 +1,22 @@
+{
+    "name": "univeros/configuration",
+    "description": "The Altair Configuration package.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "univeros/container": "*",
+        "univeros/filesystem": "*"
+        "univeros/structure": "*",
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Configuration\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}
