@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Security;
 
-
 use Altair\Security\Support\Pbkdf2Key;
 use PHPUnit\Framework\TestCase;
 

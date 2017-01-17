@@ -34,5 +34,4 @@ class MongoSessionHandler implements SessionHandlerInterface
     {
         // TODO: Implement gc() method.
     }
-
 }

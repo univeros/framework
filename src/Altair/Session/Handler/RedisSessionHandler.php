@@ -34,5 +34,4 @@ class RedisSessionHandler implements SessionHandlerInterface
     {
         // TODO: Implement gc() method.
     }
-
 }

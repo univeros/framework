@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Security;
 
-
 use Altair\Security\Support\HkdfKey;
 use PHPUnit\Framework\TestCase;
 

@@ -27,7 +27,6 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
         $fs = new Filesystem();
 
         $factory = function () use ($fs) {
-
             // The file should contain all the mapping definitions
             // If using ClassCommandMessageNameResolver and InMemoryCommandLocatorService:
             // [ YourCommandMessage::class => YourCommandHandler::class]
@@ -39,7 +38,7 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
 
             $map = new MessageCommandMap($config);
 
-            return new InMemoryCommandLocatorService($map)->add;
+            return new InMemoryCommandLocatorService($map);
         };
 
         $container

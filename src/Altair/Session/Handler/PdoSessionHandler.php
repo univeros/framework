@@ -34,5 +34,4 @@ class PdoSessionHandler implements SessionHandlerInterface
     {
         // TODO: Implement gc() method.
     }
-
 }

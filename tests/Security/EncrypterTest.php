@@ -10,7 +10,6 @@ use Altair\Security\Support\Salt;
 
 class EncrypterTest extends \PHPUnit_Framework_TestCase
 {
-
     public function testEncryptionWithHkdfKeyAndAES128CBCCipher()
     {
         $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
@@ -98,7 +97,6 @@ class EncrypterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-
     public function testEncryptionWithPbkdf2KeyAndAES128CBCCipher()
     {
         $key = new Pbkdf2Key('test-key', 'secret', EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
@@ -108,7 +106,6 @@ class EncrypterTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals('foo', $encrypted);
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
-
 
     public function testEncryptionWithPbkdf2KeyAndAES128CBCCipherWithSalt()
     {
@@ -120,7 +117,6 @@ class EncrypterTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals('foo', $encrypted);
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
-
 
     public function testEncryptionWithPbkdf2KeyAndAES192CBCCipher()
     {
@@ -143,5 +139,4 @@ class EncrypterTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals('foo', $encrypted);
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
-
 }
