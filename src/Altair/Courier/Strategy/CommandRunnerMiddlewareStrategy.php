@@ -4,6 +4,7 @@ namespace Altair\Courier\Strategy;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
 use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
+use Altair\Courier\Contracts\MiddlewareResolverInterface;
 use Altair\Courier\Exception\InvalidCommandMiddlewareException;
 use Closure;
 
@@ -13,19 +14,27 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
      * @var array
      */
     protected $middlewares;
+    /**
+     * @var MiddlewareResolverInterface
+     */
+    protected $resolver;
 
     /**
      * CommandRunnerMiddlewareStrategy constructor.
      *
      * @param array|null $middlewares
+     * @param MiddlewareResolverInterface $resolver
      */
-    public function __construct(array $middlewares = null)
+    public function __construct(array $middlewares = null, MiddlewareResolverInterface $resolver = null)
     {
         $this->middlewares = $middlewares?? [];
+
+        $this->resolver = $resolver;
     }
 
     /**
      * Returns a new instance with
+     *
      * @param array $middlewares
      *
      * @return CommandRunnerStrategyInterface
@@ -84,6 +93,10 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
             };
         }
         $middleware = $this->middlewares[$index];
+
+        if ($this->resolver !== null) {
+            $middleware = call_user_func($this->resolver, $middleware);
+        }
 
         return function ($message) use ($middleware, $index) {
             $middleware->handle($message, $this->call($index + 1));
