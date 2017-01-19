@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Base\\": ""
+            "Altair\\Happen\\": ""
         }
     },
     "minimum-stability": "dev"
