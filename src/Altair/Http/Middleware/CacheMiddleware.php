@@ -64,6 +64,7 @@ class CacheMiddleware implements MiddlewareInterface
         $response = $next($request, $response);
         $response = $this->ensureCacheControlHeader($response);
         $response = $this->ensureLastModified($response);
+        $response = $this->checkETag($request, $response);
         $this->saveToCache($item, $response);
 
         return $response;
@@ -91,6 +92,28 @@ class CacheMiddleware implements MiddlewareInterface
         return !$response->hasHeader('Last-Modified')
             ? $this->cacheUtil->withLastModified($response, time())
             : $response;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface $response
+     *
+     * @return ResponseInterface
+     */
+    protected function checkETag(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    {
+        $etag = $response->getHeader('ETag');
+        $etag = reset($etag);
+        if ($etag) {
+            $ifNoneMatch = $request->getHeaderLine('If-None-Match');
+            if ($ifNoneMatch) {
+                $etagList = preg_split('@\s*,\s*@', $ifNoneMatch);
+                if (in_array($etag, $etagList) || in_array('*', $etagList)) {
+                    return $response->withStatus(304);
+                }
+            }
+        }
+        return $response;
     }
 
     /**
