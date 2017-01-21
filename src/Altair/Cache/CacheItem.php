@@ -4,7 +4,6 @@ namespace Altair\Cache;
 use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
 use Altair\Cache\Contracts\TagAwareCacheItemInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
-use Altair\Cache\Validator\CacheItemTagValidator;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
@@ -17,7 +16,9 @@ final class CacheItem implements TagAwareCacheItemInterface
     protected $expirationTime;
     protected $defaultExpirationTime;
     protected $tags = [];
-    protected $keyValidator;
+    /**
+     * @var CacheItemTagValidatorInterface
+     */
     protected $tagValidator;
 
     /**
@@ -120,29 +121,18 @@ final class CacheItem implements TagAwareCacheItemInterface
     public function withTags(array $tags): TagAwareCacheItemInterface
     {
         $cloned = clone $this;
-        $validator = $cloned->getTagValidator();
         $reason = '';
         foreach ($tags as $tag) {
             if (is_string($tag) && isset($cloned->tags[$tag])) {
                 continue;
             }
 
-            if (!$validator->validate($tag, $reason)) {
+            if (!$cloned->tagValidator->validate($tag, $reason)) {
                 throw new InvalidArgumentException($reason);
             }
             $cloned->tags[$tag];
         }
 
         return $cloned;
-    }
-
-    /**
-     * Returns the tag validator.
-     *
-     * @return CacheItemTagValidatorInterface
-     */
-    protected function getTagValidator(): CacheItemTagValidatorInterface
-    {
-        return $this->tagValidator?? ($this->tagValidator = new CacheItemTagValidator());
     }
 }

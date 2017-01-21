@@ -3,8 +3,11 @@ namespace Altair\Cache;
 
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
 use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
 use Altair\Cache\Contracts\TagAwareCacheItemPoolInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
+use Altair\Cache\Validator\CacheItemKeyValidator;
+use Altair\Cache\Validator\CacheItemTagValidator;
 use Closure;
 use Psr\Cache\CacheItemInterface;
 use Psr\Log\LoggerAwareInterface;
@@ -23,14 +26,15 @@ class CacheItemPool implements TagAwareCacheItemPoolInterface, LoggerAwareInterf
 
     public function __construct(
         CacheItemPoolAdapterInterface $adapter,
-        CacheItemKeyValidatorInterface $cacheItemKeyValidator,
         string $namespace = '',
-        int $defaultExpirationTime = 0
+        int $defaultExpirationTime = 0,
+        CacheItemKeyValidatorInterface $cacheItemKeyValidator = null,
+        CacheItemTagValidatorInterface $cacheItemTagValidator = null
     ) {
         $this->adapter = $adapter;
-        $this->cacheItemKeyValidator = $cacheItemKeyValidator;
+        $this->cacheItemKeyValidator = $cacheItemKeyValidator?? new CacheItemKeyValidator();
         $this->namespace = $namespace === '' ? '' : $this->getId($namespace) . ':';
-        $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultExpirationTime);
+        $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultExpirationTime, $cacheItemTagValidator);
         $this->deferredMergerClosure = $this->createDeferredMergerClosure();
     }
 
@@ -112,17 +116,21 @@ class CacheItemPool implements TagAwareCacheItemPoolInterface, LoggerAwareInterf
      * Closure to access the protected properties of the object.
      *
      * @param int $defaultExpirationTime
+     * @param CacheItemTagValidatorInterface $cacheItemTagValidator
      *
      * @return Closure
      */
-    protected function createCacheItemFactoryClosure(int $defaultExpirationTime): Closure
-    {
-        return function (string $key, $value, bool $isHit) use ($defaultExpirationTime) {
+    protected function createCacheItemFactoryClosure(
+        int $defaultExpirationTime,
+        CacheItemTagValidatorInterface $cacheItemTagValidator
+    ): Closure {
+        return function (string $key, $value, bool $isHit) use ($defaultExpirationTime, $cacheItemTagValidator) {
             $cacheItem = new CacheItem();
             $cacheItem->{'key'} = $key;
             $cacheItem->{'value'} = $value;
             $cacheItem->{'isHit'} = $isHit;
             $cacheItem->{'defaultExpirationTime'} = $defaultExpirationTime;
+            $cacheItem->{'cacheItemTagValidator'} = $cacheItemTagValidator?? new CacheItemTagValidator();
 
             return $cacheItem;
         };
