@@ -1,0 +1,21 @@
+{
+    "name": "univeros/base",
+    "description": "The Altair Cache package.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "psr/cache": "^1.0",
+        "psr/log": "~1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Base\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}

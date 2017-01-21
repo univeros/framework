@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Cache\Contracts;
 
-
 use Psr\Cache\CacheItemPoolInterface;
 
 interface TagAwareCacheItemPoolInterface extends CacheItemPoolInterface
@@ -20,13 +19,13 @@ interface TagAwareCacheItemPoolInterface extends CacheItemPoolInterface
     /**
      * Invalidates cached items using tags.
      *
-     * @param string[] ...$tags An array of tags to invalidate
+     * @param string[] $tags An array of tags to invalidate
      *
      * @return bool true on success, false otherwise
      *
      * @throws \Altair\Cache\Exception\InvalidArgumentException when $tags is not valid
      */
-    public function invalidateTags(...$tags): bool;
+    public function invalidateTags(array $tags): bool;
 
     /**
      * {@inheritdoc}
