@@ -34,5 +34,4 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     {
         // TODO: Implement save() method.
     }
-
 }

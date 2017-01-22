@@ -34,5 +34,4 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     {
         // TODO: Implement save() method.
     }
-
 }

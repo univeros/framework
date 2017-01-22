@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Cache\Adapter;
 
-
 use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
 
 class NullCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
@@ -35,5 +34,4 @@ class NullCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     {
         // TODO: Implement save() method.
     }
-
 }
