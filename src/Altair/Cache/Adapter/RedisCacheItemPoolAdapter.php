@@ -69,20 +69,16 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function clear(): bool
     {
-        // When using a native Redis cluster, clearing the cache cannot work and always returns false.
-        // Clearing the cache should then be done by any other means (e.g. by restarting the cluster).
-        // - Thanks Symfony ;)
         $success = true;
-        $connection = $this->client->getConnection();
-        if ($connection instanceof PredisCluster) {
-            $hosts = [];
-            foreach ($connection as $c) {
-                $hosts[] = new Client($c);
-            }
-        } elseif ($connection instanceof RedisCluster) {
+        $hosts = $this->getHosts($this->client);
+
+        if (null === $hosts) {
+            // When using a native Redis cluster, clearing the cache cannot work and always returns false.
+            // Clearing the cache should then be done by any other means (e.g. by restarting the cluster).
+            //
+            // - Thanks Symfony ;)
+
             return false;
-        } else {
-            $hosts = [$this->client];
         }
 
         /** @var Client $host */
@@ -163,5 +159,28 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
             );
         }
         $this->namespace = $namespace;
+    }
+
+    /**
+     * @param Client $client
+     *
+     * @return array|null
+     */
+    protected function getHosts(Client $client): ?array
+    {
+        $connection = $client->getConnection();
+
+        if ($connection instanceof PredisCluster) {
+            $hosts = [];
+            foreach ($connection as $c) {
+                $hosts[] = new Client($c);
+            }
+        } elseif ($connection instanceof RedisCluster) {
+            return null;
+        } else {
+            $hosts = [$this->client];
+        }
+
+        return $hosts;
     }
 }
