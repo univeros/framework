@@ -63,5 +63,5 @@ interface CacheItemPoolAdapterInterface
      * @return bool|array True if the items were successfully persisted, otherwise will return an array with failed
      * items.
      */
-    public function save(array $values, int $lifespan): bool;
+    public function save(array $values, int $lifespan);
 }

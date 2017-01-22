@@ -15,6 +15,7 @@
         "nesbot/carbon": "~1.20",
         "nikic/fast-route": "^1.0",
         "league/flysystem": "~1.0",
+        "predis/predis": "^1.0",
         "psr/cache": "^1.0",
         "psr/http-message": "^1.0",
         "psr/log": "~1.0",
@@ -25,6 +26,7 @@
         "zendframework/zend-diactoros": "^1.0.4"
     },
     "require-dev": {
+        "ext-mongo": "*",
         "friendsofphp/php-cs-fixer": "^2.0",
         "league/flysystem-aws-s3-v3": "~1.0",
         "league/flysystem-azure": "~1.0",
@@ -73,7 +75,8 @@
         "sort-packages": true
     },
     "suggest": {
-        "cache/cache": "To implement PSR-6 complain caching"
+        "cache/cache": "To implement PSR-6 complain caching",
+        "ext-mongo": "To implement MongoDbSession handler"
     },
     "minimum-stability": "dev"
 }

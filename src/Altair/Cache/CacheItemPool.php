@@ -1,6 +1,7 @@
 <?php
 namespace Altair\Cache;
 
+use Altair\Cache\Adapter\RedisCacheItemPoolAdapter;
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
 use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
 use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
@@ -42,8 +43,14 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         CacheItemTagValidatorInterface $cacheItemTagValidator = null
     ) {
         $this->adapter = $adapter;
+
+        if ($this->adapter instanceof RedisCacheItemPoolAdapter) {
+            $this->adapter->validateNamespace($namespace);
+        }
+
         $this->cacheItemKeyValidator = $cacheItemKeyValidator?? new CacheItemKeyValidator();
         $this->namespace = $namespace === '' ? '' : $this->makeId($namespace) . ':';
+
         $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultLifespan, $cacheItemTagValidator);
         $this->deferredMergerClosure = $this->createDeferredMergerClosure();
     }

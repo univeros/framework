@@ -81,7 +81,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     /**
      * @inheritdoc
      */
-    public function save(array $values, int $lifespan): bool
+    public function save(array $values, int $lifespan)
     {
         return $this->checkResponse($this->client->setMulti($values, $lifespan));
     }

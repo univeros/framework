@@ -55,7 +55,7 @@ class FilesystemCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function getItems(array $keys = []): array
     {
-        $values = [];
+        $items = [];
         $now = time();
         foreach ($keys as $id) {
             $file = $this->getFilePath($id);
@@ -69,10 +69,10 @@ class FilesystemCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
                 $this->filesystem->delete($file);
                 continue;
             }
-            $values[$id] = $item->value;
+            $items[$id] = $item->value;
         }
 
-        return $values;
+        return $items;
     }
 
     /**
@@ -112,7 +112,7 @@ class FilesystemCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     /**
      * @inheritdoc
      */
-    public function save(array $values, int $lifespan): bool
+    public function save(array $values, int $lifespan)
     {
         $success = true;
         $expiresAt = time() + ($lifespan ?: 31557600); // 31557600s = 1 year

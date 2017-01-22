@@ -10,5 +10,4 @@ class PdoSessionHandlerConfiguration implements ConfigurationInterface
     {
         // TODO: Implement apply() method.
     }
-
 }

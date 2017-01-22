@@ -48,7 +48,7 @@ class NullCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     /**
      * @inheritdoc
      */
-    public function save(array $values, int $lifespan): bool
+    public function save(array $values, int $lifespan)
     {
         return false;
     }
