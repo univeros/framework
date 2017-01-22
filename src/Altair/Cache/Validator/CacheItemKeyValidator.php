@@ -6,7 +6,7 @@ use Altair\Cache\Traits\FailureReasonAwareTrait;
 
 class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
 {
-   use FailureReasonAwareTrait;
+    use FailureReasonAwareTrait;
 
     /**
      * @inheritdoc
