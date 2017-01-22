@@ -1,8 +1,6 @@
 <?php
 namespace Altair\Cache\Contracts;
 
-use Altair\Cache\Exception\InvalidArgumentException;
-
 interface CacheItemPoolAdapterInterface
 {
     /**
@@ -49,7 +47,7 @@ interface CacheItemPoolAdapterInterface
      * @param string[] $keys
      *          An array of keys that should be removed from the pool.
      *
-     * @throws InvalidArgumentException If any of the keys in $keys are not a legal value a
+     * @throws \Altair\Cache\Exception\InvalidArgumentException If any of the keys in $keys are not a legal value a
      * \Psr\Cache\InvalidArgumentException MUST be thrown.
      *
      * @return bool True if the items were successfully removed. False if there was an error.
