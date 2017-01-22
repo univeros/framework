@@ -9,13 +9,15 @@
     },
     "require": {
         "php": ">=7.0.0",
+        "predis/predis": "^1.0",
         "psr/cache": "^1.0",
         "psr/log": "~1.0",
+        "univeros/configuration": "*",
         "univeros/filesystem": "*"
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Base\\": ""
+            "Altair\\Cache\\": ""
         }
     },
     "minimum-stability": "dev"
