@@ -291,9 +291,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      */
     protected function makeId(string $key): string
     {
-        $reason = '';
-        if (!$this->cacheItemKeyValidator->validate($key, $reason)) {
-            throw new InvalidArgumentException($reason);
+        if (!$this->cacheItemKeyValidator->validate($key)) {
+            throw new InvalidArgumentException($this->cacheItemKeyValidator->getFailureReason());
         }
 
         if (null === $this->adapter->getMaxIdLength()) {

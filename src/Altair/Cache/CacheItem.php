@@ -109,14 +109,14 @@ final class CacheItem implements TagAwareCacheItemInterface
     public function withTags(array $tags): TagAwareCacheItemInterface
     {
         $cloned = clone $this;
-        $reason = '';
+
         foreach ($tags as $tag) {
             if (is_string($tag) && isset($cloned->tags[$tag])) {
                 continue;
             }
 
-            if (!$cloned->tagValidator->validate($tag, $reason)) {
-                throw new InvalidArgumentException($reason);
+            if (!$cloned->tagValidator->validate($tag)) {
+                throw new InvalidArgumentException($cloned->tagValidator->getFailureReason());
             }
             $cloned->tags[$tag];
         }

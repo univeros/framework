@@ -1,16 +1,14 @@
 <?php
 namespace Altair\Cache\Contracts;
 
-interface CacheItemKeyValidatorInterface
+interface CacheItemKeyValidatorInterface extends FailureReasonAwareInterface
 {
     /**
-     * Checks whether a cache key is valid and if not. If valid will return true, false otherwise and will set the error
-     * to the second parameter passed by reference.
+     * Checks whether a cache key is valid and if not. If valid will return true, false otherwise.
      *
      * @param string $key
-     * @param string $reason
      *
      * @return bool
      */
-    public function validate(string $key, string &$reason): bool;
+    public function validate(string $key): bool;
 }
