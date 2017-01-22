@@ -12,9 +12,9 @@ final class CacheItem implements TagAwareCacheItemInterface
 {
     protected $key;
     protected $value;
-    protected $hasValue;
+    protected $isHit;
     protected $expirationTime;
-    protected $defaultExpirationTime;
+    protected $defaultLifespan;
     protected $tags = [];
     /**
      * @var CacheItemTagValidatorInterface
@@ -42,17 +42,7 @@ final class CacheItem implements TagAwareCacheItemInterface
      */
     public function isHit()
     {
-        if (!$this->hasValue) {
-            return false;
-        }
-
-        $now = time();
-
-        if (null !== $this->expirationTime) {
-            return $this->expirationTime > $now;
-        }
-
-        return true;
+        return $this->isHit;
     }
 
     /**
@@ -61,8 +51,6 @@ final class CacheItem implements TagAwareCacheItemInterface
     public function set($value)
     {
         $this->value = $value;
-        $this->hasValue = true;
-
         return $this;
     }
 
@@ -72,7 +60,7 @@ final class CacheItem implements TagAwareCacheItemInterface
     public function expiresAt($expiration)
     {
         if (null === $expiration) {
-            $this->expirationTime = $this->defaultExpirationTime > 0 ? time() + $this->defaultExpirationTime : null;
+            $this->expirationTime = $this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null;
         } elseif ($expiration instanceof DateTimeInterface) {
             $this->expirationTime = $expiration->getTimestamp();
         } else {
@@ -93,7 +81,7 @@ final class CacheItem implements TagAwareCacheItemInterface
     public function expiresAfter($time)
     {
         if (null === $time) {
-            $this->expirationTime = $this->defaultExpirationTime > 0 ? time() + $this->defaultExpirationTime : null;
+            $this->expirationTime = $this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null;
         } elseif ($time instanceof DateInterval) {
             $this->expirationTime = DateTime::createFromFormat('U', time())->add($time)->format('U');
         } elseif (is_int($time)) {

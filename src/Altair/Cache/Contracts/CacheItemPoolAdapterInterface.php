@@ -2,7 +2,6 @@
 namespace Altair\Cache\Contracts;
 
 use Altair\Cache\Exception\InvalidArgumentException;
-use Psr\Cache\CacheItemInterface;
 
 interface CacheItemPoolAdapterInterface
 {
@@ -18,11 +17,11 @@ interface CacheItemPoolAdapterInterface
      *
      * @param string[] $keys An indexed array of keys of items to retrieve.
      *
-     * @return array|\Traversable A traversable collection of Cache Items keyed by the cache keys of each item. A Cache
+     * @return array a collection of Cache Items keyed by the cache keys of each item. A Cache
      * item will be returned for each key, even if that key is not found. However, if no keys are specified then an
-     * empty traversable MUST be returned instead.
+     * empty array MUST be returned instead.
      */
-    public function getItems(array $keys = []);
+    public function getItems(array $keys = []): array;
 
     /**
      * Confirms if the cache contains specified cache item.
@@ -45,15 +44,6 @@ interface CacheItemPoolAdapterInterface
     public function clear(): bool;
 
     /**
-     * Removes the item from the pool.
-     *
-     * @param string $key The key to delete.
-     *
-     * @return bool True if the item was successfully removed. False if there was an error.
-     */
-    public function deleteItem(string $key): bool;
-
-    /**
      * Removes multiple items from the pool.
      *
      * @param string[] $keys
@@ -69,9 +59,11 @@ interface CacheItemPoolAdapterInterface
     /**
      * Persists a cache item immediately.
      *
-     * @param CacheItemInterface $item The cache item to save.
+     * @param array $values The cache item to save.
+     * @param int $lifespan The time of the cached values or 0 for manual cleaning.
      *
-     * @return bool True if the item was successfully persisted. False if there was an error.
+     * @return bool|array True if the items were successfully persisted, otherwise will return an array with failed
+     * items.
      */
-    public function save(CacheItemInterface $item): bool;
+    public function save(array $values, int $lifespan): bool;
 }
