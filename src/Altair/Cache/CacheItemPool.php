@@ -352,7 +352,6 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         int $defaultLifespan,
         CacheItemTagValidatorInterface $cacheItemTagValidator
     ): Closure {
-
         return Closure::bind(
             function (string $key, $value, bool $isHit) use ($defaultLifespan, $cacheItemTagValidator) {
                 $cacheItem = new CacheItem();
