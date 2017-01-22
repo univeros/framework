@@ -7,7 +7,7 @@ use Memcached;
 
 class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
 {
-    protected $memcached;
+    protected $client;
     protected $maxIdLength = 250;
 
     /**
@@ -26,7 +26,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
         }
         $this->maxIdLength -= strlen($memcached->getOption(Memcached::OPT_PREFIX_KEY));
 
-        $this->memcached = $memcached;
+        $this->client = $memcached;
     }
 
     /**
@@ -42,7 +42,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function getItems(array $keys = []): array
     {
-        return $this->checkResponse($this->memcached->getMulti($keys));
+        return $this->checkResponse($this->client->getMulti($keys));
     }
 
     /**
@@ -50,8 +50,8 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function hasItem(string $key): bool
     {
-        return false !== $this->memcached->get($key) ||
-            $this->checkResponse(Memcached::RES_SUCCESS === $this->memcached->getResultCode());
+        return false !== $this->client->get($key) ||
+            $this->checkResponse(Memcached::RES_SUCCESS === $this->client->getResultCode());
     }
 
     /**
@@ -59,7 +59,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function clear(): bool
     {
-        return $this->checkResponse($this->memcached->flush());
+        return $this->checkResponse($this->client->flush());
     }
 
     /**
@@ -69,7 +69,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
     {
         $success = true;
 
-        foreach ($this->checkResponse((array)$this->memcached->deleteMulti($keys)) as $result) {
+        foreach ($this->checkResponse((array)$this->client->deleteMulti($keys)) as $result) {
             if (Memcached::RES_SUCCESS !== $result && Memcached::RES_NOTFOUND !== $result) {
                 $success = false;
             }
@@ -83,7 +83,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function save(array $values, int $lifespan): bool
     {
-        return $this->checkResponse($this->memcached->setMulti($values, $lifespan));
+        return $this->checkResponse($this->client->setMulti($values, $lifespan));
     }
 
     /**
@@ -97,7 +97,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     protected function checkResponse($result)
     {
-        $code = $this->memcached->getResultCode();
+        $code = $this->client->getResultCode();
 
         if (Memcached::RES_SUCCESS === $code || Memcached::RES_NOTFOUND === $code) {
             return $result;
@@ -106,7 +106,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
         throw new CacheException(
             sprintf(
                 'MemcachedAdapter client error: %s.',
-                strtolower($this->memcached->getResultMessage())
+                strtolower($this->client->getResultMessage())
             )
         );
     }
