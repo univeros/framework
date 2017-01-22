@@ -352,16 +352,21 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         int $defaultLifespan,
         CacheItemTagValidatorInterface $cacheItemTagValidator
     ): Closure {
-        return function (string $key, $value, bool $isHit) use ($defaultLifespan, $cacheItemTagValidator) {
-            $cacheItem = new CacheItem();
-            $cacheItem->{'key'} = $key;
-            $cacheItem->{'value'} = $value;
-            $cacheItem->{'isHit'} = $isHit;
-            $cacheItem->{'defaultLifespan'} = $defaultLifespan;
-            $cacheItem->{'cacheItemTagValidator'} = $cacheItemTagValidator?? new CacheItemTagValidator();
 
-            return $cacheItem;
-        };
+        return Closure::bind(
+            function (string $key, $value, bool $isHit) use ($defaultLifespan, $cacheItemTagValidator) {
+                $cacheItem = new CacheItem();
+                $cacheItem->{'key'} = $key;
+                $cacheItem->{'value'} = $value;
+                $cacheItem->{'isHit'} = $isHit;
+                $cacheItem->{'defaultLifespan'} = $defaultLifespan;
+                $cacheItem->{'cacheItemTagValidator'} = $cacheItemTagValidator?? new CacheItemTagValidator();
+
+                return $cacheItem;
+            },
+            null,
+            CacheItem::class
+        );
     }
 
     /**
