@@ -185,9 +185,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      */
     public function commit()
     {
-        $result = true;
-        $expired = [];
-        $merged = call_user_func($this->deferredMergerClosure, [$this->deferred, $this->namespace, $expired]);
+        $success = true;
+        list($merged, $expired) = call_user_func($this->deferredMergerClosure, [$this->deferred, $this->namespace]);
         $retry = $this->deferred = [];
         if (!empty($expired)) {
             $this->adapter->deleteItems($expired);
@@ -201,7 +200,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             }
             if (is_array($e) || 1 === count($values)) {
                 foreach (is_array($e) ? $e : array_keys($values) as $id) {
-                    $result = false;
+                    $success = false;
                     $value = $values[$id];
                     $this->log(
                         'Failed to save cache item with key ":key" (:type)',
@@ -219,7 +218,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             }
         }
 
-        $this->retryCommit($merged, $retry, $result);
+        return $success && $this->retryCommit($merged, $retry);
     }
 
     /**
@@ -231,7 +230,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      */
     protected function retryDeleteItems(array $ids): bool
     {
-        $result = true;
+        $success = true;
         foreach ($ids as $key => $id) {
             try {
                 $e = null;
@@ -241,10 +240,10 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             } catch (Exception $e) {
             }
             $this->log('Failed to delete cache item with key ":key".', ['key' => $key, 'exception' => $e]);
-            $result = false;
+            $success = false;
         }
 
-        return $result;
+        return $success;
     }
 
     /**
@@ -252,12 +251,13 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      *
      * @param array $merged
      * @param array $data
-     * @param bool $result
      *
      * @return bool
      */
-    protected function retryCommit(array $merged, array $data, bool &$result): bool
+    protected function retryCommit(array $merged, array $data): bool
     {
+        $success = true;
+
         foreach ($data as $lifespan => $ids) {
             foreach ($ids as $id) {
                 try {
@@ -267,7 +267,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     }
                 } catch (Exception $e) {
                 }
-                $result = false;
+                $success = false;
                 $this->log(
                     'Failed to save cache item with key ":key" (:type)',
                     [
@@ -279,7 +279,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             }
         }
 
-        return $result;
+        return $success;
     }
 
     /**
@@ -373,8 +373,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     protected function createDeferredMergerClosure(): Closure
     {
         return Closure::bind(
-            function (array $deferred, string $namespace, array &$expired) {
-                $merged = [];
+            function (array $deferred, string $namespace) {
+                $merged = $expired = [];
                 $now = time();
 
                 foreach ($deferred as $key => $item) {
@@ -388,7 +388,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     }
                 }
 
-                return $merged;
+                return [$merged, $expired];
             },
             null,
             CacheItem::class
