@@ -7,31 +7,31 @@ class NullCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
 {
     public function getMaxIdLength(): ?int
     {
-        // TODO: Implement getMaxIdLength() method.
+        return null;
     }
 
     public function getItems(array $keys = []): array
     {
-        // TODO: Implement getItems() method.
+        return [];
     }
 
     public function hasItem(string $key): bool
     {
-        // TODO: Implement hasItem() method.
+        return false;
     }
 
     public function clear(): bool
     {
-        // TODO: Implement clear() method.
+        return true;
     }
 
     public function deleteItems(array $keys): bool
     {
-        // TODO: Implement deleteItems() method.
+        return true;
     }
 
     public function save(array $values, int $lifespan): bool
     {
-        // TODO: Implement save() method.
+        return false;
     }
 }
