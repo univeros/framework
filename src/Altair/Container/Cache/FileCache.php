@@ -7,6 +7,7 @@ use Altair\Container\Contracts\ReflectionCacheInterface;
  * FileCache
  *
  * Important: Make sure you have opcache configured
+ * @see https://blog.graphiq.com/500x-faster-caching-than-redis-memcache-apc-in-php-hhvm-dcd26e8447ad#.g7g64ela5
  */
 class FileCache implements ReflectionCacheInterface
 {
@@ -19,7 +20,7 @@ class FileCache implements ReflectionCacheInterface
      */
     public function __construct(string $path = null)
     {
-        $this->path = $path??sys_get_temp_dir();
+        $this->path = $path?? sys_get_temp_dir();
     }
 
     /**
