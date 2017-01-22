@@ -1,37 +1,10 @@
 <?php
 namespace Altair\Session\Handler;
 
-use SessionHandlerInterface;
+use Predis\Session\Handler;
 
-class RedisSessionHandler implements SessionHandlerInterface
+class RedisSessionHandler extends Handler
 {
-    public function open($savePath, $sessionName)
-    {
-        // TODO: Implement open() method.
-    }
-
-    public function close()
-    {
-        // TODO: Implement close() method.
-    }
-
-    public function read($sessionId)
-    {
-        // TODO: Implement read() method.
-    }
-
-    public function write($sessionId, $data)
-    {
-        // TODO: Implement write() method.
-    }
-
-    public function destroy($sessionId)
-    {
-        // TODO: Implement destroy() method.
-    }
-
-    public function gc($maxlifetime)
-    {
-        // TODO: Implement gc() method.
-    }
+    // Please, check parent class. Predis\Session\Handler requires Predis\ClientInterface::class
+    // Make sure that interfaces is aliased with a proper configured Predis\Client::class instance.
 }

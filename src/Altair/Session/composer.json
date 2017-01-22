@@ -15,8 +15,11 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Configuration\\": ""
+            "Altair\\Session\\": ""
         }
+    },
+    "suggest": {
+        "ext-mongo": "To implement MongoSessionHandler"
     },
     "minimum-stability": "dev"
 }
