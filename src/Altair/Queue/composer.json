@@ -1,6 +1,6 @@
 {
-    "name": "univeros/courier",
-    "description": "The Altair Courier package.",
+    "name": "univeros/queue",
+    "description": "The Altair Queue package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
@@ -8,16 +8,11 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
-        "psr/log": "~1.0",
-        "univeros/configuration": "*",
-        "univeros/container": "*",
-        "univeros/filesystem": "*",
-        "univeros/structure": "*"
+        "php": ">=7.0.0"
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Courier\\": ""
+            "Altair\\Queue\\": ""
         }
     },
     "minimum-stability": "dev"

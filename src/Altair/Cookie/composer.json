@@ -1,5 +1,5 @@
 {
-    "name": "univeros/base",
+    "name": "univeros/cookie",
     "description": "The Altair Cookie package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Base\\": ""
+            "Altair\\Cookie\\": ""
         }
     },
     "minimum-stability": "dev"

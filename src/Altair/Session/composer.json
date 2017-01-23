@@ -19,7 +19,8 @@
         }
     },
     "suggest": {
-        "ext-mongo": "To implement MongoSessionHandler"
+        "ext-mongo": "The extension is required to use MongoSessionHandler",
+        "predis/predis": "The library is required to use RedisSessionHandler",
     },
     "minimum-stability": "dev"
 }

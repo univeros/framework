@@ -1,6 +1,6 @@
 {
-    "name": "univeros/container",
-    "description": "The Altair Container package.",
+    "name": "univeros/http",
+    "description": "The Altair Http package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
@@ -16,6 +16,7 @@
         "psr/cache": "^1.0",
         "relay/relay": "^1.1",
         "relay/middleware": "^1.0",
+        "univeros/cache": "*",
         "univeros/configuration": "*",
         "univeros/structure": "*",
         "willdurand/negotiation": "^2.0",
@@ -25,9 +26,6 @@
         "psr-4": {
             "Altair\\Http\\": ""
         }
-    },
-    "suggest": {
-        "cache/cache": "To implement PSR-6 complain caching"
     },
     "minimum-stability": "dev"
 }

@@ -1,5 +1,5 @@
 {
-    "name": "univeros/base",
+    "name": "univeros/cache",
     "description": "The Altair Cache package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
@@ -9,7 +9,6 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "predis/predis": "^1.0",
         "psr/cache": "^1.0",
         "psr/log": "~1.0",
         "univeros/configuration": "*",
@@ -19,6 +18,10 @@
         "psr-4": {
             "Altair\\Cache\\": ""
         }
+    },
+    "suggest": {
+        "ext-memcached": "The extension is required to use MemcachedCacheItemPoolAdapter",
+        "predis/predis": "The library is required to use RedisCacheItemPoolAdapter",
     },
     "minimum-stability": "dev"
 }
