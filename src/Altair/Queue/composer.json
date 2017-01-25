@@ -15,5 +15,9 @@
             "Altair\\Queue\\": ""
         }
     },
+    "suggest": {
+        "pda/pheanstalk": "The library is required to have beanstalkd type of queues",
+        "predis/predis": "The library is required to have redis type of queues",
+    },
     "minimum-stability": "dev"
 }

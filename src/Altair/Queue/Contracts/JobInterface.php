@@ -4,15 +4,21 @@ namespace Altair\Queue\Contracts;
 
 interface JobInterface
 {
-    public function delete();
+    public function delete(): bool;
 
-    public function complete();
+    public function complete(): bool;
 
-    public function failed();
+    public function failed(): bool;
 
     public function release($delay = 0);
 
-    public function getAttempts():int;
+    public function getId(): ?int;
 
-    public function getPayload();
+    public function getTimeToSend(): int;
+
+    public function getAttempts(): int;
+
+    public function getMaxAttempts(): int;
+
+    public function getData();
 }

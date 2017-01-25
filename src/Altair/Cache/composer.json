@@ -21,7 +21,7 @@
     },
     "suggest": {
         "ext-memcached": "The extension is required to use MemcachedCacheItemPoolAdapter",
-        "predis/predis": "The library is required to use RedisCacheItemPoolAdapter",
+        "predis/predis": "The library is required to use RedisCacheItemPoolAdapter"
     },
     "minimum-stability": "dev"
 }

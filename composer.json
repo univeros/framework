@@ -38,6 +38,7 @@
         "league/flysystem-sftp": "~1.0",
         "league/flysystem-webdav": "~1.0",
         "league/flysystem-ziparchive": "~1.0",
+        "pda/pheanstalk": "^3.1",
         "predis/predis": "^1.0",
         "phpmd/phpmd": "^2.4",
         "phpunit/phpunit": "^5.2",

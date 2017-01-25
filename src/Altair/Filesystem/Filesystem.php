@@ -22,7 +22,7 @@ class Filesystem
      * @return string
      *
      */
-    public function get(string $path, bool $lock = false)
+    public function get(string $path, bool $lock = false): string
     {
         if ($this->isFile($path)) {
             return $lock ? $this->getShared($path) : file_get_contents($path);
@@ -111,7 +111,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function exists($path)
+    public function exists(string $path): bool
     {
         return file_exists($path);
     }
@@ -155,7 +155,7 @@ class Filesystem
      *
      * @return int
      */
-    public function append($path, $data)
+    public function append(string $path, string $data)
     {
         return file_put_contents($path, $data, FILE_APPEND);
     }
