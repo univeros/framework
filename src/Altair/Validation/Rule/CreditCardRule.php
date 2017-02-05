@@ -1,8 +1,7 @@
 <?php
-namespace Validation\Rule;
+namespace Altair\Validation\Rule;
 
 use Altair\Validation\Exception\InvalidArgumentException;
-use Altair\Validation\Rule\AbstractRule;
 
 class CreditCardRule extends AbstractRule
 {

@@ -1,8 +1,6 @@
 <?php
-namespace Validation\Rule;
+namespace Altair\Validation\Rule;
 
-use Altair\Middleware\Contracts\PayloadInterface;
-use Altair\Validation\Rule\AbstractRule;
 use Altair\Validation\RuleInterface;
 
 class EmailRule extends AbstractRule

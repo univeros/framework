@@ -1,7 +1,6 @@
 <?php
-namespace Validation\Rule;
+namespace Altair\Validation\Rule;
 
-use Altair\Validation\Rule\AbstractRule;
 use DateTime;
 
 class DateTimeRule extends AbstractRule

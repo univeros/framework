@@ -1,7 +1,5 @@
 <?php
-namespace Validation\Rule;
-
-use Altair\Validation\Rule\AbstractRule;
+namespace Altair\Validation\Rule;
 
 class IntegerRule extends AbstractRule
 {
