@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Middleware;
 
-
 use Altair\Middleware\Contracts\PayloadInterface;
 
 class Manager
