@@ -11,4 +11,5 @@ git subsplit publish --heads="master" --no-tags src/Altair/Queue:git@github.com:
 git subsplit publish --heads="master" --no-tags src/Altair/Security:git@github.com:univeros/security.git
 git subsplit publish --heads="master" --no-tags src/Altair/Session:git@github.com:univeros/session.git
 git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/structure.git
+git subsplit publish --heads="master" --no-tags src/Altair/Validation:git@github.com:univeros/validation.git
 rm -rf .subsplit/

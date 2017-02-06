@@ -1,8 +1,6 @@
 <?php
 namespace Altair\Validation\Rule;
 
-use Altair\Validation\RuleInterface;
-
 class EmailRule extends AbstractRule
 {
     /**

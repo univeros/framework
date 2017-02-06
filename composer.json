@@ -69,7 +69,8 @@
             "Altair\\Tests\\": "tests"
         },
         "files": [
-            "tests/Container/fixtures.php"
+            "tests/Container/fixtures.php",
+            "tests/Validation/fixtures.php"
         ]
     },
     "config": {

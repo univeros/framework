@@ -103,8 +103,7 @@ class IsbnRule extends AbstractRule
      */
     protected function sanitize(string $value): ?string
     {
-        $value = preg_replace('/(?:(?!([0-9|X$])).)*/', '', $value);
-
-        return preg_match('/^[0-9]{10,13}$|^[0-9]{9}X$/', $value) ? $value : null;
+        $value = preg_replace('/[-‐\s+]*/', '', $value);
+        return (bool) preg_match('/^[0-9]{10,13}$|^[0-9]{9}X$/', $value) ? $value : null;
     }
 }

@@ -22,6 +22,7 @@ class ZipCodeRule extends AbstractRule
      * </code>
      *
      * @author  petitchevalroux
+     *
      * @license https://github.com/ronanguilloux/IsoCodes/blob/master/LICENSE
      */
     protected $patterns = [
@@ -245,6 +246,6 @@ class ZipCodeRule extends AbstractRule
      */
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid %s zip code .', $value);
+        return sprintf('"%s" is not a valid %s zip code .', $value, $this->country);
     }
 }

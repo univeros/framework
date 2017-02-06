@@ -75,42 +75,41 @@ class IpRule extends AbstractRule
     }
 
     /**
-     * @param string $input
+     * @param string $value
      * @param array $range
      *
      * @return array
      */
-    protected function parseRangeUsingWildcards(string $input, array $range): array
+    protected function parseRangeUsingWildcards(string $value, array $range): array
     {
-        $input = $this->fillAddress($input);
-        $range['min'] = strtr($input, '*', '0');
-        $range['max'] = str_replace('*', '255', $input);
+        $value = $this->fillAddress($value);
+        $range['min'] = strtr($value, '*', '0');
+        $range['max'] = str_replace('*', '255', $value);
 
         return $range;
     }
 
     /**
-     * @param string $input
+     * @param string $value
      * @param array $range
      *
      * @return array
      */
-    protected function parseRangeUsingCidr(string $input, array $range): array
+    protected function parseRangeUsingCidr(string $value, array $range): array
     {
-        $input = explode('/', $input);
-        $this->fillAddress($input[0], '0');
-        $range['min'] = $input[0];
-        $isMask = mb_strpos($input[1], '.') !== false;
-        if ($isMask && $this->assertAddress($input[1])) {
-            $range['mask'] = sprintf('%032b', ip2long($input[1]));
+        list($min, $max) = explode('/', $value);
+        $range['min'] = $this->fillAddress($min, '0');
+        $isMask = mb_strpos($max, '.') !== false;
+        if ($isMask && $this->assertAddress($max)) {
+            $range['mask'] = sprintf('%032b', ip2long($max));
             return $range;
         }
 
-        if ($isMask || $input[1] < 8 || $input[1] > 30) {
+        if ($isMask || $max < 8 || $max > 30) {
             throw new InvalidArgumentException('Invalid network mask.');
         }
 
-        $range['mask'] = sprintf('%032b', ip2long(long2ip(~(pow(2, (32 - $input[1])) - 1))));
+        $range['mask'] = sprintf('%032b', ip2long(long2ip(~(pow(2, (32 - $max)) - 1))));
 
         return $range;
     }
