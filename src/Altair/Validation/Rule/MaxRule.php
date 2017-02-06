@@ -35,6 +35,6 @@ class MaxRule extends AbstractRule
      */
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is bigger than "%s".', $value, $this->max);
+        return sprintf('"%s" is not valid.', $value);
     }
 }

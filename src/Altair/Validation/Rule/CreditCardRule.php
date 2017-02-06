@@ -14,11 +14,11 @@ class CreditCardRule extends AbstractRule
             'length' => [13, 16],
         ],
         'carteblanche' => [
-            'pattern' => '/^389/',
+            'pattern' => '/^3(0[0-5][0-9]{11}|[68][0-9]{12})/',
             'length' => [14]
         ],
         'maestro' => [
-            'pattern' => '/^(5(018|0[23]|[68])|6(39|7))/',
+            'pattern' => '/^(5(018|0[23]|[68])|6(30|7))/',
             'length' => [12, 13, 14, 15, 16, 17, 18, 19],
         ],
         'forbrugsforeningen' => [
@@ -81,9 +81,9 @@ class CreditCardRule extends AbstractRule
     /**
      * CreditCardRule constructor.
      *
-     * @param $type
+     * @param string $type
      */
-    public function __construct($type)
+    public function __construct(string $type)
     {
         if (!array_key_exists($type, $this->cards)) {
             throw new InvalidArgumentException(sprintf('Unknown credit card type: "%s".', $type));

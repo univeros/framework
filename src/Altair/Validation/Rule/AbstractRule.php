@@ -12,20 +12,25 @@ abstract class AbstractRule implements RuleInterface
      */
     public function __invoke(PayloadInterface $payload, callable $next): PayloadInterface
     {
-        $subject = (object) $payload->getAttribute(ValidationPayloadInterface::SUBJECT_KEY);
+        $subject = (object)$payload->getAttribute(ValidationPayloadInterface::SUBJECT_KEY);
         $attribute = $payload->getAttribute(ValidationPayloadInterface::ATTRIBUTE_KEY);
 
         if ($this->assert($subject->$attribute)) {
             $result = $payload->getAttribute(ValidationPayloadInterface::RESULT_KEY, true) && true;
+
             return $next($payload->withAttribute(ValidationPayloadInterface::RESULT_KEY, $result));
         }
 
         $failures = $payload->getAttribute(ValidationPayloadInterface::FAILURES_KEY, []);
-        $failures[$attribute] = $this->buildErrorMessage($subject->$attribute);
 
-        return $next($payload
-            ->withAttribute(ValidationPayloadInterface::FAILURES_KEY, $failures)
-            ->withAttribute(ValidationPayloadInterface::RESULT_KEY, false));
+        $value = is_array($subject->$attribute) ? gettype($subject->$attribute) : $subject->$attribute;
+        $failures[$attribute] = $this->buildErrorMessage($value);
+
+        return $next(
+            $payload
+                ->withAttribute(ValidationPayloadInterface::FAILURES_KEY, $failures)
+                ->withAttribute(ValidationPayloadInterface::RESULT_KEY, false)
+        );
     }
 
     abstract protected function buildErrorMessage($value): string;

@@ -8,8 +8,13 @@ class BooleanRule extends AbstractRule
      */
     public function assert($value): bool
     {
+        if (!is_scalar($value)) {
+            return false;
+        }
+
         return is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
     }
+
     /**
      * @inheritdoc
      */

@@ -35,6 +35,6 @@ class MinRule extends AbstractRule
      */
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is smaller than "%s".', $value, $this->min);
+        return sprintf('"%s" is not valid.', $value);
     }
 }

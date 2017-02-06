@@ -7,7 +7,7 @@ use Altair\Validation\Payload;
 abstract class AbstractRuleTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider providerTrue
+     * @dataProvider trueProvider
      * @param mixed $value
      */
     public function testPayloadTrue($value)
@@ -16,7 +16,7 @@ abstract class AbstractRuleTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider providerFalse
+     * @dataProvider falseProvider
      * @param mixed $value
      */
     public function testPayloadFalse($value)
