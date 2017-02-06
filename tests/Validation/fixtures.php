@@ -12,7 +12,6 @@ class RuleA implements RuleInterface
     public function __invoke(PayloadInterface $payload, callable $next)
     {
         $payload = $payload->withAttribute(self::class, 'A passed');
-        var_dump($payload);
         return $next($payload);
     }
     public function assert($value): bool
