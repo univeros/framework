@@ -2,6 +2,8 @@
 
 namespace Altair\Tests\Structure;
 
+use PHPUnit\Framework\Error\Notice;
+use PHPUnit\Framework\Error\Warning;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractCollectionTest extends TestCase
@@ -62,7 +64,7 @@ abstract class AbstractCollectionTest extends TestCase
 
     public function expectAccessByReferenceHasNoEffect()
     {
-        $this->expectException(\PHPUnit_Framework_Error_Notice::class);
+        $this->expectException(Notice::class);
     }
 
     public function expectPropertyDoesNotExistException()
@@ -132,7 +134,7 @@ abstract class AbstractCollectionTest extends TestCase
 
     public function expectInternalIllegalOffset()
     {
-        $this->expectException(\PHPUnit_Framework_Error_Warning::class);
+        $this->expectException( Warning::class);
     }
 
     public function outOfRangeDataProvider()

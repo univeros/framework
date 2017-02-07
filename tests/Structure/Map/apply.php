@@ -7,12 +7,18 @@ trait apply
     {
         // values, callback
         return [
-            [[], function () {
-            }],
+            [
+                [],
+                function () {
+                }
+            ],
 
-            [[1, 2, 3], function ($k, $v) {
-                return $v * 2;
-            }],
+            [
+                [1, 2, 3],
+                function ($k, $v) {
+                    return $v * 2;
+                }
+            ],
         ];
     }
 
@@ -33,9 +39,11 @@ trait apply
         $instance = $this->getInstance([1, 2, 3]);
 
         try {
-            $instance->apply(function ($value) {
-                throw new \Exception();
-            });
+            $instance->apply(
+                function ($value) {
+                    throw new \Exception();
+                }
+            );
         } catch (\Exception $e) {
             $this->assertToArray([1, 2, 3], $instance);
 
@@ -50,12 +58,15 @@ trait apply
         $instance = $this->getInstance([1, 2, 3]);
 
         try {
-            $instance->apply(function ($key, $value) {
-                if ($value === 3) {
-                    throw new \Exception();
+            $instance->apply(
+                function ($key, $value) {
+                    if ($value === 3) {
+                        throw new \Exception();
+                    }
+
+                    return '*';
                 }
-                return '*';
-            });
+            );
         } catch (\Exception $e) {
             $this->assertToArray(['*', '*', 3], $instance);
 
@@ -65,22 +76,27 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testApplyDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance([
-            'a' => new \stdClass(),
-            'b' => new \stdClass(),
-            'c' => new \stdClass(),
-        ]);
+        $instance = $this->getInstance(
+            [
+                'a' => new \stdClass(),
+                'b' => new \stdClass(),
+                'c' => new \stdClass(),
+            ]
+        );
 
-        try {
-            $instance->apply(function ($key, $value) {
+
+        $instance->apply(
+            function ($key, $value) {
                 if ($key === 'c') {
                     throw new \Exception();
                 }
-            });
-        } catch (\Exception $e) {
-            // Do nothing
-        }
+            }
+        );
+
     }
 }

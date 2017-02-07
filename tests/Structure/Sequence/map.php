@@ -87,12 +87,13 @@ trait map
         try {
             $instance->map(function ($value) {
                 if ($value === 'c') {
-                    throw new \Exception();
+                    throw new \Exception('bang!');
                 }
 
                 return $value;
             });
         } catch (\Exception $e) {
+            $this->assertEquals('bang!', $e->getMessage());
             return;
         }
 

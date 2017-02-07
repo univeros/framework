@@ -8,13 +8,19 @@ trait map
         // values, callback
         return [
             // Test mapping an empty map produces an empty map.
-            [[], function () {
-            }],
+            [
+                [],
+                function () {
+                }
+            ],
 
             // Test basic mapping where integers are doubled.
-            [[1, 2, 3], function ($k, $v) {
-                return $v * 2;
-            }],
+            [
+                [1, 2, 3],
+                function ($k, $v) {
+                    return $v * 2;
+                }
+            ],
         ];
     }
 
@@ -38,9 +44,11 @@ trait map
         $mapped = null;
 
         try {
-            $mapped = $instance->map(function ($value) {
-                throw new \Exception();
-            });
+            $mapped = $instance->map(
+                function ($value) {
+                    throw new \Exception();
+                }
+            );
         } catch (\Exception $e) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
@@ -57,11 +65,13 @@ trait map
         $mapped = null;
 
         try {
-            $mapped = $instance->map(function ($key, $value) {
-                if ($value === 3) {
-                    throw new \Exception();
+            $mapped = $instance->map(
+                function ($key, $value) {
+                    if ($value === 3) {
+                        throw new \Exception();
+                    }
                 }
-            });
+            );
         } catch (\Exception $e) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
@@ -72,22 +82,25 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
+    /**
+     * @expectedException \Exception
+     */
     public function testMapDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance([
-            'a' => new \stdClass(),
-            'b' => new \stdClass(),
-            'c' => new \stdClass(),
-        ]);
+        $instance = $this->getInstance(
+            [
+                'a' => new \stdClass(),
+                'b' => new \stdClass(),
+                'c' => new \stdClass(),
+            ]
+        );
 
-        try {
-            $mapped = $instance->map(function ($key, $value) {
+        $mapped = $instance->map(
+            function ($key, $value) {
                 if ($key === 'c') {
                     throw new \Exception();
                 }
-            });
-        } catch (\Exception $e) {
-            // Do nothing
-        }
+            }
+        );
     }
 }
