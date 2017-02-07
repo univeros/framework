@@ -82,25 +82,24 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testMapDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance(
-            [
-                'a' => new \stdClass(),
-                'b' => new \stdClass(),
-                'c' => new \stdClass(),
-            ]
-        );
-
-        $mapped = $instance->map(
-            function ($key, $value) {
-                if ($key === 'c') {
+        $instance = $this->getInstance([
+            "a" => new \stdClass(),
+            "b" => new \stdClass(),
+            "c" => new \stdClass(),
+        ]);
+        $mapped = null;
+        try {
+            $mapped = $instance->map(function($key, $value) {
+                if ($key === "c") {
                     throw new \Exception();
                 }
-            }
-        );
+            });
+        } catch (\Exception $e) {
+            $this->assertNull($mapped);
+            return;
+        }
+        $this->fail('Exception should have been caught');
     }
 }

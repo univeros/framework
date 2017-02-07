@@ -76,27 +76,26 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-    /**
-     * @expectedException \Exception
-     */
+
     public function testApplyDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance(
-            [
-                'a' => new \stdClass(),
-                'b' => new \stdClass(),
-                'c' => new \stdClass(),
-            ]
-        );
+        $instance = $this->getInstance([
+            "a" => new \stdClass(),
+            "b" => new \stdClass(),
+            "c" => new \stdClass(),
+        ]);
+        $result = null;
 
-
-        $instance->apply(
-            function ($key, $value) {
-                if ($key === 'c') {
+        try {
+            $result = $instance->apply(function($key, $value) {
+                if ($key === "c") {
                     throw new \Exception();
                 }
-            }
-        );
+            });
+        } catch (\Exception $e) {
+            $this->assertNull($result);
+            return;
+        }
 
     }
 }

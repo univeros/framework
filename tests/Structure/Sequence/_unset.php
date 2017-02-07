@@ -25,6 +25,7 @@ trait _unset
     public function testArrayAccessUnsetIndexBadIndex($initial, $index)
     {
         $instance = $this->getInstance($initial);
+        $this->assertFalse(isset($instance[$index]));
         unset($instance[$index]);
     }
 
@@ -36,6 +37,7 @@ trait _unset
     public function testArrayAccessUnsetIndexOutOfRange($initial, $index)
     {
         $instance = $this->getInstance($initial);
+        $this->assertFalse(isset($instance[$index]));
         unset($instance[$index]);
     }
 

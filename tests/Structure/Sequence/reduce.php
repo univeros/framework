@@ -98,9 +98,9 @@ trait reduce
     public function testReduceCallbackDoesNotLeakOnFailure()
     {
         $instance = $this->getInstance(['a', 'b', 'c']);
-
+        $reduced = null;
         try {
-            $instance->reduce(function ($carry, $value) {
+            $reduced = $instance->reduce(function ($carry, $value) {
                 if ($value === 'c') {
                     throw new \Exception();
                 }
@@ -108,6 +108,8 @@ trait reduce
                 return $value;
             });
         } catch (\Exception $e) {
+            $this->assertToArray(['a', 'b', 'c'], $instance);
+            $this->assertNull($reduced);
             return;
         }
 

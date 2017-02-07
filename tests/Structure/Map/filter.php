@@ -79,23 +79,25 @@ trait filter
         $this->fail('Exception should have been caught');
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testFilterDoesNotLeakWhenCallbackFails()
     {
         $instance = $this->getInstance([
-            'a' => new \stdClass(),
-            'b' => new \stdClass(),
-            'c' => new \stdClass(),
+            "a" => new \stdClass(),
+            "b" => new \stdClass(),
+            "c" => new \stdClass(),
         ]);
-
-
-        $instance->filter(function ($key, $value) {
-            if ($key === 'c') {
-                throw new \Exception();
-            }
-        });
+        $filtered = null;
+        try {
+            $filtered = $instance->filter(function($key, $value) {
+                if ($key === "c") {
+                    throw new \Exception();
+                }
+            });
+        } catch (\Exception $e) {
+            $this->assertNull($filtered);
+            return;
+        }
+        $this->fail('Exception should have been caught');
     }
 
     public function testFilterWithoutCallable()

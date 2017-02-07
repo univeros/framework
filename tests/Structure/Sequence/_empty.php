@@ -54,7 +54,7 @@ trait _empty
     public function testArrayAccessEmptyIndexBadIndex($initial, $index)
     {
         $instance = $this->getInstance($initial);
-        empty($instance[$index]);
+        $this->assertTrue(empty($instance[$index]));
     }
 
     /**
@@ -65,7 +65,7 @@ trait _empty
     public function testArrayAccessEmptyIndexOutOfRange($initial, $index)
     {
         $instance = $this->getInstance($initial);
-        empty($instance[$index]);
+        $this->assertTrue(empty($instance[$index]));
     }
 
     /**
