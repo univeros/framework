@@ -6,8 +6,9 @@ use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\RulesRunner;
 use Altair\Validation\Validator;
+use PHPUnit\Framework\TestCase;
 
-class ValidatorTest extends \PHPUnit_Framework_TestCase
+class ValidatorTest extends TestCase
 {
     public function testValidEntity()
     {

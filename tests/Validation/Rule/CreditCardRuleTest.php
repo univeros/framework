@@ -4,8 +4,9 @@ namespace Altair\Tests\Validation\Rule;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Payload;
 use Altair\Validation\Rule\CreditCardRule;
+use PHPUnit\Framework\TestCase;
 
-class CreditCardRuleTest extends \PHPUnit_Framework_TestCase
+class CreditCardRuleTest extends TestCase
 {
     public function trueProvider()
     {

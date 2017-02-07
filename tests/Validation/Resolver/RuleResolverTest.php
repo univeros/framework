@@ -5,8 +5,9 @@ use Altair\Container\Container;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\Rule\AlphaRule;
+use PHPUnit\Framework\TestCase;
 
-class RuleResolverTest extends \PHPUnit_Framework_TestCase
+class RuleResolverTest extends TestCase
 {
     /**
      * @dataProvider rulesProvider

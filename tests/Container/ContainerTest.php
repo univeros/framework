@@ -3,8 +3,9 @@ namespace Altair\Tests\Container;
 
 use Altair\Container\Container;
 use Altair\Container\Definition;
+use PHPUnit\Framework\TestCase;
 
-class ContainerTest extends \PHPUnit_Framework_TestCase
+class ContainerTest extends TestCase
 {
     public function testMakeInstanceInjectsSimpleConcreteDependency()
     {
@@ -105,7 +106,10 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     {
         $container = new Container();
         $container->share(TestDependency::class);
-        $container->make(TestDependency::class);
+        $instance = $container->make(TestDependency::class);
+        $anotherInstance = $container->make(TestDependency::class);
+        $this->assertTrue($instance instanceof TestDependency);
+        $this->assertTrue($instance === $anotherInstance);
     }
 
     public function testMakeInstanceUsesReflectionForUnknownParamsInMultiBuildWithDeps()
@@ -159,7 +163,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
         $container = new Container();
         $container->defineParameter('val', 42);
         $container->alias(TestNoExplicitDefine::class, ProviderTestCtorParamWithNoTypehintOrDefault::class);
-        $container->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
+        $instance = $container->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
+        $this->assertTrue(($instance instanceof ProviderTestCtorParamWithNoTypehintOrDefaultDependent));
     }
 
     public function testMakeInstanceInjectsRawParametersDirectly()
@@ -208,7 +213,8 @@ class ContainerTest extends \PHPUnit_Framework_TestCase
     public function testMakeInstanceHandlesNamespacedClasses()
     {
         $container = new Container();
-        $container->make(SomeClassName::class);
+        $instance = $container->make(SomeClassName::class);
+        $this->assertTrue($instance instanceof SomeClassName);
     }
 
     public function testMakeInstanceDelegate()

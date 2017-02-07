@@ -3,8 +3,9 @@ namespace Altair\Tests\Validation\Rule;
 
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Payload;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractRuleTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractRuleTest extends TestCase
 {
     /**
      * @dataProvider trueProvider

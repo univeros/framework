@@ -5,8 +5,9 @@ use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Exception\InvalidArgumentException;
 use Altair\Validation\Payload;
 use Altair\Validation\Rule\IpRule;
+use PHPUnit\Framework\TestCase;
 
-class IpRuleTest extends \PHPUnit_Framework_TestCase
+class IpRuleTest extends TestCase
 {
     public function trueProvider()
     {

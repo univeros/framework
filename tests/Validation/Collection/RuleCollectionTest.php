@@ -7,8 +7,9 @@ use Altair\Tests\Validation\ValidEntity;
 use Altair\Validation\Collection\RuleCollection;
 use Altair\Validation\Exception\InvalidArgumentException;
 use Altair\Validation\Rule\AlphaNumRule;
+use PHPUnit\Framework\TestCase;
 
-class RuleCollectionTest extends \PHPUnit_Framework_TestCase
+class RuleCollectionTest extends TestCase
 {
 
     public function testValidRules()

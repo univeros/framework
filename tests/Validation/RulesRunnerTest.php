@@ -8,8 +8,9 @@ use Altair\Validation\Payload;
 use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\Rule\AlphaRule;
 use Altair\Validation\RulesRunner;
+use PHPUnit\Framework\TestCase;
 
-class RulesRunnerTest extends \PHPUnit_Framework_TestCase
+class RulesRunnerTest extends TestCase
 {
     public function testRunner()
     {

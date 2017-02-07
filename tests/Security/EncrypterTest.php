@@ -7,8 +7,9 @@ use Altair\Security\Exception\DecryptException;
 use Altair\Security\Support\HkdfKey;
 use Altair\Security\Support\Pbkdf2Key;
 use Altair\Security\Support\Salt;
+use PHPUnit\Framework\TestCase;
 
-class EncrypterTest extends \PHPUnit_Framework_TestCase
+class EncrypterTest extends TestCase
 {
     public function testEncryptionWithHkdfKeyAndAES128CBCCipher()
     {

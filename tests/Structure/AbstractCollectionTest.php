@@ -2,7 +2,9 @@
 
 namespace Altair\Tests\Structure;
 
-abstract class AbstractCollectionTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class AbstractCollectionTest extends TestCase
 {
     /**
      * Sample sizes.

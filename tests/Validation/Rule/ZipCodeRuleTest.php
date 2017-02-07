@@ -4,8 +4,9 @@ namespace Altair\Tests\Validation\Rule;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Payload;
 use Altair\Validation\Rule\ZipCodeRule;
+use PHPUnit\Framework\TestCase;
 
-class ZipCodeRuleTest extends \PHPUnit_Framework_TestCase
+class ZipCodeRuleTest extends TestCase
 {
     public function trueProvider()
     {

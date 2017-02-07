@@ -4,8 +4,9 @@ namespace Altair\Tests\Validation\Rule;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Payload;
 use Altair\Validation\Rule\IsbnRule;
+use PHPUnit\Framework\TestCase;
 
-class IsbnRuleTest extends \PHPUnit_Framework_TestCase
+class IsbnRuleTest extends TestCase
 {
     public function trueProvider()
     {
