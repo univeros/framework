@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Filesystem;
+namespace Altair\Filesystem\Adapter;
 
 use Altair\Filesystem\Contracts\FilesystemAdapterInterface;
 use League\Flysystem\FilesystemInterface;
@@ -43,7 +43,7 @@ use League\Flysystem\FilesystemInterface;
  * @method boolean writeStream($path, $resource, array $config = [])
  *
  */
-class FilesystemAdapter implements FilesystemAdapterInterface
+class FlysystemAdapter implements FilesystemAdapterInterface
 {
     /**
      * @var FilesystemInterface
