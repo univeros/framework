@@ -18,7 +18,7 @@ class RulesRunnerTest extends TestCase
         $payload = call_user_func($runner, $this->getPayload());
         $this->assertEquals('A passed', $payload->getAttribute(RuleA::class));
         $this->assertEquals('B passed', $payload->getAttribute(RuleB::class));
-        $this->assertTrue($payload->getAttribute(PayloadInterface::RESULT_KEY) === true);
+        $this->assertTrue($payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true);
 
         $runner->withRules([RuleA::class, RuleB::class]);
 
@@ -45,7 +45,7 @@ class RulesRunnerTest extends TestCase
     protected function getPayload()
     {
         return (new Payload())
-            ->withAttribute(PayloadInterface::SUBJECT_KEY, ['test' => 'alphaOnly'])
+            ->withAttribute(PayloadInterface::ATTRIBUTE_SUBJECT, ['test' => 'alphaOnly'])
             ->withAttribute(PayloadInterface::ATTRIBUTE_KEY, 'test');
     }
 }

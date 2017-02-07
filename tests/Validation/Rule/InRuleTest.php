@@ -72,7 +72,7 @@ class InRuleTest extends AbstractRuleTest
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
-        return $payload->getAttribute(PayloadInterface::RESULT_KEY) === true;
+        return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
     protected function assertValueWithStringHaystack($value)

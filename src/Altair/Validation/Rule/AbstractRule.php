@@ -1,8 +1,8 @@
 <?php
 namespace Altair\Validation\Rule;
 
-use Altair\Middleware\Contracts\PayloadInterface;
-use Altair\Validation\Contracts\PayloadInterface as ValidationPayloadInterface;
+use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
+use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Contracts\RuleInterface;
 
 abstract class AbstractRule implements RuleInterface
@@ -10,26 +10,26 @@ abstract class AbstractRule implements RuleInterface
     /**
      * @inheritdoc
      */
-    public function __invoke(PayloadInterface $payload, callable $next): PayloadInterface
+    public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {
-        $subject = (object)$payload->getAttribute(ValidationPayloadInterface::SUBJECT_KEY);
-        $attribute = $payload->getAttribute(ValidationPayloadInterface::ATTRIBUTE_KEY);
+        $subject = (object)$payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
+        $attribute = $payload->getAttribute(PayloadInterface::ATTRIBUTE_KEY);
 
         if ($this->assert($subject->$attribute)) {
-            $result = $payload->getAttribute(ValidationPayloadInterface::RESULT_KEY, true) && true;
+            $result = $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT, true) && true;
 
-            return $next($payload->withAttribute(ValidationPayloadInterface::RESULT_KEY, $result));
+            return $next($payload->withAttribute(PayloadInterface::ATTRIBUTE_RESULT, $result));
         }
 
-        $failures = $payload->getAttribute(ValidationPayloadInterface::FAILURES_KEY, []);
+        $failures = $payload->getAttribute(PayloadInterface::ATTRIBUTE_FAILURES, []);
 
         $value = is_array($subject->$attribute) ? gettype($subject->$attribute) : $subject->$attribute;
         $failures[$attribute] = $this->buildErrorMessage($value);
 
         return $next(
             $payload
-                ->withAttribute(ValidationPayloadInterface::FAILURES_KEY, $failures)
-                ->withAttribute(ValidationPayloadInterface::RESULT_KEY, false)
+                ->withAttribute(PayloadInterface::ATTRIBUTE_FAILURES, $failures)
+                ->withAttribute(PayloadInterface::ATTRIBUTE_RESULT, false)
         );
     }
 

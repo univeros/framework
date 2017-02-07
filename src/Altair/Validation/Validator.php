@@ -46,7 +46,7 @@ class Validator implements ValidatorInterface
             }
         }
 
-        return $this->payload->getAttribute(PayloadInterface::RESULT_KEY) === true;
+        return $this->payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
     /**
@@ -65,7 +65,7 @@ class Validator implements ValidatorInterface
     protected function buildPayload(ValidatableInterface $validatable): PayloadInterface
     {
         $attributes = [
-            PayloadInterface::SUBJECT_KEY => $validatable
+            PayloadInterface::ATTRIBUTE_SUBJECT => $validatable
         ];
 
         foreach ($validatable->getRules()->keys() as $key) {

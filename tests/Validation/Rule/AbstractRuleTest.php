@@ -57,7 +57,7 @@ abstract class AbstractRuleTest extends TestCase
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
-        return $payload->getAttribute(PayloadInterface::RESULT_KEY) === true;
+        return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
     protected function assertValue($value)
@@ -74,7 +74,7 @@ abstract class AbstractRuleTest extends TestCase
         ];
 
         return (new Payload())
-            ->withAttribute(PayloadInterface::SUBJECT_KEY, $subject)
+            ->withAttribute(PayloadInterface::ATTRIBUTE_SUBJECT, $subject)
             ->withAttribute(PayloadInterface::ATTRIBUTE_KEY, 'test');
     }
 

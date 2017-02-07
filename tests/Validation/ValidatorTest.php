@@ -30,7 +30,7 @@ class ValidatorTest extends TestCase
         $payload = $validator->getPayload();
         $this->assertTrue($payload instanceof PayloadInterface);
 
-        $failures = $payload->getAttribute(\Altair\Validation\Contracts\PayloadInterface::FAILURES_KEY);
+        $failures = $payload->getAttribute(\Altair\Validation\Contracts\PayloadInterface::ATTRIBUTE_FAILURES);
         $this->assertTrue(is_array($failures));
         $this->assertCount(2, $failures);
         $this->assertEquals('"4nt0n10" have invalid alphabetic character(s)', $failures['firstName']);

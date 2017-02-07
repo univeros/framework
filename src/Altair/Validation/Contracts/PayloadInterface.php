@@ -5,8 +5,8 @@ use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 
 interface PayloadInterface extends MiddlewarePayloadInterface
 {
-    const SUBJECT_KEY = 'altair:validation:subject';
+    const ATTRIBUTE_SUBJECT = 'altair:validation:subject';
     const ATTRIBUTE_KEY = 'altair:validation:attribute';
-    const RESULT_KEY = 'altair:validation:result';
-    const FAILURES_KEY = 'altair:validation:fail';
+    const ATTRIBUTE_RESULT = 'altair:validation:result';
+    const ATTRIBUTE_FAILURES = 'altair:validation:fail';
 }
