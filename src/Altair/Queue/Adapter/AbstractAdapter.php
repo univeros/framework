@@ -1,11 +1,13 @@
 <?php
 namespace Altair\Queue\Adapter;
 
+use Altair\Middleware\Contracts\PayloadInterface;
+use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\ConnectionInterface;
 use Altair\Queue\Contracts\JobInterface;
-use Altair\Queue\Contracts\QueueAdapterInterface;
+use Pheanstalk\PheanstalkInterface;
 
-abstract class AbstractAdapter implements QueueAdapterInterface
+abstract class AbstractAdapter implements AdapterInterface
 {
     /**
      * @var ConnectionInterface
@@ -20,11 +22,15 @@ abstract class AbstractAdapter implements QueueAdapterInterface
         return $this->connection;
     }
 
-    protected function createPayload(JobInterface $job, array $data = []): string
+    /**
+     * Checkes whether the payload has an "id" set or not.
+     *
+     * @param PayloadInterface $payload
+     *
+     * @return bool
+     */
+    protected function hasIdAttribute(PayloadInterface $payload): bool
     {
-        $payload = [
-            'id' => $job->is
-        ];
+        return $payload->getAttribute(JobInterface::ATTRIBUTE_ID) !== null;
     }
-
 }

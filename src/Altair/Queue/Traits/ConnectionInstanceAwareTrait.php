@@ -1,18 +1,28 @@
 <?php
 namespace Altair\Queue\Traits;
 
+use Altair\Queue\Contracts\ConnectionInterface;
+
 trait ConnectionInstanceAwareTrait
 {
     /**
-     * @var $mixed
+     * @var ConnectionInterface
      */
     protected $instance;
 
     /**
-     * @return mixed
+     * @inheritdoc
      */
-    public function getInstance()
+    public function getConnection(): ConnectionInterface
     {
         return $this->instance?? $this->connect()->getInstance();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getInstance(): ConnectionInterface
+    {
+        return $this->instance;
     }
 }

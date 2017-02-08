@@ -6,11 +6,6 @@ use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 
-/**
- * Class BeanstalkdConnection
- *
- * @property \Pheanstalk\Pheanstalk $instance
- */
 class BeanstalkdConnection implements ConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
@@ -42,7 +37,6 @@ class BeanstalkdConnection implements ConnectionInterface
 
     /**
      * @inheritdoc
-     * @return ConnectionInterface|BeanstalkdConnection
      */
     public function connect(): ConnectionInterface
     {
@@ -57,10 +51,9 @@ class BeanstalkdConnection implements ConnectionInterface
      */
     public function disconnect(): bool
     {
-        $this->instance->getConnection()->disconnect();
+        $this->instance->disconnect();
         unset($this->instance);
 
         return true;
     }
-
 }

@@ -4,21 +4,11 @@ namespace Altair\Queue\Contracts;
 
 interface JobInterface
 {
-    public function delete(): bool;
-
-    public function complete(): bool;
-
-    public function failed(): bool;
-
-    public function release($delay = 0);
-
-    public function getId(): ?int;
-
-    public function getTimeToSend(): int;
-
-    public function getAttempts(): int;
-
-    public function getMaxAttempts(): int;
-
-    public function getData();
+    const ATTRIBUTE_ID = 'altair:queue:id';
+    const ATTRIBUTE_DATA = 'altair:queue:data';
+    const ATTRIBUTE_STATUS = 'altair:queue:status';
+    const ATTRIBUTE_DELAY = 'altair:queue:delay';
+    const ATTRIBUTE_JOB = 'altair:queue:job';
+    const ATTRIBUTE_QUEUE_NAME = 'altair:queue:name';
+    const ATTRIBUTE_COMPLETED = 'altair:queue:completed';
 }
