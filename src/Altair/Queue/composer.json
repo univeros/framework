@@ -8,7 +8,9 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0"
+        "php": ">=7.0.0",
+        "univeros/configuration": "*",
+        "univeros/middleware": "*"
     },
     "autoload": {
         "psr-4": {
