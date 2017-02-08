@@ -1,9 +1,9 @@
 <?php
 namespace Altair\Tests\Validation\Rule;
 
+use Altair\Middleware\Payload;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Exception\InvalidArgumentException;
-use Altair\Validation\Payload;
 use Altair\Validation\Rule\IpRule;
 use PHPUnit\Framework\TestCase;
 

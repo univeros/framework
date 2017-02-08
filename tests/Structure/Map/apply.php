@@ -76,7 +76,6 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-
     public function testApplyDoesNotLeakWhenCallbackFails()
     {
         $instance = $this->getInstance([
@@ -87,7 +86,7 @@ trait apply
         $result = null;
 
         try {
-            $result = $instance->apply(function($key, $value) {
+            $result = $instance->apply(function ($key, $value) {
                 if ($key === "c") {
                     throw new \Exception();
                 }
@@ -96,6 +95,5 @@ trait apply
             $this->assertNull($result);
             return;
         }
-
     }
 }

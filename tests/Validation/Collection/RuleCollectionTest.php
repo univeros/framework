@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Validation\Collection;
 
-
 use Altair\Tests\Validation\RuleA;
 use Altair\Tests\Validation\ValidEntity;
 use Altair\Validation\Collection\RuleCollection;
@@ -11,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 
 class RuleCollectionTest extends TestCase
 {
-
     public function testValidRules()
     {
         $entity = new ValidEntity();

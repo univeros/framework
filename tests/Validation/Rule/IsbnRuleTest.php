@@ -1,8 +1,8 @@
 <?php
 namespace Altair\Tests\Validation\Rule;
 
+use Altair\Middleware\Payload;
 use Altair\Validation\Contracts\PayloadInterface;
-use Altair\Validation\Payload;
 use Altair\Validation\Rule\IsbnRule;
 use PHPUnit\Framework\TestCase;
 

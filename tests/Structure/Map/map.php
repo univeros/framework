@@ -91,7 +91,7 @@ trait map
         ]);
         $mapped = null;
         try {
-            $mapped = $instance->map(function($key, $value) {
+            $mapped = $instance->map(function ($key, $value) {
                 if ($key === "c") {
                     throw new \Exception();
                 }

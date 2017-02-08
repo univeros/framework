@@ -2,9 +2,9 @@
 namespace Altair\Tests\Validation;
 
 use Altair\Container\Container;
+use Altair\Middleware\Payload;
 use Altair\Structure\Queue;
 use Altair\Validation\Contracts\PayloadInterface;
-use Altair\Validation\Payload;
 use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\Rule\AlphaRule;
 use Altair\Validation\RulesRunner;

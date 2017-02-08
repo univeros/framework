@@ -134,7 +134,7 @@ abstract class AbstractCollectionTest extends TestCase
 
     public function expectInternalIllegalOffset()
     {
-        $this->expectException( Warning::class);
+        $this->expectException(Warning::class);
     }
 
     public function outOfRangeDataProvider()

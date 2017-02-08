@@ -88,7 +88,7 @@ trait filter
         ]);
         $filtered = null;
         try {
-            $filtered = $instance->filter(function($key, $value) {
+            $filtered = $instance->filter(function ($key, $value) {
                 if ($key === "c") {
                     throw new \Exception();
                 }
