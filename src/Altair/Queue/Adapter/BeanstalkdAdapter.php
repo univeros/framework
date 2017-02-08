@@ -31,7 +31,7 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function __construct(
         BeanstalkdConnection $connection,
-        int $timeToRun = Pheanstalk::DEFAULT_TTR,
+        int $timeToRun = PheanstalkInterface::DEFAULT_TTR,
         int $reserveTimeout = 5
     ) {
         $this->connection = $connection->connect();

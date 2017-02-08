@@ -32,7 +32,7 @@ class MiddlewareCommandBusConfiguration implements ConfigurationInterface
     {
         $fs = new Filesystem();
 
-        $mapDefinition = new Definition([':config' => $fs->getRequiredFileValue($this->env->get('COU_MAP_FILE'))]);
+        $mapDefinition = new Definition([':config' => $fs->getRequiredFileValue($this->env->get('COURIER_MAP_FILE'))]);
         $resolverDefinition = new Definition([':container' => $container]);
         $runnerDefinition = new Definition(
             [
