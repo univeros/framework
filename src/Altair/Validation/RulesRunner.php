@@ -1,8 +1,8 @@
 <?php
 namespace Altair\Validation;
 
+use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Structure\Queue;
-use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RuleInterface;
 

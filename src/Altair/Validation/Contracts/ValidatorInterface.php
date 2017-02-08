@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Validation\Contracts;
 
+use Altair\Middleware\Contracts\PayloadInterface;
+
 interface ValidatorInterface
 {
     /**

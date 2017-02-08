@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Validation;
 
+use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
+use Altair\Middleware\Payload;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Contracts\ValidatableInterface;
 use Altair\Validation\Contracts\ValidatorInterface;
@@ -52,7 +54,7 @@ class Validator implements ValidatorInterface
     /**
      * @inheritdoc
      */
-    public function getPayload(): ?PayloadInterface
+    public function getPayload(): ?MiddlewarePayloadInterface
     {
         return $this->payload;
     }
@@ -60,9 +62,9 @@ class Validator implements ValidatorInterface
     /**
      * @param ValidatableInterface $validatable
      *
-     * @return PayloadInterface
+     * @return MiddlewarePayloadInterface
      */
-    protected function buildPayload(ValidatableInterface $validatable): PayloadInterface
+    protected function buildPayload(ValidatableInterface $validatable): MiddlewarePayloadInterface
     {
         $attributes = [
             PayloadInterface::ATTRIBUTE_SUBJECT => $validatable
