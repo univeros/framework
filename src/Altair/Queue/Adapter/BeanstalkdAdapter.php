@@ -45,13 +45,11 @@ class BeanstalkdAdapter extends AbstractAdapter
     public function push(PayloadInterface $payload): bool
     {
         $queue = $payload->getAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, AdapterInterface::DEFAULT_QUEUE_NAME);
-        $delay = (int)$payload->getAttribute(JobInterface::ATTRIBUTE_DELAY, Pheanstalk::DEFAULT_DELAY);
-        $delay = (int)max(Pheanstalk::DEFAULT_DELAY, $delay - time());
 
         return $this->getConnection()
             ->getInstance()
             ->useTube($queue)
-            ->put(json_encode($payload), Pheanstalk::DEFAULT_PRIORITY, $delay, $this->timeToRun);
+            ->put(json_encode($payload), Pheanstalk::DEFAULT_PRIORITY, $this->getDelay($payload), $this->timeToRun);
     }
 
     /**
