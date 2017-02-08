@@ -7,12 +7,14 @@ use Altair\Middleware\Payload;
 use Altair\Queue\Connection\BeanstalkdConnection;
 use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
+use Altair\Queue\Traits\EnsureIdAwareTrait;
 use Pheanstalk\Job;
-use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 
 class BeanstalkdAdapter extends AbstractAdapter
 {
+    use EnsureIdAwareTrait;
+
     /**
      * @var int
      */
@@ -34,7 +36,7 @@ class BeanstalkdAdapter extends AbstractAdapter
         int $timeToRun = PheanstalkInterface::DEFAULT_TTR,
         int $reserveTimeout = 5
     ) {
-        $this->connection = $connection->connect();
+        $this->connection = $connection;
         $this->timeToRun = $timeToRun;
         $this->reserveTimeout = $reserveTimeout;
     }
@@ -44,12 +46,17 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function push(PayloadInterface $payload): bool
     {
-        $queue = $payload->getAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, AdapterInterface::DEFAULT_QUEUE_NAME);
+        $queue = $this->getQueueNameAttribute($payload);
 
         return $this->getConnection()
             ->getInstance()
             ->useTube($queue)
-            ->put(json_encode($payload), Pheanstalk::DEFAULT_PRIORITY, $this->getDelay($payload), $this->timeToRun);
+            ->put(
+                json_encode($this->ensureId($payload)->withoutAttribute(JobInterface::ATTRIBUTE_JOB)),
+                PheanstalkInterface::DEFAULT_PRIORITY,
+                $this->getDelay($payload),
+                $this->timeToRun
+            );
     }
 
     /**
@@ -64,9 +71,8 @@ class BeanstalkdAdapter extends AbstractAdapter
 
         if ($job instanceof Job) {
             $data = json_decode($job->getData(), true);
-            $data[JobInterface::ATTRIBUTE_JOB] = $job;
 
-            return new Payload($data);
+            return (new Payload($data))->withAttribute(JobInterface::ATTRIBUTE_JOB, $job);
         }
 
         return null;
@@ -84,9 +90,9 @@ class BeanstalkdAdapter extends AbstractAdapter
             throw new InvalidMethodCallException('Payload does not have a valid Beanstalkd job.');
         }
 
-        $queue = $payload->getAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, AdapterInterface::DEFAULT_QUEUE_NAME);
+        $queue = $this->getQueueNameAttribute($payload);
 
-        /** @var Pheanstalk $store */
+        /** @var \Pheanstalk\Pheanstalk $store */
         $store = $this->getConnection()->getInstance()->useTube($queue);
 
         if ($payload->getAttribute(JobInterface::ATTRIBUTE_COMPLETED) === true) {
@@ -94,7 +100,11 @@ class BeanstalkdAdapter extends AbstractAdapter
         } else {
             // add back to the queue as it wasn't completed maybe due to some transitory error
             // could also be failed.
-            $store->release($job, PheanstalkInterface::DEFAULT_PRIORITY, $this->getDelay($payload));
+            $store->release(
+                $job,
+                PheanstalkInterface::DEFAULT_PRIORITY,
+                $this->getDelay($payload->withoutAttribute(JobInterface::ATTRIBUTE_JOB))
+            );
         }
     }
 

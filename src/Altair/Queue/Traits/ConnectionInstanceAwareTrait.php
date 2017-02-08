@@ -6,7 +6,7 @@ use Altair\Queue\Contracts\ConnectionInterface;
 trait ConnectionInstanceAwareTrait
 {
     /**
-     * @var ConnectionInterface
+     * @var mixed
      */
     protected $instance;
 
@@ -21,7 +21,7 @@ trait ConnectionInstanceAwareTrait
     /**
      * @inheritdoc
      */
-    public function getInstance(): ConnectionInterface
+    public function getInstance()
     {
         return $this->instance;
     }

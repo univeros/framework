@@ -51,8 +51,10 @@ class BeanstalkdConnection implements ConnectionInterface
      */
     public function disconnect(): bool
     {
-        $this->instance->disconnect();
-        unset($this->instance);
+        if ($this->instance instanceof Pheanstalk && $this->instance->getConnection()->hasSocket()) {
+            $this->instance->getConnection()->disconnect();
+        }
+        $this->instance = null;
 
         return true;
     }

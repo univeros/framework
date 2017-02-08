@@ -5,7 +5,6 @@ use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\ConnectionInterface;
 use Altair\Queue\Contracts\JobInterface;
-use Pheanstalk\PheanstalkInterface;
 
 abstract class AbstractAdapter implements AdapterInterface
 {
@@ -20,6 +19,16 @@ abstract class AbstractAdapter implements AdapterInterface
     public function getConnection(): ConnectionInterface
     {
         return $this->connection;
+    }
+
+    /**
+     * @param PayloadInterface $payload
+     *
+     * @return string
+     */
+    protected function getQueueNameAttribute(PayloadInterface $payload): string
+    {
+        return $payload->getAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, AdapterInterface::DEFAULT_QUEUE_NAME);
     }
 
     /**
