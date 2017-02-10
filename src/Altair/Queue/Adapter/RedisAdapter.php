@@ -14,9 +14,6 @@ class RedisAdapter extends AbstractAdapter
 {
     use EnsureIdAwareTrait;
 
-    /**
-     * @var int
-     */
     protected $expireTime;
 
     /**
@@ -36,13 +33,13 @@ class RedisAdapter extends AbstractAdapter
      */
     public function push(PayloadInterface $payload): bool
     {
-        $queue = $this->getQueueNameAttribute($payload);
+        $queue = $this->getQueueNameFromAttribute($payload);
         $delay = (int)$payload->getAttribute(JobInterface::ATTRIBUTE_DELAY, 0);
         $payload = json_encode($this->ensureId($payload)->withoutAttribute(JobInterface::ATTRIBUTE_JOB));
 
-        return $delay > time()
+        return (bool) ($delay > time()
             ? $this->getConnection()->getInstance()->zadd($queue . ':delayed', $delay, $payload)
-            : $this->getConnection()->getInstance()->rpush($queue, $payload);
+            : $this->getConnection()->getInstance()->rpush($queue, $payload));
     }
 
     /**
@@ -76,7 +73,7 @@ class RedisAdapter extends AbstractAdapter
         if ($this->hasIdAttribute($payload)) {
             throw new InvalidMethodCallException('Job must have an id to be updated on queue.');
         }
-        $queue = $this->getQueueNameAttribute($payload);
+        $queue = $this->getQueueNameFromAttribute($payload);
 
         $this->removeReserved($queue, $payload);
 

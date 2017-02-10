@@ -46,9 +46,9 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function push(PayloadInterface $payload): bool
     {
-        $queue = $this->getQueueNameAttribute($payload);
+        $queue = $this->getQueueNameFromAttribute($payload);
 
-        return $this->getConnection()
+        return (bool) $this->getConnection()
             ->getInstance()
             ->useTube($queue)
             ->put(
@@ -90,7 +90,7 @@ class BeanstalkdAdapter extends AbstractAdapter
             throw new InvalidMethodCallException('Payload does not have a valid Beanstalkd job.');
         }
 
-        $queue = $this->getQueueNameAttribute($payload);
+        $queue = $this->getQueueNameFromAttribute($payload);
 
         /** @var \Pheanstalk\Pheanstalk $store */
         $store = $this->getConnection()->getInstance()->useTube($queue);

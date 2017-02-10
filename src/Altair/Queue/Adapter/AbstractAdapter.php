@@ -26,7 +26,7 @@ abstract class AbstractAdapter implements AdapterInterface
      *
      * @return string
      */
-    protected function getQueueNameAttribute(PayloadInterface $payload): string
+    protected function getQueueNameFromAttribute(PayloadInterface $payload): string
     {
         return $payload->getAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, AdapterInterface::DEFAULT_QUEUE_NAME);
     }

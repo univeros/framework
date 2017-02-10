@@ -8,7 +8,7 @@ interface ConnectionInterface
      *
      * @return ConnectionInterface
      */
-    public function connect(): self;
+    public function connect(): ConnectionInterface;
 
     /**
      * Disconnects the queue store.

@@ -33,6 +33,8 @@ class BeanstalkdConnection implements ConnectionInterface
         $this->port = $port;
         $this->connectionTimeout = $connectionTimeout;
         $this->connectPersistent = $connectPersistent;
+
+        $this->connect();
     }
 
     /**
