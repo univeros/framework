@@ -59,7 +59,9 @@ class RedisAdapter extends AbstractAdapter
 
             $data = json_decode($job, true);
 
-            return (new Payload($data))->withAttribute(JobInterface::ATTRIBUTE_JOB, $job);
+            return (new Payload($data))
+                ->withAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, $queue)
+                ->withAttribute(JobInterface::ATTRIBUTE_JOB, $job);
         }
 
         return null;

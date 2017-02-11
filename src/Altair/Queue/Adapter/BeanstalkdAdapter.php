@@ -64,6 +64,8 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
+        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+
         $job = $this->getConnection()
             ->getInstance()
             ->watch($queue?? AdapterInterface::DEFAULT_QUEUE_NAME)
@@ -72,7 +74,9 @@ class BeanstalkdAdapter extends AbstractAdapter
         if ($job instanceof Job) {
             $data = json_decode($job->getData(), true);
 
-            return (new Payload($data))->withAttribute(JobInterface::ATTRIBUTE_JOB, $job);
+            return (new Payload($data))
+                ->withAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, $queue)
+                ->withAttribute(JobInterface::ATTRIBUTE_JOB, $job);
         }
 
         return null;

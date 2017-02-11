@@ -50,7 +50,9 @@ class SqsAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
-        $url = $this->getQueueUrl(['QueueName' => $queue?? AdapterInterface::DEFAULT_QUEUE_NAME]);
+        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+
+        $url = $this->getQueueUrl(['QueueName' => $queue]);
 
         /** @var \Aws\Result $result */
         $result = $this->getConnection()->getInstance()->receiveMessage(['QueueUrl' => $url]);
@@ -65,7 +67,9 @@ class SqsAdapter extends AbstractAdapter
                 ]
             ];
 
-            return (new Payload($data))->withAttribute(JobInterface::ATTRIBUTE_JOB, $result);
+            return (new Payload($data))
+                ->withAttribute(JobInterface::ATTRIBUTE_QUEUE_NAME, $queue)
+                ->withAttribute(JobInterface::ATTRIBUTE_JOB, $result);
         }
 
         return null;

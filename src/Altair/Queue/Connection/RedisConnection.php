@@ -47,6 +47,7 @@ class RedisConnection implements ConnectionInterface
         if ($this->instance instanceof Client && $this->instance->isConnected()) {
             $this->instance->disconnect();
         }
+
         $this->instance = null;
 
         return true;
