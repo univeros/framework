@@ -1,11 +1,11 @@
 <?php
-namespace Altair\Courier\Resolver;
+namespace Altair\Middleware\Resolver;
 
 use Altair\Container\Container;
-use Altair\Courier\Contracts\CommandMiddlewareInterface;
-use Altair\Courier\Contracts\MiddlewareResolverInterface;
+use Altair\Middleware\Contracts\MiddlewareInterface;
+use Altair\Middleware\Contracts\ResolverInterface;
 
-class MiddlewareResolver implements MiddlewareResolverInterface
+class MiddlewareResolver implements ResolverInterface
 {
     /**
      * @var Container
@@ -23,13 +23,11 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     }
 
     /**
-     * Resolve a class spec into an object, if it is not already instantiated.
+     * @param $entry
      *
-     * @param string|object $entry
-     *
-     * @return CommandMiddlewareInterface
+     * @return MiddlewareInterface
      */
-    public function __invoke($entry): CommandMiddlewareInterface
+    public function __invoke($entry): MiddlewareInterface
     {
         if (is_object($entry)) {
             return $entry;

@@ -1,7 +1,7 @@
 <?php
 namespace Altair\Middleware\Contracts;
 
-interface ResolverInterface
+interface MiddlewareResolverInterface
 {
     /**
      *

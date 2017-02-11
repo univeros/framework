@@ -3,7 +3,7 @@ namespace Altair\Middleware;
 
 use Altair\Middleware\Contracts\MiddlewareInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
-use Altair\Middleware\Contracts\ResolverInterface;
+use Altair\Middleware\Contracts\MiddlewareResolverInterface;
 use Altair\Structure\Queue;
 
 class Runner
@@ -18,7 +18,7 @@ class Runner
      *
      * A callable to convert queue entries to callables.
      *
-     * @var callable|ResolverInterface
+     * @var callable|MiddlewareResolverInterface
      *
      */
     protected $resolver;
@@ -29,7 +29,7 @@ class Runner
      *
      * @param Queue $queue The middleware queue.
      *
-     * @param callable|ResolverInterface $resolver Converts queue entries to callables.
+     * @param callable|MiddlewareResolverInterface $resolver Converts queue entries to callables.
      *
      */
     public function __construct(Queue $queue, callable $resolver = null)
