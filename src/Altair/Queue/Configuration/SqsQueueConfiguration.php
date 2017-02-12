@@ -7,8 +7,8 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Queue\Adapter\SqsAdapter;
 use Altair\Queue\Connection\SqsConnection;
-use Altair\Queue\Contracts\AdapterInterface;
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 
 class SqsQueueConfiguration implements ConfigurationInterface
 {
@@ -26,7 +26,7 @@ class SqsQueueConfiguration implements ConfigurationInterface
 
         $container
             ->define(SqsConnection::class, $connectionDefinition)
-            ->alias(ConnectionInterface::class, SqsConnection::class)
-            ->alias(AdapterInterface::class, SqsAdapter::class);
+            ->alias(QueueConnectionInterface::class, SqsConnection::class)
+            ->alias(QueueAdapterInterface::class, SqsAdapter::class);
     }
 }

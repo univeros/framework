@@ -7,8 +7,8 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Queue\Adapter\PdoAdapter;
 use Altair\Queue\Connection\PdoConnection;
-use Altair\Queue\Contracts\AdapterInterface;
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 
 class PdoQueueConfiguration implements ConfigurationInterface
 {
@@ -26,7 +26,7 @@ class PdoQueueConfiguration implements ConfigurationInterface
 
         $container
             ->define(PdoConnection::class, $connectionDefinition)
-            ->alias(ConnectionInterface::class, PdoConnection::class)
-            ->alias(AdapterInterface::class, PdoAdapter::class);
+            ->alias(QueueConnectionInterface::class, PdoConnection::class)
+            ->alias(QueueAdapterInterface::class, PdoAdapter::class);
     }
 }

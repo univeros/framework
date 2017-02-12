@@ -1,14 +1,13 @@
 <?php
 namespace Altair\Queue;
 
-use Altair\Middleware\Contracts\MiddlewareInterface;
+use Altair\Middleware\Contracts\MiddlewareManagerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
-use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
-use Altair\Queue\Contracts\ManagerInterface;
-use Altair\Queue\Manager as MiddlewareManager;
+use Altair\Queue\Contracts\QueueAdapterInterface;
+use Altair\Queue\Contracts\QueueManagerInterface;
 
-class Manager implements ManagerInterface
+class QueueManager implements QueueManagerInterface
 {
     protected $adapter;
     protected $pushProcessor;
@@ -17,14 +16,14 @@ class Manager implements ManagerInterface
     /**
      * Manager constructor.
      *
-     * @param AdapterInterface $adapter
-     * @param Manager|null $pushProcessor
-     * @param MiddlewareInterface|null $popProcessor
+     * @param QueueAdapterInterface $adapter
+     * @param MiddlewareManagerInterface $pushProcessor
+     * @param MiddlewareManagerInterface $popProcessor
      */
     public function __construct(
-        AdapterInterface $adapter,
-        MiddlewareManager $pushProcessor = null,
-        MiddlewareInterface $popProcessor = null
+        QueueAdapterInterface $adapter,
+        MiddlewareManagerInterface $pushProcessor = null,
+        MiddlewareManagerInterface $popProcessor = null
     ) {
         $this->adapter = $adapter;
         $this->pushProcessor = $pushProcessor;
@@ -34,7 +33,7 @@ class Manager implements ManagerInterface
     /**
      * @inheritdoc
      */
-    public function getAdapter(): AdapterInterface
+    public function getAdapter(): QueueAdapterInterface
     {
         return $this->adapter;
     }
@@ -81,5 +80,4 @@ class Manager implements ManagerInterface
     {
         return $this->adapter->isEmpty($queue);
     }
-
 }

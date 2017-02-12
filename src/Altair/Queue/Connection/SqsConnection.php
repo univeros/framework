@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Queue\Connection;
 
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use Aws\Sqs\SqsClient;
 
-class SqsConnection implements ConnectionInterface
+class SqsConnection implements QueueConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
 
@@ -30,7 +30,7 @@ class SqsConnection implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function connect(): ConnectionInterface
+    public function connect(): QueueConnectionInterface
     {
         if (null === $this->instance) {
             $this->instance = new SqsClient(

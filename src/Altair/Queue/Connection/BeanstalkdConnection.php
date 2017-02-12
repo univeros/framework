@@ -1,12 +1,12 @@
 <?php
 namespace Altair\Queue\Connection;
 
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\PheanstalkInterface;
 
-class BeanstalkdConnection implements ConnectionInterface
+class BeanstalkdConnection implements QueueConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
 
@@ -40,7 +40,7 @@ class BeanstalkdConnection implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function connect(): ConnectionInterface
+    public function connect(): QueueConnectionInterface
     {
         $this->disconnect();
         $this->instance = new Pheanstalk($this->host, $this->port, $this->connectionTimeout, $this->connectPersistent);

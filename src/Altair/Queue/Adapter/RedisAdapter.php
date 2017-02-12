@@ -5,8 +5,8 @@ use Altair\Cache\Exception\InvalidMethodCallException;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Payload;
 use Altair\Queue\Connection\RedisConnection;
-use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Traits\EnsureIdAwareTrait;
 use Predis\Transaction\MultiExec;
 
@@ -47,7 +47,7 @@ class RedisAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
-        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+        $queue = $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME;
         $this->migrateExpiredJobs($queue);
 
         $job = $this->getConnection()->getInstance()->lpop($queue);
@@ -95,7 +95,7 @@ class RedisAdapter extends AbstractAdapter
      */
     public function isEmpty(string $queue = null): bool
     {
-        return $this->getConnection()->getInstance()->llen($queue?? AdapterInterface::DEFAULT_QUEUE_NAME) === 0;
+        return $this->getConnection()->getInstance()->llen($queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME) === 0;
     }
 
     /**

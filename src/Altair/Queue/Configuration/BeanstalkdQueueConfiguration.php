@@ -7,8 +7,8 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Queue\Adapter\BeanstalkdAdapter;
 use Altair\Queue\Connection\BeanstalkdConnection;
-use Altair\Queue\Contracts\AdapterInterface;
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 use Pheanstalk\PheanstalkInterface;
 
 class BeanstalkdQueueConfiguration implements ConfigurationInterface
@@ -36,7 +36,7 @@ class BeanstalkdQueueConfiguration implements ConfigurationInterface
         $container
             ->define(BeanstalkdConnection::class, $connectionDefinition)
             ->define(BeanstalkdAdapter::class, $adapterDefinition)
-            ->alias(ConnectionInterface::class, BeanstalkdConnection::class)
-            ->alias(AdapterInterface::class, BeanstalkdAdapter::class);
+            ->alias(QueueConnectionInterface::class, BeanstalkdConnection::class)
+            ->alias(QueueAdapterInterface::class, BeanstalkdAdapter::class);
     }
 }

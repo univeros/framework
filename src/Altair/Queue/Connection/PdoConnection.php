@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Queue\Connection;
 
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use PDO;
 
-class PdoConnection implements ConnectionInterface
+class PdoConnection implements QueueConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
 
@@ -34,7 +34,7 @@ class PdoConnection implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function connect(): ConnectionInterface
+    public function connect(): QueueConnectionInterface
     {
         $this->disconnect();
         $this->instance = new PDO($this->dsn, $this->username, $this->password, $this->options);

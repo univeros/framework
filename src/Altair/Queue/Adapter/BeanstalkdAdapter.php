@@ -5,8 +5,8 @@ use Altair\Cache\Exception\InvalidMethodCallException;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Payload;
 use Altair\Queue\Connection\BeanstalkdConnection;
-use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Traits\EnsureIdAwareTrait;
 use Pheanstalk\Job;
 use Pheanstalk\PheanstalkInterface;
@@ -64,11 +64,11 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
-        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+        $queue = $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME;
 
         $job = $this->getConnection()
             ->getInstance()
-            ->watch($queue?? AdapterInterface::DEFAULT_QUEUE_NAME)
+            ->watch($queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME)
             ->reserve($this->reserveTimeout);
 
         if ($job instanceof Job) {
@@ -117,7 +117,7 @@ class BeanstalkdAdapter extends AbstractAdapter
      */
     public function isEmpty(string $queue = null): bool
     {
-        $stats = $this->getConnection()->getInstance()->statsTube($queue?? AdapterInterface::DEFAULT_QUEUE_NAME);
+        $stats = $this->getConnection()->getInstance()->statsTube($queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME);
 
         return (int)$stats->current_jobs_delayed === 0
             && (int)$stats->current_jobs_urgent === 0

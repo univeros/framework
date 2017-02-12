@@ -7,8 +7,8 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Queue\Adapter\RedisAdapter;
 use Altair\Queue\Connection\RedisConnection;
-use Altair\Queue\Contracts\AdapterInterface;
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 
 class RedisQueueConfiguration implements ConfigurationInterface
 {
@@ -34,7 +34,7 @@ class RedisQueueConfiguration implements ConfigurationInterface
         $container
             ->define(RedisConnection::class, $connectionDefinition)
             ->define(RedisAdapter::class, $adapterDefinition)
-            ->alias(ConnectionInterface::class, RedisConnection::class)
-            ->alias(AdapterInterface::class, RedisAdapter::class);
+            ->alias(QueueConnectionInterface::class, RedisConnection::class)
+            ->alias(QueueAdapterInterface::class, RedisAdapter::class);
     }
 }

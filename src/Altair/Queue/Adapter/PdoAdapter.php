@@ -5,8 +5,8 @@ use Altair\Cache\Exception\InvalidMethodCallException;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Payload;
 use Altair\Queue\Connection\PdoConnection;
-use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Traits\EnsureIdAwareTrait;
 use PDO;
 
@@ -49,7 +49,7 @@ class PdoAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
-        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+        $queue = $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME;
 
         $sql = 'SELECT `id`, `message`
             FROM `%s` WHERE `tts` <= NOW()
@@ -103,7 +103,7 @@ class PdoAdapter extends AbstractAdapter
     {
         $sql = sprintf(
             'SELECT COUNT(`id`) FROM `%s` WHERE `tts` <= NOW() ORDER BY id ASC LIMIT 1',
-            $queue?? AdapterInterface::DEFAULT_QUEUE_NAME
+            $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME
         );
         /** @var \PDOStatement $query */
         $query = $this->getConnection()->getInstance()->prepare($sql);

@@ -1,14 +1,14 @@
 <?php
 namespace Altair\Queue\Contracts;
 
-interface ConnectionInterface
+interface QueueConnectionInterface
 {
     /**
      * Connects to the queue store.
      *
-     * @return ConnectionInterface
+     * @return QueueConnectionInterface
      */
-    public function connect(): ConnectionInterface;
+    public function connect(): QueueConnectionInterface;
 
     /**
      * Disconnects the queue store.

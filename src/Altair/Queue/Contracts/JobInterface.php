@@ -11,4 +11,6 @@ interface JobInterface
     const ATTRIBUTE_JOB = 'altair:queue:job';
     const ATTRIBUTE_QUEUE_NAME = 'altair:queue:name';
     const ATTRIBUTE_COMPLETED = 'altair:queue:completed';
+    const ATTRIBUTE_TIMEOUT = 'altair:queue:timeout';
+    const ATTRIBUTE_FAILURE = 'altair:queue:failure';
 }

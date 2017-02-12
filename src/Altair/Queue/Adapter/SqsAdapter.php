@@ -5,8 +5,8 @@ use Altair\Cache\Exception\InvalidMethodCallException;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Payload;
 use Altair\Queue\Connection\SqsConnection;
-use Altair\Queue\Contracts\AdapterInterface;
 use Altair\Queue\Contracts\JobInterface;
+use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Traits\EnsureIdAwareTrait;
 use Aws\Result;
 
@@ -50,7 +50,7 @@ class SqsAdapter extends AbstractAdapter
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
-        $queue = $queue?? AdapterInterface::DEFAULT_QUEUE_NAME;
+        $queue = $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME;
 
         $url = $this->getQueueUrl(['QueueName' => $queue]);
 
@@ -113,7 +113,7 @@ class SqsAdapter extends AbstractAdapter
      */
     public function isEmpty(string $queue = null): bool
     {
-        $url = $this->getQueueUrl(['QueueName' => $queue?? AdapterInterface::DEFAULT_QUEUE_NAME]);
+        $url = $this->getQueueUrl(['QueueName' => $queue?? QueueAdapterInterface::DEFAULT_QUEUE_NAME]);
 
         /** @var \Aws\Result $attributes */
         $attributes = $this->getConnection()->getInstance()->getQueueAttributes(

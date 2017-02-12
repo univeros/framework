@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Queue\Connection;
 
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use Predis\Client;
 
-class RedisConnection implements ConnectionInterface
+class RedisConnection implements QueueConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
 
@@ -31,7 +31,7 @@ class RedisConnection implements ConnectionInterface
     /**
      * @inheritdoc
      */
-    public function connect(): ConnectionInterface
+    public function connect(): QueueConnectionInterface
     {
         $this->disconnect();
         $this->instance = new Client($this->params);

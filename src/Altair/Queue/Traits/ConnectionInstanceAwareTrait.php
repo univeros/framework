@@ -1,7 +1,7 @@
 <?php
 namespace Altair\Queue\Traits;
 
-use Altair\Queue\Contracts\ConnectionInterface;
+use Altair\Queue\Contracts\QueueConnectionInterface;
 
 trait ConnectionInstanceAwareTrait
 {
@@ -13,7 +13,7 @@ trait ConnectionInstanceAwareTrait
     /**
      * @inheritdoc
      */
-    public function getConnection(): ConnectionInterface
+    public function getConnection(): QueueConnectionInterface
     {
         return $this->instance?? $this->connect()->getInstance();
     }
