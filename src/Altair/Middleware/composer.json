@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Http\\": ""
+            "Altair\\Middleware\\": ""
         }
     },
     "minimum-stability": "dev"

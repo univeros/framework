@@ -2,11 +2,12 @@
 namespace Altair\Middleware;
 
 use Altair\Middleware\Contracts\MiddlewareInterface;
-use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Contracts\MiddlewareResolverInterface;
+use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
+use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Structure\Queue;
 
-class Runner
+class Runner implements MiddlewareRunnerInterface
 {
     /**
      * The middleware queue.
@@ -45,7 +46,7 @@ class Runner
      *
      * @return PayloadInterface
      */
-    public function __invoke(PayloadInterface $payload)
+    public function __invoke(PayloadInterface $payload): PayloadInterface
     {
         $entry = $this->queue->pop();
         $middleware = $this->resolve($entry);

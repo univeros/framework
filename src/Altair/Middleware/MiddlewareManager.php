@@ -1,9 +1,11 @@
 <?php
 namespace Altair\Middleware;
 
+use Altair\Middleware\Contracts\MiddlewareManagerInterface;
+use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
 
-class Manager
+class MiddlewareManager implements MiddlewareManagerInterface
 {
     /**
      * @var Runner
@@ -13,9 +15,9 @@ class Manager
     /**
      * Manager constructor.
      *
-     * @param Runner $runner
+     * @param MiddlewareRunnerInterface $runner
      */
-    public function __construct(Runner $runner)
+    public function __construct(MiddlewareRunnerInterface $runner)
     {
         $this->runner = $runner;
     }
