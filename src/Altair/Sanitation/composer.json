@@ -1,0 +1,22 @@
+{
+    "name": "univeros/sanitation",
+    "description": "The Altair Sanitation package.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "univeros/configuration": "*",
+        "univeros/middleware": "*",
+        "univeros/structure": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Sanitation\\": ""
+        }
+    },
+    "minimum-stability": "dev"
+}
