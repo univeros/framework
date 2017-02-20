@@ -3,6 +3,7 @@ namespace Altair\Sanitation;
 
 use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 use Altair\Middleware\Payload;
+use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\PayloadInterface;
 use Altair\Sanitation\Contracts\SanitizableInterface;
 use Altair\Sanitation\Contracts\SanitizerInterface;
@@ -10,7 +11,7 @@ use Altair\Sanitation\Contracts\SanitizerInterface;
 class Sanitizer implements SanitizerInterface
 {
     /**
-     * @var FiltersRunner
+     * @var FiltersRunnerInterface
      */
     protected $runner;
     /**
@@ -21,9 +22,9 @@ class Sanitizer implements SanitizerInterface
     /**
      * Validator constructor.
      *
-     * @param FiltersRunner $runner
+     * @param FiltersRunnerInterface $runner
      */
-    public function __construct(FiltersRunner $runner)
+    public function __construct(FiltersRunnerInterface $runner)
     {
         $this->runner = $runner;
     }
@@ -35,9 +36,9 @@ class Sanitizer implements SanitizerInterface
     {
         $this->payload = $this->buildPayload($sanitizable);
 
-        foreach($sanitizable->getFilters() as $key => $value) {
+        foreach ($sanitizable->getFilters() as $key => $value) {
             $keys = explode(',', preg_replace('/\s+/', '', $key));
-            foreach($keys as $attribute) {
+            foreach ($keys as $attribute) {
                 $filters = is_array($value) ? $value : [$value];
                 $runner = $this->runner->withFilters($filters);
                 $payload = $this->payload->withAttribute(PayloadInterface::ATTRIBUTE_KEY, $attribute);
@@ -75,7 +76,7 @@ class Sanitizer implements SanitizerInterface
         foreach ($sanitizable->getFilters()->keys() as $key) {
             $keys = explode(',', preg_replace('/\s+/', '', $key));
             foreach ($keys as $attribute) {
-                if(isset($attributes[$attribute])) {
+                if (isset($attributes[$attribute])) {
                     continue;
                 }
                 $attributes[$attribute] = $sanitizable->$attribute;

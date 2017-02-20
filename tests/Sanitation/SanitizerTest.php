@@ -53,14 +53,10 @@ class SanitizerTest extends TestCase
         $this->assertEquals('HELLO WORLD', $sanitized->uppercase);
         $this->assertEquals('Hello world', $sanitized->uppercaseFirst);
         $this->assertEquals('Hello world', $sanitized->lowerCaseUpperCaseFirst);
-
-
     }
 
     protected function getSanitizer()
     {
         return new Sanitizer(new FiltersRunner(new FilterResolver(new Container())));
     }
-
-
 }

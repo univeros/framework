@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Sanitation\Filter;
 
-
 class IntegerFilter extends AbstractFilter
 {
     /**
@@ -28,5 +27,4 @@ class IntegerFilter extends AbstractFilter
 
         return null;
     }
-
 }

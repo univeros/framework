@@ -9,7 +9,6 @@ use Altair\Http\Formatter\JsonFormatter;
 use Altair\Http\Traits\ResolverAwareTrait;
 use Negotiation\AcceptEncoding;
 use Negotiation\Negotiator;
-use phpDocumentor\Reflection\DocBlock\Tags\Formatter;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Relay\ResolverInterface;

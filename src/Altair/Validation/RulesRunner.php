@@ -1,13 +1,13 @@
 <?php
 namespace Altair\Validation;
 
-use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Structure\Queue;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RuleInterface;
+use Altair\Validation\Contracts\RulesRunnerInterface;
 
-class RulesRunner implements MiddlewareRunnerInterface
+class RulesRunner implements RulesRunnerInterface
 {
     /**
      * The middleware queue.
@@ -46,7 +46,7 @@ class RulesRunner implements MiddlewareRunnerInterface
      */
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = !$this->queue->isEmpty() ? $this->queue->pop() : null;
+        $entry = null !== $this->queue && !$this->queue->isEmpty() ? $this->queue->pop() : null;
         $middleware = $this->resolve($entry);
 
         return $middleware($payload, $this);
@@ -55,9 +55,9 @@ class RulesRunner implements MiddlewareRunnerInterface
     /**
      * @param array $rules
      *
-     * @return RulesRunner
+     * @return RulesRunnerInterface
      */
-    public function withRules(array $rules): RulesRunner
+    public function withRules(array $rules): RulesRunnerInterface
     {
         $this->queue = new Queue($rules);
 

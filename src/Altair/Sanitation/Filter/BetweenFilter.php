@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Sanitation\Filter;
 
-
 class BetweenFilter extends AbstractFilter
 {
     /**
@@ -39,5 +38,4 @@ class BetweenFilter extends AbstractFilter
 
         return $value;
     }
-
 }

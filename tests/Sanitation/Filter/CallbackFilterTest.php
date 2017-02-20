@@ -36,7 +36,6 @@ class CallbackFilterTest extends AbstractFilterTest
         ];
     }
 
-
     protected function buildFilter(): FilterInterface
     {
         $callback = function ($value) {

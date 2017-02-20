@@ -8,7 +8,7 @@ class TitleCaseFilter extends AbstractFilter
      */
     public function parse($value)
     {
-        if(!is_string($value)) {
+        if (!is_string($value)) {
             return null;
         }
         return ucwords($value);

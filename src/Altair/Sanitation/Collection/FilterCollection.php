@@ -2,9 +2,9 @@
 namespace Altair\Sanitation\Collection;
 
 use Altair\Sanitation\Contracts\FilterInterface;
+use Altair\Sanitation\Exception\InvalidArgumentException;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
-use Altair\Sanitation\Exception\InvalidArgumentException;
 
 class FilterCollection extends Map
 {

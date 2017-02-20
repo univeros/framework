@@ -4,13 +4,14 @@ namespace Altair\Validation;
 use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 use Altair\Middleware\Payload;
 use Altair\Validation\Contracts\PayloadInterface;
+use Altair\Validation\Contracts\RulesRunnerInterface;
 use Altair\Validation\Contracts\ValidatableInterface;
 use Altair\Validation\Contracts\ValidatorInterface;
 
 class Validator implements ValidatorInterface
 {
     /**
-     * @var RulesRunner
+     * @var RulesRunnerInterface
      */
     protected $runner;
     /**
@@ -21,9 +22,9 @@ class Validator implements ValidatorInterface
     /**
      * Validator constructor.
      *
-     * @param RulesRunner $runner
+     * @param RulesRunnerInterface $runner
      */
-    public function __construct(RulesRunner $runner)
+    public function __construct(RulesRunnerInterface $runner)
     {
         $this->runner = $runner;
     }
@@ -77,7 +78,7 @@ class Validator implements ValidatorInterface
         foreach ($validatable->getRules()->keys() as $key) {
             $keys = explode(',', $this->sanitize($key));
             foreach ($keys as $attribute) {
-                if(isset($attributes[$attribute])) {
+                if (isset($attributes[$attribute])) {
                     continue;
                 }
                 $attributes[$attribute] = $validatable->$attribute;

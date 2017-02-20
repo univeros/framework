@@ -1,9 +1,6 @@
 <?php
 namespace Altair\Structure\Contracts;
 
-use Altair\Structure\Pair;
-use Altair\Structure\Set;
-
 interface MapInterface extends CollectionInterface
 {
     /**

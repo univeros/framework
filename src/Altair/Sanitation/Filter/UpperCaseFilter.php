@@ -42,7 +42,7 @@ class UpperCaseFilter extends AbstractFilter
     protected function getFirstToUpper(string $value): string
     {
         $length = mb_strlen($value);
-        if ($length == 0) {
+        if ($length === 0) {
             return '';
         }
         if ($length > 1) {
@@ -54,6 +54,4 @@ class UpperCaseFilter extends AbstractFilter
 
         return strtoupper($value);
     }
-
-
 }

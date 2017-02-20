@@ -2,7 +2,6 @@
 namespace Altair\Session\Handler;
 
 use MongoBinData;
-use MongoClient;
 use MongoCollection;
 use MongoDate;
 use SessionHandlerInterface;

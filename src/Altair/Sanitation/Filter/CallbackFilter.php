@@ -25,6 +25,4 @@ class CallbackFilter extends AbstractFilter
     {
         return call_user_func($this->callable, $value);
     }
-
-
 }

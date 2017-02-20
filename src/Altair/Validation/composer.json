@@ -10,6 +10,7 @@
     "require": {
         "php": ">=7.0.0",
         "univeros/configuration": "*",
+        "univeros/container": "*",
         "univeros/middleware": "*",
         "univeros/structure": "*"
     },

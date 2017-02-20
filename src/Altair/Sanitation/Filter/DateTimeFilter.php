@@ -57,5 +57,4 @@ class DateTimeFilter extends AbstractFilter
 
         return $datetime;
     }
-
 }

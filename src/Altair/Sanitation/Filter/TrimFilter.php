@@ -29,5 +29,4 @@ class TrimFilter extends AbstractFilter
 
         return trim($value, $this->chars);
     }
-
 }

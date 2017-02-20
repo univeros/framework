@@ -2,8 +2,8 @@
 namespace Altair\Sanitation\Filter;
 
 use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
-use Altair\Sanitation\Contracts\PayloadInterface;
 use Altair\Sanitation\Contracts\FilterInterface;
+use Altair\Sanitation\Contracts\PayloadInterface;
 
 abstract class AbstractFilter implements FilterInterface
 {

@@ -26,6 +26,6 @@ class RegexFilterTest extends AbstractFilterTest
 
     protected function buildFilter(): FilterInterface
     {
-        return new RegexFilter('/^[\+\-]?[0-9]+$/','');
+        return new RegexFilter('/^[\+\-]?[0-9]+$/', '');
     }
 }

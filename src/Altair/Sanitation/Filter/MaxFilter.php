@@ -29,5 +29,4 @@ class MaxFilter extends AbstractFilter
 
         return $value > $this->max ? $this->max : $value;
     }
-
 }

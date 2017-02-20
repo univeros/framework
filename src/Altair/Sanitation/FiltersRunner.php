@@ -1,13 +1,13 @@
 <?php
 namespace Altair\Sanitation;
 
-use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Sanitation\Contracts\FilterInterface;
+use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Structure\Queue;
 
-class FiltersRunner implements MiddlewareRunnerInterface
+class FiltersRunner implements FiltersRunnerInterface
 {
     /**
      * The middleware queue.
@@ -54,9 +54,9 @@ class FiltersRunner implements MiddlewareRunnerInterface
     /**
      * @param array $filters
      *
-     * @return FiltersRunner
+     * @return FiltersRunnerInterface
      */
-    public function withFilters(array $filters): FiltersRunner
+    public function withFilters(array $filters): FiltersRunnerInterface
     {
         $this->queue = new Queue($filters);
 

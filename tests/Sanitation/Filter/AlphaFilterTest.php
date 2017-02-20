@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Sanitation\Filter;
 
-
 use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Filter\AlphaFilter;
 

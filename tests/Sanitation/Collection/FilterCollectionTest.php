@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Tests\Sanitation\Collection;
 
-
 use Altair\Sanitation\Collection\FilterCollection;
 use Altair\Sanitation\Exception\InvalidArgumentException;
 use Altair\Sanitation\Filter\AlphaNumFilter;

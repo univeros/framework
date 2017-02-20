@@ -42,7 +42,7 @@ class LowerCaseFilter extends AbstractFilter
     protected function getFirstToLower(string $value): string
     {
         $length = mb_strlen($value);
-        if ($length == 0) {
+        if ($length === 0) {
             return '';
         }
         if ($length > 1) {
@@ -54,6 +54,4 @@ class LowerCaseFilter extends AbstractFilter
 
         return strtolower($value);
     }
-
-
 }

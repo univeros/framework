@@ -2,7 +2,6 @@
 namespace Altair\Courier\Service;
 
 use Altair\Courier\Contracts\CommandInterface;
-use Altair\Courier\Contracts\CommandLocatorServiceInterface;
 use Altair\Courier\Contracts\InMemoryCommandLocatorServiceInterface;
 use Altair\Courier\Exception\UnknownCommandMessageNameException;
 use Altair\Courier\Support\MessageCommandMap;

@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Sanitation\Filter;
 
-
 class RegexFilter extends AbstractFilter
 {
     /**

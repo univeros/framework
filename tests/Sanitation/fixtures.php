@@ -20,7 +20,6 @@ use Altair\Sanitation\Filter\MinStrLengthFilter;
 use Altair\Sanitation\Filter\TrimFilter;
 use Altair\Sanitation\Filter\UpperCaseFilter;
 
-
 class SanitizableEntity implements SanitizableInterface
 {
     public $alpha;
@@ -78,7 +77,6 @@ class SanitizableEntity implements SanitizableInterface
             ]
         );
     }
-
 }
 
 class FilterA extends AbstractFilter

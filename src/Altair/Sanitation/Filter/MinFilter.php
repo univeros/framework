@@ -29,5 +29,4 @@ class MinFilter extends AbstractFilter
 
         return $value < $this->min ? $this->min : $value;
     }
-
 }

@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Sanitation\Filter;
 
-
 class MinStrLengthFilter extends AbstractFilter
 {
     /**
@@ -46,5 +45,4 @@ class MinStrLengthFilter extends AbstractFilter
 
         return $value;
     }
-
 }

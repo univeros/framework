@@ -26,7 +26,6 @@ class AlphaNumFilterTest extends AbstractFilterTest
         ];
     }
 
-
     protected function buildFilter(): FilterInterface
     {
         return new AlphaNumFilter();
