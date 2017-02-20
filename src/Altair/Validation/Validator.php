@@ -14,7 +14,7 @@ class Validator implements ValidatorInterface
      */
     protected $runner;
     /**
-     * @var
+     * @var Payload
      */
     protected $payload;
 
@@ -60,6 +60,10 @@ class Validator implements ValidatorInterface
     }
 
     /**
+     * Create a Payload instance with ValidatableInterface as its subject and add the rest of the subject's attributes
+     * that are going to be validated. That way we could make use of a LoggingMiddleware class and extract the
+     * attributes using "Payload::getAttributes()".
+     *
      * @param ValidatableInterface $validatable
      *
      * @return MiddlewarePayloadInterface
@@ -73,6 +77,9 @@ class Validator implements ValidatorInterface
         foreach ($validatable->getRules()->keys() as $key) {
             $keys = explode(',', $this->sanitize($key));
             foreach ($keys as $attribute) {
+                if(isset($attributes[$attribute])) {
+                    continue;
+                }
                 $attributes[$attribute] = $validatable->$attribute;
             }
         }

@@ -22,7 +22,7 @@ class DateTimeRule extends AbstractRule
         $errors = DateTime::getLastErrors();
 
         // errors show as warnings
-        return $errors['warnings'] ? false : (bool)$datetime;
+        return $datetime === false || $errors['warnings'] ? false : (bool)$datetime;
     }
     /**
      * @inheritdoc

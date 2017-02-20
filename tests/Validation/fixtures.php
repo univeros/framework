@@ -5,6 +5,7 @@ use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Validation\Collection\RuleCollection;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Contracts\ValidatableInterface;
+use Altair\Validation\Rule\AlphaNumRule;
 use Altair\Validation\Rule\AlphaRule;
 
 class RuleA implements RuleInterface
@@ -41,7 +42,7 @@ class ValidEntity implements ValidatableInterface
     {
         return (new RuleCollection())
             ->put('firstName', AlphaRule::class)
-            ->put('firstName, lastName', [AlphaRule::class]); // test multiple keys
+            ->put('firstName, lastName', [AlphaRule::class, ['class' => AlphaNumRule::class]]); // test multiple keys
     }
 }
 

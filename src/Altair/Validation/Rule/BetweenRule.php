@@ -4,11 +4,11 @@ namespace Altair\Validation\Rule;
 class BetweenRule extends AbstractRule
 {
     /**
-     * @var
+     * @var mixed the minimum value
      */
     protected $min;
     /**
-     * @var
+     * @var mixed the maximum value
      */
     protected $max;
 

@@ -1,13 +1,13 @@
 <?php
-namespace Altair\Validation;
+namespace Altair\Sanitation;
 
 use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
+use Altair\Sanitation\Contracts\FilterInterface;
+use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Structure\Queue;
-use Altair\Validation\Contracts\ResolverInterface;
-use Altair\Validation\Contracts\RuleInterface;
 
-class RulesRunner implements MiddlewareRunnerInterface
+class FiltersRunner implements MiddlewareRunnerInterface
 {
     /**
      * The middleware queue.
@@ -48,18 +48,17 @@ class RulesRunner implements MiddlewareRunnerInterface
     {
         $entry = !$this->queue->isEmpty() ? $this->queue->pop() : null;
         $middleware = $this->resolve($entry);
-
         return $middleware($payload, $this);
     }
 
     /**
-     * @param array $rules
+     * @param array $filters
      *
-     * @return RulesRunner
+     * @return FiltersRunner
      */
-    public function withRules(array $rules): RulesRunner
+    public function withFilters(array $filters): FiltersRunner
     {
-        $this->queue = new Queue($rules);
+        $this->queue = new Queue($filters);
 
         return $this;
     }
@@ -67,9 +66,9 @@ class RulesRunner implements MiddlewareRunnerInterface
     /**
      * Converts a queue entry to a callable, using the resolver if present.
      *
-     * @param mixed|callable|RuleInterface $entry the queue entry.
+     * @param mixed|callable|FilterInterface $entry the queue entry.
      *
-     * @return callable|RuleInterface
+     * @return callable|FilterInterface
      */
     protected function resolve($entry)
     {

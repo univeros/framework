@@ -70,6 +70,7 @@
         },
         "files": [
             "tests/Container/fixtures.php",
+            "tests/Sanitation/fixtures.php",
             "tests/Validation/fixtures.php"
         ]
     },
