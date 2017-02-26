@@ -20,7 +20,7 @@ class RedisQueueConfiguration implements ConfigurationInterface
             [
                 ':params' => [
                     'host' => $this->env->get('QUEUE_REDIS_HOST', 'localhost'),
-                    'port' => $this->env->get('QUEUE_REDIS_PORT', 9367)
+                    'port' => $this->env->get('QUEUE_REDIS_PORT', 6379)
                 ]
             ]
         );
