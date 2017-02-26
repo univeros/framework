@@ -47,9 +47,9 @@ class MongoSessionHandler implements SessionHandlerInterface
     {
         $data = $this->collection->findOne(['_id' => $sessionId]);
 
-        return null === $data || !isset($data['session_data'])
+        return null === $data || !isset($data['content'])
             ? ''
-            : $data['session_data']->bin;
+            : $data['content']->bin;
     }
 
     /**
@@ -63,8 +63,8 @@ class MongoSessionHandler implements SessionHandlerInterface
             ],
             [
                 '$set' => [
-                    'session_data' => new MongoBinData($data, MongoBinData::BYTE_ARRAY),
-                    'timestamp' => new MongoDate(),
+                    'content' => new MongoBinData($data, MongoBinData::BYTE_ARRAY),
+                    'session_time' => new MongoDate(),
                 ]
             ],
             [
@@ -92,7 +92,7 @@ class MongoSessionHandler implements SessionHandlerInterface
         $time = new MongoDate(time() - $maxlifetime);
         $this->collection->remove(
             [
-                'timestamp' => ['$l' => $time]
+                'session_time' => ['$l' => $time]
             ]
         );
 
