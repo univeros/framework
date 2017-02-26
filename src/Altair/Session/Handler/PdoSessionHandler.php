@@ -1,37 +1,108 @@
 <?php
 namespace Altair\Session\Handler;
 
-use SessionHandlerInterface;
+use Altair\Session\Contracts\PdoSessionAdapterInterface;
+use Altair\Session\Contracts\PdoSessionHandlerInterface;
+use PDOException;
 
-class PdoSessionHandler implements SessionHandlerInterface
+class PdoSessionHandler implements PdoSessionHandlerInterface
 {
+    /**
+     * @var PdoSessionAdapterInterface
+     */
+    protected $adapter;
+    /**
+     * @var bool whether gc() has been called
+     */
+    protected $gcCalled = false;
+
+    /**
+     * PdoSessionHandler constructor.
+     *
+     * @param PdoSessionAdapterInterface $adapter
+     */
+    public function __construct(
+        PdoSessionAdapterInterface $adapter
+    ) {
+        $this->adapter = $adapter;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function open($savePath, $sessionName)
     {
-        // TODO: Implement open() method.
+        if (!$this->adapter->getIsConnected()) {
+            $this->adapter->connect();
+        }
+
+        return true;
     }
 
     public function close()
     {
-        // TODO: Implement close() method.
+        $gc = $this->gcCalled;
+        $this->gcCalled = false;
+
+        return $this->adapter->close($gc);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function read($sessionId)
     {
-        // TODO: Implement read() method.
+        try {
+            return $this->adapter->read($sessionId);
+        } catch (PDOException $e) {
+            $this->adapter->rollback();
+            throw $e;
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function write($sessionId, $data)
     {
-        // TODO: Implement write() method.
+        try {
+            return $this->adapter->write($sessionId, $data);
+        } catch (PDOException $e) {
+            $this->adapter->rollback();
+            throw $e;
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function destroy($sessionId)
     {
-        // TODO: Implement destroy() method.
+        try {
+            return $this->adapter->delete($sessionId);
+        } catch (PDOException $e) {
+            $this->adapter->rollback();
+            throw $e;
+        }
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function gc($maxlifetime)
     {
-        // TODO: Implement gc() method.
+        // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
+        // This way, pruning expired sessions does not block them from being started while the current session is used.
+        return $this->gcCalled = true;
+    }
+
+    /**
+     * Returns whether the session has expired or not.
+     *
+     * @return bool
+     */
+    public function getHasSessionExpired(): bool
+    {
+        return $this->adapter->getHasSessionExpired();
     }
 }
