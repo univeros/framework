@@ -77,6 +77,7 @@ class CsrfMiddleware implements MiddlewareInterface
             return false;
         }
         $token = base64_decode($data[$this->param]);
+
         return $this->sessionManager->getCsrfToken()->isValid($token);
     }
 
