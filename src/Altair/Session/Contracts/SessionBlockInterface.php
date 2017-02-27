@@ -3,7 +3,7 @@ namespace Altair\Session\Contracts;
 
 interface SessionBlockInterface
 {
-    const CSRF_KEY = 'altair:csrf:token';
+    const CSRF_KEY = 'altair:session:csrf';
     const FLASH_KEY = 'altair:session:flash';
 
     /**

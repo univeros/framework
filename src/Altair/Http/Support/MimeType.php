@@ -12,7 +12,7 @@ class MimeType
     const DEFAULT_MIME_TYPE = 'application/octet-stream';
 
     /**
-     * @var array
+     * @var array of mime types according to file extensions
      */
     protected $mimeTypes = [
         '3dml' => 'text/vnd.in3d.3dml',
@@ -996,7 +996,7 @@ class MimeType
         'zir' => 'application/vnd.zul',
         'zirz' => 'application/vnd.zul',
         'zmm' => 'application/vnd.handheld-entertainment+xml',
-        123 => 'application/vnd.lotus-1-2-3',
+        '123' => 'application/vnd.lotus-1-2-3',
     ];
 
     /**
@@ -1014,7 +1014,7 @@ class MimeType
      * @param string $file
      * @return string
      */
-    public function getFromFile(string $file): string
+    public function getFromFileExtension(string $file): string
     {
         $file = new SplFileInfo($file);
 

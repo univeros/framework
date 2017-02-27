@@ -18,6 +18,7 @@
         "relay/middleware": "^1.0",
         "univeros/cache": "*",
         "univeros/configuration": "*",
+        "univeros/session": "*",
         "univeros/structure": "*",
         "willdurand/negotiation": "^2.0",
         "zendframework/zend-diactoros": "^1.0.4"

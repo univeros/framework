@@ -33,7 +33,7 @@ class CsrfToken implements CsrfTokenInterface
      */
     public function isValid(string $value): bool
     {
-        return hash_equals($value, $this->getValue());
+        return hash_equals($this->getValue(), $value);
     }
 
     /**
