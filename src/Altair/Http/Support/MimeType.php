@@ -1003,7 +1003,7 @@ class MimeType
      * @param ResponseInterface $response
      * @return string
      */
-    public function getFromResponse(ResponseInterface $response): string
+    public function getFromResponseHeaderLine(ResponseInterface $response): string
     {
         $mime = strtolower($response->getHeaderLine('Content-Type'));
         $mime = explode(';', $mime, 2);

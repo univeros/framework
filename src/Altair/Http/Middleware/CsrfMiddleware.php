@@ -44,7 +44,7 @@ class CsrfMiddleware implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        if ((new MimeType())->getFromResponse($response) !== 'text/html') {
+        if ((new MimeType())->getFromResponseHeaderLine($response) !== 'text/html') {
             return $next($request, $response);
         }
 
