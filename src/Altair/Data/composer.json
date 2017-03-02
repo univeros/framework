@@ -1,6 +1,6 @@
 {
-    "name": "univeros/base",
-    "description": "The Altair Base package.",
+    "name": "univeros/data",
+    "description": "The Altair Data package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
@@ -12,7 +12,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Altair\\Base\\": ""
+            "Altair\\Data\\": ""
         }
     },
     "minimum-stability": "dev"

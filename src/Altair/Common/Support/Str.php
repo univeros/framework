@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Base\Support;
+namespace Altair\Common\Support;
 
 class Str
 {
