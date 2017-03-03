@@ -1,12 +1,10 @@
 <?php
 namespace Altair\Http\Contracts;
 
-
 use Psr\Http\Message\ServerRequestInterface;
 
 interface FormatNegotiatorInterface
 {
-
     const DEFAULT_FORMAT = 'html';
 
     /**

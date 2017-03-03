@@ -9,7 +9,6 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class SpamBlockerMiddleware implements MiddlewareInterface
 {
-
     protected $list;
 
     /**
@@ -19,7 +18,7 @@ class SpamBlockerMiddleware implements MiddlewareInterface
      */
     public function __construct(string $path)
     {
-        if(!is_file($path)) {
+        if (!is_file($path)) {
             throw new RuntimeException(sprintf('The spammers file "%s" does not exists.', $path));
         }
         $this->list = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);

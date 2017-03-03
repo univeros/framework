@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Http\Configuration;
 
-
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
 use Altair\Http\Contracts\FormatNegotiatorInterface;

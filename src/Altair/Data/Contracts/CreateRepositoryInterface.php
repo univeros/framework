@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Data\Contracts;
 
-
 interface CreateRepositoryInterface
 {
     /**

@@ -1,7 +1,6 @@
 <?php
 namespace Altair\Http\Support;
 
-
 use Altair\Http\Contracts\FormatNegotiatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\InvalidArgumentException;
