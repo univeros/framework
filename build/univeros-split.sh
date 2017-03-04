@@ -1,9 +1,10 @@
 git subsplit init git@github.com:univeros/framework.git
-git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/common.git
-git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/configuration.git
+git subsplit publish --heads="master" --no-tags src/Altair/Common:git@github.com:univeros/common.git
+git subsplit publish --heads="master" --no-tags src/Altair/Configuration:git@github.com:univeros/configuration.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/container.git
 git subsplit publish --heads="master" --no-tags src/Altair/Courier:git@github.com:univeros/courier.git
 git subsplit publish --heads="master" --no-tags src/Altair/Cookie:git@github.com:univeros/cookie.git
+git subsplit publish --heads="master" --no-tags src/Altair/Data:git@github.com:univeros/data.git
 git subsplit publish --heads="master" --no-tags src/Altair/Filesystem:git@github.com:univeros/filesystem.git
 git subsplit publish --heads="master" --no-tags src/Altair/Http:git@github.com:univeros/http.git
 git subsplit publish --heads="master" --no-tags src/Altair/Middleware:git@github.com:univeros/middleware.git
