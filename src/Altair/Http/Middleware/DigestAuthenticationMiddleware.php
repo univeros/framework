@@ -43,7 +43,6 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
             return $next($request, $response);
         }
 
-
         $this->checkAllowance($host, $scheme);
 
         $authorization = $this->parseAuthorizationHeader($request);

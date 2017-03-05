@@ -10,6 +10,7 @@ interface MiddlewareInterface
     const ATTRIBUTE_ACTION = 'altair:http:action';
     const ATTRIBUTE_FORMAT = 'altair:http:format';
     const ATTRIBUTE_USERNAME = 'altair:http:username';
+    const ATTRIBUTE_EXCEPTION = 'altair:http:exception';
     const ATTRIBUTE_CSRF_HEADER = 'X-XSRF-TOKEN'; // TODO: validate CSRF tokens from headers.
 
     /**
