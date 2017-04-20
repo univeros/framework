@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Container\Exception;
+namespace Altair\Common\Exception;
 
 class InvalidArgumentException extends \InvalidArgumentException
 {
