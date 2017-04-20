@@ -3,9 +3,9 @@ namespace Altair\Middleware\Resolver;
 
 use Altair\Container\Container;
 use Altair\Middleware\Contracts\MiddlewareInterface;
-use Altair\Middleware\Contracts\ResolverInterface;
+use Altair\Middleware\Contracts\MiddlewareResolverInterface;
 
-class MiddlewareResolver implements ResolverInterface
+class MiddlewareResolver implements MiddlewareResolverInterface
 {
     /**
      * @var Container

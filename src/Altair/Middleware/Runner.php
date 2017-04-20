@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Middleware;
 
 use Altair\Middleware\Contracts\MiddlewareInterface;
@@ -48,7 +49,7 @@ class Runner implements MiddlewareRunnerInterface
      */
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = $this->queue->pop();
+        $entry = !$this->queue->isEmpty() ? $this->queue->pop() : null;
         $middleware = $this->resolve($entry);
 
         return $middleware($payload, $this);
