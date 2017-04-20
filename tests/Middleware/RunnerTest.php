@@ -44,7 +44,7 @@ class RunnerTest extends TestCase
             ]
         );
 
-        $resolver = function($class) {
+        $resolver = function ($class) {
             return new $class();
         };
 
