@@ -33,5 +33,5 @@ interface EntityInterface extends ArrayableInterface, JsonSerializable, Serializ
      *
      * @return mixed
      */
-    public function fromData(array $data);
+    public function withData(array $data);
 }
