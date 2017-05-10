@@ -49,8 +49,8 @@
         }
     },
     "replace": {
-        "univeros/base": "self.version",
         "univeros/cache": "self.version",
+        "univeros/common": "self.version",
         "univeros/configuration": "self.version",
         "univeros/container": "self.version",
         "univeros/cookie": "self.version",
@@ -58,10 +58,13 @@
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",
         "univeros/http": "self.version",
+        "univeros/middleware": "self.version",
         "univeros/queue": "self.version",
+        "univeros/sanitation": "self.version",
         "univeros/security": "self.version",
         "univeros/session": "self.version",
-        "univeros/structure": "self.version"
+        "univeros/structure": "self.version",
+        "univeros/validation": "self.version"
     },
     "autoload-dev": {
         "psr-4": {

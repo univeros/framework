@@ -1,4 +1,5 @@
 git subsplit init git@github.com:univeros/framework.git
+git subsplit publish --heads="master" --no-tags src/Altair/Common:git@github.com:univeros/cache.git
 git subsplit publish --heads="master" --no-tags src/Altair/Common:git@github.com:univeros/common.git
 git subsplit publish --heads="master" --no-tags src/Altair/Configuration:git@github.com:univeros/configuration.git
 git subsplit publish --heads="master" --no-tags src/Altair/Container:git@github.com:univeros/container.git
