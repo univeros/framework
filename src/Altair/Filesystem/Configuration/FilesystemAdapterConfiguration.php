@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Filesystem\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
@@ -16,15 +17,16 @@ class FilesystemAdapterConfiguration implements ConfigurationInterface
 
     public function apply(Container $container)
     {
+        // AdapterInterface configuration must be included *always*
+        // before this configuration class. Other types of configuration
+        // are allowed. Use this as an example to create your very own.
         if ($this->env->get('FS_USE_CACHE')) {
+            // @see http://flysystem.thephpleague.com/caching/
             $container
                 ->delegate(
                     FilesystemInterface::class,
                     function () use ($container) {
-                        // AdapterInterface configuration must be included *always*
-                        // before this configuration class. Other types of configuration
-                        // are allowed. Use this as an example to create your very own.
-                        // @see http://flysystem.thephpleague.com/caching/
+
                         $adapter = $container->make(AdapterInterface::class);
                         $cachedAdapter = new CachedAdapter($adapter, new Memory());
 

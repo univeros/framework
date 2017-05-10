@@ -1,12 +1,13 @@
 <?php
+
 namespace Altair\Filesystem\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use Dropbox\Client;
 use League\Flysystem\AdapterInterface;
-use League\Flysystem\Dropbox\DropboxAdapter;
+use Spatie\Dropbox\Client;
+use Spatie\FlysystemDropbox\DropboxAdapter;
 
 class DropboxAdapterConfiguration implements ConfigurationInterface
 {
@@ -15,13 +16,9 @@ class DropboxAdapterConfiguration implements ConfigurationInterface
     public function apply(Container $container)
     {
         $factory = function () {
-            $client = new Client(
-                $this->env->get('FS_DROPBOX_ACCESS_TOKEN'),
-                $this->env->get('FS_DROPBOX_CLIENT_IDENTIFIER'),
-                $this->env->get('FS_DROPBOX_USER_LOCALE')
-            );
+            $client = new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN'));
 
-            return new DropboxAdapter($client, $this->env->get('FS_DROPBOX_PREFIX'));
+            return new DropboxAdapter($client, $this->env->get('FS_DROPBOX_PREFIX', ''));
         };
 
         $container
