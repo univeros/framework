@@ -1,7 +1,9 @@
 <?php
+
 namespace Altair\Happen;
 
 use Altair\Happen\Exception\InvalidArgumentException;
+use Carbon\Carbon;
 
 class Event implements EventInterface
 {
@@ -17,6 +19,10 @@ class Event implements EventInterface
      * @var array
      */
     protected $arguments;
+    /**
+     * @var int
+     */
+    protected $occurredOn;
 
     /**
      * Event constructor.
@@ -27,8 +33,18 @@ class Event implements EventInterface
     public function __construct(string $name, array $arguments = null)
     {
         $this->name = $name;
-        $this->arguments = $arguments?? [];
+        $this->arguments = $arguments ?? [];
+        $this->occurredOn = Carbon::today('UTC')->getTimestamp();
     }
+
+    /**
+     * @inheritdoc
+     */
+    public function getOccurredOn(): int
+    {
+        return $this->occurredOn;
+    }
+
 
     /**
      * @inheritdoc

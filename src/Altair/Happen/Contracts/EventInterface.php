@@ -18,6 +18,13 @@ interface EventInterface
     public function isPropagationStopped(): bool;
 
     /**
+     * Returns the timestamp when the event has occured.
+     *
+     * @return int
+     */
+    public function getOccurredOn(): int;
+
+    /**
      * Get the event name.
      *
      * @return string
