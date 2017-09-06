@@ -74,6 +74,5 @@ class EntityTest extends TestCase
         $this->assertEquals(43, $entity->id);
         $this->assertEquals('Moon', $entity->name);
         $this->assertNull($entity->created_at);
-
     }
 }
