@@ -25,7 +25,7 @@ class CookieCollection extends Map
     {
         $pair = $this->lookupKey($cookie->getName());
 
-        if ($pair) {
+        if ($pair instanceof Pair) {
             $pair->value = $cookie;
         } else {
             $this->adjustCapacity();

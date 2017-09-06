@@ -7,7 +7,6 @@ use Altair\Data\Exception\InvalidArgumentException;
 
 trait AttributesAwareTrait
 {
-
     /**
      * Checks whether a property exists in the instance.
      *

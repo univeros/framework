@@ -45,7 +45,6 @@ class Event implements EventInterface
         return $this->occurredOn;
     }
 
-
     /**
      * @inheritdoc
      */

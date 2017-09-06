@@ -26,7 +26,6 @@ class FilesystemAdapterConfiguration implements ConfigurationInterface
                 ->delegate(
                     FilesystemInterface::class,
                     function () use ($container) {
-
                         $adapter = $container->make(AdapterInterface::class);
                         $cachedAdapter = new CachedAdapter($adapter, new Memory());
 

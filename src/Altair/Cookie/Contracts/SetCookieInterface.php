@@ -1,9 +1,23 @@
 <?php
 namespace Altair\Cookie\Contracts;
 
-interface SetCookieInterface extends CookieInterface
+interface SetCookieInterface
 {
     const HEADER = 'Set-Cookie';
+
+    /**
+     * Returns the name of the cookie
+     *
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * Returns the value of the cookie
+     *
+     * @return null|string
+     */
+    public function getValue(): ?string;
 
     /**
      * @return int

@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Cookie;
 
 use Altair\Cookie\Contracts\SetCookieInterface;
@@ -100,6 +101,19 @@ class SetCookie implements SetCookieInterface
     public function getHttpOnly(): bool
     {
         return $this->httpOnly;
+    }
+
+    /**
+     * @param null $value
+     *
+     * @return SetCookie
+     */
+    public function withValue($value = null)
+    {
+        $clone = clone($this);
+        $clone->value = $value;
+
+        return $clone;
     }
 
     /**

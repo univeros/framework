@@ -4,7 +4,6 @@ namespace Altair\Data\Traits;
 
 use Altair\Data\Exception\RuntimeException;
 
-
 trait ImmutableAttributesAwareTrait
 {
     use AttributesAwareTrait;

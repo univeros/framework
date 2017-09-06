@@ -25,7 +25,7 @@ class SetCookieCollection extends Map
     {
         $pair = $this->lookupKey($cookie->getName());
 
-        if ($pair) {
+        if ($pair instanceof Pair) {
             $pair->value = $cookie;
         } else {
             $this->adjustCapacity();
@@ -42,7 +42,7 @@ class SetCookieCollection extends Map
     {
         $pair = $this->lookupKey($key);
 
-        if ($pair) {
+        if ($pair instanceof Pair) {
             $pair->value = new SetCookie($key, $value);
         } else {
             $this->adjustCapacity();
@@ -159,7 +159,7 @@ class SetCookieCollection extends Map
     {
         $array = [];
         foreach ($pairs as $pair) {
-            $array[$pair->value->getName()] = $pair->value->getValue();
+            $array[$pair->value->getName()] = $pair->value;
         }
 
         return $array;
