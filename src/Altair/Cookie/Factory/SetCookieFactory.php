@@ -50,7 +50,7 @@ class SetCookieFactory
     {
         $cookieStr = new CookieStr();
         $attributes = $cookieStr->split($string);
-        list($name, $value) = $cookieStr->splitPair(array_shift($attributes));
+        [$name, $value] = $cookieStr->splitPair(array_shift($attributes));
         $cookie = new SetCookie($name, $value);
 
         while ($attribute = array_shift($attributes)) {

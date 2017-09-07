@@ -59,7 +59,7 @@ class SetCookieCollection extends Map
     {
         foreach ($values as $key => $value) {
             if ($value instanceof SetCookie) {
-                $this->put($value->getName(), $value->getValue());
+                $this->putSetCookie($value);
             } else {
                 $this->put($key, $value);
             }
