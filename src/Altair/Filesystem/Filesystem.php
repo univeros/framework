@@ -3,12 +3,15 @@ namespace Altair\Filesystem;
 
 use Altair\Filesystem\Exception\FileNotFoundException;
 use Altair\Filesystem\Exception\InvalidArgumentException;
-use Altair\Filesystem\Exception\UnreadableFileException;
 use DirectoryIterator;
 use ErrorException;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 
+/**
+ * Thanks Laravel
+ */
 class Filesystem
 {
     /**
@@ -45,7 +48,7 @@ class Filesystem
             try {
                 if (flock($handle, LOCK_SH)) {
                     clearstatcache(true, $path);
-                    $contents = fread($handle, $this->size($path) ?: 1);
+                    $contents = fread($handle, $this->getFileSize($path) ?: 1);
                     flock($handle, LOCK_UN);
                 }
             } finally {
@@ -105,6 +108,23 @@ class Filesystem
     }
 
     /**
+     * Gets or sets UNIX mode of a file or directory.
+     *
+     * @param  string $path
+     * @param  int $mode
+     *
+     * @return mixed
+     */
+    public function chmod($path, $mode = null)
+    {
+        if ($mode) {
+            return chmod($path, $mode);
+        }
+
+        return substr(sprintf('%o', fileperms($path)), -4);
+    }
+
+    /**
      * Determine if a file or directory exists.
      *
      * @param  string $path
@@ -114,6 +134,19 @@ class Filesystem
     public function exists(string $path): bool
     {
         return file_exists($path);
+    }
+
+    /**
+     * Move a file to a new location.
+     *
+     * @param  string $path
+     * @param  string $target
+     *
+     * @return bool
+     */
+    public function move($path, $target)
+    {
+        return rename($path, $target);
     }
 
     /**
@@ -185,6 +218,37 @@ class Filesystem
     }
 
     /**
+     * Copy a file to a new location.
+     *
+     * @param  string $path
+     * @param  string $target
+     *
+     * @return bool
+     */
+    public function copy($path, $target)
+    {
+        return copy($path, $target);
+    }
+
+    /**
+     * Create a hard link to the target file or directory.
+     *
+     * @param  string $target
+     * @param  string $link
+     *
+     * @return bool
+     */
+    public function link($target, $link)
+    {
+        if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
+            return symlink($target, $link);
+        }
+        $mode = $this->isDirectory($target) ? 'J' : 'H';
+        exec("mklink /{$mode} \"{$link}\" \"{$target}\"");
+        return true;
+    }
+
+    /**
      * Create a directory.
      *
      * @param  string $path
@@ -204,45 +268,123 @@ class Filesystem
     }
 
     /**
+     * Move a directory.
+     *
+     * @param  string $from
+     * @param  string $to
+     * @param  bool $overwrite
+     *
+     * @return bool
+     */
+    public function moveDirectory($from, $to, $overwrite = false)
+    {
+        if ($overwrite && $this->isDirectory($to)) {
+            if (!$this->deleteDirectory($to)) {
+                return false;
+            }
+        }
+
+        return @rename($from, $to) === true;
+    }
+
+    /**
+     * Copy a directory from one location to another.
+     *
+     * @param  string $directory
+     * @param  string $destination
+     * @param  int $options
+     *
+     * @return bool
+     */
+    public function copyDirectory($directory, $destination, $options = null)
+    {
+        if (!$this->isDirectory($directory)) {
+            return false;
+        }
+        $options = $options ?: FilesystemIterator::SKIP_DOTS;
+        // If the destination directory does not actually exist, we will go ahead and
+        // create it recursively, which just gets the destination prepared to copy
+        // the files over. Once we make the directory we'll proceed the copying.
+        if (!$this->isDirectory($destination)) {
+            $this->makeDirectory($destination, 0777, true);
+        }
+        $items = new FilesystemIterator($directory, $options);
+        foreach ($items as $item) {
+            // As we spin through items, we will check to see if the current file is actually
+            // a directory or a file. When it is actually a directory we will need to call
+            // back into this function recursively to keep copying these nested folders.
+            $target = $destination . '/' . $item->getBasename();
+            if ($item->isDir()) {
+                $path = $item->getPathname();
+                if (!$this->copyDirectory($path, $target, $options)) {
+                    return false;
+                }
+            }
+            // If the current items is just a regular file, we will just copy this to the new
+            // location and keep looping. If for some reason the copy fails we'll bail out
+            // and return false, so the developer is aware that the copy process failed.
+            else {
+                if (!$this->copy($item->getPathname(), $target)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Recursively delete a directory.
+     *
+     * The directory itself may be optionally preserved.
+     *
+     * @param  string $directory
+     * @param  bool $preserve
+     *
+     * @return bool
+     */
+    public function deleteDirectory($directory, $preserve = false)
+    {
+        if (!$this->isDirectory($directory)) {
+            return false;
+        }
+        $items = new FilesystemIterator($directory);
+        foreach ($items as $item) {
+            // If the item is a directory, we can just recurse into the function and
+            // delete that sub-directory otherwise we'll just delete the file and
+            // keep iterating through each file until the directory is cleaned.
+            if ($item->isDir() && !$item->isLink()) {
+                $this->deleteDirectory($item->getPathname());
+            }
+            // If the item is just a file, we can go ahead and delete it since we're
+            // just looping through and waxing all of the files in this directory
+            // and calling directories recursively, so we delete the real path.
+            else {
+                $this->delete($item->getPathname());
+            }
+        }
+        if (!$preserve) {
+            @rmdir($directory);
+        }
+
+        return true;
+    }
+
+    /**
      * Clears the directory by deleting its contents recursively.
      *
      * @param string $path
      *
      * @return bool
-     * @throws UnreadableFileException
+     * @throws InvalidArgumentException
      */
     public function clearDirectory(string $path): bool
     {
         if (!$this->isDirectory($path)) {
             throw new InvalidArgumentException(sprintf('"%s" is not a directory.', $path));
         }
-        $contents = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS, RecursiveIteratorIterator::SELF_FIRST)
-        );
 
-        /** @var \SplFileInfo $file */
-        foreach ($contents as $file) {
-            if (!$file->isReadable()) {
-                throw new UnreadableFileException(
-                    sprintf(
-                        'Unreadable file encountered: "%s"',
-                        $file->getRealPath()
-                    )
-                );
-            }
-            switch ($file->getType()) {
-                case 'dir':
-                    rmdir($file->getRealPath());
-                    break;
-                case 'link':
-                    unlink($file->getPathname());
-                    break;
-                default:
-                    unlink($file->getRealPath());
-            }
-        }
-
-        return true;
+        return $this->deleteDirectory($path, true);
     }
 
     /**
@@ -255,6 +397,18 @@ class Filesystem
     public function getFileName(string $path): string
     {
         return pathinfo($path, PATHINFO_FILENAME);
+    }
+
+    /**
+     * Get the MD5 hash of the file at the given path.
+     *
+     * @param  string $path
+     *
+     * @return string
+     */
+    public function getFileHash($path)
+    {
+        return md5_file($path);
     }
 
     /**
@@ -282,13 +436,15 @@ class Filesystem
     }
 
     /**
-     * Get the file type of a given file.
+     * Get the type of a given path. Possible values are fifo, char, dir, block, link, file, socket and unknown.
      *
      * @param  string $path
      *
      * @return string
+     *
+     * @see http://php.net/manual/en/function.filetype.php
      */
-    public function getFileType(string $path): string
+    public function getType(string $path): string
     {
         return filetype($path);
     }
@@ -433,9 +589,9 @@ class Filesystem
      * @param string $pattern
      * @param boolean $ignoreDotFiles
      *
-     * @return array
+     * @return \SplFileInfo[]
      */
-    public function listAllFiles($directory, $pattern = '/^.*\.*$/i', $ignoreDotFiles = true)
+    public function listAllFiles($directory, $pattern = '/^.*\.*$/i', $ignoreDotFiles = true): array
     {
         if (!$this->isDirectory($directory)) {
             throw new InvalidArgumentException("The directory argument must be a directory: $directory");
@@ -447,9 +603,9 @@ class Filesystem
             if ($ignoreDotFiles && $file->getBasename()[0] === '.') {
                 continue;
             }
+
             if ($file->isFile() && preg_match($pattern, $file->getFilename())) {
-                $name = $this->getFileName($file->getBasename());
-                $files[$name] = $file->getPathname();
+                $files[] = $file;
             }
         }
 
@@ -464,7 +620,7 @@ class Filesystem
      *
      * @return array
      */
-    public function listDirectories($directory, $ignoreDotDirectories = true)
+    public function listDirectories($directory, $ignoreDotDirectories = true): array
     {
         if (!$this->isDirectory($directory)) {
             throw new InvalidArgumentException(sprintf('"%s" is not a directory.', $directory));

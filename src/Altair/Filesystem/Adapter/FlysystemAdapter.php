@@ -2,23 +2,27 @@
 namespace Altair\Filesystem\Adapter;
 
 use Altair\Filesystem\Contracts\FilesystemAdapterInterface;
+use League\Flysystem\AdapterInterface;
+use League\Flysystem\Config;
 use League\Flysystem\FilesystemInterface;
+use League\Flysystem\Handler;
+use League\Flysystem\PluginInterface;
 
 /**
  * Filesystem
  *
  * Adopted adapter functionality from Flysystem
  *
- * @method \League\Flysystem\FilesystemInterface addPlugin(\League\Flysystem\PluginInterface $plugin)
+ * @method FilesystemInterface addPlugin(PluginInterface $plugin)
  * @method void assertAbsent($path)
  * @method void assertPresent($path)
  * @method boolean copy($path, $newpath)
  * @method boolean createDir($dirname, array $config = [])
  * @method boolean delete($path)
  * @method boolean deleteDir($dirname)
- * @method \League\Flysystem\Handler get($path, \League\Flysystem\Handler $handler = null)
- * @method \League\Flysystem\AdapterInterface getAdapter()
- * @method \League\Flysystem\Config getConfig()
+ * @method Handler get($path, Handler $handler = null)
+ * @method AdapterInterface getAdapter()
+ * @method Config getConfig()
  * @method array|false getMetadata($path)
  * @method string|false getMimetype($path)
  * @method integer|false getSize($path)
