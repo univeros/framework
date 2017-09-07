@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Cookie\Collection;
 
 use Altair\Cookie\Contracts\SetCookieInterface;
@@ -129,6 +130,7 @@ class SetCookieCollection extends Map
         foreach ($this->toArray() as $cookie) {
             $response = $response->withAddedHeader(SetCookieInterface::HEADER, (string)$cookie);
         }
+
         return $response;
     }
 
@@ -158,8 +160,9 @@ class SetCookieCollection extends Map
     protected function pairsToArray($pairs): array
     {
         $array = [];
+        /** @var Pair $pair */
         foreach ($pairs as $pair) {
-            $array[$pair->value->getName()] = $pair->value;
+            $array[$pair->key] = (string)$pair->value;
         }
 
         return $array;

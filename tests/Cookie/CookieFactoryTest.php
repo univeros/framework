@@ -60,7 +60,7 @@ class CookieFactoryTest extends TestCase
      *
      * @dataProvider  provideCookieStringAndExpectedCookiesData
      */
-    public function testCreateCollectionFromResponse($cookieString, array $expectedCookies)
+    public function testCreateCollectionFromRequest($cookieString, array $expectedCookies)
     {
         $request = $this->prophesize(RequestInterface::class);
         $request->getHeaderLine(Cookie::HEADER)->willReturn($cookieString);
