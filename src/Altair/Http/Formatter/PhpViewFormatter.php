@@ -1,5 +1,4 @@
 <?php
-
 namespace Altair\Http\Formatter;
 
 use Altair\Http\Configuration\PhpViewConfiguration;
