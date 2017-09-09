@@ -18,7 +18,7 @@ class EntityTest extends TestCase
      */
     protected $entity;
 
-    public function setUp()
+    protected function setUp()
     {
         $this->data = [
             'id' => 42,

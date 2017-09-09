@@ -100,7 +100,7 @@ class Filesystem
      *
      * @param  string $file
      *
-     * @return mixed
+     * @return void
      */
     public function requireOnce(string $file)
     {
@@ -144,7 +144,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function move($path, $target)
+    public function move($path, $target): bool
     {
         return rename($path, $target);
     }
@@ -186,7 +186,7 @@ class Filesystem
      * @param  string $path
      * @param  string $data
      *
-     * @return int
+     * @return int|bool
      */
     public function append(string $path, string $data)
     {
@@ -225,7 +225,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function copy($path, $target)
+    public function copy($path, $target): bool
     {
         return copy($path, $target);
     }
@@ -238,7 +238,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function link($target, $link)
+    public function link($target, $link): bool
     {
         if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
             return symlink($target, $link);
@@ -276,7 +276,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function moveDirectory($from, $to, $overwrite = false)
+    public function moveDirectory($from, $to, $overwrite = false): bool
     {
         if ($overwrite && $this->isDirectory($to)) {
             if (!$this->deleteDirectory($to)) {
@@ -296,7 +296,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function copyDirectory($directory, $destination, $options = null)
+    public function copyDirectory($directory, $destination, $options = null): bool
     {
         if (!$this->isDirectory($directory)) {
             return false;
@@ -343,7 +343,7 @@ class Filesystem
      *
      * @return bool
      */
-    public function deleteDirectory($directory, $preserve = false)
+    public function deleteDirectory($directory, $preserve = false): bool
     {
         if (!$this->isDirectory($directory)) {
             return false;
@@ -406,7 +406,7 @@ class Filesystem
      *
      * @return string
      */
-    public function getFileHash($path)
+    public function getFileHash($path): string
     {
         return md5_file($path);
     }

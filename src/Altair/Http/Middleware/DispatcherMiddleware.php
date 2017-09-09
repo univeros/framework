@@ -67,7 +67,8 @@ class DispatcherMiddleware implements MiddlewareInterface
                     "Cannot access resource '%s' using method '%s'",
                     $path,
                     $method
-                ), 405
+                ),
+                405
             );
         }
         throw new HttpNotFoundException($path);

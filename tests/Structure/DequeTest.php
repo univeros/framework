@@ -78,12 +78,12 @@ class DequeTest extends AbstractCollectionTest
         $instance->unshift('z');
         $instance->unshift('y');
         $instance->unshift('x');    // [a, b, c, _, _, x, y, z]
-                                    //           T     H
+        //           T     H
 
         $instance->push('d');
         $instance->push('e');       // [a, b, c, d, e, x, y, z]
-                                    //                 T
-                                    //                 H
+        //                 T
+        //                 H
 
         $instance->push('f');
 
@@ -98,10 +98,10 @@ class DequeTest extends AbstractCollectionTest
 
         $instance->push('c', 'd');
         $instance->unshift('a', 'b');       // [c, d, _, _, _, _, a, b]
-                                            //        T           H
-                                            //
-                                            // Temporary space: 4
-                                            // Wrapped values:  2
+        //        T           H
+        //
+        // Temporary space: 4
+        // Wrapped values:  2
 
         // if the number of free slots >= number of wrapped values
 
@@ -124,10 +124,10 @@ class DequeTest extends AbstractCollectionTest
 
         $instance->push('c', 'd', 'e', 'f');
         $instance->unshift('a', 'b');       // [c, d, e, f, _, _, a, b]
-                                            //              T     H
-                                            //
-                                            // Temporary space: 2
-                                            // Wrapped values:  2
+        //              T     H
+        //
+        // Temporary space: 2
+        // Wrapped values:  2
 
         $expected = ['f', 'e', 'd', 'c', 'b', 'a'];
         $this->assertToArray($expected, $instance->sort(function ($a, $b) {
@@ -141,10 +141,10 @@ class DequeTest extends AbstractCollectionTest
 
         $instance->push('c', 'd', 'e', 'f', 'g');
         $instance->unshift('a', 'b');       // [c, d, e, f, g, _, a, b]
-                                            //                 T  H
-                                            //
-                                            // Temporary space: 1
-                                            // Wrapped values:  2
+        //                 T  H
+        //
+        // Temporary space: 1
+        // Wrapped values:  2
 
         $expected = ['g', 'f', 'e', 'd', 'c', 'b', 'a'];
         $this->assertToArray($expected, $instance->sort(function ($a, $b) {

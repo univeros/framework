@@ -78,8 +78,10 @@ class Inflector
         if ($separator === '_') {
             return trim(strtolower(preg_replace($regex, '_\0', $name)), '_');
         }
-        return trim(strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
-                $separator);
+        return trim(
+            strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
+                $separator
+        );
     }
 
     /**

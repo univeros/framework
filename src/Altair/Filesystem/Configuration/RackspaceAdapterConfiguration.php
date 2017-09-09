@@ -26,7 +26,8 @@ class RackspaceAdapterConfiguration implements ConfigurationInterface
             $rackSpace = new Rackspace($endpoint, ['username' => $username, 'apiKey' => $apiKey]);
 
             return new RackspaceAdapter(
-                $rackSpace->objectStoreService('cloudFiles', $region)->getContainer($container), $prefix
+                $rackSpace->objectStoreService('cloudFiles', $region)->getContainer($container),
+                $prefix
             );
         };
 

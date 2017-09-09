@@ -5,9 +5,10 @@ trait reverse
 {
     public function reversedDataProvider()
     {
-        return array_map(function ($a) {
-            return [$a[0], array_reverse($a[1])];
-        },
+        return array_map(
+            function ($a) {
+                return [$a[0], array_reverse($a[1])];
+            },
             $this->basicDataProvider()
         );
     }
