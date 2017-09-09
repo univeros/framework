@@ -194,7 +194,7 @@ trait PdoSessionAdapterAwareTrait
         $maxlifetime = (int)ini_get('session.gc_maxlifetime');
 
         $mergeQuery = $this->getMergePdoStatement($sessionId, $data);
-        if (null !== $mergeQuery) {
+        if (null !== $mergeQuery && $mergeQuery instanceof PDOStatement) {
             $mergeQuery->execute();
 
             return true;
@@ -204,7 +204,7 @@ trait PdoSessionAdapterAwareTrait
             ->getConnection()
             ->prepare(
                 sprintf(
-                    'UDATE %s SET content=:content, session_lifetime=:lifetime, session_time=:session_time' .
+                    'UPDATE %s SET content=:content, session_lifetime=:lifetime, session_time=:session_time ' .
                     'WHERE id=:id',
                     $this->table
                 )
@@ -233,7 +233,7 @@ trait PdoSessionAdapterAwareTrait
                         )
                     );
                 $insertQuery->bindParam(':id', $sessionId, PDO::PARAM_STR);
-                $insertQuery->bindParam(':data', $data, PDO::PARAM_LOB);
+                $insertQuery->bindParam(':content', $data, PDO::PARAM_LOB);
                 $insertQuery->bindParam(':lifetime', $maxlifetime, PDO::PARAM_INT);
                 $insertQuery->bindValue(':session_time', time(), PDO::PARAM_INT);
                 $insertQuery->execute();
@@ -333,7 +333,7 @@ trait PdoSessionAdapterAwareTrait
         $this->executeUnlockStatements();
 
         if ($gcCalled) {
-            $sql = sprintf('DELETE FROM %s WHERE lifetime + created_at < :session_time', $this->table);
+            $sql = sprintf('DELETE FROM %s WHERE (session_lifetime + session_time) < :session_time', $this->table);
             $query = $this->getConnection()->prepare($sql);
             $query->bindValue(':session_time', time(), PDO::PARAM_INT);
             $query->execute();
