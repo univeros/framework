@@ -1,25 +1,27 @@
 <?php
+
 namespace Altair\Session\Handler;
 
-use MongoBinData;
-use MongoCollection;
-use MongoDate;
+use MongoDB\BSON\Binary;
+use MongoDB\BSON\UTCDateTime;
+use MongoDB\Collection;
+use MongoDB\Driver\Exception\Exception as MongoDBException;
 use SessionHandlerInterface;
 
 class MongoSessionHandler implements SessionHandlerInterface
 {
     /**
      * Session collection
-     * @var MongoCollection
+     * @var Collection
      */
     protected $collection;
 
     /**
      * Class constructor
      *
-     * @param MongoCollection $collection
+     * @param Collection $collection
      */
-    public function __construct(MongoCollection $collection)
+    public function __construct(Collection $collection)
     {
         $this->collection = $collection;
     }
@@ -45,11 +47,13 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     public function read($sessionId)
     {
-        $data = $this->collection->findOne(['_id' => $sessionId]);
+        $data = $this->collection->findOne(
+            ['_id' => $sessionId, 'session_lifetime' => ['$gte' => $this->createUTCDateTime()]]
+        );
 
         return null === $data || !isset($data['content'])
             ? ''
-            : $data['content']->bin;
+            : $data['content']->getData();
     }
 
     /**
@@ -57,21 +61,30 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     public function write($sessionId, $data)
     {
-        $this->collection->update(
-            [
-                '_id' => $sessionId
-            ],
-            [
-                '$set' => [
-                    'content' => new MongoBinData($data, MongoBinData::BYTE_ARRAY),
-                    'session_time' => new MongoDate(),
+        try {
+            $expires = $this->createUTCDateTime(time() + (int) ini_get('session.gc_maxlifetime'));
+
+            $this->collection->updateOne(
+                [
+                    '_id' => $sessionId
+                ],
+                [
+                    '$set' => [
+                        'content' => new Binary($data, Binary::TYPE_OLD_BINARY),
+                        'session_lifetime' => $expires,
+                        'session_time' => $this->createUTCDateTime()
+                    ]
+                ],
+                [
+                    'upsert' => true,
+                    'multiple' => false
                 ]
-            ],
-            [
-                'upsert' => true,
-                'multiple' => false
-            ]
-        );
+            );
+        } catch (MongoDBException $e) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -79,7 +92,11 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     public function destroy($sessionId)
     {
-        $this->collection->remove(['_id' => $sessionId]);
+        try {
+            $this->collection->deleteOne(['_id' => $sessionId]);
+        } catch (MongoDBException  $e) {
+            return false;
+        }
 
         return true;
     }
@@ -89,13 +106,30 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     public function gc($maxlifetime)
     {
-        $time = new MongoDate(time() - $maxlifetime);
-        $this->collection->remove(
-            [
-                'session_time' => ['$l' => $time]
-            ]
-        );
+        try {
+            $this->collection->deleteMany(
+                [
+                    'session_lifetime' => ['$lt' => $this->createUTCDateTime()]
+                ]
+            );
+        } catch (MongoDBException $e) {
+            return false;
+        }
 
         return true;
+    }
+
+    /**
+     * @param null|int $seconds
+     *
+     * @return UTCDateTime
+     */
+    private function createUTCDateTime($seconds = null)
+    {
+        if (null === $seconds) {
+            $seconds = time();
+        }
+
+        return new UTCDateTime($seconds * 1000);
     }
 }
