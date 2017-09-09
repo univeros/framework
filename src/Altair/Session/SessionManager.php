@@ -269,6 +269,7 @@ class SessionManager implements SessionManagerInterface
         if ($this->csrfToken === null) {
             $sessionBlock = $this->getSessionBlock(SessionBlockInterface::CSRF_KEY);
             $this->csrfToken = new CsrfToken($sessionBlock, new Salt());
+            $this->csrfToken->generateValue();
         }
 
         return $this->csrfToken;

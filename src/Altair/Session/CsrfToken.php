@@ -51,5 +51,7 @@ class CsrfToken implements CsrfTokenInterface
     {
         $value = hash('sha512', $this->salt->generate());
         $this->sessionBlock->set('value', $value);
+
+        return $this->getValue();
     }
 }
