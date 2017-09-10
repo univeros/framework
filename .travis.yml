@@ -15,6 +15,20 @@ cache:
     - vendor
     - $HOME/.composer/cache
 
+before_install:
+  - |
+    # php.ini configuration
+    INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    phpenv config-rm xdebug.ini || echo "xdebug not available"
+    echo date.timezone = Europe/Madrid >> $INI
+    echo memory_limit = -1 >> $INI
+    echo session.gc_probability = 0 >> $INI
+    echo opcache.enable_cli = 1 >> $INI
+    echo apc.enable_cli = 1 >> $INI
+    echo extension = redis.so >> $INI
+    echo extension = memcached.so >> $INI
+    echo extension = mongodb.so >> $INI
+
 install:
   - |
     if [[ $TRAVIS_PHP_VERSION != '7.1' && $TRAVIS_PHP_VERSION != hhv* ]]; then
