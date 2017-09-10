@@ -1,17 +1,17 @@
 <?php
-namespace Altair\Cache\Adapter;
+namespace Altair\Cache\Storage;
 
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\CacheException;
 use Memcached;
 
-class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
+class MemcachedCacheItemStorage implements CacheItemStorageInterface
 {
     protected $client;
     protected $maxIdLength = 250;
 
     /**
-     * MemcachedCacheItemPoolAdapter constructor.
+     * MemcachedCacheItemPoolStorage constructor.
      *
      * @param Memcached $memcached
      */
@@ -22,7 +22,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
         }
         $opt = $memcached->getOption(Memcached::OPT_SERIALIZER);
         if (Memcached::SERIALIZER_PHP !== $opt && Memcached::SERIALIZER_IGBINARY !== $opt) {
-            throw new CacheException('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
+            throw new CacheException('MemcachedStorage: "serializer" option must be "php" or "igbinary".');
         }
         $this->maxIdLength -= strlen($memcached->getOption(Memcached::OPT_PREFIX_KEY));
 
@@ -105,7 +105,7 @@ class MemcachedCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
 
         throw new CacheException(
             sprintf(
-                'MemcachedAdapter client error: %s.',
+                'MemcachedStorage client error: %s.',
                 strtolower($this->client->getResultMessage())
             )
         );

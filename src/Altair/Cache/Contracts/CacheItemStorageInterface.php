@@ -1,7 +1,7 @@
 <?php
 namespace Altair\Cache\Contracts;
 
-interface CacheItemPoolAdapterInterface
+interface CacheItemStorageInterface
 {
     /**
      * Returns the maximum length of an id that an adapter supports. If null, the key can be of any size.

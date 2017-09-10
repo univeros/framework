@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Cache\Support;
 
 use DomainException;

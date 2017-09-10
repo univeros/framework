@@ -1,14 +1,14 @@
 <?php
 namespace Altair\Cache\Configuration;
 
-use Altair\Cache\Adapter\RedisCacheItemPoolAdapter;
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
+use Altair\Cache\Storage\PredisCacheItemStorage;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Predis\Client;
 
-class RedisCacheItemPoolConfiguration implements ConfigurationInterface
+class RedisCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
@@ -22,11 +22,11 @@ class RedisCacheItemPoolConfiguration implements ConfigurationInterface
                 ]
             );
 
-            return new RedisCacheItemPoolAdapter($client);
+            return new PredisCacheItemStorage($client);
         };
 
         $container
-            ->delegate(RedisCacheItemPoolAdapter::class, $factory)
-            ->alias(CacheItemPoolAdapterInterface::class, RedisCacheItemPoolAdapter::class);
+            ->delegate(PredisCacheItemStorage::class, $factory)
+            ->alias(CacheItemStorageInterface::class, PredisCacheItemStorage::class);
     }
 }

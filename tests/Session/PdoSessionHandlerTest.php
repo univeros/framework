@@ -68,8 +68,6 @@ class PdoSessionHandlerTest extends TestCase
 
         $this->assertSame('', $data, 'Session already considered garbage, so not returning data even if it is not pruned yet');
         $this->assertEquals(1, $this->adapter->getConnection()->query('SELECT COUNT(*) FROM sessions')->fetchColumn(), 'Expired session is pruned');
-
-        var_dump($handler->read('gc_id'));
     }
 
     public function testSessionDestroy()

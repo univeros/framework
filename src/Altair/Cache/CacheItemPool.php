@@ -1,13 +1,12 @@
 <?php
+
 namespace Altair\Cache;
 
-use Altair\Cache\Adapter\RedisCacheItemPoolAdapter;
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
-use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
+use Altair\Cache\Storage\PredisCacheItemStorage;
 use Altair\Cache\Validator\CacheItemKeyValidator;
-use Altair\Cache\Validator\CacheItemTagValidator;
 use Closure;
 use Exception;
 use Psr\Cache\CacheItemInterface;
@@ -19,7 +18,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $adapter;
+    protected $store;
     protected $cacheItemKeyValidator;
     protected $namespace;
     protected $deferred = [];
@@ -29,29 +28,27 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * CacheItemPool constructor.
      *
-     * @param CacheItemPoolAdapterInterface $adapter
+     * @param CacheItemStorageInterface $store
      * @param string $namespace
      * @param int $defaultLifespan
      * @param CacheItemKeyValidatorInterface|null $cacheItemKeyValidator
-     * @param CacheItemTagValidatorInterface|null $cacheItemTagValidator
      */
     public function __construct(
-        CacheItemPoolAdapterInterface $adapter,
+        CacheItemStorageInterface $store,
         string $namespace = '',
         int $defaultLifespan = 0,
-        CacheItemKeyValidatorInterface $cacheItemKeyValidator = null,
-        CacheItemTagValidatorInterface $cacheItemTagValidator = null
+        CacheItemKeyValidatorInterface $cacheItemKeyValidator = null
     ) {
-        $this->adapter = $adapter;
+        $this->store = $store;
 
-        if ($this->adapter instanceof RedisCacheItemPoolAdapter) {
-            $this->adapter->validateNamespace($namespace);
+        if ($this->store instanceof PredisCacheItemStorage) {
+            $this->store->useNamespace($namespace);
         }
 
-        $this->cacheItemKeyValidator = $cacheItemKeyValidator?? new CacheItemKeyValidator();
-        $this->namespace = $namespace === '' ? '' : $this->makeId($namespace) . ':';
+        $this->cacheItemKeyValidator = $cacheItemKeyValidator ?? new CacheItemKeyValidator();
+        $this->namespace = empty($namespace) ? '' : $this->makeId($namespace) . ':';
 
-        $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultLifespan, $cacheItemTagValidator);
+        $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultLifespan);
         $this->deferredMergerClosure = $this->createDeferredMergerClosure();
     }
 
@@ -86,9 +83,9 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             $keys
         );
         try {
-            $items = $this->adapter->getItems($ids);
+            $items = $this->store->getItems($ids);
         } catch (Exception $e) {
-            $this->log('Failed to fetch requested items.', ['keys' => $keys, 'exception' => $e]);
+            $this->log('Failed to fetch requested cache items.', ['keys' => $keys, 'exception' => $e]);
             $items = [];
         }
 
@@ -106,7 +103,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             $this->commit();
         }
         try {
-            return $this->adapter->hasItem($key);
+            return $this->store->hasItem($id);
         } catch (Exception $e) {
             $this->log(
                 'Failed to check whether and item with key ":key" is cached.',
@@ -125,7 +122,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         $this->deferred = [];
 
         try {
-            return $this->adapter->clear();
+            return $this->store->clear();
         } catch (Exception $e) {
             $this->log('Failed clear the cache.', ['exception' => $e]);
 
@@ -153,7 +150,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         }
 
         try {
-            if ($this->adapter->deleteItems($ids)) {
+            if ($this->store->deleteItems($ids)) {
                 return true;
             }
         } catch (Exception $e) {
@@ -193,14 +190,17 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     public function commit()
     {
         $success = true;
-        list($merged, $expired) = call_user_func($this->deferredMergerClosure, [$this->deferred, $this->namespace]);
+        list($merged, $expired) = call_user_func_array(
+            $this->deferredMergerClosure,
+            [$this->deferred, $this->namespace]
+        );
         $retry = $this->deferred = [];
         if (!empty($expired)) {
-            $this->adapter->deleteItems($expired);
+            $this->store->deleteItems($expired);
         }
         foreach ($merged as $lifespan => $values) {
             try {
-                if (($e = $this->adapter->save($values, $lifespan)) === true) {
+                if (($e = $this->store->save($values, $lifespan)) === true) {
                     continue;
                 }
             } catch (Exception $e) {
@@ -241,7 +241,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         foreach ($ids as $key => $id) {
             try {
                 $e = null;
-                if ($this->adapter->deleteItems([$id])) {
+                if ($this->store->deleteItems([$id])) {
                     continue;
                 }
             } catch (Exception $e) {
@@ -269,7 +269,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             foreach ($ids as $id) {
                 try {
                     $value = $merged[$lifespan][$id];
-                    if (($e = $this->adapter->save([$id => $value], $lifespan) === true)) {
+                    if (($e = $this->store->save([$id => $value], $lifespan) === true)) {
                         continue;
                     }
                 } catch (Exception $e) {
@@ -287,29 +287,6 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         }
 
         return $success;
-    }
-
-    /**
-     * Makes a cache key injecting the namespace if any.
-     *
-     * @param string $key
-     *
-     * @return string
-     */
-    protected function makeId(string $key): string
-    {
-        if (!$this->cacheItemKeyValidator->validate($key)) {
-            throw new InvalidArgumentException($this->cacheItemKeyValidator->getFailureReason());
-        }
-
-        if (null === $this->adapter->getMaxIdLength()) {
-            return $this->namespace . $key;
-        }
-        $id = $this->namespace . $key;
-
-        return strlen($id) > $this->adapter->getMaxIdLength()
-            ? $this->namespace . substr_replace(base64_encode(hash('sha256', $key, true)), ':', -22)
-            : $id;
     }
 
     /**
@@ -350,23 +327,19 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      * Creates the cache item factory closure by using the Closure Bind Override. It uses the bind static method of
      * Closure to access the protected properties of the object.
      *
-     * @param int $defaultLifespan
-     * @param CacheItemTagValidatorInterface $cacheItemTagValidator
+     * @param int|null $defaultLifespan
      *
      * @return Closure
      */
-    protected function createCacheItemFactoryClosure(
-        int $defaultLifespan,
-        CacheItemTagValidatorInterface $cacheItemTagValidator
-    ): Closure {
+    protected function createCacheItemFactoryClosure(int $defaultLifespan = null): Closure
+    {
         return Closure::bind(
-            function (string $key, $value, bool $isHit) use ($defaultLifespan, $cacheItemTagValidator) {
+            function (string $key, $value, bool $isHit) use ($defaultLifespan) {
                 $cacheItem = new CacheItem();
                 $cacheItem->{'key'} = $key;
                 $cacheItem->{'value'} = $value;
                 $cacheItem->{'isHit'} = $isHit;
                 $cacheItem->{'defaultLifespan'} = $defaultLifespan;
-                $cacheItem->{'cacheItemTagValidator'} = $cacheItemTagValidator?? new CacheItemTagValidator();
 
                 return $cacheItem;
             },
@@ -404,6 +377,29 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             null,
             CacheItem::class
         );
+    }
+
+    /**
+     * Makes a cache key injecting the namespace if any.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    protected function makeId(string $key): string
+    {
+        if (!$this->cacheItemKeyValidator->validate($key)) {
+            throw new InvalidArgumentException($this->cacheItemKeyValidator->getFailureReason());
+        }
+
+        if (null === $this->store->getMaxIdLength()) {
+            return $this->namespace . $key;
+        }
+        $id = $this->namespace . $key;
+
+        return strlen($id) > $this->store->getMaxIdLength()
+            ? $this->namespace . substr_replace(base64_encode(hash('sha256', $key, true)), ':', -22)
+            : $id;
     }
 
     /**

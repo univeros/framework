@@ -1,33 +1,36 @@
 <?php
-namespace Altair\Cache\Adapter;
 
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+namespace Altair\Cache\Storage;
+
+use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
 use Altair\Cache\Support\CacheItemUnserializer;
+use Altair\Cache\Traits\RedisNamespaceValidationAwareTrait;
 use Exception;
-use Predis\Client;
-use Predis\Collection\Iterator\Keyspace;
-use Predis\Connection\Aggregate\PredisCluster;
-use Predis\Connection\Aggregate\RedisCluster;
+use Redis;
 
-class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
+class RedisCacheItemStorage implements CacheItemStorageInterface
 {
+    use RedisNamespaceValidationAwareTrait;
+
     protected $client;
     protected $namespace;
 
     /**
-     * RedisCacheItemPoolAdapter constructor.
+     * RedisCacheItemPoolStorage constructor.
      *
-     * @param Client $redis
+     * @param Redis $redis
+     * @param string $namespace
      */
-    public function __construct(Client $redis)
+    public function __construct(Redis $redis, $namespace = '')
     {
         $info = $redis->info('Server');
-        $info = $info['Server']?? $info;
+        $info = $info['Server'] ?? $info;
         if (!version_compare($info['redis_version'], '2.8', '>=')) {
             throw new InvalidArgumentException(sprintf('%s requires Redis 2.8 or above.', static::class));
         }
         $this->client = $redis;
+        $this->useNamespace($namespace);
     }
 
     /**
@@ -69,31 +72,24 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
      */
     public function clear(): bool
     {
-        $success = true;
-        $hosts = $this->getHosts($this->client);
-
-        if (null === $hosts) {
-            // When using a native Redis cluster, clearing the cache cannot work and always returns false.
-            // Clearing the cache should then be done by any other means (e.g. by restarting the cluster).
-            //
-            // - Thanks Symfony ;)
-
-            return false;
+        if (!isset($this->namespace[0])) {
+            return $this->client->flushdb();
         }
 
-        /** @var Client $host */
-        foreach ($hosts as $host) {
-            if (!isset($this->namespace[0])) {
-                $success = $host->flushdb() && $success;
-                continue;
-            }
+        $cursor = null;
 
-            foreach ((new Keyspace($host, $this->namespace . '*', 1000)) as $keys) {
-                $host->del($keys);
+        do {
+            $keys = $this->client->scan($cursor, $this->namespace . '*', 1000);
+            if (isset($keys[1]) && is_array($keys[1])) {
+                $cursor = $keys[0];
+                $keys = $keys[1];
             }
-        }
+            if ($keys) {
+                $this->client->del($keys);
+            }
+        } while ($cursor = (int)$cursor);
 
-        return $success;
+        return true;
     }
 
     /**
@@ -129,15 +125,24 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
 
             return $failed;
         }
-
-        $this->client->pipeline(
-            function ($pipe) use ($serialized, $lifespan) {
-                /** @var Client $pipe */
-                foreach ($serialized as $id => $value) {
-                    $pipe->setex($id, $lifespan, $value);
-                }
+        $this->client->multi(Redis::PIPELINE);
+        $ids = [];
+        foreach ($serialized as $id => $value) {
+            if (0 >= $lifespan) {
+                $this->client->set($id, $value);
+            } else {
+                $this->client->setex($id, $lifespan, $value);
             }
-        );
+            $ids[] = $id;
+        }
+        $results = $this->client->exec();
+
+        foreach ($ids as $key => $id) {
+            $result = $results[$key];
+            if (true !== $result) {
+                $failed[] = $id;
+            }
+        }
 
         return empty($failed) ? true : $failed;
     }
@@ -159,28 +164,5 @@ class RedisCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
             );
         }
         $this->namespace = $namespace;
-    }
-
-    /**
-     * @param Client $client
-     *
-     * @return array|null
-     */
-    protected function getHosts(Client $client): ?array
-    {
-        $connection = $client->getConnection();
-
-        if ($connection instanceof PredisCluster) {
-            $hosts = [];
-            foreach ($connection as $c) {
-                $hosts[] = new Client($c);
-            }
-        } elseif ($connection instanceof RedisCluster) {
-            return null;
-        } else {
-            $hosts = [$this->client];
-        }
-
-        return $hosts;
     }
 }

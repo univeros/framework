@@ -11,7 +11,7 @@ class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
     /**
      * @inheritdoc
      */
-    public function validate(string $key): bool
+    public function validate($key): bool
     {
         if (!is_string($key)) {
             $this->reason = sprintf(

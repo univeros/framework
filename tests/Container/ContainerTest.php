@@ -25,6 +25,10 @@ class ContainerTest extends TestCase
         $container = new Container();
         $container->alias(DepInterface::class, DepImplementation::class);
         $this->assertEquals(new DepImplementation, $container->make(DepInterface::class));
+
+        $container->alias('custom', DepImplementation::class);
+        $this->assertTrue($container->isset('custom'));
+        $this->assertEquals(new DepImplementation, $container->make('custom'));
     }
 
     /**

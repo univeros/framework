@@ -1,18 +1,18 @@
 <?php
-namespace Altair\Cache\Adapter;
+namespace Altair\Cache\Storage;
 
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
 use Altair\Filesystem\Filesystem;
 
-class FilesystemCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
+class FilesystemCacheItemStorage implements CacheItemStorageInterface
 {
     protected $directory;
     protected $filesystem;
     protected $tmp;
 
     /**
-     * FilesystemCacheItemPoolAdapter constructor.
+     * FilesystemCacheItemPoolStorage constructor.
      *
      * @param Filesystem $filesystem
      * @param string|null $directory
@@ -141,7 +141,7 @@ class FilesystemCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
         $item->id = $id;
         $item->value = $value;
         $item->expiresAt = $expiresAt;
-        $data = str_replace('stdClass::__set_state', '(object)', var_export($item));
+        $data = str_replace('stdClass::__set_state', '(object)', var_export($item, true));
         $contents = '<?php return ' . $data . ';';
 
         if (false === @file_put_contents($this->tmp, $contents)) {

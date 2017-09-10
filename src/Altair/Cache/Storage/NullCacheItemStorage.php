@@ -1,9 +1,9 @@
 <?php
-namespace Altair\Cache\Adapter;
+namespace Altair\Cache\Storage;
 
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
 
-class NullCacheItemPoolAdapter implements CacheItemPoolAdapterInterface
+class NullCacheItemStorage implements CacheItemStorageInterface
 {
     /**
      * @inheritdoc

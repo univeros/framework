@@ -1,14 +1,14 @@
 <?php
 namespace Altair\Cache\Configuration;
 
-use Altair\Cache\Adapter\FilesystemCacheItemPoolAdapter;
-use Altair\Cache\Contracts\CacheItemPoolAdapterInterface;
+use Altair\Cache\Contracts\CacheItemStorageInterface;
+use Altair\Cache\Storage\FilesystemCacheItemStorage;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Container\Definition;
 
-class FilesystemCacheItemPoolConfiguration implements ConfigurationInterface
+class FilesystemCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
@@ -21,7 +21,7 @@ class FilesystemCacheItemPoolConfiguration implements ConfigurationInterface
         );
 
         $container
-            ->define(FilesystemCacheItemPoolAdapter::class, $adapterConfiguration)
-            ->alias(CacheItemPoolAdapterInterface::class, FilesystemCacheItemPoolAdapter::class);
+            ->define(FilesystemCacheItemStorage::class, $adapterConfiguration)
+            ->alias(CacheItemStorageInterface::class, FilesystemCacheItemStorage::class);
     }
 }
