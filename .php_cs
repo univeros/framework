@@ -18,7 +18,7 @@ return PhpCsFixer\Config::create()
         'ordered_imports' => true,
         'phpdoc_add_missing_param_annotation' => true,
         'psr4' => true,
-        'strict_comparison' => true,
+        'strict_comparison' => false,
     ))
     ->setFinder($finder)
 ;

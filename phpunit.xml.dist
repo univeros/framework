@@ -25,6 +25,9 @@
             </exclude>
         </whitelist>
     </filter>
+    <logging>
+        <log type="coverage-clover" target="coverage.xml" />
+    </logging>
     <php>
         <!--
         <env name="REDIS_HOST" value="127.0.0.1" />

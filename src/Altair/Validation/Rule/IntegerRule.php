@@ -8,8 +8,9 @@ class IntegerRule extends AbstractRule
      */
     public function assert($value): bool
     {
-        return is_int($value) || (is_numeric($value) && $value === (int)$value);
+        return is_int($value) || (is_numeric($value) && $value == (int)$value);
     }
+
     /**
      * @inheritdoc
      */
