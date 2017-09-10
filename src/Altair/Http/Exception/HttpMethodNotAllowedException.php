@@ -4,7 +4,7 @@ namespace Altair\Http\Exception;
 use Exception;
 use Psr\Http\Message\ResponseInterface;
 
-class HttpMethodNotAllowedException extends \HttpRequestMethodException
+class HttpMethodNotAllowedException extends HttpBadRequestException
 {
     protected $allowed = [];
 
