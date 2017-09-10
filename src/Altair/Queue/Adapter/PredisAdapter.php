@@ -4,13 +4,13 @@ namespace Altair\Queue\Adapter;
 use Altair\Cache\Exception\InvalidMethodCallException;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Middleware\Payload;
-use Altair\Queue\Connection\RedisConnection;
+use Altair\Queue\Connection\PredisConnection;
 use Altair\Queue\Contracts\JobInterface;
 use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Traits\EnsureIdAwareTrait;
 use Predis\Transaction\MultiExec;
 
-class RedisAdapter extends AbstractAdapter
+class PredisAdapter extends AbstractAdapter
 {
     use EnsureIdAwareTrait;
 
@@ -19,10 +19,10 @@ class RedisAdapter extends AbstractAdapter
     /**
      * RedisQueueStoreAdapter constructor.
      *
-     * @param RedisConnection $connection
+     * @param PredisConnection $connection
      * @param int $expireTime
      */
-    public function __construct(RedisConnection $connection, $expireTime = 60)
+    public function __construct(PredisConnection $connection, $expireTime = 60)
     {
         $this->expireTime = $expireTime;
         $this->connection = $connection;

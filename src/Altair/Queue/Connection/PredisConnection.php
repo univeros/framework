@@ -5,7 +5,7 @@ use Altair\Queue\Contracts\QueueConnectionInterface;
 use Altair\Queue\Traits\ConnectionInstanceAwareTrait;
 use Predis\Client;
 
-class RedisConnection implements QueueConnectionInterface
+class PredisConnection implements QueueConnectionInterface
 {
     use ConnectionInstanceAwareTrait;
 

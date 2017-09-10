@@ -5,12 +5,12 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Container\Definition;
-use Altair\Queue\Adapter\RedisAdapter;
-use Altair\Queue\Connection\RedisConnection;
+use Altair\Queue\Adapter\PredisAdapter;
+use Altair\Queue\Connection\PredisConnection;
 use Altair\Queue\Contracts\QueueAdapterInterface;
 use Altair\Queue\Contracts\QueueConnectionInterface;
 
-class RedisQueueConfiguration implements ConfigurationInterface
+class PredisQueueConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
@@ -32,9 +32,9 @@ class RedisQueueConfiguration implements ConfigurationInterface
         );
 
         $container
-            ->define(RedisConnection::class, $connectionDefinition)
-            ->define(RedisAdapter::class, $adapterDefinition)
-            ->alias(QueueConnectionInterface::class, RedisConnection::class)
-            ->alias(QueueAdapterInterface::class, RedisAdapter::class);
+            ->define(PredisConnection::class, $connectionDefinition)
+            ->define(PredisAdapter::class, $adapterDefinition)
+            ->alias(QueueConnectionInterface::class, PredisConnection::class)
+            ->alias(QueueAdapterInterface::class, PredisAdapter::class);
     }
 }
