@@ -21,13 +21,13 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./src</directory>
             <exclude>
-                <directory>./src/Altair/Core</directory>
+                <directory>./src/Altair/Filesystem/FlysystemAdapter.php</directory>
             </exclude>
         </whitelist>
     </filter>
-    <!--<logging>
+    <logging>
         <log type="coverage-clover" target="coverage.xml" />
-    </logging>-->
+    </logging>
     <php>
         <!--
         <env name="REDIS_HOST" value="127.0.0.1" />
