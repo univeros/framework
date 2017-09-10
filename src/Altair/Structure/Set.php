@@ -28,11 +28,6 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     use Traits\CollectionTrait;
 
     /**
-     * @var \Altair\Structure\Contracts\MapInterface
-     */
-    protected $internal;
-
-    /**
      * Creates a new set using the values of an array or Traversable object.
      * The keys of either will not be preserved.
      *
