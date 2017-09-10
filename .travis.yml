@@ -4,7 +4,6 @@ sudo: false
 language: php
 
 php:
-  - 7.0
   - 7.1
 
 branches:
@@ -19,7 +18,6 @@ before_install:
   - |
     # php.ini configuration
     INI=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
-    phpenv config-rm xdebug.ini || echo "xdebug not available"
     echo date.timezone = Europe/Madrid >> $INI
     echo memory_limit = -1 >> $INI
     echo session.gc_probability = 0 >> $INI
@@ -30,12 +28,6 @@ before_install:
     echo extension = mongodb.so >> $INI
 
 install:
-  - |
-    if [[ $TRAVIS_PHP_VERSION != '7.1' ]]; then
-        # disable xdebug for performance reasons when code coverage is not needed
-        # note: xdebug on hhvm is disabled by default
-        phpenv config-rm xdebug.ini || echo "xdebug is not installed"
-    fi
   - travis_retry composer self-update && composer --version
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - travis_retry composer install --prefer-dist --no-interaction
