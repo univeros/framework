@@ -29,8 +29,7 @@ before_install:
 
 install:
   - travis_retry composer self-update && composer --version
-  - export PATH="$HOME/.composer/vendor/bin:$PATH"
-  - travis_retry composer install --prefer-dist --no-interaction
+  - travis_retry composer install --dev --no-interaction --prefer-dist
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
