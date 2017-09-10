@@ -21,7 +21,7 @@
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./src</directory>
             <exclude>
-                <directory>./src/Altair/Filesystem/FlysystemAdapter.php</directory>
+                <file>./src/Altair/Filesystem/FlysystemAdapter.php</file>
             </exclude>
         </whitelist>
     </filter>
