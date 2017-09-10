@@ -25,4 +25,12 @@ class Deque implements IteratorAggregate, ArrayAccess, SequenceInterface, Capaci
 {
     use Traits\SequenceTrait;
     use Traits\SquaredCapacityTrait;
+
+    /**
+     * @inheritdoc
+     */
+    public function __construct($values = null)
+    {
+        $this->pushAll($this->normalizeItems($values ?? []));
+    }
 }
