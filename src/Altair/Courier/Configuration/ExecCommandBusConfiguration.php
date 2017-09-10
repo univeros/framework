@@ -32,7 +32,7 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
             // [ YourCommandMessage::class => YourCommandHandler::class]
             //
             // If using CommandMessageNameResolver and CallableCommandLocatorService:
-            // [ YourCommandMessage::class => function() { return new YourCommandHandler(); } ]
+            // [ 'name-in-message-class' => function() { return new YourCommand(); } ]
 
             $config = $fs->getRequiredFileValue($this->env->get('COURIER_MAP_FILE'));
 

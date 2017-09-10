@@ -42,7 +42,7 @@ class CommandLoggerMiddleware implements CommandMiddlewareInterface
 
         $log = $message->getLogMessage();
 
-        if ($log !== null && $log->getLevel() !== $this->level) {
+        if (null !== $log && $log->getLevel() !== $this->level) {
             $level = $log->getLevel();
         }
 
