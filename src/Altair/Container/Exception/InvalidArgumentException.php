@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Container\Exception;
 
-class InvalidArgumentException extends \InvalidArgumentException
+use Psr\Container\ContainerExceptionInterface;
+
+class InvalidArgumentException extends \InvalidArgumentException implements ContainerExceptionInterface
 {
 }

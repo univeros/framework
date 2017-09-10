@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Container\Exception;
 
-class OutOfBoundsException extends \OutOfBoundsException
+use Psr\Container\ContainerExceptionInterface;
+
+class OutOfBoundsException extends \OutOfBoundsException implements ContainerExceptionInterface
 {
 }

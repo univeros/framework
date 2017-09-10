@@ -9,7 +9,8 @@
     },
     "require": {
         "php": ">=7.0.0",
-        "univeros/structure": "*"
+        "univeros/structure": "*",
+        "psr/container": "^1.0"
     },
     "autoload": {
         "psr-4": {

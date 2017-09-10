@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Container;
 
 use Altair\Container\Builder\ArgumentsBuilder;
@@ -12,12 +13,14 @@ use Altair\Container\Collection\SharesCollection;
 use Altair\Container\Contracts\ReflectionInterface;
 use Altair\Container\Exception\InjectionException;
 use Altair\Container\Exception\InvalidArgumentException;
+use Altair\Container\Exception\NotFoundException;
 use Altair\Container\Reflection\CachedReflection;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
+use Psr\Container\ContainerInterface;
 use ReflectionException;
 
-class Container
+class Container implements ContainerInterface
 {
     use NameNormalizerTrait;
 
@@ -86,15 +89,15 @@ class Container
         ExecutableBuilder $executableBuilder = null,
         ArgumentsBuilder $argumentsBuilder = null
     ) {
-        $this->reflector = $reflector?? new CachedReflection();
-        $this->aliases = $aliasesCollection?? new AliasesCollection();
-        $this->classDefinitions = $classDefinitionsCollection?? new ClassDefinitionsCollection();
-        $this->parameterDefinitions = $parameterDefinitionsCollection?? new ParameterDefinitionsCollection();
-        $this->shares = $sharesCollection?? new SharesCollection();
-        $this->prepares = $preparesCollection?? new PreparesCollection();
-        $this->delegates = $delegatesCollection?? new DelegatesCollection();
-        $this->executableBuilder = $executableBuilder?? new ExecutableBuilder($this);
-        $this->argumentsBuilder = $argumentsBuilder?? new ArgumentsBuilder($this);
+        $this->reflector = $reflector ?? new CachedReflection();
+        $this->aliases = $aliasesCollection ?? new AliasesCollection();
+        $this->classDefinitions = $classDefinitionsCollection ?? new ClassDefinitionsCollection();
+        $this->parameterDefinitions = $parameterDefinitionsCollection ?? new ParameterDefinitionsCollection();
+        $this->shares = $sharesCollection ?? new SharesCollection();
+        $this->prepares = $preparesCollection ?? new PreparesCollection();
+        $this->delegates = $delegatesCollection ?? new DelegatesCollection();
+        $this->executableBuilder = $executableBuilder ?? new ExecutableBuilder($this);
+        $this->argumentsBuilder = $argumentsBuilder ?? new ArgumentsBuilder($this);
     }
 
     /**
@@ -103,6 +106,26 @@ class Container
     public function __clone()
     {
         $this->making = [];
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function get($id)
+    {
+        if (!$this->isset($id)) {
+            throw new NotFoundException(sprintf('Class or alias %s not found.', $id));
+        }
+
+        return $this->make($id);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function has($id)
+    {
+        return $this->isset($id);
     }
 
     /**
@@ -267,7 +290,7 @@ class Container
                 )
             );
         }
-        $definition = $definition?? new Definition([]);
+        $definition = $definition ?? new Definition([]);
 
         $this->making[$normalizedClass] = count($this->making);
 
@@ -310,7 +333,7 @@ class Container
     public function execute($callableOrMethodString, Definition $definition = null)
     {
         $executable = $this->executableBuilder->build($callableOrMethodString);
-        $definition = $definition?? new Definition([]);
+        $definition = $definition ?? new Definition([]);
         $arguments = $this->argumentsBuilder->build($executable->getCallableReflection(), $definition);
 
         return call_user_func_array([$executable, '__invoke'], $arguments);
