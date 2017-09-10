@@ -23,11 +23,6 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     use Traits\CollectionTrait;
 
     /**
-     * @var Vector
-     */
-    protected $internal;
-
-    /**
      * Creates an instance using the values of an array or Traversable object.
      *
      * @param array|\Traversable $values
