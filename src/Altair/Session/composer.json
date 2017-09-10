@@ -20,7 +20,7 @@
     },
     "suggest": {
         "ext-mongo": "The extension is required to use MongoSessionHandler",
-        "predis/predis": "The library is required to use RedisSessionHandler",
+        "predis/predis": "The library is required to use PredisSessionHandler"
     },
     "minimum-stability": "dev"
 }

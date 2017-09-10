@@ -5,12 +5,12 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Container\Definition;
-use Altair\Session\Handler\RedisSessionHandler;
+use Altair\Session\Handler\PredisSessionHandler;
 use Predis\Client;
 use Predis\ClientInterface;
 use SessionHandlerInterface;
 
-class RedisSessionHandlerConfiguration implements ConfigurationInterface
+class PredisSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
@@ -25,6 +25,6 @@ class RedisSessionHandlerConfiguration implements ConfigurationInterface
         $container
             ->define(Client::class, $definition)
             ->alias(ClientInterface::class, Client::class)
-            ->alias(SessionHandlerInterface::class, RedisSessionHandler::class);
+            ->alias(SessionHandlerInterface::class, PredisSessionHandler::class);
     }
 }
