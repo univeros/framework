@@ -39,6 +39,7 @@ class PdoSessionHandlerTest extends TestCase
         $handler->write('sid', 'test-data');
         $data = $handler->read('sid');
         $this->assertEquals('test-data', $data);
+        $handler->close();
     }
 
     public function testSessionGc()

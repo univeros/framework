@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Http\Support;
+namespace Altair\Http\Rule;
 
 use Altair\Http\Contracts\HttpAuthRuleInterface;
 use Psr\Http\Message\ServerRequestInterface;

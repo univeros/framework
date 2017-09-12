@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Http\Support;
+namespace Altair\Http\Validator;
 
 use Altair\Http\Contracts\IdentityValidatorInterface;
 
@@ -23,7 +23,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
     /**
      * @inheritdoc
      */
-    public function __invoke(array $arguments)
+    public function __invoke(array $arguments): bool
     {
         $user = $arguments['user'];
         $password = $arguments['password'];

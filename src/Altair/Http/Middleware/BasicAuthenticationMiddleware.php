@@ -27,7 +27,7 @@ class BasicAuthenticationMiddleware implements MiddlewareInterface
         $this->checkAllowance($host, $scheme);
 
         list($user, $password) = $this->getAuthDataFromServerParams($params);
-        if (false === call_user_func($this->validator, ['user' => $user, 'password' => $password])) {
+        if (false === call_user_func($this->identityValidator, ['user' => $user, 'password' => $password])) {
             $response = $response
                 ->withStatus(HttpStatusCodeInterface::HTTP_UNAUTHORIZED)
                 ->withHeader('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));

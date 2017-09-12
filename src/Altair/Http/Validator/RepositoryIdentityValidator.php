@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Http\Support;
+namespace Altair\Http\Validator;
 
 use Altair\Data\Contracts\QueryRepositoryInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
@@ -29,16 +29,16 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
         // By default: 'username' and 'hash' are the default fieldname values. You can easily change them as:
         // ['username' => 'my_field_username', 'hash' => 'my_field_name_for_hash']
 
-        $this->options = $options?? ['username' => 'username', 'hash' => 'hash'];
+        $this->options = $options ?? ['username' => 'username', 'hash' => 'hash'];
     }
 
     /**
      * @inheritdoc
      */
-    public function __invoke(array $arguments)
+    public function __invoke(array $arguments): bool
     {
-        $user = $arguments["user"];
-        $password = $arguments["password"];
+        $user = $arguments["user"] ?? null;
+        $password = $arguments["password"] ?? null;
 
         $user = $this->repository->findOneBy([$this->options['username'] => $user]);
 

@@ -1,5 +1,5 @@
 <?php
-namespace Altair\Http\Support;
+namespace Altair\Http\Validator;
 
 use Altair\Data\Contracts\QueryRepositoryInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
@@ -36,7 +36,7 @@ class DigestSignatureValidator implements IdentityValidatorInterface
      *
      * @return bool
      */
-    public function __invoke(array $arguments)
+    public function __invoke(array $arguments): bool
     {
         $authorization = $arguments['authorization'];
         $realm = $arguments['realm'];

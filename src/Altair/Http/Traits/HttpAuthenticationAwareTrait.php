@@ -5,7 +5,7 @@ use Altair\Http\Contracts\HttpAuthRuleInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Altair\Http\Exception\RuntimeException;
-use Altair\Http\Support\RequestMethodRule;
+use Altair\Http\Rule\RequestMethodRule;
 use Psr\Http\Message\ServerRequestInterface;
 
 trait HttpAuthenticationAwareTrait
@@ -13,7 +13,7 @@ trait HttpAuthenticationAwareTrait
     /**
      * @var IdentityValidatorInterface
      */
-    protected $validator;
+    protected $identityValidator;
     /**
      * @var HttpAuthRuleInterface[]|array
      */
@@ -31,10 +31,6 @@ trait HttpAuthenticationAwareTrait
      */
     protected $realm;
     /**
-     * @var string Digest Authentication only attribute.
-     */
-    protected $nonce;
-    /**
      * @var mixed|null
      */
     protected $onError;
@@ -46,13 +42,13 @@ trait HttpAuthenticationAwareTrait
     /**
      * Authentication middleware Constructor.
      *
-     * @param IdentityValidatorInterface $validator
+     * @param IdentityValidatorInterface $identityValidator
      * @param HttpAuthRuleInterface[] $rules
      * @param array $options
      */
-    public function __construct(IdentityValidatorInterface $validator, array $rules = null, array $options = null)
+    public function __construct(IdentityValidatorInterface $identityValidator, array $rules = null, array $options = null)
     {
-        $this->validator = $validator;
+        $this->identityValidator = $identityValidator;
         $this->rules = $rules?? [];
         if (empty($this->rules)) {
             $this->rules[] = new RequestMethodRule(); // OPTIONS by default
@@ -70,7 +66,6 @@ trait HttpAuthenticationAwareTrait
         $this->ssl = $options['ssl']?? true;
         $this->allowed = $options['allowed']?? ['localhost', '127.0.0.1', '::1'];
         $this->onError = $options['onError']?? null;
-        $this->nonce = $options['nonce']?? null;
     }
 
     /**

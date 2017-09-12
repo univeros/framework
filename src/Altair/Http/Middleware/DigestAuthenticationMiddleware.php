@@ -3,8 +3,8 @@ namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\HttpAuthRuleInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
-use Altair\Http\Support\DigestSignatureValidator;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
+use Altair\Http\Validator\DigestSignatureValidator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,13 +22,15 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
     /**
      * DigestAuthenticationMiddleware constructor.
      *
-     * @param DigestSignatureValidator $validator
+     * @param DigestSignatureValidator $identityValidator
      * @param HttpAuthRuleInterface[] $rules
      * @param array $options
      */
-    public function __construct(DigestSignatureValidator $validator, array $rules = null, array $options = null)
+    public function __construct(DigestSignatureValidator $identityValidator, array $rules = null, array $options = null)
     {
-        $this->init($validator, $rules, $options);
+        $this->init($identityValidator, $rules, $options);
+
+        $this->nonce = $options['nonce']?? null;
     }
 
     /**
@@ -53,7 +55,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
                 'realm' => $this->realm,
                 'method' => $request->getMethod()
             ];
-            if (true === call_user_func($this->validator, $arguments)) {
+            if (true === call_user_func($this->identityValidator, $arguments)) {
                 return $next(
                     $request->withAttribute(MiddlewareInterface::ATTRIBUTE_USERNAME, $authorization['username']),
                     $response
