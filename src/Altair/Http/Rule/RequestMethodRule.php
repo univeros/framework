@@ -28,6 +28,6 @@ class RequestMethodRule implements HttpAuthRuleInterface
      */
     public function __invoke(ServerRequestInterface $request)
     {
-        return !in_array($request->getMethod(), $this->options['passthrough']);
+        return !in_array($request->getMethod(), $this->options['passthrough'], false);
     }
 }

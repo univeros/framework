@@ -91,13 +91,11 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
             throw $e;
         }
 
-        if ($response->getStatusCode() === HttpStatusCodeInterface::HTTP_UNAUTHORIZED ||
-            $response->getStatusCode() === HttpStatusCodeInterface::HTTP_FORBIDDEN) {
+        $statusCode = $response->getStatusCode();
+        if ($statusCode === HttpStatusCodeInterface::HTTP_UNAUTHORIZED ||
+            $statusCode === HttpStatusCodeInterface::HTTP_FORBIDDEN) {
             if (is_callable($this->onError)) {
-                $callableResponse = call_user_func_array(
-                    $this->onError,
-                    [$request, $response, $exception]
-                );
+                $callableResponse = call_user_func($this->onError, $request, $response, $exception);
 
                 return $callableResponse instanceof ResponseInterface
                     ? $callableResponse

@@ -1,4 +1,5 @@
 <?php
+
 namespace Altair\Http\Rule;
 
 use Altair\Http\Contracts\HttpAuthRuleInterface;
@@ -10,8 +11,8 @@ class RequestPathRule implements HttpAuthRuleInterface
      * @var array
      */
     protected $options = [
-        "path" => ["/"],
-        "passthrough" => []
+        'path' => ['/'],
+        'passthrough' => []
     ];
 
     /**
@@ -30,19 +31,19 @@ class RequestPathRule implements HttpAuthRuleInterface
      */
     public function __invoke(ServerRequestInterface $request)
     {
-        $uri = "/" . $request->getUri()->getPath();
-        $uri = preg_replace("#/+#", "/", $uri);
+        $uri = '/' . $request->getUri()->getPath();
+        $uri = preg_replace('#/+#', '/', $uri);
 
-        foreach ((array)$this->options["passthrough"] as $passthrough) {
-            $passthrough = rtrim($passthrough, "/");
-            if (!!preg_match("@^{$passthrough}(/.*)?$@", $uri)) {
+        foreach ((array)$this->options['passthrough'] as $passthrough) {
+            $passthrough = rtrim($passthrough, '/');
+            if ((bool)preg_match("@^{$passthrough}(/.*)?$@", $uri)) {
                 return false;
             }
         }
 
-        foreach ((array)$this->options["path"] as $path) {
-            $path = rtrim($path, "/");
-            if (!!preg_match("@^{$path}(/.*)?$@", $uri)) {
+        foreach ((array)$this->options['path'] as $path) {
+            $path = rtrim($path, '/');
+            if ((bool)preg_match("@^{$path}(/.*)?$@", $uri)) {
                 return true;
             }
         }

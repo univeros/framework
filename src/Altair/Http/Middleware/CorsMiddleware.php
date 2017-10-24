@@ -1,31 +1,35 @@
 <?php
+
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
-use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
+use Neomerx\Cors\Contracts\AnalyzerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class CorsMiddleware implements MiddlewareInterface
 {
     /**
-     * @var Analyzer
+     * @var AnalyzerInterface
      */
     protected $analyzer;
 
     /**
      * CorsMiddleware constructor.
-     * @param Analyzer $analyzer
+     *
+     * @param AnalyzerInterface $analyzer
      */
-    public function __construct(Analyzer $analyzer)
+    public function __construct(AnalyzerInterface $analyzer)
     {
         $this->analyzer = $analyzer;
     }
 
     /**
      * @inheritdoc
+     *
+     * @throws \InvalidArgumentException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
@@ -52,8 +56,10 @@ class CorsMiddleware implements MiddlewareInterface
 
     /**
      * Adds cors response headers to the response
+     *
      * @param AnalysisResultInterface $cors
      * @param ResponseInterface $response
+     *
      * @return ResponseInterface
      */
     protected function applyCorsResponseHeaders(
@@ -63,6 +69,7 @@ class CorsMiddleware implements MiddlewareInterface
         foreach ($cors->getResponseHeaders() as $name => $value) {
             $response = $response->withHeader($name, $value);
         }
+
         return $response;
     }
 }

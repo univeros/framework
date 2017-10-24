@@ -21,6 +21,8 @@ class CompoundResponder implements ResponderInterface
     /**
      * @param ResolverInterface $resolver
      * @param array $responders
+     *
+     * @throws InvalidResponderException
      */
     public function __construct(
         ResolverInterface $resolver,
@@ -59,6 +61,8 @@ class CompoundResponder implements ResponderInterface
      * @param array $responders
      *
      * @return array
+     *
+     * @throws InvalidResponderException
      */
     protected function filterResponders(array $responders): array
     {

@@ -1,9 +1,12 @@
 <?php
+
 namespace Altair\Http\Responder;
 
 use Altair\Http\Collection\HttpStatusCollection;
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
+use Altair\Http\Exception\InvalidArgumentException;
+use Altair\Http\Exception\OutOfBoundsException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -23,6 +26,7 @@ class StatusResponder implements ResponderInterface
     {
         $this->httpStatusCollection = $httpStatusCollection;
     }
+
     /**
      * @inheritDoc
      */
@@ -34,8 +38,10 @@ class StatusResponder implements ResponderInterface
         if ($this->hasStatus($payload)) {
             $response = $this->status($response, $payload);
         }
+
         return $response;
     }
+
     /**
      * Determine if the payload has a status.
      *
@@ -43,10 +49,11 @@ class StatusResponder implements ResponderInterface
      *
      * @return boolean
      */
-    private function hasStatus(PayloadInterface $payload)
+    private function hasStatus(PayloadInterface $payload): bool
     {
-        return (bool) $payload->getStatus();
+        return (bool)$payload->getStatus();
     }
+
     /**
      * Get the response with the status code from the payload.
      *
@@ -54,14 +61,19 @@ class StatusResponder implements ResponderInterface
      * @param PayloadInterface $payload
      *
      * @return ResponseInterface
+     *
+     * @throws InvalidArgumentException If the requested $statusText is not valid
+     * @throws OutOfBoundsException     If not status code is found
      */
-    private function status(
-        ResponseInterface $response,
-        PayloadInterface $payload
-    ) {
+    private function status(ResponseInterface $response, PayloadInterface $payload): ResponseInterface
+    {
         $status = $payload->getStatus();
         $code = $this->httpStatusCollection->getStatusCode($status);
 
-        return $response->withStatus($code);
+        try {
+            return $response->withStatus($code);
+        } catch (\InvalidArgumentException $e) {
+            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        }
     }
 }
