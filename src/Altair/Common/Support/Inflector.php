@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Common\Support;
 
 class Inflector
@@ -80,7 +88,7 @@ class Inflector
         }
         return trim(
             strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
-                $separator
+            $separator
         );
     }
 

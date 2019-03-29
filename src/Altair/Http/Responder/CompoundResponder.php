@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Http\Responder;
 
 use Altair\Http\Contracts\PayloadInterface;
@@ -60,9 +68,9 @@ class CompoundResponder implements ResponderInterface
     /**
      * @param array $responders
      *
+     * @throws InvalidResponderException
      * @return array
      *
-     * @throws InvalidResponderException
      */
     protected function filterResponders(array $responders): array
     {

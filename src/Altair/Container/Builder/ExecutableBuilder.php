@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Container\Builder;
 
 use Altair\Container\Container;
@@ -52,8 +60,8 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * @param $callableOrMethodString
      *
-     * @return array
      * @throws InjectionException
+     * @return array
      */
     protected function buildExecutableStructure($callableOrMethodString): array
     {
@@ -85,8 +93,8 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * @param string $executableString
      *
-     * @return array
      * @throws InjectionException
+     * @return array
      */
     protected function buildExecutableStructureFromString(string $executableString): array
     {
@@ -140,8 +148,8 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * @param array $executableArray
      *
-     * @return array
      * @throws InjectionException
+     * @return array
      */
     protected function buildExecutableStructureFromArray(array $executableArray): array
     {

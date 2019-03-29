@@ -1,4 +1,11 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
 
 namespace Altair\Common\Support;
 
@@ -636,8 +643,8 @@ class Arr // - Thanks @yii
      * @param array|\Traversable $haystack The set of values to search.
      * @param bool $strict Whether to enable strict (`===`) comparison.
      *
-     * @return bool `true` if `$needle` was found in `$haystack`, `false` otherwise.
      * @throws InvalidArgumentException if `$haystack` is neither traversable nor an array.
+     * @return bool `true` if `$needle` was found in `$haystack`, `false` otherwise.
      * @see http://php.net/manual/en/function.in-array.php
      */
     public static function isIn($needle, $haystack, bool $strict = false): bool

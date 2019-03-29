@@ -1,4 +1,11 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
 
 namespace Altair\Data\Traits;
 
@@ -56,9 +63,9 @@ trait ImmutableAttributesAwareTrait
      * @param string $key
      * @param mixed $value
      *
+     * @throws RuntimeException
      * @return void
      *
-     * @throws RuntimeException
      */
     public function __set($key, $value)
     {
@@ -75,9 +82,9 @@ trait ImmutableAttributesAwareTrait
      *
      * @param string $key
      *
+     * @throws RuntimeException
      * @return void
      *
-     * @throws RuntimeException
      */
     public function __unset($key)
     {

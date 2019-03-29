@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Http\Formatter;
 
 use Altair\Http\Configuration\PhpViewConfiguration;
@@ -56,8 +64,8 @@ class PhpViewFormatter extends AbstractHtmlFormatter
      *
      * @param PayloadInterface $payload
      *
-     * @return string
      * @throws Throwable
+     * @return string
      */
     protected function render(PayloadInterface $payload): string
     {
@@ -110,9 +118,9 @@ class PhpViewFormatter extends AbstractHtmlFormatter
      * @param string $file
      * @param array $params
      *
-     * @return string
      * @throws Exception
      * @throws Throwable
+     * @return string
      */
     protected function renderPhpFile(string $file, array $params = []): string
     {

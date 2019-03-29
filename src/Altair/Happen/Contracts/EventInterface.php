@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Happen;
 
 interface EventInterface
@@ -43,9 +51,9 @@ interface EventInterface
      *
      * @param string $key Key
      *
+     * @throws \Altair\Happen\Exception\InvalidArgumentException If key is not found.
      * @return mixed Contents of array key
      *
-     * @throws \Altair\Happen\Exception\InvalidArgumentException If key is not found.
      */
     public function getArgument(string $key);
 

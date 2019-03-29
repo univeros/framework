@@ -1,4 +1,12 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Container\Builder;
 
 use Altair\Container\Container;
@@ -96,8 +104,8 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param ReflectionParameter $reflectionParameter
      *
-     * @return mixed|null
      * @throws InjectionException
+     * @return mixed|null
      */
     protected function buildArgumentFromReflectionParameter(ReflectionParameter $reflectionParameter)
     {
@@ -132,8 +140,8 @@ class ArgumentsBuilder implements BuilderInterface
      * @param string $name
      * @param $callableOrMethodString
      *
-     * @return mixed
      * @throws InjectionException
+     * @return mixed
      */
     protected function buildArgumentFromDelegate(string $name, $callableOrMethodString)
     {

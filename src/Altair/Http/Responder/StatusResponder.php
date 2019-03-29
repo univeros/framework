@@ -1,4 +1,11 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
 
 namespace Altair\Http\Responder;
 
@@ -60,10 +67,10 @@ class StatusResponder implements ResponderInterface
      * @param ResponseInterface $response
      * @param PayloadInterface $payload
      *
-     * @return ResponseInterface
-     *
      * @throws InvalidArgumentException If the requested $statusText is not valid
      * @throws OutOfBoundsException     If not status code is found
+     * @return ResponseInterface
+     *
      */
     private function status(ResponseInterface $response, PayloadInterface $payload): ResponseInterface
     {

@@ -1,4 +1,11 @@
-<?php
+<?php declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
 
 namespace Altair\Container;
 
@@ -275,8 +282,8 @@ class Container implements ContainerInterface
      * @param string $name
      * @param Definition|null $definition
      *
-     * @return mixed|null|object
      * @throws InjectionException
+     * @return mixed|null|object
      */
     public function make(string $name, Definition $definition = null)
     {
@@ -421,8 +428,8 @@ class Container implements ContainerInterface
      * @param $object
      * @param $normalizedClass
      *
-     * @return mixed
      * @throws InjectionException
+     * @return mixed
      */
     protected function prepareInstance($object, $normalizedClass)
     {
@@ -466,8 +473,8 @@ class Container implements ContainerInterface
      * @param $normalizedClass
      * @param Definition $definition
      *
-     * @return mixed|object
      * @throws InjectionException
+     * @return mixed|object
      */
     protected function provisionInstance($className, $normalizedClass, Definition $definition)
     {
@@ -498,8 +505,8 @@ class Container implements ContainerInterface
     /**
      * @param $className
      *
-     * @return mixed
      * @throws InjectionException
+     * @return mixed
      */
     protected function instantiateWithoutConstructorParameters($className)
     {
