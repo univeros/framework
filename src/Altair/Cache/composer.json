@@ -8,7 +8,7 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=7.2",
         "psr/cache": "^1.0",
         "psr/simple-cache": "^1.0",
         "psr/log": "~1.0",

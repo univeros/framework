@@ -53,6 +53,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritdoc
+     * @throws \ErrorException
      */
     public function getItems(array $keys = []): array
     {
@@ -101,7 +102,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
                 continue;
             }
 
-            foreach ((new Keyspace($host, $this->namespace . '*', 1000)) as $keys) {
+            foreach (new Keyspace($host, $this->namespace . '*', 1000) as $keys) {
                 $host->del($keys);
             }
         }

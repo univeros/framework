@@ -40,7 +40,7 @@ interface TagAwareCacheItemPoolInterface extends CacheItemPoolInterface
      *
      * @return TagAwareCacheItemInterface
      */
-    public function getItem($key);
+    public function getItem($key): TagAwareCacheItemInterface;
 
     /**
      * {@inheritdoc}

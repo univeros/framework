@@ -20,13 +20,13 @@ class RedisCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             $client = new Client(
                 [
                     'host' => $this->env->get('CACHE_REDIS_HOST', 'localhost'),
-                    'port' => $this->env->get('CACHE_REDIS_PORT', 6379)
+                    'port' => $this->env->get('CACHE_REDIS_PORT', 6379),
                 ]
             );
 

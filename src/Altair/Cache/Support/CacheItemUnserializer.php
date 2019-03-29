@@ -9,13 +9,13 @@
 
 namespace Altair\Cache\Support;
 
-use DomainException;
+use Altair\Cache\Exception\UnserializeException;
 use Error;
 use ErrorException;
 
 class CacheItemUnserializer
 {
-    const BOOL_FALSE = 'b:0;';
+    public const BOOL_FALSE = 'b:0;';
 
     /**
      * Replaces native unserialize() to be able to throw an exception if the value cannot be instantiated as a class or
@@ -33,10 +33,10 @@ class CacheItemUnserializer
         }
         $handler = ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
         try {
-            if (false !== ($value = unserialize($value))) {
+            if (false !== ($value = unserialize($value, ['allowed_classes' => true]))) {
                 return $value;
             }
-            throw new DomainException('Failed to unserialize cached value.');
+            throw new UnserializeException('Failed to unserialize cached value.');
         } catch (Error $e) { // ensure error is an instance of \Exception
             throw new ErrorException($e->getMessage(), $e->getCode(), E_ERROR, $e->getFile(), $e->getLine());
         } finally { // reset
@@ -49,8 +49,8 @@ class CacheItemUnserializer
      *
      * @param $class
      */
-    public static function handleUnserializeCallback($class)
+    public static function handleUnserializeCallback($class): void
     {
-        throw new DomainException('Class not found: ' . $class);
+        throw new UnserializeException('Class not found: ' . $class);
     }
 }

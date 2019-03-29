@@ -32,7 +32,7 @@ final class CacheItem implements CacheItemInterface
     /**
      * @inheritdoc
      */
-    public function getKey()
+    public function getKey(): string
     {
         return $this->key;
     }
@@ -48,7 +48,7 @@ final class CacheItem implements CacheItemInterface
     /**
      * @inheritdoc
      */
-    public function isHit()
+    public function isHit(): bool
     {
         return $this->isHit;
     }

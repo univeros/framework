@@ -18,7 +18,7 @@ trait RedisNamespaceValidationAwareTrait
      * @param string $namespace
      * @throws InvalidArgumentException if the namespace contains invalid characters
      */
-    public function useNamespace(string $namespace)
+    public function useNamespace(string $namespace): void
     {
         if (preg_match('/[^-+_.A-Za-z0-9]/', $namespace, $match)) {
             throw new InvalidArgumentException(

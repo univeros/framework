@@ -69,7 +69,7 @@ interface CacheItemStorageInterface
      * @param int $lifespan The time of the cached values or 0 for manual cleaning.
      *
      * @return bool|array True if the items were successfully persisted, otherwise will return an array with failed
-     * items.
+     * items. Note: It will depend on the storage being used.
      */
     public function save(array $values, int $lifespan);
 }

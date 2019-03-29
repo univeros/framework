@@ -50,6 +50,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritdoc
+     * @throws \ErrorException
      */
     public function getItems(array $keys = []): array
     {
@@ -80,7 +81,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     public function clear(): bool
     {
         if (!isset($this->namespace[0])) {
-            return $this->client->flushdb();
+            return $this->client->flushDB();
         }
 
         $cursor = null;
@@ -159,7 +160,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
      * @param string $namespace
      * @throws InvalidArgumentException if the namespace contains invalid characters
      */
-    public function validateNamespace(string $namespace)
+    public function validateNamespace(string $namespace): void
     {
         if (preg_match('/[^-+_.A-Za-z0-9]/', $namespace, $match)) {
             throw new InvalidArgumentException(
