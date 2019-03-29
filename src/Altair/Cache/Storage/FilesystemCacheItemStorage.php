@@ -19,25 +19,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      */
     public function __construct(Filesystem $filesystem, string $directory = null)
     {
-        $directory = $directory?? sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'univeros-cache' . DIRECTORY_SEPARATOR;
-
-        if (!$filesystem->exists($directory)) {
-            $filesystem->makeDirectory($directory, 0777, true, true);
-        }
-
-        if (false === $directory = realpath($directory) ?: ($filesystem->exists($directory) ? $directory : false)) {
-            throw new InvalidArgumentException(sprintf('Cache directory does not exist "%s"', $directory));
-        }
-
-        if (!$filesystem->isWritable($directory)) {
-            throw new InvalidArgumentException(sprintf('Cache directory is not writtable "%s".', $directory));
-        }
-
-        $directory .= DIRECTORY_SEPARATOR;
-        if ('\\' === DIRECTORY_SEPARATOR && strlen($directory) > 234) { // windows allows max of 258
-            throw new InvalidArgumentException(sprintf('Cache directory path is too long "%s"', $directory));
-        }
-        $this->directory = $directory;
+        $this->setCacheDirectory($filesystem, $directory);
         $this->filesystem = $filesystem;
         $this->tmp = $this->directory . uniqid('', true);
     }
@@ -169,12 +151,42 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     protected function getFilePath(string $id, bool $force = false): string
     {
         $hash = str_replace('/', '-', base64_encode(hash('sha256', $this->directory . $id, true)));
-        $directory = $this->directory . strtoupper($hash[0] . DIRECTORY_SEPARATOR . $hash[1] . DIRECTORY_SEPARATOR);
+        $directory = $this->directory . strtoupper($hash[0] . '/' . $hash[1] . '/');
 
         if ($force && !$this->filesystem->exists($directory)) {
             $this->filesystem->makeDirectory($directory, 0777, true, true);
         }
 
         return $directory . substr($hash, 2, 20);
+    }
+
+    /**
+     * @param Filesystem $filesystem
+     * @param string $directory
+     */
+    private function setCacheDirectory(Filesystem $filesystem, string $directory): void
+    {
+        $directory = $directory ?? sys_get_temp_dir() . '/univeros-cache/';
+
+        if (!$filesystem->exists($directory)) {
+            $filesystem->makeDirectory($directory, 0777, true, true);
+        }
+
+        $path = realpath($directory);
+        $path = false === $path && $filesystem->exists($directory) ? $directory : false;
+
+        if (false === $path) {
+            throw new InvalidArgumentException(sprintf('Cache directory does not exist "%s"', $directory));
+        }
+
+        if (!$filesystem->isWritable($path)) {
+            throw new InvalidArgumentException(sprintf('Cache directory is not writable "%s".', $path));
+        }
+
+        $path .= '/';
+        if ('\\' === '/' && strlen($path) > 234) { // windows allows max of 258
+            throw new InvalidArgumentException(sprintf('Cache directory path is too long "%s"', $path));
+        }
+        $this->directory = $path;
     }
 }

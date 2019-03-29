@@ -3,9 +3,9 @@ namespace Altair\Happen;
 
 interface EventDispatcherInterface
 {
-    const HIGH_PRIORITY = 100;
-    const NORMAL_PRIORITY = 0;
-    const LOW_PRIORITY = -100;
+    public const HIGH_PRIORITY = 100;
+    public const NORMAL_PRIORITY = 0;
+    public const LOW_PRIORITY = -100;
 
     /**
      * Add a listener for an event.

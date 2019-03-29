@@ -47,11 +47,11 @@ class EventDispatcher implements EventDispatcherInterface
             if (is_string($params)) {
                 $this->addListener($name, ListenerFactory::create([$subscriber, $params]));
             } elseif (is_string($params[0])) {
-                list($method, $priority) = $params;
+                [$method, $priority] = $params;
                 $this->addListener($name, ListenerFactory::create([$subscriber, $method]), $priority?? 0);
             } else {
                 foreach ($params as $listener) {
-                    list($method, $priority) = $listener;
+                    [$method, $priority] = $listener;
                     $this->addListener($name, ListenerFactory::create([$subscriber, $method]), $priority?? 0);
                 }
             }
@@ -63,7 +63,7 @@ class EventDispatcher implements EventDispatcherInterface
      */
     public function dispatch(string $name, EventInterface $event = null): EventInterface
     {
-        $event = $event ?? (new Event($name));
+        $event = $event ?? new Event($name);
 
         $this
             ->invokeListeners($name, $event)
@@ -157,7 +157,7 @@ class EventDispatcher implements EventDispatcherInterface
      *
      * @return $this
      */
-    protected function invokeListeners(string $name, EventInterface $event)
+    protected function invokeListeners(string $name, EventInterface $event): self
     {
         $listeners = $this->getListeners($name);
 
@@ -169,7 +169,7 @@ class EventDispatcher implements EventDispatcherInterface
                 ? [$listener, '__invoke']
                 : [$listener, null];
 
-            call_user_func($callable, $event);
+            $callable($event);
         }
 
         return $this;

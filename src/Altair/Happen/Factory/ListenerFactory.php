@@ -12,7 +12,7 @@ class ListenerFactory
      *
      * @return ListenerInterface
      */
-    public static function create(callback $callback): ListenerInterface
+    public static function create(callable $callback): ListenerInterface
     {
         return new CallbackListener($callback);
     }
