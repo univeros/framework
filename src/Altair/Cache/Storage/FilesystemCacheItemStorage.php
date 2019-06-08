@@ -187,7 +187,8 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         }
 
         $path = realpath($directory);
-        $path = false === $path && $filesystem->exists($directory) ? $directory : false;
+
+        $path = false !== $path && $filesystem->exists($directory) ? $directory : false;
 
         if (false === $path) {
             throw new InvalidArgumentException(sprintf('Cache directory does not exist "%s"', $directory));

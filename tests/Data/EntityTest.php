@@ -6,6 +6,8 @@ use Altair\Data\Contracts\ArrayableInterface;
 use Altair\Data\Contracts\EntityInterface;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
+use JsonSerializable;
+use Serializable;
 
 class EntityTest extends TestCase
 {
@@ -32,9 +34,9 @@ class EntityTest extends TestCase
     public function testInterfaces()
     {
         $this->assertInstanceOf(EntityInterface::class, $this->entity);
-        $this->assertInstanceOf(\JsonSerializable::class, $this->entity);
+        $this->assertInstanceOf(JsonSerializable::class, $this->entity);
         $this->assertInstanceOf(ArrayableInterface::class, $this->entity);
-        $this->assertInstanceOf(\Serializable::class, $this->entity);
+        $this->assertInstanceOf(Serializable::class, $this->entity);
     }
 
     public function testDateAttribute()
@@ -53,7 +55,6 @@ class EntityTest extends TestCase
     {
         $frozen = serialize($this->entity);
 
-        $this->assertInternalType('string', $frozen);
         $thawed = unserialize($frozen);
         $this->assertInstanceOf(get_class($this->entity), $thawed);
         $this->assertNotSame($this->entity, $thawed);

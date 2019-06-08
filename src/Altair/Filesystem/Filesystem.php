@@ -174,10 +174,10 @@ class Filesystem
     /**
      * Prepend to a file.
      *
-     * @param  string $path
-     * @param  string $data
-     *
-     * @return int|false
+     * @param string $path
+     * @param string $data
+     * @throws FileNotFoundException
+     * @return false|int
      */
     public function prepend(string $path, string $data)
     {
@@ -248,7 +248,7 @@ class Filesystem
      */
     public function link($target, $link): bool
     {
-        if (strtolower(substr(PHP_OS, 0, 3)) !== 'win') {
+        if (stripos(PHP_OS, 'win') !== 0) {
             return symlink($target, $link);
         }
         $mode = $this->isDirectory($target) ? 'J' : 'H';
@@ -259,15 +259,18 @@ class Filesystem
     /**
      * Create a directory.
      *
-     * @param  string $path
-     * @param  int $mode
-     * @param  bool $recursive
-     * @param  bool $force
+     * @param string $path
+     * @param int $mode
+     * @param bool $recursive
+     * @param bool $force
      *
      * @return bool
      */
     public function makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false): bool
     {
+        if (file_exists($path) && is_dir($path)) {
+            return true;
+        }
         if ($force) {
             return @mkdir($path, $mode, $recursive);
         }
@@ -278,18 +281,16 @@ class Filesystem
     /**
      * Move a directory.
      *
-     * @param  string $from
-     * @param  string $to
-     * @param  bool $overwrite
+     * @param string $from
+     * @param string $to
+     * @param bool $overwrite
      *
      * @return bool
      */
     public function moveDirectory($from, $to, $overwrite = false): bool
     {
-        if ($overwrite && $this->isDirectory($to)) {
-            if (!$this->deleteDirectory($to)) {
-                return false;
-            }
+        if ($overwrite && $this->isDirectory($to) && !$this->deleteDirectory($to)) {
+            return false;
         }
 
         return @rename($from, $to) === true;
@@ -634,7 +635,7 @@ class Filesystem
             throw new InvalidArgumentException(sprintf('"%s" is not a directory.', $directory));
         }
         $directories = [];
-        foreach ((new DirectoryIterator($directory)) as $file) {
+        foreach (new DirectoryIterator($directory) as $file) {
             if ($ignoreDotDirectories && $file->isDot()) {
                 continue;
             }
