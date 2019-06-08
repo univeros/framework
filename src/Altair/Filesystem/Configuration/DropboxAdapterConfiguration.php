@@ -20,7 +20,7 @@ class DropboxAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             $client = new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN'));

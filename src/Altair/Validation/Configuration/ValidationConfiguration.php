@@ -22,7 +22,7 @@ class ValidationConfiguration implements ConfigurationInterface
     /**
      * @param Container $container
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->alias(ResolverInterface::class, RuleResolver::class)

@@ -19,7 +19,7 @@ class SftpAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             $config = array_filter(

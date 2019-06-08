@@ -20,7 +20,7 @@ class AzureAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             return new AzureAdapter(

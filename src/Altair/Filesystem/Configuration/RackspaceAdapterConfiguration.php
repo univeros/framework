@@ -21,7 +21,7 @@ class RackspaceAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             $endpoint = $this->env->get('FS_RACKSPACE_ENDPOINT', Rackspace::US_IDENTITY_ENDPOINT);

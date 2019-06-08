@@ -22,7 +22,7 @@ class FilesystemAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         // AdapterInterface configuration must be included *always*
         // before this configuration class. Other types of configuration

@@ -35,7 +35,7 @@ class FastRouteConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             return \FastRoute\simpleDispatcher(

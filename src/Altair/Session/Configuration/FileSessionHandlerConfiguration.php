@@ -20,7 +20,7 @@ class FileSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $definition = new Definition([
             ':path' => $this->env->get('SESSION_FILE_PATH'),

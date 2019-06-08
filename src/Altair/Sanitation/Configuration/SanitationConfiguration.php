@@ -22,7 +22,7 @@ class SanitationConfiguration implements ConfigurationInterface
     /**
      * @param Container $container
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->alias(ResolverInterface::class, FilterResolver::class)

@@ -232,7 +232,7 @@ class Container implements ContainerInterface
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             throw new InvalidArgumentException('Invalid invokable: callable or provisional string required');
         }
-        list(, $normalizedClass) = $this->aliases->resolve($name);
+        [, $normalizedClass] = $this->aliases->resolve($name);
         $this->prepares[$normalizedClass] = $callableOrMethodStr;
 
         return $this;
@@ -253,9 +253,9 @@ class Container implements ContainerInterface
             $errorDetail = '';
             if (is_string($callableOrMethodStr)) {
                 $errorDetail = " but received '$callableOrMethodStr'";
-            } elseif (is_array($callableOrMethodStr) &&
-                count($callableOrMethodStr) === 2 &&
-                array_key_exists(0, $callableOrMethodStr) &&
+            } elseif (is_array($callableOrMethodStr) && 2 === count($callableOrMethodStr)
+                      &&
+                      array_key_exists(0, $callableOrMethodStr) &&
                 array_key_exists(1, $callableOrMethodStr)
             ) {
                 if (is_string($callableOrMethodStr[0]) && is_string($callableOrMethodStr[1])) {
@@ -286,7 +286,7 @@ class Container implements ContainerInterface
      */
     public function make(string $name, Definition $definition = null)
     {
-        list($className, $normalizedClass) = $this->aliases->resolve($name);
+        [$className, $normalizedClass] = $this->aliases->resolve($name);
 
         if (isset($this->making[$normalizedClass])) {
             throw new InjectionException(
@@ -503,7 +503,7 @@ class Container implements ContainerInterface
 
     /**
      * @param $className
-     *
+     *@throws ReflectionException
      * @throws InjectionException
      * @return mixed
      */

@@ -26,7 +26,7 @@ class MySqlSessionHandlerConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $adapterDefinition = $this->getAdapterDefinition();
 

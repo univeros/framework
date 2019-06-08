@@ -19,7 +19,7 @@ class PayloadConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container->alias(
             PayloadInterface::class,

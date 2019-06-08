@@ -23,7 +23,7 @@ class PhpViewConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $definition = new Definition([
             ':templatePath' => $this->env->get('HTTP_PHP_VIEW_TEMPLATE_PATH'),

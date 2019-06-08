@@ -22,7 +22,7 @@ class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         // There are a couple of great sources to get a good lit of domain spammers.
         // I highly recommend https://github.com/desbma/referer-spam-domains-blacklist which contains a set of tools

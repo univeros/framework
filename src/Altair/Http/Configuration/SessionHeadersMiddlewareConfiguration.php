@@ -16,7 +16,7 @@ use Altair\Http\Support\NoCacheLimiter;
 
 class SessionHeadersMiddlewareConfiguration implements ConfigurationInterface
 {
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         // forced or fire errors if not set like this?
         ini_set('session.use_trans_sid', false);

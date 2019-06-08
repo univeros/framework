@@ -20,7 +20,7 @@ class GridFsAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $factory = function () {
             $gridFs = (new MongoClient($this->env->get('FS_GRID_FS_SERVER')))

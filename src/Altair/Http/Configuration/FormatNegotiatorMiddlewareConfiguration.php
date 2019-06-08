@@ -16,7 +16,7 @@ use Altair\Http\Support\FormatNegotiator;
 
 class FormatNegotiatorMiddlewareConfiguration implements ConfigurationInterface
 {
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->alias(FormatNegotiatorInterface::class, FormatNegotiator::class);

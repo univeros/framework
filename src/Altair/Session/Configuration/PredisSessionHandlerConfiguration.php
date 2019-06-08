@@ -22,7 +22,7 @@ class PredisSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         // This definition is pretty basic. To improve this configuration, check the multiple connection parameters
         // on https://github.com/nrk/predis/wiki/Connection-Parameters to configure on your .env file.

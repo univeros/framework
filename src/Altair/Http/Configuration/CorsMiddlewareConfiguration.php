@@ -23,7 +23,7 @@ class CorsMiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->alias(AnalysisStrategyInterface::class, Settings::class) /** Settings class must be defined by user */

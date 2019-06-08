@@ -30,7 +30,7 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $fs = new Filesystem();
 

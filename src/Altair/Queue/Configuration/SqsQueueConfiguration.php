@@ -22,7 +22,7 @@ class SqsQueueConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $connectionDefinition = new Definition(
             [

@@ -23,7 +23,7 @@ class RelayConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $relayBuilderDefinition = new Definition(['resolver' => ResolverInterface::class]);
         $containerResolverDefinition = new Definition([':container' => $container]);

@@ -24,7 +24,7 @@ class MiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->define(MiddlewareResolver::class, (new Definition([':container' => $container])))
