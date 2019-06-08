@@ -89,7 +89,7 @@ class EventDispatcher implements EventDispatcherInterface
         foreach ($eventStack->getStack() as $event) {
             $events[] = $event instanceof EventInterface
                 ? $this->dispatch($event->getName(), $event)
-                : $this->dispatch($event);
+                : $this->dispatch((string)$event);
         }
 
         return $events;
@@ -199,6 +199,6 @@ class EventDispatcher implements EventDispatcherInterface
         $listeners = $this->listeners[$name];
         krsort($listeners);
 
-        return call_user_func_array('array_merge', $listeners);
+        return array_merge(...$listeners);
     }
 }
