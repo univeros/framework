@@ -11,17 +11,17 @@ namespace Altair\Security\Contracts;
 
 interface EncrypterInterface
 {
-    const AES_128_CBC_CIPHER = 'AES-128-CBC';
-    const AES_192_CBC_CIPHER = 'AES-192-CBC';
-    const AES_256_CBC_CIPHER = 'AES-256-CBC';
+    public const AES_128_CBC_CIPHER = 'AES-128-CBC';
+    public const AES_192_CBC_CIPHER = 'AES-192-CBC';
+    public const AES_256_CBC_CIPHER = 'AES-256-CBC';
 
-    const AES_128_CBC_CIPHER_KEY_LENGTH = 16;
-    const AES_192_CBC_CIPHER_KEY_LENGTH = 24;
-    const AES_256_CBC_CIPHER_KEY_LENGTH = 32;
+    public const AES_128_CBC_CIPHER_KEY_LENGTH = 16;
+    public const AES_192_CBC_CIPHER_KEY_LENGTH = 24;
+    public const AES_256_CBC_CIPHER_KEY_LENGTH = 32;
 
-    const BLOCK_SIZE = 16;
+    public const BLOCK_SIZE = 16;
 
-    const HASH_SHA256_ALGORITHM = 'sha256';
+    public const HASH_SHA256_ALGORITHM = 'sha256';
 
     /**
      * Encrypts a given value. Returns a base64encode'd JSON string.

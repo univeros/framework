@@ -15,6 +15,7 @@ use Altair\Security\Exception\DecryptException;
 use Altair\Security\Exception\EncryptException;
 use Altair\Security\Exception\InvalidConfigException;
 use Altair\Security\Validator\PayloadValidator;
+use Exception;
 
 class Encrypter implements EncrypterInterface
 {
@@ -76,13 +77,14 @@ class Encrypter implements EncrypterInterface
 
     /**
      * @inheritDoc
+     * @throws Exception
      */
     public function encrypt($value): string
     {
         $iv = random_bytes(EncrypterInterface::BLOCK_SIZE);
         $value = openssl_encrypt(serialize($value), $this->cipher, $this->derivedKey, 0, $iv);
 
-        if ($value === false) {
+        if (false === $value) {
             throw new EncryptException('Unable to encrypt the data.');
         }
 
@@ -101,18 +103,19 @@ class Encrypter implements EncrypterInterface
 
     /**
      * @inheritDoc
+     * @throws DecryptException
      */
     public function decrypt(string $payload)
     {
-        $payload = $this->getPayload($payload);
+        $data = $this->getPayload($payload);
 
-        $value = openssl_decrypt($payload['value'], $this->cipher, $this->derivedKey, 0, $payload['iv']);
+        $value = openssl_decrypt($data['value'], $this->cipher, $this->derivedKey, 0, $data['iv']);
 
-        if ($value === false) {
+        if (false === $value) {
             throw new DecryptException('Unable to decrypt the data.');
         }
 
-        return unserialize($value);
+        return unserialize($value, ['allowed_classes' => true]);
     }
 
     /**
@@ -127,6 +130,7 @@ class Encrypter implements EncrypterInterface
      * @param string $payload
      *
      * @throws DecryptException
+     * @throws Exception
      * @return array
      */
     protected function getPayload(string $payload): array

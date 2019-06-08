@@ -39,7 +39,6 @@ abstract class AbstractKey implements KeyInterface
      * @param string|null $salt
      * @param int $length
      *
-     * @throws InvalidConfigException
      */
     public function __construct(string $key, string $salt = null, int $length = 0)
     {

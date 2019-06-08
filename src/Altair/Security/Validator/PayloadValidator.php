@@ -10,6 +10,7 @@
 namespace Altair\Security\Validator;
 
 use Altair\Security\Contracts\EncrypterInterface;
+use Exception;
 
 class PayloadValidator
 {
@@ -36,7 +37,7 @@ class PayloadValidator
 
     /**
      * Determines whether the payload has a valid format.
-     *
+     * @throws Exception
      * @return bool
      */
     public function validate(): bool
@@ -46,7 +47,7 @@ class PayloadValidator
 
     /**
      * Checks whether the passed payload has a valid mac value
-     *
+     * @throws Exception
      * @return bool
      */
     protected function hasValidMac(): bool
