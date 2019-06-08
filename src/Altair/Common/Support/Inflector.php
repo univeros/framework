@@ -46,8 +46,9 @@ class Inflector
      *
      * @return string
      */
-    public function slug(string $value, string $replacement = '-', $lowercase = true): string
+    public function slug(string $value, string $replacement = null, $lowercase = true): string
     {
+        $replacement = $replacement ?? '-';
         $value = $this->transliterator->transliterate($value);
         $value = preg_replace('/[^a-zA-Z0-9=\s—–-]+/u', '', $value);
         $value = preg_replace('/[=\s—–-]+/u', $replacement, $value);
@@ -83,13 +84,13 @@ class Inflector
     public function camelToId(string $name, string $separator = '-', bool $strict = false): string
     {
         $regex = $strict ? '/[A-Z]/' : '/(?<![A-Z])[A-Z]/';
-        if ($separator === '_') {
-            return trim(strtolower(preg_replace($regex, '_\0', $name)), '_');
-        }
-        return trim(
-            strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
-            $separator
-        );
+
+        return '_' === $separator
+            ? strtolower(trim(preg_replace($regex, '_\0', $name), '_'))
+            : trim(
+                strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
+                $separator
+            );
     }
 
     /**
@@ -99,7 +100,7 @@ class Inflector
      */
     public function camelToWords(string $name, bool $uppercase = true): string
     {
-        $label = trim(strtolower(str_replace([
+        $label = strtolower(trim(str_replace([
             '-',
             '_',
             '.',
@@ -164,7 +165,7 @@ class Inflector
      */
     public function ordinal(int $number): string
     {
-        if (in_array($number % 100, range(11, 13))) {
+        if (in_array($number % 100, range(11, 13), false)) {
             return $number . 'th';
         }
         switch ($number % 10) {

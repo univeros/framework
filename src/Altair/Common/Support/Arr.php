@@ -10,6 +10,7 @@
 namespace Altair\Common\Support;
 
 use Altair\Common\Exception\InvalidArgumentException;
+use Closure;
 
 class Arr // - Thanks @yii
 {
@@ -92,7 +93,7 @@ class Arr // - Thanks @yii
      */
     public static function getValue(array $array, $key, $default = null)
     {
-        if ($key instanceof \Closure) {
+        if ($key instanceof Closure) {
             return $key($array, $default);
         }
         if (is_array($key)) {
@@ -113,7 +114,8 @@ class Arr // - Thanks @yii
             // this is expected to fail if the property does not exist, or __get() is not implemented
             // it is not reliably possible to check whether a property is accessible beforehand
             return $array->$key;
-        } elseif (is_array($array)) {
+        }
+        if (is_array($array)) {
             return (isset($array[$key]) || array_key_exists($key, $array)) ? $array[$key] : $default;
         }
 
@@ -339,7 +341,7 @@ class Arr // - Thanks @yii
      * ```
      *
      * @param array $array
-     * @param string|\Closure $name
+     * @param string|Closure $name
      * @param bool $keepKeys whether to maintain the array keys. If false, the resulting array
      * will be re-indexed with integers.
      *
@@ -482,9 +484,9 @@ class Arr // - Thanks @yii
             throw new InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
         }
         $args = [];
-        foreach ($keys as $i => $key) {
+        foreach ($keys as $i => $k) {
             $flag = $sortFlag[$i];
-            $args[] = static::getColumn($array, $key);
+            $args[] = static::getColumn($array, $k);
             $args[] = $direction[$i];
             $args[] = $flag;
         }
@@ -494,7 +496,7 @@ class Arr // - Thanks @yii
         $args[] = SORT_ASC;
         $args[] = SORT_NUMERIC;
         $args[] = &$array;
-        call_user_func_array('array_multisort', $args);
+        array_multisort(...$args);
     }
 
     /**
@@ -543,7 +545,7 @@ class Arr // - Thanks @yii
      * @return array the decoded data
      * @see http://www.php.net/manual/en/function.htmlspecialchars-decode.php
      */
-    public static function htmlDecode(array $array, $valuesOnly = true)
+    public static function htmlDecode(array $array, $valuesOnly = true): array
     {
         $data = [];
         foreach ($array as $key => $value) {
@@ -758,7 +760,7 @@ class Arr // - Thanks @yii
         foreach ($filters as $var) {
             $keys = explode('.', $var);
             $globalKey = $keys[0];
-            $localKey = isset($keys[1]) ? $keys[1] : null;
+            $localKey = $keys[1] ?? null;
             if ($globalKey[0] === '!') {
                 $forbiddenVars[] = [
                     substr($globalKey, 1),
@@ -782,7 +784,7 @@ class Arr // - Thanks @yii
             $result[$globalKey][$localKey] = $array[$globalKey][$localKey];
         }
         foreach ($forbiddenVars as $var) {
-            list($globalKey, $localKey) = $var;
+            [$globalKey, $localKey] = $var;
             if (array_key_exists($globalKey, $result)) {
                 unset($result[$globalKey][$localKey]);
             }

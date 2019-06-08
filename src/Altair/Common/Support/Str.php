@@ -36,7 +36,7 @@ class Str
      */
     public function byteSubString(string $value, int $start, int $length = null, string $encoding = '8bit'): string
     {
-        return mb_substr($value, $start, $length === null ? mb_strlen($value, $encoding) : $length, $encoding);
+        return mb_substr($value, $start, $length ?? mb_strlen($value, $encoding), $encoding);
     }
 
     /**
@@ -108,7 +108,7 @@ class Str
         bool $caseSensitive = true,
         string $encoding = '8bit'
     ): bool {
-        if (!$bytes = static::byteLength($needle)) {
+        if (!$bytes = $this->byteLength($needle)) {
             return true;
         }
         if ($caseSensitive) {

@@ -23,7 +23,7 @@ class ArrayRegistry implements RegistryInterface
      */
     public function __construct(array $data = null)
     {
-        $this->data = isset($data) ? $data : [];
+        $this->data = $data ?? [];
     }
 
     /**
