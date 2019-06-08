@@ -17,7 +17,7 @@ use Altair\Structure\Set;
 class ConfigurationCollection extends Set implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {
@@ -31,7 +31,7 @@ class ConfigurationCollection extends Set implements ConfigurationInterface
                 throw new InvalidConfigurationException(
                     sprintf(
                         "Configuration class '%s' must implement '%s'",
-                        get_class($configuration),
+                        is_object($configuration) ? get_class($configuration) : $configuration,
                         ConfigurationInterface::class
                     )
                 );
