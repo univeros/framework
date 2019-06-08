@@ -13,6 +13,7 @@ use Altair\Container\Cache\ArrayCache;
 use Altair\Container\Contracts\ReflectionCacheInterface;
 use Altair\Container\Contracts\ReflectionInterface;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -42,13 +43,15 @@ class CachedReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws ReflectionException
      */
     public function getClass(string $class): ReflectionClass
     {
         $key = ReflectionCacheInterface::CLASSES_KEY_PREFIX . strtolower($class);
         $reflectionClass = $this->cache->get($key);
-        if (!$reflectionClass) {
+        if (false === $reflectionClass) {
             $reflectionClass = $this->reflector->getClass($class);
             $this->cache->put($key, $reflectionClass);
         }
@@ -57,13 +60,15 @@ class CachedReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws ReflectionException
      */
     public function getConstructor(string $class): ?ReflectionMethod
     {
         $key = ReflectionCacheInterface::CONSTRUCTORS_KEY_PREFIX . strtolower($class);
         $reflectionConstructor = $this->cache->get($key);
-        if ($reflectionConstructor === false) {
+        if (false === $reflectionConstructor) {
             $reflectionConstructor = $this->reflector->getConstructor($class);
             $this->cache->put($key, $reflectionConstructor);
         }
@@ -72,7 +77,9 @@ class CachedReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws ReflectionException
      */
     public function getConstructorParameters(string $class): ?array
     {
@@ -88,7 +95,7 @@ class CachedReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
@@ -98,14 +105,20 @@ class CachedReflection implements ReflectionInterface
             $class = strtolower($function->class);
             $key = ReflectionCacheInterface::CLASSES_KEY_PREFIX . "{$class}.{$method}.param-{$name}";
         } else {
-            $key = $method !== '{closure}'
+            $key = (strpos($method, '{closure}') === false)
                 ? ReflectionCacheInterface::FUNCTIONS_KEY_PREFIX . "{$method}.param-{$name}"
                 : null;
         }
 
         $typeHint = ($key === null) ? false : $this->cache->get($key);
 
-        if (false !== $typeHint) {
+        if (false === $typeHint) {
+            $typeHint = $this->reflector->getParameterTypeHint($function, $parameter);
+            if (null !== $key) {
+                $this->cache->put($key, $typeHint);
+            }
+        }
+        /*if (false !== $typeHint) {
             return (string)$typeHint;
         }
 
@@ -117,13 +130,15 @@ class CachedReflection implements ReflectionInterface
             $typeHint = null;
         }
 
-        $this->cache->put($key, $typeHint);
+        $this->cache->put($key, $typeHint);*/
 
         return $typeHint;
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws ReflectionException
      */
     public function getFunction($name): ReflectionFunction
     {
@@ -142,7 +157,9 @@ class CachedReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     *
+     * @throws ReflectionException
      */
     public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
     {

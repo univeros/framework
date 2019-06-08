@@ -107,7 +107,7 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param ReflectionParameter $reflectionParameter
      * @throws InjectionException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @return mixed|null
      */
     protected function buildArgumentFromReflectionParameter(ReflectionParameter $reflectionParameter)
@@ -160,6 +160,7 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param array $definition
      * @throws InjectionException
+     * @throws ReflectionException
      * @return mixed|object|null
      */
     protected function buildArgumentFromClassDefinition(array $definition)
