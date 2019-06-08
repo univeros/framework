@@ -44,7 +44,7 @@ class FilterCollection extends Map
      *
      * @param mixed $key
      */
-    protected function filterKey($key)
+    protected function filterKey($key): void
     {
         if (!is_string($key)) {
             throw new InvalidArgumentException(
@@ -61,10 +61,10 @@ class FilterCollection extends Map
      *
      * @param mixed $filters
      */
-    protected function parseFilters($filters)
+    protected function parseFilters($filters): void
     {
         if (is_string($filters)) {
-            if (!in_array(FilterInterface::class, class_implements($filters))) {
+            if (!in_array(FilterInterface::class, class_implements($filters), false)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         '"%s" does not implement %s.',
@@ -79,7 +79,7 @@ class FilterCollection extends Map
                     $filter = ['class' => $filter];
                 }
                 $class = $filter['class'] ?? null;
-                if ($class === null || !in_array(FilterInterface::class, class_implements($class))) {
+                if ($class === null || !in_array(FilterInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'A definition of a filter as array must have a "class" key and must implement %s.',

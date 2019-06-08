@@ -21,8 +21,6 @@ class BooleanFilter extends AbstractFilter
         }
         $filtered = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return is_bool($filtered)
-            ? (bool)$filtered
-            : (bool)$value;
+        return is_bool($filtered) ? $filtered : (bool)$value;
     }
 }

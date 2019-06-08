@@ -33,7 +33,8 @@ class FilterResolver implements ResolverInterface
 
     /**
      * @param mixed $entry
-     *
+     * @throws \Altair\Container\Exception\InjectionException
+     * @throws \ReflectionException
      * @return FilterInterface
      */
     public function __invoke($entry): FilterInterface

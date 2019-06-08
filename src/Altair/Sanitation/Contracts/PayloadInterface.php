@@ -13,6 +13,6 @@ use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 
 interface PayloadInterface extends MiddlewarePayloadInterface
 {
-    const ATTRIBUTE_SUBJECT = 'altair:sanitation:subject';
-    const ATTRIBUTE_KEY = 'altair:sanitation:attribute';
+    public const ATTRIBUTE_SUBJECT = 'altair:sanitation:subject';
+    public const ATTRIBUTE_KEY = 'altair:sanitation:attribute';
 }

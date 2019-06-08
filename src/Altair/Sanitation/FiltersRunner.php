@@ -81,7 +81,7 @@ class FiltersRunner implements FiltersRunnerInterface
     protected function resolve($entry)
     {
         if (!$entry) {
-            return function (PayloadInterface $payload, callable $next) {
+            return static function (PayloadInterface $payload) {
                 return $payload;
             };
         }

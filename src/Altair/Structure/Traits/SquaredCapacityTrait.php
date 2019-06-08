@@ -37,9 +37,9 @@ trait SquaredCapacityTrait
      *
      * @return $this
      */
-    protected function increaseCapacity()
+    protected function increaseCapacity(): self
     {
-        $this->capacity = $this->square(max(count($this), $this->capacity + 1));
+        $this->capacity = $this->square((int)max(count($this), $this->capacity + 1));
 
         return $this;
     }
@@ -53,6 +53,6 @@ trait SquaredCapacityTrait
      */
     private function square(int $capacity): int
     {
-        return pow(2, ceil(log($capacity, 2)));
+        return (int)(2 ** ceil(log($capacity, 2)));
     }
 }

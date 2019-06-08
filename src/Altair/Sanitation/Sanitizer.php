@@ -51,7 +51,7 @@ class Sanitizer implements SanitizerInterface
                 $runner = $this->runner->withFilters($filters);
                 $payload = $this->payload->withAttribute(PayloadInterface::ATTRIBUTE_KEY, $attribute);
 
-                $this->payload = call_user_func($runner, $payload);
+                $this->payload = $runner($payload);
             }
         }
 

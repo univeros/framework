@@ -31,8 +31,9 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     }
 
     /**
-     * @param $entry
-     *
+     * @param mixed $entry
+     * @throws \Altair\Container\Exception\InjectionException
+     * @throws \ReflectionException
      * @return MiddlewareInterface
      */
     public function __invoke($entry): MiddlewareInterface

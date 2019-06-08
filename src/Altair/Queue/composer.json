@@ -9,6 +9,8 @@
     },
     "require": {
         "php": ">=7.0.0",
+        "ext-json": "*",
+        "ext-redis": "*",
         "univeros/configuration": "*",
         "univeros/happen": "*",
         "univeros/middleware": "*"

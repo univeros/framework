@@ -31,15 +31,13 @@ class LowerCaseFilter extends AbstractFilter
      *
      * @return null|string
      */
-    public function parse($value)
+    public function parse($value): ?string
     {
         if (!is_scalar($value)) {
             return null;
         }
 
-        return is_scalar($value)
-            ? ($this->firstOnly ? $this->getFirstToLower($value) : strtolower($value))
-            : null;
+        return $this->firstOnly ? $this->getFirstToLower($value) : strtolower($value);
     }
 
     /**
