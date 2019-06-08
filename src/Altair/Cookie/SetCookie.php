@@ -49,13 +49,13 @@ class SetCookie implements SetCookieInterface
     public function __toString()
     {
         $parts = [
-            urlencode($this->name) . '=' . urlencode($this->value)
+            urlencode($this->name) . '=' . ($this->value ? urlencode($this->value) : ''),
         ];
 
         $parts[] = $this->domain ? sprintf('Domain=%s', $this->domain) : null;
         $parts[] = $this->path ? sprintf('Path=%s', $this->path) : null;
-        $parts[] = $this->expires ? sprintf("Expires=%s", gmdate('D, d M Y H:i:s T', $this->expires)) : null;
-        $parts[] = $this->maxAge ? sprintf("Max-Age=%s", $this->maxAge) : null;
+        $parts[] = $this->expires ? sprintf('Expires=%s', gmdate('D, d M Y H:i:s T', $this->expires)) : null;
+        $parts[] = $this->maxAge ? sprintf('Max-Age=%s', $this->maxAge) : null;
         $parts[] = $this->secure ? 'Secure' : null;
         $parts[] = $this->httpOnly ? 'HttpOnly' : null;
 

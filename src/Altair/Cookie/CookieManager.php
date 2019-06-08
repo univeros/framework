@@ -111,7 +111,7 @@ class CookieManager
      */
     public function expireOnResponse(ResponseInterface $response, string $name): ResponseInterface
     {
-        return static::setOnResponse($response, SetCookieFactory::createExpired($name));
+        return $this->setOnResponse($response, SetCookieFactory::createExpired($name));
     }
 
     /**
@@ -121,7 +121,7 @@ class CookieManager
      *
      * @return ResponseInterface
      */
-    public function modifyOnResponse(ResponseInterface $response, string $name, callable $modify)
+    public function modifyOnResponse(ResponseInterface $response, string $name, callable $modify): ResponseInterface
     {
         $cookies = SetCookieFactory::createCollectionFromResponse($response);
         $cookie = $modify($cookies->hasKey($name) ? $cookies->get($name) : SetCookieFactory::create($name));

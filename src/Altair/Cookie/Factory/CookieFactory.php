@@ -35,7 +35,7 @@ class CookieFactory
      */
     public static function createFromPairString(string $pair): Cookie
     {
-        list($name, $value) = (new CookieStr())->splitPair($pair);
+        [$name, $value] = (new CookieStr())->splitPair($pair);
 
         $cookie = new Cookie($name);
 
@@ -53,7 +53,7 @@ class CookieFactory
 
         return new CookieCollection(
             array_map(
-                function ($pair) {
+                static function ($pair) {
                     return static::createFromPairString($pair);
                 },
                 $pairs

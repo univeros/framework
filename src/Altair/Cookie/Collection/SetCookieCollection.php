@@ -86,14 +86,14 @@ class SetCookieCollection extends Map
         if ($comparator) {
             usort(
                 $pairs,
-                function ($a, $b) use ($comparator) {
+                static function ($a, $b) use ($comparator) {
                     return $comparator($a->value->getValue(), $b->value->getValue());
                 }
             );
         } else {
             usort(
                 $pairs,
-                function ($a, $b) {
+                static function ($a, $b) {
                     return $a->value->getValue() <=> $b->value->getValue();
                 }
             );

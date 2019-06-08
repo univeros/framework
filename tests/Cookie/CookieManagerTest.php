@@ -43,7 +43,6 @@ class CookieManagerTest extends TestCase
 
         $cookie = $manager->getFromRequest($request->reveal(), 'name', 'value');
 
-        $this->assertInstanceOf(Cookie::class, $cookie);
         $this->assertEquals('name', $cookie->getName());
         $this->assertEquals('value', $cookie->getValue());
     }
@@ -59,7 +58,7 @@ class CookieManagerTest extends TestCase
         $request = $manager->modifyOnRequest(
             $request,
             'name',
-            function (Cookie $cookie) {
+            static function (Cookie $cookie) {
                 return $cookie->withValue('another value');
             }
         );
@@ -91,7 +90,7 @@ class CookieManagerTest extends TestCase
         $response = $manager->modifyOnResponse(
             $response,
             'name',
-            function (SetCookie $cookie) {
+            static function (SetCookie $cookie) {
                 return $cookie
                     ->remember()
                     ->withValue('another value');
