@@ -105,13 +105,13 @@ trait HttpAuthenticationAwareTrait
      * @throws RuntimeException to stop execution
      * @return void
      */
-    protected function checkAllowance(string $host, string $scheme)
+    protected function checkAllowance(string $host, string $scheme): void
     {
-        if ("https" !== $scheme && true === $this->ssl) {
+        if ('https' !== $scheme && true === $this->ssl) {
             $allowed = is_string($this->allowed) ? explode(',', $this->allowed) : $this->allowed;
-            if (!in_array($host, $allowed)) {
+            if (!in_array($host, $allowed, false)) {
                 $message = sprintf(
-                    "Insecure (HTTP) use of middleware over %s is denied.",
+                    'Insecure (HTTP) use of middleware over %s is denied.',
                     strtoupper($scheme)
                 );
                 throw new RuntimeException($message);

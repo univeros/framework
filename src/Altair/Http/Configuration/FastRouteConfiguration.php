@@ -14,6 +14,7 @@ use Altair\Container\Container;
 use Altair\Http\Collection\RouteCollection;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+use function FastRoute\simpleDispatcher;
 
 class FastRouteConfiguration implements ConfigurationInterface
 {
@@ -38,10 +39,10 @@ class FastRouteConfiguration implements ConfigurationInterface
     public function apply(Container $container): void
     {
         $factory = function () {
-            return \FastRoute\simpleDispatcher(
+            return simpleDispatcher(
                 function (RouteCollector $routeCollector) {
                     foreach ($this->routeCollection as $request => $action) {
-                        list($method, $path) = explode(' ', $request, 2);
+                        [$method, $path] = explode(' ', $request, 2);
                         $routeCollector->addRoute($method, $path, $action);
                     }
                 }

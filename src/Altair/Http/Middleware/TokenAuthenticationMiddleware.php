@@ -77,7 +77,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
             if ($token = $this->tokenExtractor->extract($request)) {
                 $authToken = $this->tokenFactory->fromTokenString($token);
             } elseif ($credentials = $this->credentialsExtractor->extract($request)) {
-                list($user, $password) = $credentials;
+                [$user, $password] = $credentials;
                 if (false === call_user_func($this->identityValidator, ['user' => $user, 'password' => $password])) {
                     throw new AuthorizationException('Invalid credentials.');
                 }

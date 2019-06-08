@@ -27,8 +27,8 @@ class MiddlewareConfiguration implements ConfigurationInterface
     public function apply(Container $container): void
     {
         $container
-            ->define(MiddlewareResolver::class, (new Definition([':container' => $container])))
-            ->define(Runner::class, (new Definition([':resolver' => MiddlewareResolverInterface::class])))
+            ->define(MiddlewareResolver::class, new Definition([':container' => $container]))
+            ->define(Runner::class, new Definition([':resolver' => MiddlewareResolverInterface::class]))
             ->alias(MiddlewareResolverInterface::class, MiddlewareResolver::class)
             ->alias(MiddlewareRunnerInterface::class, Runner::class)
             ->alias(MiddlewareManagerInterface::class, MiddlewareManager::class);

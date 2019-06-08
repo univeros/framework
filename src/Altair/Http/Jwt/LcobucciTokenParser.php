@@ -86,7 +86,7 @@ class LcobucciTokenParser implements TokenParserInterface
 
         if (!$this->config->getSigner()->verify($token->signature()->hash(), $token->payload(), $key)) {
             throw new InvalidTokenException(
-                sprintf('Provided authorization token is invalid.', $jwt)
+                sprintf('Provided authorization token %s is invalid.', $jwt)
             );
         }
     }

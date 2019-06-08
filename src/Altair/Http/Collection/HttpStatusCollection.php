@@ -102,9 +102,9 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException If the requested $statusCode is not valid
      *
-     * @return int
+     * @return string
      */
-    public function getResponseClass(int $code)
+    public function getResponseClass(int $code): string
     {
         $responseClass = [
             1 => HttpStatusCodeInterface::RESPONSE_CLASS_INFORMATIONAL,

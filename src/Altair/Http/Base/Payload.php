@@ -17,7 +17,7 @@ use Altair\Structure\Map;
 class Payload implements PayloadInterface
 {
     /**
-     * @var string
+     * @var int
      */
     protected $status;
     /**
@@ -52,7 +52,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
-    public function withStatus(string $status): PayloadInterface
+    public function withStatus(int $status): PayloadInterface
     {
         $cloned = clone $this;
         $cloned->status = $status;
@@ -63,7 +63,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
-    public function getStatus(): int
+    public function getStatus(): ?int
     {
         return $this->status;
     }

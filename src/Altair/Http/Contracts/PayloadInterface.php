@@ -19,11 +19,11 @@ interface PayloadInterface extends HttpStatusInterface
      *
      * @see StatusInterface
      *
-     * @param string $status
+     * @param int $status
      *
      * @return PayloadInterface
      */
-    public function withStatus(string $status): PayloadInterface;
+    public function withStatus(int $status): PayloadInterface;
 
     /**
      * Get the status of the payload.
@@ -32,7 +32,7 @@ interface PayloadInterface extends HttpStatusInterface
      *
      * @return int
      */
-    public function getStatus(): int;
+    public function getStatus(): ?int;
 
     /**
      * Create a copy of the payload with input collection map.

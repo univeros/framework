@@ -86,7 +86,7 @@ class ActionMiddleware implements MiddlewareInterface
         DomainInterface $domain,
         InputInterface $input,
         ServerRequestInterface $request
-    ) {
+    ): PayloadInterface {
         return $domain($input($request));
     }
 
@@ -105,7 +105,7 @@ class ActionMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
-    ) {
+    ): ResponseInterface {
         return $responder($request, $response, $payload);
     }
 }

@@ -116,7 +116,7 @@ class CacheMiddleware implements MiddlewareInterface
             $ifNoneMatch = $request->getHeaderLine('If-None-Match');
             if ($ifNoneMatch) {
                 $etagList = preg_split('@\s*,\s*@', $ifNoneMatch);
-                if (in_array($etag, $etagList) || in_array('*', $etagList)) {
+                if (in_array($etag, $etagList, false) || in_array('*', $etagList, false)) {
                     return $response->withStatus(304);
                 }
             }
