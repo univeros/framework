@@ -15,10 +15,8 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class SetCookie implements SetCookieInterface
+class SetCookie extends AbstractCookie implements SetCookieInterface
 {
-    use NameAndValueAwareTrait;
-
     /**
      * @var int
      */
@@ -43,6 +41,16 @@ class SetCookie implements SetCookieInterface
      * @var bool
      */
     protected $httpOnly = false;
+
+    /**
+     * Cookie constructor.
+     * @param string $name
+     * @param string|null $value
+     */
+    public function __construct(string $name, string $value = null)
+    {
+        parent::__construct($name, $value);
+    }
 
     /**
      * @return string

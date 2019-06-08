@@ -12,9 +12,17 @@ namespace Altair\Cookie;
 use Altair\Cookie\Contracts\CookieInterface;
 use Altair\Cookie\Traits\NameAndValueAwareTrait;
 
-class Cookie implements CookieInterface
+class Cookie extends AbstractCookie implements CookieInterface
 {
-    use NameAndValueAwareTrait;
+    /**
+     * Cookie constructor.
+     * @param string $name
+     * @param string|null $value
+     */
+    public function __construct(string $name, string $value = null)
+    {
+        parent::__construct($name, $value);
+    }
 
     /**
      * @return string

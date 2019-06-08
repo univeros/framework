@@ -7,9 +7,9 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Altair\Cookie\Traits;
+namespace Altair\Cookie;
 
-trait NameAndValueAwareTrait
+abstract class AbstractCookie
 {
     /**
      * @var string
@@ -22,12 +22,12 @@ trait NameAndValueAwareTrait
     protected $value;
 
     /**
-     * NameAndValueAwareTrait constructor.
+     * AbstractCookie constructor.
      *
      * @param string $name
      * @param string|null $value
      */
-    public function __construct(string $name, string $value = null)
+    protected function __construct(string $name, string $value = null)
     {
         $this->name = $name;
         $this->value = $value;
