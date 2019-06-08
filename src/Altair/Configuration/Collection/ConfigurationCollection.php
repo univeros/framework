@@ -19,7 +19,7 @@ class ConfigurationCollection extends Set implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         foreach ($this as $configuration) {
             if (!is_object($configuration)) {

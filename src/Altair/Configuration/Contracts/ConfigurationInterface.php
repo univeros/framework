@@ -10,6 +10,7 @@
 namespace Altair\Configuration\Contracts;
 
 use Altair\Container\Container;
+use Altair\Container\Exception\InjectionException;
 use Altair\Container\Exception\InvalidArgumentException;
 
 interface ConfigurationInterface
@@ -20,6 +21,7 @@ interface ConfigurationInterface
      * @param Container $container
      *
      * @throws InvalidArgumentException
+     * @throws InjectionException
      */
     public function apply(Container $container): void;
 }

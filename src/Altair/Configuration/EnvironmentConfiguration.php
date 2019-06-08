@@ -39,7 +39,7 @@ class EnvironmentConfiguration implements ConfigurationInterface
     /**
      * @inheritdoc
      */
-    public function apply(Container $container)
+    public function apply(Container $container): void
     {
         $container
             ->share(Env::class)
@@ -54,7 +54,7 @@ class EnvironmentConfiguration implements ConfigurationInterface
             )
             ->prepare(
                 Env::class,
-                function (Env $env, Container $container) {
+                static function (Env $env, Container $container) {
                     // ensure Loader loads environment file prior using Env::class
                     $loader = $container->make(Loader::class);
                     $loader->load();
