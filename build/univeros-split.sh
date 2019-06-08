@@ -9,7 +9,6 @@ git subsplit publish --heads="master" --no-tags src/Altair/Data:git@github.com:u
 git subsplit publish --heads="master" --no-tags src/Altair/Filesystem:git@github.com:univeros/filesystem.git
 git subsplit publish --heads="master" --no-tags src/Altair/Http:git@github.com:univeros/http.git
 git subsplit publish --heads="master" --no-tags src/Altair/Middleware:git@github.com:univeros/middleware.git
-git subsplit publish --heads="master" --no-tags src/Altair/Queue:git@github.com:univeros/queue.git
 git subsplit publish --heads="master" --no-tags src/Altair/Security:git@github.com:univeros/security.git
 git subsplit publish --heads="master" --no-tags src/Altair/Session:git@github.com:univeros/session.git
 git subsplit publish --heads="master" --no-tags src/Altair/Structure:git@github.com:univeros/structure.git
