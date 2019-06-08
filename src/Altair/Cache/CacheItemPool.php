@@ -343,7 +343,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     protected function createCacheItemFactoryClosure(int $defaultLifespan = null): Closure
     {
         return Closure::bind(
-            function (string $key, $value, bool $isHit) use ($defaultLifespan) {
+            static function (string $key, $value, bool $isHit) use ($defaultLifespan) {
                 $cacheItem = new CacheItem();
                 $cacheItem->{'key'} = $key;
                 $cacheItem->{'value'} = $value;

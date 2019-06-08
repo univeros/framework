@@ -32,6 +32,8 @@ class SimpleCache implements CacheInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws SimpleCacheException
      */
     public function get($key, $default = null)
     {
@@ -48,6 +50,8 @@ class SimpleCache implements CacheInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws SimpleCacheException
      */
     public function set($key, $value, $ttl = null)
     {
@@ -82,13 +86,15 @@ class SimpleCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function clear()
+    public function clear(): bool
     {
-        $this->pool->clear();
+        return $this->pool->clear();
     }
 
     /**
      * @inheritdoc
+     *
+     * @throws SimpleCacheException
      */
     public function getMultiple($keys, $default = null)
     {
@@ -120,8 +126,10 @@ class SimpleCache implements CacheInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws SimpleCacheException
      */
-    public function setMultiple($values, $ttl = null)
+    public function setMultiple($values, $ttl = null): bool
     {
         $valuesIsArray = is_array($values);
         if (!$valuesIsArray && !$values instanceof Traversable) {
@@ -170,8 +178,10 @@ class SimpleCache implements CacheInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws SimpleCacheException
      */
-    public function deleteMultiple($keys)
+    public function deleteMultiple($keys): bool
     {
         if ($keys instanceof Traversable) {
             $keys = iterator_to_array($keys, false);
@@ -195,7 +205,7 @@ class SimpleCache implements CacheInterface
     /**
      * @inheritdoc
      */
-    public function has($key)
+    public function has($key): bool
     {
         try {
             return $this->pool->hasItem($key);

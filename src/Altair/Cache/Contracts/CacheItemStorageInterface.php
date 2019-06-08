@@ -40,6 +40,7 @@ interface CacheItemStorageInterface
      *
      * @return bool True if item exists in the cache, false otherwise.
      */
+
     public function hasItem(string $key): bool;
 
     /**

@@ -24,6 +24,7 @@ final class CacheItem implements CacheItemInterface
     protected $expirationTime;
     protected $defaultLifespan;
     protected $tags = [];
+
     /**
      * @var CacheItemTagValidatorInterface
      */

@@ -145,7 +145,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
         }
 
         $this->client->pipeline(
-            function ($pipe) use ($serialized, $lifespan) {
+            static function ($pipe) use ($serialized, $lifespan) {
                 /** @var Client $pipe */
                 foreach ($serialized as $id => $value) {
                     if (0 >= $lifespan) {

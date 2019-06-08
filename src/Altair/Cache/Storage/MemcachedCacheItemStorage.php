@@ -58,8 +58,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
      */
     public function hasItem(string $key): bool
     {
-        return false !== $this->client->get($key) ||
-            $this->checkResponse(Memcached::RES_SUCCESS === $this->client->getResultCode());
+        return false !== $this->client->get($key) || Memcached::RES_SUCCESS === $this->client->getResultCode();
     }
 
     /**
@@ -91,7 +90,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
      */
     public function save(array $values, int $lifespan)
     {
-        return $this->checkResponse($this->client->setMulti($values, $lifespan));
+        return Memcached::RES_SUCCESS === $this->checkResponse($this->client->setMulti($values, $lifespan));
     }
 
     /**

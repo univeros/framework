@@ -11,7 +11,9 @@ namespace Altair\Cache\Storage;
 
 use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
+use Altair\Filesystem\Exception\FileNotFoundException;
 use Altair\Filesystem\Filesystem;
+use stdClass;
 
 class FilesystemCacheItemStorage implements CacheItemStorageInterface
 {
@@ -42,6 +44,8 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws FileNotFoundException
      */
     public function getItems(array $keys = []): array
     {
@@ -67,13 +71,15 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritdoc
+     *
+     * @throws FileNotFoundException
      */
     public function hasItem(string $key): bool
     {
         $file = $this->getFilePath($key);
 
-        return $this->filesystem->exists($file) &&
-            (@$this->filesystem->getLastModified($file) > time() || (bool)$this->getItems([$key]));
+        return $this->filesystem->exists($file) && ($this->filesystem->getLastModified($file) > time()
+                                                    || (bool)$this->getItems([$key]));
     }
 
     /**
@@ -81,7 +87,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      */
     public function clear(): bool
     {
-        return @$this->filesystem->clearDirectory($this->directory);
+        return $this->filesystem->clearDirectory($this->directory);
     }
 
     /**
@@ -127,20 +133,20 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     {
         $file = $this->getFilePath($id, true);
 
-        $item = new \stdClass();
+        $item = new stdClass();
         $item->id = $id;
         $item->value = $value;
         $item->expiresAt = $expiresAt;
         $data = str_replace('stdClass::__set_state', '(object)', var_export($item, true));
         $contents = '<?php return ' . $data . ';';
 
-        if (false === @file_put_contents($this->tmp, $contents)) {
+        if (false === file_put_contents($this->tmp, $contents)) {
             return false;
         }
         if (null !== $expiresAt) {
-            @touch($this->tmp, $expiresAt);
+            touch($this->tmp, $expiresAt);
         }
-        if (@rename($this->tmp, $file)) {
+        if (rename($this->tmp, $file)) {
             return true;
         }
         $this->filesystem->delete($this->tmp);
@@ -172,7 +178,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      * @param Filesystem $filesystem
      * @param string $directory
      */
-    private function setCacheDirectory(Filesystem $filesystem, string $directory): void
+    private function setCacheDirectory(Filesystem $filesystem, ?string $directory): void
     {
         $directory = $directory ?? sys_get_temp_dir() . '/univeros-cache/';
 

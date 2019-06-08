@@ -89,8 +89,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
         do {
             $keys = $this->client->scan($cursor, $this->namespace . '*', 1000);
             if (isset($keys[1]) && is_array($keys[1])) {
-                $cursor = $keys[0];
-                $keys = $keys[1];
+                [$cursor, $keys] = $keys;
             }
             if ($keys) {
                 $this->client->del($keys);
