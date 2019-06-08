@@ -11,12 +11,12 @@ namespace Altair\Container\Contracts;
 
 interface ReflectionCacheInterface
 {
-    const CLASSES_KEY_PREFIX = 'class.';
-    const CONSTRUCTORS_KEY_PREFIX = 'const.';
-    const CONSTRUCTOR_PARAMETERS_KEY_PREFIX = 'const-params.';
-    const FUNCTIONS_KEY_PREFIX = 'func.';
-    const FUNCTION_PARAMETERS_KEY_PREFIX = 'func-params.';
-    const METHODS_KEY_PREFIX = 'method.';
+    public const CLASSES_KEY_PREFIX = 'class.';
+    public const CONSTRUCTORS_KEY_PREFIX = 'const.';
+    public const CONSTRUCTOR_PARAMETERS_KEY_PREFIX = 'const-params.';
+    public const FUNCTIONS_KEY_PREFIX = 'func.';
+    public const FUNCTION_PARAMETERS_KEY_PREFIX = 'func-params.';
+    public const METHODS_KEY_PREFIX = 'method.';
 
     /**
      * @param string $key
@@ -27,7 +27,7 @@ interface ReflectionCacheInterface
 
     /**
      * @param string $key
-     * @param $data
+     * @param mixed $data
      *
      * @return ReflectionCacheInterface
      */

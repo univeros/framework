@@ -83,7 +83,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     public function intersect(MapInterface $map): MapInterface
     {
         return $this->filter(
-            function ($key) use ($map) {
+            static function ($key) use ($map) {
                 return $map->hasKey($key);
             }
         );
@@ -95,7 +95,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     public function diff(MapInterface $map): MapInterface
     {
         return $this->filter(
-            function ($key) use ($map) {
+            static function ($key) use ($map) {
                 return !$map->hasKey($key);
             }
         );
@@ -194,14 +194,14 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
         if ($comparator) {
             usort(
                 $pairs,
-                function ($a, $b) use ($comparator) {
+                static function ($a, $b) use ($comparator) {
                     return $comparator($a->value, $b->value);
                 }
             );
         } else {
             usort(
                 $pairs,
-                function ($a, $b) {
+                static function ($a, $b) {
                     return $a->value <=> $b->value;
                 }
             );
@@ -220,14 +220,14 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
         if ($comparator) {
             usort(
                 $pairs,
-                function ($a, $b) use ($comparator) {
+                static function ($a, $b) use ($comparator) {
                     return $comparator($a->key, $b->key);
                 }
             );
         } else {
             usort(
                 $pairs,
-                function ($a, $b) {
+                static function ($a, $b) {
                     return $a->key <=> $b->key;
                 }
             );
@@ -296,7 +296,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     public function first(): PairInterface
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Map is empty');
         }
 
         return $this->internal[0];
@@ -308,7 +308,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     public function last(): PairInterface
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Map is empty');
         }
 
         return end($this->internal);
@@ -320,7 +320,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     public function skip(int $position): PairInterface
     {
         if ($position < 0 || $position >= count($this->internal)) {
-            throw new OutOfRangeException();
+            throw new OutOfRangeException('Out of range');
         }
         /** @var PairInterface $pair */
         $pair = $this->internal[$position];
@@ -363,12 +363,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      */
     public function get($key, $default = null)
     {
-        if (($pair = $this->lookupKey($key))) {
+        if ($pair = $this->lookupKey($key)) {
             return $pair->value;
         }
 
         if (func_num_args() === 1) {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException('Out of bounds');
         }
 
         return $default;
@@ -413,7 +413,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
         // Check if a default was provided
         if (func_num_args() === 1) {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException('Out of bounds');
         }
 
         return $default;

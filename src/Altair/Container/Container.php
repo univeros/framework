@@ -278,12 +278,11 @@ class Container implements ContainerInterface
 
     /**
      * Instantiate/provision a class instance
-     *
      * @param string $name
      * @param Definition|null $definition
-     *
      * @throws InjectionException
-     * @return mixed|null|object
+     * @throws ReflectionException
+     * @return mixed|object|null
      */
     public function make(string $name, Definition $definition = null)
     {
@@ -331,11 +330,11 @@ class Container implements ContainerInterface
     /**
      * Invoke the specified callable or class::method string, provisioning dependencies along the way
      *
-     * @param mixed $callableOrMethodString A valid PHP callable or a provisionable ClassName::methodName string
-     * @param Definition $definition Optional definition specifying params with which to invoke the provisioned callable
-     *
+     * @param $callableOrMethodString
+     * @param Definition|null $definition
      * @throws InjectionException
-     * @return mixed Returns the invocation result returned from calling the generated executable
+     * @throws ReflectionException
+     * @return mixed
      */
     public function execute($callableOrMethodString, Definition $definition = null)
     {

@@ -13,6 +13,7 @@ use Altair\Container\Container;
 use Altair\Container\Contracts\BuilderInterface;
 use Altair\Container\Definition;
 use Altair\Container\Exception\InjectionException;
+use ReflectionException;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionParameter;
@@ -37,15 +38,16 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param ReflectionFunctionAbstract $reflectionFunction
      * @param Definition $definition
-     * @param ReflectionParameter[]|null $reflectionParameters
-     *
+     * @param array|null $reflectionParameters
+     * @throws InjectionException
+     * @throws ReflectionException
      * @return array
      */
     public function build(
         ReflectionFunctionAbstract $reflectionFunction,
         Definition $definition,
         array $reflectionParameters = null
-    ) {
+    ): array {
         $arguments = [];
 
         if (!isset($reflectionParameters)) {
@@ -79,8 +81,9 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * @param ReflectionFunctionAbstract $reflectionFunction
      * @param ReflectionParameter $reflectionParameter
-     *
-     * @return mixed|null|object
+     * @throws InjectionException
+     * @throws \ReflectionException
+     * @return mixed|object|null
      */
     protected function buildArgumentFromTypeHint(
         ReflectionFunctionAbstract $reflectionFunction,
@@ -103,8 +106,8 @@ class ArgumentsBuilder implements BuilderInterface
 
     /**
      * @param ReflectionParameter $reflectionParameter
-     *
      * @throws InjectionException
+     * @throws \ReflectionException
      * @return mixed|null
      */
     protected function buildArgumentFromReflectionParameter(ReflectionParameter $reflectionParameter)
@@ -125,7 +128,7 @@ class ArgumentsBuilder implements BuilderInterface
 
             throw new InjectionException(
                 sprintf(
-                    "No definition available to provision typeless parameter \$%s at position %d in %s()",
+                    'No definition available to provision typeless parameter \$%s at position %d in %s()',
                     $reflectionParameter->name,
                     $reflectionParameter->getPosition(),
                     $function
@@ -156,17 +159,17 @@ class ArgumentsBuilder implements BuilderInterface
 
     /**
      * @param array $definition
-     *
-     * @return mixed|null|object
+     * @throws InjectionException
+     * @return mixed|object|null
      */
     protected function buildArgumentFromClassDefinition(array $definition)
     {
-        list($class, $definition) = $definition;
+        [$class, $arguments] = $definition;
 
-        if (is_array($definition)) {
-            $definition = new Definition($definition);
+        if (is_array($arguments)) {
+            $arguments = new Definition($arguments);
         }
 
-        return $this->container->make($class, $definition);
+        return $this->container->make($class, $arguments);
     }
 }

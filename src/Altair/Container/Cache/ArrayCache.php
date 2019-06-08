@@ -30,7 +30,7 @@ class ArrayCache implements ReflectionCacheInterface
     }
 
     /**
-     * @inheritdocs
+     * @inheritDoc
      */
     public function put(string $key, $data): ReflectionCacheInterface
     {

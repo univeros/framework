@@ -11,6 +11,7 @@ namespace Altair\Container\Collection;
 
 use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Traits\NameNormalizerTrait;
+use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
 
 class SharesCollection extends Map
@@ -21,11 +22,11 @@ class SharesCollection extends Map
      * @param string $name
      * @param AliasesCollection $aliasesCollection
      *
-     * @return \Altair\Structure\Contracts\MapInterface
+     * @return MapInterface
      */
-    public function shareClass(string $name, AliasesCollection $aliasesCollection)
+    public function shareClass(string $name, AliasesCollection $aliasesCollection): MapInterface
     {
-        list(, $normalizedName) = $aliasesCollection->resolve($name);
+        [, $normalizedName] = $aliasesCollection->resolve($name);
 
         return $this->put($normalizedName, $this[$normalizedName]?? null);
     }
@@ -34,9 +35,9 @@ class SharesCollection extends Map
      * @param $instance
      * @param AliasesCollection $aliasesCollection
      *
-     * @return \Altair\Structure\Contracts\MapInterface
+     * @return MapInterface
      */
-    public function shareInstance($instance, AliasesCollection $aliasesCollection)
+    public function shareInstance($instance, AliasesCollection $aliasesCollection): MapInterface
     {
         $normalizedName = $this->normalizeName(get_class($instance));
         if (isset($aliasesCollection[$normalizedName])) {

@@ -11,7 +11,7 @@ namespace Altair\Structure\Contracts;
 
 interface CapacityInterface
 {
-    const MIN_CAPACITY = 8;
+    public const MIN_CAPACITY = 8;
 
     /**
      * Ensures that enough memory is allocated for a required capacity.

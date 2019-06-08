@@ -40,7 +40,7 @@ trait CapacityTrait
      *
      * @return $this
      */
-    public function allocate(int $capacity)
+    public function allocate(int $capacity): self
     {
         $this->capacity = max($capacity, $this->capacity);
 
@@ -55,7 +55,7 @@ trait CapacityTrait
     /**
      * Adjusts the structure's capacity according to its current size.
      */
-    protected function adjustCapacity()
+    protected function adjustCapacity(): void
     {
         $size = count($this);
 
@@ -63,11 +63,8 @@ trait CapacityTrait
         // structure drops low enough.
         if ($size < $this->capacity / 4) {
             $this->capacity = max(CapacityInterface::MIN_CAPACITY, $this->capacity / 2);
-        } else {
-            // Also check if we should increase capacity when the size changes.
-            if ($size >= $this->capacity) {
-                $this->increaseCapacity();
-            }
+        } elseif ($size >= $this->capacity) { // Also check if we should increase capacity when the size changes.
+            $this->increaseCapacity();
         }
     }
 }

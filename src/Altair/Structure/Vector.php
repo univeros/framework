@@ -46,7 +46,7 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
     /**
      * Adjusts the structure's capacity according to its current size.
      */
-    protected function adjustCapacity()
+    protected function adjustCapacity(): void
     {
         $size = count($this);
 
@@ -70,7 +70,7 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
         $size = count($this);
 
         if ($size > $this->capacity) {
-            $this->capacity = max(intval($this->capacity * 1.5), $size);
+            $this->capacity = max((int)($this->capacity * 1.5), $size);
         }
 
         return $this;

@@ -11,6 +11,7 @@ namespace Altair\Container\Reflection;
 
 use Altair\Container\Contracts\ReflectionInterface;
 use ReflectionClass;
+use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -19,7 +20,8 @@ use ReflectionParameter;
 class StandardReflection implements ReflectionInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @throws ReflectionException
      */
     public function getClass(string $class): ReflectionClass
     {
@@ -27,7 +29,8 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @throws ReflectionException
      */
     public function getConstructor(string $class): ?ReflectionMethod
     {
@@ -37,7 +40,8 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @throws ReflectionException
      */
     public function getConstructorParameters(string $class): ?array
     {
@@ -49,7 +53,7 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
@@ -61,7 +65,8 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @throws ReflectionException
      */
     public function getFunction($name): ReflectionFunction
     {
@@ -69,7 +74,7 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFunctionParameters(ReflectionFunction $reflectionFunction): ?array
     {
@@ -77,7 +82,8 @@ class StandardReflection implements ReflectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
+     * @throws ReflectionException
      */
     public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
     {

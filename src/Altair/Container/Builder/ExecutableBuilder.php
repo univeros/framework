@@ -34,13 +34,13 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     }
 
     /**
-     * @param $callableOrMethodString
-     *
+     * @param mixed $callableOrMethodString
+     * @throws InjectionException
      * @return Executable
      */
     public function build($callableOrMethodString): Executable
     {
-        list($reflectionFunction, $invocationObject) = $this->buildExecutableStructure($callableOrMethodString);
+        [$reflectionFunction, $invocationObject] = $this->buildExecutableStructure($callableOrMethodString);
 
         return new Executable($reflectionFunction, $invocationObject);
     }
@@ -118,7 +118,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * @param $class
      * @param $method
-     *
+     * @throws InjectionException
      * @return array
      */
     protected function buildExecutableStructureFromClassMethodCallable($class, $method): array
@@ -130,7 +130,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
             $class = $childReflection->getParentClass()->name;
             $method = substr($method, $relativeStaticMethodStartPos + 8);
         }
-        list($className, ) = $this->container->getAliases()->resolve($class);
+        [$className] = $this->container->getAliases()->resolve($class);
         $reflectionMethod = $this->container->getReflector()->getMethod($className, $method);
 
         if ($reflectionMethod->isStatic()) {

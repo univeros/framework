@@ -13,9 +13,9 @@ use Altair\Container\Exception\OutOfBoundsException;
 
 class Definition
 {
-    const RAW_PREFIX = ':';
-    const DELEGATE_PREFIX = '+';
-    const DEFINITION_PREFIX = '@';
+    public const RAW_PREFIX = ':';
+    public const DELEGATE_PREFIX = '+';
+    public const DEFINITION_PREFIX = '@';
 
     /**
      * @var array
@@ -45,7 +45,7 @@ class Definition
     /**
      * @return array
      */
-    public function getArguments()
+    public function getArguments(): array
     {
         return $this->arguments;
     }
@@ -69,7 +69,7 @@ class Definition
      *
      * @return Definition
      */
-    public function addRaw(string $key, $value)
+    public function addRaw(string $key, $value): Definition
     {
         return $this->add(self::RAW_PREFIX . $key, $value);
     }
@@ -80,7 +80,7 @@ class Definition
      *
      * @return Definition
      */
-    public function addDelegate(string $key, $value)
+    public function addDelegate(string $key, $value): Definition
     {
         return $this->add(self::DELEGATE_PREFIX . $key, $value);
     }
@@ -152,7 +152,7 @@ class Definition
      */
     public function get($name)
     {
-        if (!isset($this->arguments[$name]) && !array_key_exists($name, $this->arguments)) {
+        if (!array_key_exists($name, $this->arguments) && !isset($this->arguments[$name])) {
             throw new OutOfBoundsException("'$name' not found in definition.");
         }
 

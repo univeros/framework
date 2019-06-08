@@ -18,9 +18,9 @@ class AliasesCollection extends Map
     use NameNormalizerTrait;
 
     /**
-     * Define an alias for all occurrences of a given typehint
+     * Define an alias for all occurrences of a given type hint
      *
-     * Use this method to specify implementation classes for interface and abstract class typehints.
+     * Use this method to specify implementation classes for interface and abstract class type hints.
      *
      * @param string $original The typehint to replace
      * @param string $alias The implementation name
@@ -29,12 +29,13 @@ class AliasesCollection extends Map
      * @throws \InvalidArgumentException if any argument is empty or not a string
      * @return self
      */
-    public function define(string $original, string $alias, SharesCollection &$sharesCollection)
+    public function define(string $original, string $alias, SharesCollection $sharesCollection): self
     {
         if ((empty($original) || !is_string($original)) || (empty($alias) || !is_string($alias))) {
             throw new InvalidArgumentException('"$original" and/or "$alias" cannot be empty.');
         }
 
+        /** @var AliasesCollection|string $original */
         $original = $this->normalizeName($original);
 
         if (isset($sharesCollection[$original])) {
@@ -65,7 +66,7 @@ class AliasesCollection extends Map
         $normalizedName = $this->normalizeName($name);
 
         if (isset($this[$normalizedName])) {
-            $name = $this->get($normalizedName);
+            $name = (string)$this->get($normalizedName);
             $normalizedName = $this->normalizeName($name);
         }
 
@@ -77,8 +78,8 @@ class AliasesCollection extends Map
      *
      * @return string
      */
-    public function getNormalized($name)
+    public function getNormalized(string $name): string
     {
-        return $this->normalizeName($this->get($name));
+        return $this->normalizeName((string)$this->get($name));
     }
 }

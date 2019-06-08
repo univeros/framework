@@ -80,7 +80,7 @@ class Executable
      * @param ReflectionMethod $reflection
      * @param mixed $object
      */
-    protected function setMethodCallable(ReflectionMethod $reflection, $object)
+    protected function setMethodCallable(ReflectionMethod $reflection, $object): void
     {
         if (is_object($object)) {
             $this->callableReflection = $reflection;

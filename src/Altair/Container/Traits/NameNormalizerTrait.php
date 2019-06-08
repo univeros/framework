@@ -18,6 +18,6 @@ trait NameNormalizerTrait
      */
     protected function normalizeName(string $className): string
     {
-        return ltrim(strtolower($className), '\\');
+        return strtolower(ltrim($className, '\\'));
     }
 }

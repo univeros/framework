@@ -106,7 +106,7 @@ class CachedReflection implements ReflectionInterface
         $typeHint = ($key === null) ? false : $this->cache->get($key);
 
         if (false !== $typeHint) {
-            return $typeHint;
+            return (string)$typeHint;
         }
 
         if ($reflectionClass = $parameter->getClass()) {

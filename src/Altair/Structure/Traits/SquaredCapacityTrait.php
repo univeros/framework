@@ -25,7 +25,7 @@ trait SquaredCapacityTrait
      *
      * @return $this
      */
-    public function allocate(int $capacity)
+    public function allocate(int $capacity): self
     {
         $this->capacity = max($this->square($capacity), $this->capacity);
 
