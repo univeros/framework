@@ -13,7 +13,7 @@ use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Queue\Contracts\JobInterface;
 use JsonSerializable;
 
-class Payload implements JobInterface, PayloadInterface, JsonSerializable
+class Payload implements PayloadInterface, JsonSerializable
 {
     /**
      * @var array|null
