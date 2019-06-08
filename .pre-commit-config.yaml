@@ -1,0 +1,7 @@
+repos:
+    - repo: git@github.com:2amigos/pre-commit-php.git
+      rev: 1.3.0
+      hooks:
+          - id: php-cs-fixer
+            files: \.(php)$
+            args: [--config=.php_cs.dist --allow-risky=yes --path-mode=intersection ./]
