@@ -40,9 +40,9 @@ class CommandHandlerMiddleware implements CommandMiddlewareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function handle(CommandMessageInterface $message, callable $next)
+    public function handle(CommandMessageInterface $message, callable $next): void
     {
         $name = $this->nameResolver->resolve($message);
         // purposely call get to fire error in case there is no command found for that message

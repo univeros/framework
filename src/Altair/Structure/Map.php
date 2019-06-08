@@ -55,7 +55,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function apply(callable $callback): MapInterface
     {
@@ -67,7 +67,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function merge($values): MapInterface
     {
@@ -78,7 +78,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function intersect(MapInterface $map): MapInterface
     {
@@ -90,7 +90,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function diff(MapInterface $map): MapInterface
     {
@@ -102,7 +102,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function filter(callable $callback = null): MapInterface
     {
@@ -118,7 +118,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function map(callable $callback): MapInterface
     {
@@ -132,7 +132,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function put($key, $value): MapInterface
     {
@@ -149,7 +149,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function putAll($values): MapInterface
     {
@@ -161,7 +161,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reverse(): MapInterface
     {
@@ -171,7 +171,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function slice(int $offset, int $length = null): MapInterface
     {
@@ -185,7 +185,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sort(callable $comparator = null): MapInterface
     {
@@ -211,7 +211,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function ksort(callable $comparator = null): MapInterface
     {
@@ -237,7 +237,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function union(MapInterface $map): MapInterface
     {
@@ -245,7 +245,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function xor(MapInterface $map): MapInterface
     {
@@ -257,7 +257,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function pairs(): VectorInterface
     {
@@ -272,7 +272,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function values(): VectorInterface
     {
@@ -303,7 +303,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function last(): PairInterface
     {
@@ -315,7 +315,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function skip(int $position): PairInterface
     {
@@ -329,7 +329,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function keys(): SetInterface
     {
@@ -343,7 +343,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasKey($key): bool
     {
@@ -351,7 +351,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasValue($value): bool
     {
@@ -359,7 +359,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get($key, $default = null)
     {
@@ -375,7 +375,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reduce(callable $callback, $initial = null)
     {
@@ -389,7 +389,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sum()
     {
@@ -397,7 +397,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function remove($key, $default = null)
     {
@@ -420,7 +420,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -438,7 +438,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -446,7 +446,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws OutOfBoundsException
      */
@@ -462,7 +462,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetUnset($offset)
     {
@@ -470,7 +470,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetExists($offset)
     {

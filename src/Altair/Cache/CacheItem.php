@@ -31,7 +31,7 @@ final class CacheItem implements CacheItemInterface
     protected $tagValidator;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getKey(): string
     {
@@ -39,7 +39,7 @@ final class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get()
     {
@@ -47,7 +47,7 @@ final class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isHit(): bool
     {
@@ -55,7 +55,7 @@ final class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set($value)
     {
@@ -65,7 +65,7 @@ final class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function expiresAt($expiration)
     {
@@ -86,7 +86,7 @@ final class CacheItem implements CacheItemInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function expiresAfter($time)
     {

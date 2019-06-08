@@ -30,7 +30,7 @@ class ContainerResolver implements ResolverInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke($entry)
     {

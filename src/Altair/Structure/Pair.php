@@ -78,7 +78,7 @@ class Pair implements PairInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function equalsKey($key): bool
     {
@@ -100,7 +100,7 @@ class Pair implements PairInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -108,7 +108,7 @@ class Pair implements PairInterface, JsonSerializable
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function jsonSerialize()
     {

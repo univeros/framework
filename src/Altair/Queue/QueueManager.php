@@ -39,7 +39,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAdapter(): QueueAdapterInterface
     {
@@ -47,7 +47,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function push(PayloadInterface $payload): bool
     {
@@ -59,7 +59,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
@@ -71,7 +71,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function ack(PayloadInterface $payload)
     {
@@ -82,7 +82,7 @@ class QueueManager implements QueueManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmpty(string $queue = null): bool
     {

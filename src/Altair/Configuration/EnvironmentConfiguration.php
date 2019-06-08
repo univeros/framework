@@ -37,7 +37,7 @@ class EnvironmentConfiguration implements ConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

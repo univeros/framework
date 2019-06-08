@@ -35,7 +35,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMaxIdLength(): ?int
     {
@@ -43,7 +43,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws FileNotFoundException
      */
@@ -70,7 +70,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws FileNotFoundException
      */
@@ -83,7 +83,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -91,7 +91,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -106,7 +106,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(array $values, int $lifespan)
     {

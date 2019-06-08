@@ -38,7 +38,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get(string $key, $default = null)
     {
@@ -46,7 +46,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set(string $key, $value): SessionBlockInterface
     {
@@ -56,7 +56,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function remove(string $key): SessionBlockInterface
     {
@@ -68,7 +68,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has(string $key): bool
     {
@@ -76,7 +76,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): SessionBlockInterface
     {
@@ -86,7 +86,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFlash(string $key, $default = null, bool $delete = false)
     {
@@ -107,7 +107,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAllFlashes($delete = false)
     {
@@ -133,7 +133,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface
     {
@@ -146,7 +146,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function appendFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface
     {
@@ -169,7 +169,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function removeFlash($key)
     {
@@ -184,7 +184,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function removeAllFlashes()
     {
@@ -196,7 +196,7 @@ class SessionBlock implements SessionBlockInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasFlash($key): bool
     {

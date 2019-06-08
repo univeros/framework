@@ -19,7 +19,7 @@ trait ConnectionInstanceAwareTrait
     protected $instance;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getConnection(): QueueConnectionInterface
     {
@@ -27,7 +27,7 @@ trait ConnectionInstanceAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getInstance()
     {

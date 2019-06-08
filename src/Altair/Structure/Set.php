@@ -50,7 +50,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function add(...$values): SetInterface
     {
@@ -62,7 +62,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function allocate(int $capacity): SetInterface
     {
@@ -72,7 +72,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function diff(SetInterface $set): SetInterface
     {
@@ -80,7 +80,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function xor(SetInterface $set): SetInterface
     {
@@ -88,7 +88,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function capacity(): int
     {
@@ -96,7 +96,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function contains(...$values): bool
     {
@@ -110,7 +110,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function filter(callable $callback = null): SetInterface
     {
@@ -138,7 +138,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(int $position)
     {
@@ -146,7 +146,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function intersect(SetInterface $set): SetInterface
     {
@@ -154,7 +154,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function join(string $glue = null): string
     {
@@ -162,7 +162,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reduce(callable $callback, $initial = null)
     {
@@ -176,7 +176,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function remove(...$values)
     {
@@ -198,7 +198,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function slice(int $offset, int $length = null): SetInterface
     {
@@ -206,7 +206,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sort(callable $comparator = null): SetInterface
     {
@@ -267,7 +267,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getMap(): MapInterface
     {
@@ -275,7 +275,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isEmpty(): bool
     {
@@ -283,7 +283,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -301,7 +301,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws OutOfBoundsException
      */
@@ -317,7 +317,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetGet($offset)
     {
@@ -325,7 +325,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */
@@ -335,7 +335,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */

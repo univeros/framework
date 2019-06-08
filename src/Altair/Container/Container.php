@@ -108,7 +108,7 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __clone()
     {
@@ -116,7 +116,7 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get($id)
     {
@@ -128,7 +128,7 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has($id)
     {

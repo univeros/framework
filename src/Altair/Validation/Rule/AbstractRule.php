@@ -16,7 +16,7 @@ use Altair\Validation\Contracts\RuleInterface;
 abstract class AbstractRule implements RuleInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {

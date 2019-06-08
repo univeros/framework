@@ -37,7 +37,7 @@ class CsrfToken implements CsrfTokenInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isValid(string $value): bool
     {
@@ -45,7 +45,7 @@ class CsrfToken implements CsrfTokenInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getValue(): string
     {
@@ -53,7 +53,7 @@ class CsrfToken implements CsrfTokenInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function generateValue()
     {

@@ -12,7 +12,7 @@ namespace Altair\Validation\Rule;
 class EmailRule extends AbstractRule
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($input): bool
     {
@@ -22,7 +22,7 @@ class EmailRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

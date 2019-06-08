@@ -33,7 +33,7 @@ class PdoAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function push(PayloadInterface $payload): bool
     {
@@ -53,7 +53,7 @@ class PdoAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
@@ -91,7 +91,7 @@ class PdoAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function ack(PayloadInterface $payload)
     {
@@ -105,7 +105,7 @@ class PdoAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmpty(string $queue = null): bool
     {

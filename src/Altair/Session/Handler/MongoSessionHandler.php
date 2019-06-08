@@ -34,7 +34,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function open($savePath, $sessionName)
     {
@@ -42,7 +42,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function close()
     {
@@ -50,7 +50,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function read($sessionId)
     {
@@ -64,7 +64,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function write($sessionId, $data)
     {
@@ -95,7 +95,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function destroy($sessionId)
     {
@@ -109,7 +109,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function gc($maxlifetime)
     {

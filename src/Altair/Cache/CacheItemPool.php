@@ -69,7 +69,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getItem($key)
     {
@@ -79,7 +79,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getItems(array $keys = [])
     {
@@ -101,7 +101,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasItem($key): bool
     {
@@ -123,7 +123,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -139,7 +139,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItem($key): bool
     {
@@ -147,7 +147,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -168,7 +168,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(CacheItemInterface $item): bool
     {
@@ -180,7 +180,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function saveDeferred(CacheItemInterface $item): bool
     {
@@ -193,7 +193,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function commit(): bool
     {

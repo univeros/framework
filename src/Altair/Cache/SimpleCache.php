@@ -31,7 +31,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws SimpleCacheException
      */
@@ -49,7 +49,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws SimpleCacheException
      */
@@ -70,7 +70,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function delete($key)
     {
@@ -84,7 +84,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -92,7 +92,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws SimpleCacheException
      */
@@ -125,7 +125,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws SimpleCacheException
      */
@@ -177,7 +177,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws SimpleCacheException
      */
@@ -203,7 +203,7 @@ class SimpleCache implements CacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has($key): bool
     {

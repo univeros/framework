@@ -21,7 +21,7 @@ trait TagsAwareTrait
     protected $tagValidator;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withTag(string $tag): TagAwareCacheItemInterface
     {
@@ -29,7 +29,7 @@ trait TagsAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withTags(array $tags): TagAwareCacheItemInterface
     {

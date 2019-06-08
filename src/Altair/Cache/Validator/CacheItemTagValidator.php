@@ -17,7 +17,7 @@ class CacheItemTagValidator implements CacheItemTagValidatorInterface
     use FailureReasonAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate(string $tag): bool
     {

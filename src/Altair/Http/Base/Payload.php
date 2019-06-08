@@ -50,7 +50,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withStatus(string $status): PayloadInterface
     {
@@ -61,7 +61,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getStatus(): int
     {
@@ -69,7 +69,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withInputCollection(InputCollection $inputCollection): PayloadInterface
     {
@@ -80,7 +80,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getInputCollection(): InputCollection
     {
@@ -88,7 +88,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withOutput(array $output): PayloadInterface
     {
@@ -99,7 +99,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOutput(): array
     {
@@ -107,7 +107,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withMessages(array $messages): PayloadInterface
     {
@@ -118,7 +118,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMessages(): array
     {
@@ -126,7 +126,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withSetting(string $name, $value): PayloadInterface
     {
@@ -137,7 +137,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withoutSetting(string $name): PayloadInterface
     {
@@ -148,7 +148,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withSettingsCollection(SettingsCollection $settingsCollection): PayloadInterface
     {
@@ -159,7 +159,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSetting(string $name, $default = null)
     {
@@ -167,7 +167,7 @@ class Payload implements PayloadInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSettingsCollection(): SettingsCollection
     {

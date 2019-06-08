@@ -18,5 +18,5 @@ interface CommandRunnerStrategyInterface
      *
      * @return void
      */
-    public function run(CommandMessageInterface $message);
+    public function run(CommandMessageInterface $message): void;
 }

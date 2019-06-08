@@ -50,7 +50,7 @@ class BeanstalkdAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function push(PayloadInterface $payload): bool
     {
@@ -68,7 +68,7 @@ class BeanstalkdAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
@@ -91,7 +91,7 @@ class BeanstalkdAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function ack(PayloadInterface $payload)
     {
@@ -121,7 +121,7 @@ class BeanstalkdAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmpty(string $queue = null): bool
     {

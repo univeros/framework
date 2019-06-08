@@ -17,7 +17,7 @@ class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
     use FailureReasonAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function validate($key): bool
     {

@@ -22,7 +22,7 @@ use Altair\Middleware\Runner;
 class MiddlewareConfiguration implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

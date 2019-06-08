@@ -26,7 +26,7 @@ class DateTimeFilter extends AbstractFilter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse($value)
     {

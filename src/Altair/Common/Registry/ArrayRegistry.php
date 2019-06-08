@@ -27,7 +27,7 @@ class ArrayRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get(string $key, $default = null)
     {
@@ -35,7 +35,7 @@ class ArrayRegistry implements RegistryInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function set(string $key, $value)
     {

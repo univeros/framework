@@ -38,7 +38,7 @@ class Sanitizer implements SanitizerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function sanitize(SanitizableInterface $sanitizable): SanitizableInterface
     {

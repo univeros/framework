@@ -44,7 +44,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPublicKey(): string
     {
@@ -52,7 +52,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTtl(): int
     {
@@ -60,7 +60,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSigner(): Signer
     {
@@ -68,7 +68,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getTimestamp():int
     {
@@ -76,7 +76,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPrivateKey(): ?string
     {
@@ -84,7 +84,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getExpirationTimestamp(): int
     {

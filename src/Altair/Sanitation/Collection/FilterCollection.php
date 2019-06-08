@@ -17,7 +17,7 @@ use Altair\Structure\Map;
 class FilterCollection extends Map
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function put($key, $value): MapInterface
     {
@@ -27,7 +27,7 @@ class FilterCollection extends Map
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function putAll($values): MapInterface
     {

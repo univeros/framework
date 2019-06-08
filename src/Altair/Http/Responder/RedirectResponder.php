@@ -17,7 +17,7 @@ use Psr\Http\Message\ServerRequestInterface;
 class RedirectResponder implements ResponderInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(
         ServerRequestInterface $request,

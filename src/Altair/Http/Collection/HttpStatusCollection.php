@@ -27,7 +27,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     protected $values;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __construct($values = [])
     {
@@ -37,7 +37,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count()
     {
@@ -45,7 +45,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIterator()
     {

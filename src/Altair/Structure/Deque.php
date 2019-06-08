@@ -34,7 +34,7 @@ class Deque implements IteratorAggregate, ArrayAccess, SequenceInterface, Capaci
     use Traits\SquaredCapacityTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __construct($values = null)
     {

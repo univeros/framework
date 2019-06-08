@@ -49,7 +49,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function copy()
     {
@@ -57,7 +57,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -65,7 +65,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function peek()
     {
@@ -121,7 +121,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {

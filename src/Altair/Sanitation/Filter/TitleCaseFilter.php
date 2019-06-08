@@ -12,7 +12,7 @@ namespace Altair\Sanitation\Filter;
 class TitleCaseFilter extends AbstractFilter
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse($value)
     {

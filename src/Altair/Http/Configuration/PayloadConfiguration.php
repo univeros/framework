@@ -17,7 +17,7 @@ use Altair\Http\Contracts\PayloadInterface;
 class PayloadConfiguration implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

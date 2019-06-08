@@ -20,7 +20,7 @@ class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
     use EnvAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

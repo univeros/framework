@@ -72,7 +72,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getId(): string
     {
@@ -80,7 +80,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setId(string $id)
     {
@@ -88,7 +88,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setDeleteCookieCallable(callable $callable = null)
     {
@@ -100,7 +100,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSessionBlock(string $name): SessionBlockInterface
     {
@@ -108,7 +108,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -116,7 +116,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setName(string $name)
     {
@@ -124,7 +124,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSavePath(): string
     {
@@ -132,7 +132,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setSavePath(string $path)
     {
@@ -144,7 +144,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getCookieParams(): array
     {
@@ -152,7 +152,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function setCookieParams(array $params)
     {
@@ -167,7 +167,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getIsActive(): bool
     {
@@ -175,7 +175,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function exists(): bool
     {
@@ -183,7 +183,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function start(): bool
     {
@@ -199,7 +199,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear()
     {
@@ -207,7 +207,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function resume(): bool
     {
@@ -223,7 +223,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function close()
     {
@@ -233,7 +233,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function destroy(): bool
     {
@@ -253,7 +253,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function regenerateId(bool $deletePrevious = true): bool
     {
@@ -270,7 +270,7 @@ class SessionManager implements SessionManagerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getCsrfToken(): CsrfTokenInterface
     {

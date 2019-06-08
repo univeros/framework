@@ -21,7 +21,7 @@ use Neomerx\Cors\Strategies\Settings;
 class CorsMiddlewareConfiguration implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

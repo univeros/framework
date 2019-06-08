@@ -12,14 +12,14 @@ namespace Altair\Validation\Rule;
 class SwiftBicRule extends AbstractRule
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {
         return (bool) preg_match('/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/', $value);
     }
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

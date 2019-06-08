@@ -40,7 +40,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function peek()
     {
@@ -48,7 +48,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function pop()
     {
@@ -56,7 +56,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function push(...$values): StackInterface
     {
@@ -66,7 +66,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function copy()
     {
@@ -74,7 +74,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function count(): int
     {
@@ -82,7 +82,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function allocate(int $capacity)
     {
@@ -102,7 +102,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -120,7 +120,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws OutOfBoundsException
      */
@@ -134,7 +134,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */
@@ -144,7 +144,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */
@@ -154,7 +154,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */

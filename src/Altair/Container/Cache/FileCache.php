@@ -32,7 +32,7 @@ class FileCache implements ReflectionCacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get(string $key)
     {
@@ -45,7 +45,7 @@ class FileCache implements ReflectionCacheInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function put(string $key, $data): ReflectionCacheInterface
     {

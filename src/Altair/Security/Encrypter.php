@@ -75,7 +75,7 @@ class Encrypter implements EncrypterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function encrypt($value): string
     {
@@ -100,7 +100,7 @@ class Encrypter implements EncrypterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function decrypt(string $payload)
     {
@@ -116,7 +116,7 @@ class Encrypter implements EncrypterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hash(string $iv, string $data, bool $raw = false): string
     {

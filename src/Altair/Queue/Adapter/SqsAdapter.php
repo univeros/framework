@@ -33,7 +33,7 @@ class SqsAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function push(PayloadInterface $payload): bool
     {
@@ -54,7 +54,7 @@ class SqsAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function pop(string $queue = null): ?PayloadInterface
     {
@@ -84,7 +84,7 @@ class SqsAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function ack(PayloadInterface $payload)
     {
@@ -117,7 +117,7 @@ class SqsAdapter extends AbstractAdapter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isEmpty(string $queue = null): bool
     {

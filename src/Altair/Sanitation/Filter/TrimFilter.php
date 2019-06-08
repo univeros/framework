@@ -27,7 +27,7 @@ class TrimFilter extends AbstractFilter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse($value)
     {

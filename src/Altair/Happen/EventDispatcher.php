@@ -23,7 +23,7 @@ class EventDispatcher implements EventDispatcherInterface
     protected $sortedListeners = [];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addListener(
         string $name,
@@ -37,7 +37,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addListenerProvider(ListenerProviderInterface $provider): EventDispatcherInterface
     {
@@ -47,7 +47,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
@@ -67,7 +67,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function dispatch(string $name, EventInterface $event = null): EventInterface
     {
@@ -81,7 +81,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function dispatchStack(EventStackInterface $eventStack): array
     {
@@ -96,7 +96,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getListeners(string $name): array
     {
@@ -104,7 +104,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasListeners(string $name): bool
     {
@@ -112,7 +112,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function removeListener(string $name, callable $listener): EventDispatcherInterface
     {
@@ -130,7 +130,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function removeAllListeners(string $name): EventDispatcherInterface
     {
@@ -142,7 +142,7 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function removeSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {

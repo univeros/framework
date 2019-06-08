@@ -25,9 +25,9 @@ class CommandLockerMiddleware implements CommandMiddlewareInterface
     protected $running = false;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function handle(CommandMessageInterface $message, callable $next)
+    public function handle(CommandMessageInterface $message, callable $next): void
     {
         // ensure we always execute one and only one command at a time
         $this->queue[] = $message;

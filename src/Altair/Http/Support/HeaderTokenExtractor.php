@@ -30,7 +30,7 @@ class HeaderTokenExtractor implements TokenExtractorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function extract(ServerRequestInterface $request): ?string
     {

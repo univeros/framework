@@ -21,7 +21,7 @@ use Relay\ResolverInterface;
 class RelayConfiguration implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

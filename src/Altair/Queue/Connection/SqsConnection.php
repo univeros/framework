@@ -36,7 +36,7 @@ class SqsConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function connect(): QueueConnectionInterface
     {

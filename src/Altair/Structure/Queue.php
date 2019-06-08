@@ -39,7 +39,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function peek()
     {
@@ -47,7 +47,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function pop()
     {
@@ -55,7 +55,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function push(...$values): QueueInterface
     {
@@ -65,7 +65,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function allocate(int $capacity): QueueInterface
     {
@@ -85,7 +85,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function copy()
     {
@@ -93,7 +93,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -111,7 +111,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws OutOfBoundsException
      */
@@ -125,7 +125,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */
@@ -135,7 +135,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */
@@ -145,7 +145,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @throws Error
      */

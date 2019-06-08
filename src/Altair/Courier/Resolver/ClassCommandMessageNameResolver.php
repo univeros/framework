@@ -15,7 +15,7 @@ use Altair\Courier\Contracts\CommandMessageNameResolverInterface;
 class ClassCommandMessageNameResolver implements CommandMessageNameResolverInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function resolve(CommandMessageInterface $message): string
     {

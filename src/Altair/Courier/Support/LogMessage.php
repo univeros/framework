@@ -36,7 +36,7 @@ class LogMessage implements LogMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __toString()
     {
@@ -44,7 +44,7 @@ class LogMessage implements LogMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getLevel(): string
     {
@@ -52,7 +52,7 @@ class LogMessage implements LogMessageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMessage(): string
     {

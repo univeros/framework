@@ -17,7 +17,7 @@ use Altair\Validation\Exception\InvalidArgumentException;
 class RuleCollection extends Map
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function put($key, $value): MapInterface
     {
@@ -27,7 +27,7 @@ class RuleCollection extends Map
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function putAll($values): MapInterface
     {

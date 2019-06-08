@@ -32,7 +32,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     use PdoSessionAdapterAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
@@ -50,7 +50,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getDriver(): string
     {
@@ -58,7 +58,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getSelectSql(): string
     {
@@ -70,7 +70,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {

@@ -37,7 +37,7 @@ class PredisConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function connect(): QueueConnectionInterface
     {
@@ -48,7 +48,7 @@ class PredisConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function disconnect(): bool
     {

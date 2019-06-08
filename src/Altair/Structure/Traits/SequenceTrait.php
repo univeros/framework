@@ -22,7 +22,7 @@ trait SequenceTrait
     use CollectionTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function toArray(): array
     {
@@ -30,7 +30,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function apply(callable $callback): SequenceInterface
     {
@@ -42,7 +42,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function merge($values): SequenceInterface
     {
@@ -54,7 +54,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function contains(...$values): bool
     {
@@ -68,7 +68,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function filter(callable $callback = null): SequenceInterface
     {
@@ -76,7 +76,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function find($value)
     {
@@ -84,7 +84,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function first()
     {
@@ -96,7 +96,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function get(int $index)
     {
@@ -106,7 +106,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function insert(int $index, ...$values): SequenceInterface
     {
@@ -118,7 +118,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function join(string $glue = null): string
     {
@@ -126,7 +126,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function last()
     {
@@ -138,7 +138,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function map(callable $callback): SequenceInterface
     {
@@ -146,7 +146,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function pop()
     {
@@ -163,7 +163,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function push(...$values): SequenceInterface
     {
@@ -173,7 +173,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reduce(callable $callback, $initial = null)
     {
@@ -181,7 +181,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function remove(int $index)
     {
@@ -196,7 +196,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function reverse(): SequenceInterface
     {
@@ -204,7 +204,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function rotate(int $rotations): SequenceInterface
     {
@@ -222,7 +222,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function set(int $index, $value): SequenceInterface
     {
@@ -233,7 +233,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function shift()
     {
@@ -250,7 +250,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function slice(int $offset, int $length = null): SequenceInterface
     {
@@ -262,7 +262,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sort(callable $comparator = null): SequenceInterface
     {
@@ -278,7 +278,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sum()
     {
@@ -286,7 +286,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function unshift(...$values): SequenceInterface
     {
@@ -311,7 +311,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetSet($offset, $value)
     {
@@ -323,7 +323,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function &offsetGet($offset)
     {
@@ -333,7 +333,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetUnset($offset)
     {
@@ -344,7 +344,7 @@ trait SequenceTrait
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function offsetExists($offset)
     {

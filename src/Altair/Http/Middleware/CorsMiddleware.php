@@ -34,7 +34,7 @@ class CorsMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      *
      * @throws \InvalidArgumentException
      */

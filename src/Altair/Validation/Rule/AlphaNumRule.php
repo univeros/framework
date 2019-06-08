@@ -12,7 +12,7 @@ namespace Altair\Validation\Rule;
 class AlphaNumRule extends AbstractRule
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {
@@ -24,7 +24,7 @@ class AlphaNumRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

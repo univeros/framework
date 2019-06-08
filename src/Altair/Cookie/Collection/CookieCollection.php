@@ -44,7 +44,7 @@ class CookieCollection extends Map
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function put($key, $value): MapInterface
     {
@@ -61,7 +61,7 @@ class CookieCollection extends Map
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function putAll($values): MapInterface
     {
@@ -77,7 +77,7 @@ class CookieCollection extends Map
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sort(callable $comparator = null): MapInterface
     {
@@ -103,7 +103,7 @@ class CookieCollection extends Map
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function values(): VectorInterface
     {
@@ -117,7 +117,7 @@ class CookieCollection extends Map
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function sum()
     {

@@ -44,7 +44,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMaxIdLength(): ?int
     {
@@ -52,7 +52,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      * @throws \ErrorException
      */
     public function getItems(array $keys = []): array
@@ -71,7 +71,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasItem(string $key): bool
     {
@@ -79,7 +79,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -111,7 +111,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -123,7 +123,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(array $values, int $lifespan)
     {

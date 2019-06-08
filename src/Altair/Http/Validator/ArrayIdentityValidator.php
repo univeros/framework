@@ -29,7 +29,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(array $arguments): bool
     {

@@ -33,7 +33,7 @@ class BetweenFilter extends AbstractFilter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse($value)
     {

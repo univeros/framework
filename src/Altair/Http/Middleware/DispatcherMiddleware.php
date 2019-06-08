@@ -35,7 +35,7 @@ class DispatcherMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {

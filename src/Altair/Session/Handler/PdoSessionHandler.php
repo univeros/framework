@@ -36,7 +36,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function open($savePath, $sessionName)
     {
@@ -56,7 +56,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function read($sessionId)
     {
@@ -69,7 +69,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function write($sessionId, $data)
     {
@@ -82,7 +82,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function destroy($sessionId)
     {
@@ -95,7 +95,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function gc($maxlifetime)
     {

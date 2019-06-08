@@ -15,7 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 class PrivateCacheLimiter extends AbstractCacheLimiter
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(ResponseInterface $response): ResponseInterface
     {

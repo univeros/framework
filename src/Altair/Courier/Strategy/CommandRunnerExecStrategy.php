@@ -39,8 +39,9 @@ class CommandRunnerExecStrategy implements CommandRunnerStrategyInterface
 
     /**
      * @param CommandMessageInterface $message
+     * @throws \Altair\Courier\Exception\UnknownCommandMessageNameException
      */
-    public function run(CommandMessageInterface $message)
+    public function run(CommandMessageInterface $message): void
     {
         $name = $this->nameResolver->resolve($message);
         $command = $this->commandLocator->get($name);

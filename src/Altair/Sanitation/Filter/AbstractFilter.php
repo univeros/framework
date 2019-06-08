@@ -16,7 +16,7 @@ use Altair\Sanitation\Contracts\PayloadInterface;
 abstract class AbstractFilter implements FilterInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {

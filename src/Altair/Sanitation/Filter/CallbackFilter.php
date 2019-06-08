@@ -27,7 +27,7 @@ class CallbackFilter extends AbstractFilter
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse($value)
     {

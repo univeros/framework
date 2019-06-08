@@ -14,7 +14,7 @@ use Altair\Cache\Contracts\CacheItemStorageInterface;
 class NullCacheItemStorage implements CacheItemStorageInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMaxIdLength(): ?int
     {
@@ -22,7 +22,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getItems(array $keys = []): array
     {
@@ -30,7 +30,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasItem(string $key): bool
     {
@@ -38,7 +38,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -46,7 +46,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -54,7 +54,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(array $values, int $lifespan)
     {

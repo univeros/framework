@@ -61,7 +61,7 @@ class Validator implements ValidatorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getPayload(): ?MiddlewarePayloadInterface
     {

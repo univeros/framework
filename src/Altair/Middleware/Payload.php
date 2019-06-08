@@ -31,7 +31,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAttribute($name, $default = null)
     {
@@ -39,7 +39,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getAttributes(): array
     {
@@ -47,7 +47,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withAttribute($name, $value): PayloadInterface
     {
@@ -58,7 +58,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withAttributes(array $attributes): PayloadInterface
     {
@@ -69,7 +69,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withoutAttribute($name): PayloadInterface
     {
@@ -80,7 +80,7 @@ class Payload implements JobInterface, PayloadInterface, JsonSerializable
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function jsonSerialize()
     {

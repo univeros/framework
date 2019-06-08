@@ -46,7 +46,7 @@ class BeanstalkdConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function connect(): QueueConnectionInterface
     {
@@ -57,7 +57,7 @@ class BeanstalkdConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function disconnect(): bool
     {

@@ -21,7 +21,7 @@ use Zend\Diactoros\ServerRequestFactory;
 class HttpMessageConfiguration implements ConfigurationInterface
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

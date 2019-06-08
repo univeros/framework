@@ -36,7 +36,7 @@ class JsonFormatter implements OutputFormatterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public static function accepts(): array
     {
@@ -44,7 +44,7 @@ class JsonFormatter implements OutputFormatterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function type(): string
     {
@@ -52,7 +52,7 @@ class JsonFormatter implements OutputFormatterInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function body(PayloadInterface $payload): string
     {

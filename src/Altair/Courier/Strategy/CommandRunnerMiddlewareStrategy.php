@@ -82,7 +82,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
      *
      * @param CommandMessageInterface $message
      */
-    public function run(CommandMessageInterface $message)
+    public function run(CommandMessageInterface $message): void
     {
         call_user_func($this->call(0), $message);
     }

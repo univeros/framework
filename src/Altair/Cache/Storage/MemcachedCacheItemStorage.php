@@ -38,7 +38,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMaxIdLength(): ?int
     {
@@ -46,7 +46,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getItems(array $keys = []): array
     {
@@ -54,7 +54,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasItem(string $key): bool
     {
@@ -62,7 +62,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -70,7 +70,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -86,7 +86,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(array $values, int $lifespan)
     {

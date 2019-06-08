@@ -64,7 +64,7 @@ trait AttributesAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function toArray(): array
     {

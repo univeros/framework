@@ -46,7 +46,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isExecutable($executable): bool
     {

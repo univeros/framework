@@ -43,7 +43,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function open($save_path, $name)
     {
@@ -51,7 +51,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function close()
     {
@@ -59,7 +59,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function destroy($session_id)
     {
@@ -67,7 +67,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function gc($maxlifetime)
     {
@@ -81,7 +81,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function read($session_id)
     {
@@ -94,7 +94,7 @@ class FileSessionHandler implements SessionHandlerInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function write($session_id, $session_data)
     {

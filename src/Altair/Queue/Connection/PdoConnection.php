@@ -40,7 +40,7 @@ class PdoConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function connect(): QueueConnectionInterface
     {
@@ -52,7 +52,7 @@ class PdoConnection implements QueueConnectionInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function disconnect(): bool
     {

@@ -41,7 +41,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMaxIdLength(): ?int
     {
@@ -49,7 +49,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      * @throws \ErrorException
      */
     public function getItems(array $keys = []): array
@@ -68,7 +68,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasItem(string $key): bool
     {
@@ -76,7 +76,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function clear(): bool
     {
@@ -100,7 +100,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function deleteItems(array $keys): bool
     {
@@ -112,7 +112,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function save(array $values, int $lifespan)
     {

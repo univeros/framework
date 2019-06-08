@@ -44,7 +44,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {

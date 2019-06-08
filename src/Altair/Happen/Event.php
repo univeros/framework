@@ -45,7 +45,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getOccurredOn(): int
     {
@@ -53,7 +53,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function stopPropagation(): EventInterface
     {
@@ -63,7 +63,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function isPropagationStopped(): bool
     {
@@ -71,7 +71,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getName(): string
     {
@@ -79,7 +79,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getArguments(): array
     {
@@ -87,7 +87,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function hasArgument(string $key): bool
     {
@@ -95,7 +95,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getArgument(string $key)
     {
@@ -107,7 +107,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withName(string $name): EventInterface
     {
@@ -118,7 +118,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withArgument(string $key, $content): EventInterface
     {
@@ -129,7 +129,7 @@ class Event implements EventInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withArguments(array $arguments): EventInterface
     {

@@ -90,7 +90,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getIsConnected(): bool
     {
@@ -106,7 +106,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getConnection(): PDO
     {
@@ -118,7 +118,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function connect()
     {
@@ -127,7 +127,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function read(string $sessionId): string
     {
@@ -195,7 +195,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function write(string $sessionId, string $data): bool
     {
@@ -259,7 +259,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function beginTransaction()
     {
@@ -277,7 +277,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function rollback()
     {
@@ -296,7 +296,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function commit()
     {
@@ -317,7 +317,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function delete(string $sessionId): bool
     {
@@ -332,7 +332,7 @@ trait PdoSessionAdapterAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function close(bool $gcCalled = false): bool
     {

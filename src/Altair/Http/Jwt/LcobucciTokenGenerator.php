@@ -40,7 +40,7 @@ class LcobucciTokenGenerator implements TokenGeneratorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function generate(array $claims = []): string
     {

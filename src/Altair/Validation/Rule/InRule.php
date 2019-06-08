@@ -33,7 +33,7 @@ class InRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {

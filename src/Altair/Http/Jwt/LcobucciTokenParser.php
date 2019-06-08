@@ -48,7 +48,7 @@ class LcobucciTokenParser implements TokenParserInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function parse(string $token): TokenInterface
     {

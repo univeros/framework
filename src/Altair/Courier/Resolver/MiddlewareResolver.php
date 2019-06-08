@@ -34,15 +34,12 @@ class MiddlewareResolver implements MiddlewareResolverInterface
      * Resolve a class spec into an object, if it is not already instantiated.
      *
      * @param string|object $entry
-     *
+     * @throws \Altair\Container\Exception\InjectionException
+     * @throws \ReflectionException
      * @return CommandMiddlewareInterface
      */
     public function __invoke($entry): CommandMiddlewareInterface
     {
-        if (is_object($entry)) {
-            return $entry;
-        }
-
-        return $this->container->make($entry);
+        return is_object($entry) ? $entry : $this->container->make($entry);
     }
 }

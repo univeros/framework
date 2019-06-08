@@ -31,7 +31,7 @@ class CommandBus implements CommandBusInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function handle(CommandMessageInterface $message)
     {

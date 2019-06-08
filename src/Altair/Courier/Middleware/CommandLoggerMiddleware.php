@@ -38,9 +38,9 @@ class CommandLoggerMiddleware implements CommandMiddlewareInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
-    public function handle(CommandMessageInterface $message, callable $next)
+    public function handle(CommandMessageInterface $message, callable $next): void
     {
         $level = $this->level;
 

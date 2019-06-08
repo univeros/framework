@@ -38,7 +38,7 @@ class Pbkdf2Key extends AbstractKey
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function derive(): string
     {

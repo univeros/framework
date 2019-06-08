@@ -31,7 +31,7 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function has(string $name): bool
     {
@@ -39,7 +39,7 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function get(string $name): CommandInterface
     {

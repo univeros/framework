@@ -74,7 +74,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     ];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFromServerRequestAttribute(ServerRequestInterface $request): ?string
     {
@@ -82,7 +82,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFromServerRequestUriPath(ServerRequestInterface $request): ?string
     {
@@ -100,7 +100,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getFromServerRequestHeaderLine(ServerRequestInterface $request): ?string
     {
@@ -119,7 +119,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getContentTypeByFormat(string $format): string
     {

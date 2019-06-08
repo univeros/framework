@@ -36,7 +36,7 @@ class BodyCredentialsExtractor implements CredentialsExtractorInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function extract(ServerRequestInterface $request): ?array
     {

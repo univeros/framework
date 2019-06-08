@@ -35,7 +35,7 @@ class Token implements TokenInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getToken(): string
     {
@@ -43,7 +43,7 @@ class Token implements TokenInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getMetadata(string $key = null)
     {

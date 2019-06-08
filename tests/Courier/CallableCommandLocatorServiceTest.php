@@ -10,7 +10,7 @@ class CallableCommandLocatorServiceTest extends TestCase
 {
     public function testItFindsCorrectCommandHandlerUsingFunctionCallable()
     {
-        $callable = function ($name) {
+        $callable = static function ($name) {
             switch ($name) {
                 case 'TestCommandMessage':
                     return new TestCommand();

@@ -33,7 +33,7 @@ class BetweenRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {
@@ -45,7 +45,7 @@ class BetweenRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

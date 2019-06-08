@@ -22,7 +22,7 @@ trait EventStackAwareTrait
     protected $stack = [];
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function addEvent($event): self
     {
@@ -38,7 +38,7 @@ trait EventStackAwareTrait
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function getStack(): array
     {

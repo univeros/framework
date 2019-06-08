@@ -24,7 +24,7 @@ class SqliteSessionHandlerConfiguration implements ConfigurationInterface
     use PdoAdapterDefinitionAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

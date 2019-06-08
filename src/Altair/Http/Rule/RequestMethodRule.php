@@ -32,7 +32,7 @@ class RequestMethodRule implements HttpAuthRuleInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request)
     {

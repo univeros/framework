@@ -34,7 +34,7 @@ class RequestPathRule implements HttpAuthRuleInterface
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function __invoke(ServerRequestInterface $request)
     {

@@ -36,14 +36,14 @@ interface TagAwareCacheItemPoolInterface extends CacheItemPoolInterface
     public function invalidateTags(array $tags): bool;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return TagAwareCacheItemInterface
      */
     public function getItem($key): TagAwareCacheItemInterface;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      *
      * @return array|\Traversable|TagAwareCacheItemInterface[]
      */

@@ -14,7 +14,7 @@ use DateTime;
 class DateTimeRule extends AbstractRule
 {
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {
@@ -33,7 +33,7 @@ class DateTimeRule extends AbstractRule
         return $datetime === false || $errors['warnings'] ? false : (bool)$datetime;
     }
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

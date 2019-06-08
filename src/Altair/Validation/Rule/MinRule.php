@@ -27,7 +27,7 @@ class MinRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function assert($value): bool
     {
@@ -39,7 +39,7 @@ class MinRule extends AbstractRule
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     protected function buildErrorMessage($value): string
     {

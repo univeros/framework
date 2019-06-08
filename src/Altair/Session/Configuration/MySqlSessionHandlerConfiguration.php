@@ -24,7 +24,7 @@ class MySqlSessionHandlerConfiguration implements ConfigurationInterface
     use PdoAdapterDefinitionAwareTrait;
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function apply(Container $container): void
     {

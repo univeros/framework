@@ -32,7 +32,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function withMap(MessageCommandMap $map): InMemoryCommandLocatorServiceInterface
     {
@@ -40,7 +40,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     }
 
     /**
-     * @inheritdoc
+     * @inheritDoc
      */
     public function add(string $messageName, string $commandName): InMemoryCommandLocatorServiceInterface
     {
