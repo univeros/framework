@@ -13,6 +13,7 @@ use Altair\Cookie\Collection\SetCookieCollection;
 use Altair\Cookie\Contracts\SetCookieInterface;
 use Altair\Cookie\SetCookie;
 use Altair\Cookie\Support\CookieStr;
+use Exception;
 use Psr\Http\Message\ResponseInterface;
 
 class SetCookieFactory
@@ -32,6 +33,7 @@ class SetCookieFactory
      * @param string $name
      * @param string|null $value
      *
+     *@throws Exception
      * @return SetCookie
      */
     public static function createRemembered(string $name, string $value = null): SetCookie
@@ -41,7 +43,7 @@ class SetCookieFactory
 
     /**
      * @param string $name
-     *
+     *@throws Exception
      * @return SetCookie
      */
     public static function createExpired(string $name): SetCookie
@@ -66,13 +68,15 @@ class SetCookieFactory
             $key = strtolower($pair[0]);
             $value = $pair[1]?? null;
 
-            if ($key === 'secure') {
+            if ('secure' === $key) {
                 $cookie = $cookie->withSecure(true);
                 continue;
-            } elseif ($key === 'httponly') {
+            }
+            if ('httponly' === $key) {
                 $cookie = $cookie->withHttpOnly(true);
                 continue;
-            } elseif ($value === null) {
+            }
+            if (null === $value) {
                 continue;
             }
 
@@ -81,7 +85,7 @@ class SetCookieFactory
                     $cookie = $cookie->withExpires($value);
                     break;
                 case 'max-age':
-                    $cookie = $cookie->withMaxAge($value);
+                    $cookie = $cookie->withMaxAge((int)$value);
                     break;
                 case 'domain':
                     $cookie = $cookie->withDomain($value);
@@ -104,7 +108,7 @@ class SetCookieFactory
     {
         return new SetCookieCollection(
             array_map(
-                function ($string) {
+                static function ($string) {
                     return static::createFromCookieString($string);
                 },
                 $strings
@@ -121,7 +125,7 @@ class SetCookieFactory
     {
         return new SetCookieCollection(
             array_map(
-                function ($string) {
+                static function ($string) {
                     return static::createFromCookieString($string);
                 },
                 $response->getHeader(SetCookieInterface::HEADER)

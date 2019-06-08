@@ -13,6 +13,7 @@ use Altair\Cookie\Contracts\SetCookieInterface;
 use Altair\Cookie\Traits\NameAndValueAwareTrait;
 use DateTime;
 use DateTimeInterface;
+use Exception;
 
 class SetCookie implements SetCookieInterface
 {
@@ -115,9 +116,9 @@ class SetCookie implements SetCookieInterface
      *
      * @return SetCookie
      */
-    public function withValue($value = null)
+    public function withValue($value = null): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->value = $value;
 
         return $clone;
@@ -145,7 +146,7 @@ class SetCookie implements SetCookieInterface
      */
     public function withMaxAge(int $maxAge = null): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->maxAge = $maxAge;
 
         return $clone;
@@ -158,7 +159,7 @@ class SetCookie implements SetCookieInterface
      */
     public function withPath(string $path = null): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->path = $path;
 
         return $clone;
@@ -171,7 +172,7 @@ class SetCookie implements SetCookieInterface
      */
     public function withDomain($domain = null): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->domain = $domain;
 
         return $clone;
@@ -184,7 +185,7 @@ class SetCookie implements SetCookieInterface
      */
     public function withSecure(bool $secure = null): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->secure = $secure;
 
         return $clone;
@@ -197,13 +198,14 @@ class SetCookie implements SetCookieInterface
      */
     public function withHttpOnly(bool $httpOnly): SetCookie
     {
-        $clone = clone($this);
+        $clone = clone $this;
         $clone->httpOnly = $httpOnly;
 
         return $clone;
     }
 
     /**
+     *@throws Exception
      * @return SetCookie
      */
     public function remember(): SetCookie
@@ -212,6 +214,7 @@ class SetCookie implements SetCookieInterface
     }
 
     /**
+     *@throws Exception
      * @return SetCookie
      */
     public function expire(): SetCookie
@@ -229,16 +232,16 @@ class SetCookie implements SetCookieInterface
         if ($expires === null) {
             return $expires;
         }
-        if ($expires instanceof DateTime || $expires instanceof DateTimeInterface) {
+        if ($expires instanceof DateTimeInterface) {
             return $expires->getTimestamp();
         }
         if (is_numeric($expires)) {
             return $expires;
         }
         if (is_string($expires)) {
-            $expires = strtotime($expires);
+            $expiresTime = strtotime($expires);
 
-            return $expires !== false ? $expires : null;
+            return false !== $expiresTime ? $expiresTime : null;
         }
     }
 }
