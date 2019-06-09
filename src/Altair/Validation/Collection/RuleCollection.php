@@ -44,7 +44,7 @@ class RuleCollection extends Map
      *
      * @param mixed $key
      */
-    protected function filterKey($key)
+    protected function filterKey($key): void
     {
         if (!is_string($key)) {
             throw new InvalidArgumentException(
@@ -61,10 +61,10 @@ class RuleCollection extends Map
      *
      * @param mixed $rules
      */
-    protected function filterRules($rules)
+    protected function filterRules($rules): void
     {
         if (is_string($rules)) {
-            if (!in_array(RuleInterface::class, class_implements($rules))) {
+            if (!in_array(RuleInterface::class, class_implements($rules), false)) {
                 throw new InvalidArgumentException(
                     sprintf(
                         '"%s" does not implement %s.',
@@ -79,7 +79,7 @@ class RuleCollection extends Map
                     $rule = ['class' => $rule];
                 }
                 $class = $rule['class'] ?? null;
-                if ($class === null || !in_array(RuleInterface::class, class_implements($class))) {
+                if ($class === null || !in_array(RuleInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(
                         sprintf(
                             'A definition of a rule as array must have a "class" key and must implement %s.',

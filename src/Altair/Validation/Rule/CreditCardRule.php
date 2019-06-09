@@ -129,7 +129,7 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertNumeric(string $value): bool
     {
-        return preg_match('/^[0-9]+$/', $value);
+        return (bool)preg_match('/^\d+$/', $value);
     }
 
     /**
@@ -159,7 +159,7 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertPattern(string $value): bool
     {
-        return preg_match($this->cards[$this->type]['pattern'], $value);
+        return (bool)preg_match($this->cards[$this->type]['pattern'], $value);
     }
 
     /**
@@ -171,14 +171,15 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertLuhn($value): bool
     {
-        if (in_array($this->type, $this->noLuhn)) {
+        if (in_array($this->type, $this->noLuhn, false)) {
             return true;
         }
 
         $cardNumber = strrev($value);
         $checksum = 0;
-        for ($i = 0; $i < strlen($cardNumber); $i++) {
-            $currentNum = substr($cardNumber, $i, 1);
+        $length = strlen($cardNumber);
+        for ($i = 0; $i < $length; $i++) {
+            $currentNum = $cardNumber[$i];
             if ($i % 2 === 1) {
                 $currentNum *= 2;
             }

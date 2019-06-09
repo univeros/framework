@@ -25,7 +25,7 @@ class IsbnRule extends AbstractRule
      */
     public function __construct(int $type = null)
     {
-        if (null !== $type && !in_array($type, [10, 13])) {
+        if (null !== $type && !in_array($type, [10, 13], false)) {
             throw new InvalidArgumentException(sprintf('ISBN type must be 10 or 13, "%d" given.', $type));
         }
         $this->type = $type;
@@ -36,10 +36,10 @@ class IsbnRule extends AbstractRule
      */
     public function assert($value): bool
     {
-        $value = $this->sanitize($value);
+        $value = $this->sanitize((string)$value);
 
         return null !== $value && (null !== $this->type
-                ? call_user_func([$this, 'assertIsbn' . (string)$this->type], $value)
+                ? $this->{'assertIsbn' . $this->type}($value)
                 : ($this->assertIsbn10($value) || $this->assertIsbn13($value)));
     }
 
@@ -67,12 +67,12 @@ class IsbnRule extends AbstractRule
         $checksum = 0;
         for ($i = 0; $i < 10; ++$i) {
             if ($value[$i] === 'X') {
-                $checksum += 10 * intval(10 - $i);
+                $checksum += 10 * (10 - $i);
             }
-            $checksum += intval($value[$i]) * intval(10 - $i);
+            $checksum += (int)$value[$i] * (10 - $i);
         }
 
-        return $checksum % 11 === 0;
+        return (int)$checksum % 11 === 0;
     }
 
     /**
@@ -111,7 +111,8 @@ class IsbnRule extends AbstractRule
      */
     protected function sanitize(string $value): ?string
     {
-        $value = preg_replace('/[-‐\s+]*/', '', $value);
-        return (bool) preg_match('/^[0-9]{10,13}$|^[0-9]{9}X$/', $value) ? $value : null;
+        $value = preg_replace('/[-‐\s+]*/u', '', $value);
+
+        return (bool)preg_match('/^\d{10,13}$|^\d{9}X$/', $value) ? $value : null;
     }
 }

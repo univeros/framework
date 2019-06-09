@@ -35,7 +35,7 @@ class RegexRule extends AbstractRule
             return false;
         }
 
-        return preg_match($this->pattern, $value);
+        return (bool)preg_match($this->pattern, (string)$value);
     }
 
     /**
@@ -43,6 +43,6 @@ class RegexRule extends AbstractRule
      */
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is invalid.', $value, $this->pattern);
+        return sprintf('"%s" is invalid for pattern "%s".', $value, $this->pattern);
     }
 }

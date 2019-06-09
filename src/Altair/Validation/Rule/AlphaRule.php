@@ -20,7 +20,7 @@ class AlphaRule extends AbstractRule
             return false;
         }
 
-        return (bool)preg_match('/^[\p{L}]+$/u', $value);
+        return (bool)preg_match('/^[\p{L}]+$/u', (string)$value);
     }
 
     /**

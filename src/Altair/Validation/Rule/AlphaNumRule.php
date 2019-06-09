@@ -20,7 +20,7 @@ class AlphaNumRule extends AbstractRule
             return false;
         }
 
-        return (bool)preg_match('/^[\p{L}\p{Nd}]+$/u', $value);
+        return (bool)preg_match('/^[\p{L}\p{Nd}]+$/u', (string)$value);
     }
 
     /**

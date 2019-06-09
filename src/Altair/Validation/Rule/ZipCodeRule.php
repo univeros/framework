@@ -33,7 +33,7 @@ class ZipCodeRule extends AbstractRule
      *
      * @license https://github.com/ronanguilloux/IsoCodes/blob/master/LICENSE
      */
-    protected $patterns = [
+    protected static $patterns = [
         'AC' => 'ASCN 1ZZ',
         'AD' => 'AD[1-7]0\\d',
         'AF' => '\\d{4}',
@@ -230,8 +230,8 @@ class ZipCodeRule extends AbstractRule
      */
     public function __construct(string $country = null)
     {
-        $this->country = trim(strtoupper($country?? 'US'));
-        if (!array_key_exists($this->country, $this->patterns)) {
+        $this->country = strtoupper(trim($country?? 'US'));
+        if (!array_key_exists($this->country, self::$patterns)) {
             throw new InvalidArgumentException(sprintf('Invalid country ISO ALPHA-2 code: %s', $this->country));
         }
     }
@@ -246,7 +246,8 @@ class ZipCodeRule extends AbstractRule
             return false;
         }
 
-        return (bool)preg_match("/^({$this->patterns[$this->country]})$/", $value);
+        $patterns = self::$patterns;
+        return (bool)preg_match("/^({$patterns[$this->country]})$/", $value);
     }
 
     /**

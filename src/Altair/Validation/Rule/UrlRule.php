@@ -28,8 +28,8 @@ class UrlRule extends AbstractRule
         // now make sure it parses as a URL with scheme and host
         $result = @parse_url($value);
 
-        $scheme = trim(($result['scheme']?? ''));
-        $host = trim(($result['host']?? ''));
+        $scheme = trim($result['scheme']?? '');
+        $host = trim($result['host']?? '');
 
         return !(empty($scheme) || empty($host));
     }

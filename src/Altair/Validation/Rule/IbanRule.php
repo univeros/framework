@@ -140,7 +140,7 @@ class IbanRule extends AbstractRule
             ]
         );
 
-        return bcmod($check, 97) === '1';
+        return bcmod($check, '97') === '1';
     }
 
     /**
@@ -160,7 +160,7 @@ class IbanRule extends AbstractRule
      */
     protected function sanitize(string $value): string
     {
-        $value = ltrim(strtoupper($value));
+        $value = strtoupper(ltrim($value));
         $value = preg_replace('/^I?IBAN/', '', $value);
 
         return preg_replace('/[^a-zA-Z0-9]/', '', $value);

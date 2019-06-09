@@ -42,9 +42,9 @@ class InRule extends AbstractRule
         }
 
         if ($value === null || $value === '') {
-            return $this->strict ? $value === $this->haystack : $value === $this->haystack;
+            return $this->strict ? $value === $this->haystack : $value == $this->haystack;
         }
-
+        $value = (string)$value;
         return $this->strict
             ? false !== mb_strpos($this->haystack, $value, 0, mb_detect_encoding($value))
             : false !== mb_stripos($this->haystack, $value, 0, mb_detect_encoding($value));

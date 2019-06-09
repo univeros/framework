@@ -33,7 +33,8 @@ class RuleResolver implements ResolverInterface
 
     /**
      * @param mixed $entry
-     *
+     * @throws \Altair\Container\Exception\InjectionException
+     * @throws \ReflectionException
      * @return RuleInterface
      */
     public function __invoke($entry): RuleInterface
