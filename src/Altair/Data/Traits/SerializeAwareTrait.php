@@ -42,9 +42,9 @@ trait SerializeAwareTrait
      *
      * @inheritDoc
      */
-    public function unserialize($data)
+    public function unserialize($data): void
     {
-        foreach (unserialize($data) as $key => $value) {
+        foreach (unserialize($data, ['allowed_classes' => true]) as $key => $value) {
             $this->{$key} = $value;
         }
     }

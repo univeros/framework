@@ -57,6 +57,9 @@ class MongoSessionHandlerTest extends TestCase
         $this->assertEquals('data', $data);
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionGc()
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);

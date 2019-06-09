@@ -74,8 +74,8 @@ class FileSessionHandler implements SessionHandlerInterface
         $files = $this->filesystem->listAllFiles($this->path);
         $now = time();
         foreach ($files as $file) {
-            if (filemtime($file) + $maxlifetime <= $now) {
-                $this->filesystem->delete($file);
+            if (filemtime($file->getPathname()) + $maxlifetime <= $now) {
+                $this->filesystem->delete($file->getPathname());
             }
         }
     }

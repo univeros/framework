@@ -42,6 +42,9 @@ class PdoSessionHandlerTest extends TestCase
         $handler->close();
     }
 
+    /**
+     * @runInSeparateProcess
+     */
     public function testSessionGc()
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);
@@ -106,11 +109,11 @@ class PdoSessionHandlerTest extends TestCase
 
     protected function getCreateSqliteTableStmt()
     {
-        $sql = "CREATE TABLE sessions (
+        $sql = 'CREATE TABLE sessions (
                 id TEXT NOT NULL PRIMARY KEY, 
                 content BLOB NOT NULL, 
                 session_lifetime INTEGER NOT NULL, 
-                session_time INTEGER NOT NULL)";
+                session_time INTEGER NOT NULL)';
 
         return $sql;
     }

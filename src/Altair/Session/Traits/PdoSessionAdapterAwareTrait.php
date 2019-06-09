@@ -143,14 +143,14 @@ trait PdoSessionAdapterAwareTrait
 
         $sql = $this->getSelectSql();
         $query = $this->getConnection()->prepare($sql);
-        $query->bindParam(':id', $sessionId, PDO::PARAM_STR);
+        $query->bindParam(':id', $sessionId);
 
         do {
             $query->execute();
             $rows = $query->fetchAll(PDO::FETCH_NUM);
 
             if ($rows) {
-                if ($this->checkIfSessionExpired($rows[0][1], $rows[0][2])) {
+                if ($this->checkIfSessionExpired((int)$rows[0][1], (int)$rows[0][2])) {
                     return '';
                 }
 
@@ -170,8 +170,8 @@ trait PdoSessionAdapterAwareTrait
                             )
                         );
 
-                    $query->bindParam(':id', $sessionId, PDO::PARAM_STR);
-                    $query->bindValue(':content', '', PDO::PARAM_STR);
+                    $query->bindParam(':id', $sessionId);
+                    $query->bindValue(':content', '');
                     $query->bindValue(':lifetime', 0, PDO::PARAM_INT);
                     $query->bindValue(':session_time', time(), PDO::PARAM_INT);
                     $query->execute();
@@ -202,7 +202,7 @@ trait PdoSessionAdapterAwareTrait
         $maxlifetime = (int)ini_get('session.gc_maxlifetime');
 
         $mergeQuery = $this->getMergePdoStatement($sessionId, $data);
-        if (null !== $mergeQuery && $mergeQuery instanceof PDOStatement) {
+        if ($mergeQuery instanceof PDOStatement) {
             $mergeQuery->execute();
 
             return true;
@@ -217,8 +217,8 @@ trait PdoSessionAdapterAwareTrait
                     $this->table
                 )
             );
-        $updateQuery->bindParam(':id', $sessionId, PDO::PARAM_STR);
-        $updateQuery->bindParam(':content', $data, PDO::PARAM_STR);
+        $updateQuery->bindParam(':id', $sessionId);
+        $updateQuery->bindParam(':content', $data);
         $updateQuery->bindParam(':lifetime', $maxlifetime, PDO::PARAM_INT);
         $updateQuery->bindValue(':session_time', time(), PDO::PARAM_INT);
         $updateQuery->execute();
@@ -240,7 +240,7 @@ trait PdoSessionAdapterAwareTrait
                             $this->table
                         )
                     );
-                $insertQuery->bindParam(':id', $sessionId, PDO::PARAM_STR);
+                $insertQuery->bindParam(':id', $sessionId);
                 $insertQuery->bindParam(':content', $data, PDO::PARAM_LOB);
                 $insertQuery->bindParam(':lifetime', $maxlifetime, PDO::PARAM_INT);
                 $insertQuery->bindValue(':session_time', time(), PDO::PARAM_INT);
@@ -325,7 +325,7 @@ trait PdoSessionAdapterAwareTrait
         $sql = sprintf('DELETE FROM %s WHERE id = :id', $this->table);
 
         $query = $this->getConnection()->prepare($sql);
-        $query->bindParam(':id', $sessionId, PDO::PARAM_STR);
+        $query->bindParam(':id', $sessionId);
         $query->execute();
 
         return true;

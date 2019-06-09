@@ -16,7 +16,7 @@ class CsrfTokenTest extends TestCase
     protected function setUp()
     {
         $this->tmpDir = __DIR__ . '/tmp';
-        mkdir($this->tmpDir);
+        @mkdir($this->tmpDir);
     }
 
     protected function tearDown()
