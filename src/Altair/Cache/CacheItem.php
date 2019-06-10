@@ -93,7 +93,9 @@ final class CacheItem implements CacheItemInterface
         if (null === $time) {
             $this->expirationTime = $this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null;
         } elseif ($time instanceof DateInterval) {
-            $this->expirationTime = DateTime::createFromFormat('U', time())->add($time)->format('U');
+            $this->expirationTime = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))
+                ->add($time)
+                ->format('U');
         } elseif (is_int($time)) {
             $this->expirationTime = time() + $time;
         } else {
