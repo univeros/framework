@@ -70,7 +70,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     public function peek()
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Queue is empty');
         }
 
         return $this->heap[0]->value;
@@ -84,7 +84,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     public function pop()
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Queue is empty');
         }
 
         // Last leaf of the heap to become the new root.
@@ -180,7 +180,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      */
     protected function parent(int $index): int
     {
-        return ($index - 1) / 2;
+        return (int)(($index - 1) / 2);
     }
 
     /**

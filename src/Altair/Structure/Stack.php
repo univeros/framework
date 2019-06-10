@@ -129,7 +129,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
         if ($offset === null) {
             $this->push($value);
         } else {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException('Out of bounds');
         }
     }
 
@@ -140,7 +140,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      */
     public function offsetGet($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 
     /**
@@ -150,7 +150,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      */
     public function offsetUnset($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 
     /**
@@ -160,6 +160,6 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      */
     public function offsetExists($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 }

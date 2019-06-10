@@ -56,7 +56,7 @@ class Pair implements PairInterface, JsonSerializable
 
             return;
         }
-        throw new OutOfBoundsException();
+        throw new OutOfBoundsException('Out of bounds');
     }
 
     /**

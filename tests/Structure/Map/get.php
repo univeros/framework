@@ -28,11 +28,10 @@ trait get
         $this->assertEquals('a', $instance->get('?', 'a'));
     }
 
-    public function testGetKeyNotFound()
+    public function testGetKeyNotFoundIsNull()
     {
         $instance = $this->getInstance();
-        $this->expectKeyNotFoundException();
-        $instance->get('?');
+        $this->assertEquals(null, $instance->get('?'));
     }
 
     public function testArrayAccessGet()

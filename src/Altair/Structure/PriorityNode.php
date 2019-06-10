@@ -61,6 +61,6 @@ class PriorityNode implements PriorityNodeInterface
 
             return;
         }
-        throw new OutOfBoundsException();
+        throw new OutOfBoundsException('Out of bounds');
     }
 }

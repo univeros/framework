@@ -133,7 +133,7 @@ trait CollectionTrait
      * Pushes all values of either an array or traversable object.
      * @param mixed $values
      */
-    protected function pushAll($values)
+    protected function pushAll($values): void
     {
         foreach ($values as $value) {
             $this->internal[] = $value;
@@ -150,15 +150,18 @@ trait CollectionTrait
      *
      * @return array
      */
-    protected function normalizeItems($items)
+    protected function normalizeItems($items): array
     {
         if (is_array($items)) {
             return $items;
-        } elseif ($items instanceof CollectionInterface) {
+        }
+        if ($items instanceof CollectionInterface) {
             return $items->toArray();
-        } elseif ($items instanceof JsonSerializable) {
+        }
+        if ($items instanceof JsonSerializable) {
             return $items->jsonSerialize();
-        } elseif ($items instanceof Traversable) {
+        }
+        if ($items instanceof Traversable) {
             return iterator_to_array($items);
         }
 

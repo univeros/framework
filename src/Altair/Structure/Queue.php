@@ -120,7 +120,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
         if ($offset === null) {
             $this->push($value);
         } else {
-            throw new OutOfBoundsException();
+            throw new OutOfBoundsException('Out of bounds');
         }
     }
 
@@ -131,7 +131,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      */
     public function offsetGet($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 
     /**
@@ -141,7 +141,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      */
     public function offsetUnset($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 
     /**
@@ -151,6 +151,6 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      */
     public function offsetExists($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 }

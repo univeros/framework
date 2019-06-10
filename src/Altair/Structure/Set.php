@@ -313,7 +313,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
             return;
         }
 
-        throw new OutOfBoundsException();
+        throw new OutOfBoundsException('Out of bounds');
     }
 
     /**
@@ -331,7 +331,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      */
     public function offsetExists($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 
     /**
@@ -341,6 +341,6 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      */
     public function offsetUnset($offset)
     {
-        throw new Error();
+        throw new Error('Not supported');
     }
 }

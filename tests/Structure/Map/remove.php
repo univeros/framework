@@ -82,15 +82,15 @@ trait remove
         $reference = [];
 
         for ($i = 0; $i < 10; $i++) {
-            for ($i = 0; $i < self::MANY; $i++) {
-                $k = rand(0, self::MANY * 2);
-                $v = rand();
+            for ($j = 0; $j < self::MANY; $j++) {
+                $k = random_int(0, self::MANY * 2);
+                $v = mt_rand();
 
                 $reference[$k] = $v;
                 $instance[$k] = $v;
             }
 
-            for ($i = 0; $i < self::MANY; $i++) {
+            for ($l = 0; $l < self::MANY; $l++) {
                 $k = rand(0, self::MANY * 2);
 
                 unset($reference[$k], $instance[$k]);
@@ -123,10 +123,9 @@ trait remove
         $this->assertEquals('a', $instance->remove('?', 'a'));
     }
 
-    public function testRemoveKeyNotFound()
+    public function testRemoveKeyNotFoundIsEqualNull()
     {
         $instance = $this->getInstance();
-        $this->expectKeyNotFoundException();
-        $instance->remove('?');
+        $this->assertEquals(null, $instance->remove('?'));
     }
 }

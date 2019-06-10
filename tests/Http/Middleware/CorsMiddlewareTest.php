@@ -17,7 +17,7 @@ class CorsMiddlewareTest extends AbstractMiddlewareTest
             ->setServerOrigin([
                 'scheme' => 'http',
                 'host' => 'example.com',
-                'port' => '123'
+                'port' => 123
             ])
             ->setRequestAllowedOrigins([
                 'http://good.example.com:321' => true,

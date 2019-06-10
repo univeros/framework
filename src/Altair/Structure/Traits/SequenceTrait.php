@@ -89,7 +89,7 @@ trait SequenceTrait
     public function first()
     {
         if (empty($this->internal)) {
-            throw new UnderflowException();
+            throw new UnderflowException('Is empty');
         }
 
         return $this->internal[0];
@@ -111,7 +111,7 @@ trait SequenceTrait
     public function insert(int $index, ...$values): SequenceInterface
     {
         if ($index < 0 || $index > count($this->internal)) {
-            throw new OutOfRangeException();
+            throw new OutOfRangeException('Out of bounds');
         }
 
         return new static(array_splice($this->internal, $index, 0, $values));
@@ -131,7 +131,7 @@ trait SequenceTrait
     public function last()
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Is empty');
         }
 
         return end($this->internal);
@@ -151,7 +151,7 @@ trait SequenceTrait
     public function pop()
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Is empty');
         }
 
         $value = array_pop($this->internal);
@@ -238,7 +238,7 @@ trait SequenceTrait
     public function shift()
     {
         if ($this->isEmpty()) {
-            throw new UnderflowException();
+            throw new UnderflowException('Is empty');
         }
 
         $value = array_shift($this->internal);
@@ -338,7 +338,7 @@ trait SequenceTrait
     public function offsetUnset($offset)
     {
         // Unset should be quiet, so we shouldn't allow 'remove' to throw.
-        if (is_integer($offset) && $offset >= 0 && $offset < count($this)) {
+        if (is_int($offset) && $offset >= 0 && $offset < count($this)) {
             $this->remove($offset);
         }
     }
@@ -360,10 +360,10 @@ trait SequenceTrait
      *
      * @param int $index
      */
-    protected function checkRange(int $index)
+    protected function checkRange(int $index): void
     {
         if ($index < 0 || $index >= count($this->internal)) {
-            throw new OutOfRangeException();
+            throw new OutOfRangeException('Out of range');
         }
     }
 

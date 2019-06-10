@@ -367,10 +367,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
             return $pair->value;
         }
 
-        if (func_num_args() === 1) {
-            throw new OutOfBoundsException('Out of bounds');
-        }
-
         return $default;
     }
 
@@ -409,11 +405,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
             if ($pair->equalsKey($key)) {
                 return $this->delete($position);
             }
-        }
-
-        // Check if a default was provided
-        if (func_num_args() === 1) {
-            throw new OutOfBoundsException('Out of bounds');
         }
 
         return $default;
@@ -458,7 +449,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
             return $pair->value;
         }
 
-        throw new OutOfBoundsException();
+        throw new OutOfBoundsException('Out of bounds');
     }
 
     /**
@@ -466,7 +457,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      */
     public function offsetUnset($offset)
     {
-        $this->remove($offset, null);
+        $this->remove($offset);
     }
 
     /**
@@ -474,7 +465,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      */
     public function offsetExists($offset)
     {
-        return $this->get($offset, null) !== null;
+        return $this->get($offset) !== null;
     }
 
     /**
