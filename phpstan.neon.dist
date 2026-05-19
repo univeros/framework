@@ -1,0 +1,17 @@
+parameters:
+    level: 5
+    phpVersion: 80300
+    paths:
+        - src
+    excludePaths:
+        - src/Altair/Filesystem/Adapter/FlysystemAdapter.php
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+    tmpDir: .phpstan-cache
+
+    ignoreErrors:
+        # PHP-side stubs for optional ext-* extensions vary across environments
+        - identifier: function.notFound
+          paths:
+              - src/Altair/Cache/Storage/MemcachedCacheItemStorage.php
+              - src/Altair/Cache/Storage/RedisCacheItemStorage.php

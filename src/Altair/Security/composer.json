@@ -8,13 +8,12 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.2",
+        "php": ">=8.3",
         "ext-openssl": "*"
     },
     "autoload": {
         "psr-4": {
             "Altair\\Security\\": ""
         }
-    },
-    "minimum-stability": "dev"
+    }
 }

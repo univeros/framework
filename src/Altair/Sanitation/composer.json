@@ -8,7 +8,7 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=8.3",
         "univeros/configuration": "*",
         "univeros/container": "*",
         "univeros/middleware": "*",
@@ -18,6 +18,5 @@
         "psr-4": {
             "Altair\\Sanitation\\": ""
         }
-    },
-    "minimum-stability": "dev"
+    }
 }

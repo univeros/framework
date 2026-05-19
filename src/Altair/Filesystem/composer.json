@@ -8,10 +8,9 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
-        "univeros/configuration": "*",
-        "univeros/filesystem": "*",
-        "league/flysystem": "~1.0"
+        "php": ">=8.3",
+        "league/flysystem": "^3.29",
+        "univeros/configuration": "*"
     },
     "autoload": {
         "psr-4": {
@@ -19,16 +18,9 @@
         }
     },
     "suggest": {
-        "league/flysystem-eventable-filesystem": "Allows you to use EventableFilesystem",
-        "league/flysystem-rackspace": "Allows you to use Rackspace Cloud Files",
-        "league/flysystem-copy": "Allows you to use Copy.com storage",
-        "league/flysystem-azure": "Allows you to use Windows Azure Blob storage",
-        "league/flysystem-webdav": "Allows you to use WebDAV storage",
         "league/flysystem-aws-s3-v3": "Allows you to use S3 storage with AWS SDK v3",
-        "league/flysystem-dropbox": "Allows you to use Dropbox storage",
-        "league/flysystem-cached-adapter": "Flysystem adapter decorator for metadata caching",
-        "league/flysystem-sftp": "Allows you to use SFTP server storage via phpseclib",
-        "league/flysystem-ziparchive": "Allows you to use ZipArchive adapter"
-    },
-    "minimum-stability": "dev"
+        "league/flysystem-sftp-v3": "Allows you to use SFTP server storage via phpseclib v3",
+        "league/flysystem-ftp": "Allows you to use FTP storage",
+        "spatie/flysystem-dropbox": "Allows you to use Dropbox storage"
+    }
 }

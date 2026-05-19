@@ -13,7 +13,7 @@ use Altair\Http\Contracts\ErrorHandlerInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class DefaultErrorHandler implements ErrorHandlerInterface
 {

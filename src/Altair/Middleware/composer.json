@@ -8,13 +8,13 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
+        "php": ">=8.3",
+        "psr/http-server-middleware": "^1.0",
         "univeros/structure": "*"
     },
     "autoload": {
         "psr-4": {
             "Altair\\Middleware\\": ""
         }
-    },
-    "minimum-stability": "dev"
+    }
 }

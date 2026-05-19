@@ -1,36 +1,48 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit backupGlobals="false"
-         backupStaticAttributes="false"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true"
-         convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
-         processIsolation="false"
-         stopOnError="false"
-         stopOnFailure="false"
-         verbose="true"
+         cacheDirectory=".phpunit.cache"
+         executionOrder="depends,defects"
+         requireCoverageMetadata="false"
+         beStrictAboutCoverageMetadata="false"
+         beStrictAboutOutputDuringTests="true"
+         failOnRisky="true"
+         failOnWarning="true"
+         displayDetailsOnIncompleteTests="true"
+         displayDetailsOnSkippedTests="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnTestsThatTriggerErrors="true"
+         displayDetailsOnTestsThatTriggerNotices="true"
+         displayDetailsOnTestsThatTriggerWarnings="true"
 >
     <testsuites>
         <testsuite name="Univeros Test Suite">
             <directory suffix="Test.php">./tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
+
+    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+        <include>
             <directory suffix=".php">./src</directory>
-            <exclude>
-                <file>./src/Altair/Filesystem/Adapter/FlysystemAdapter.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
-    <logging>
-        <log type="coverage-clover" target="coverage.xml" />
-    </logging>
+        </include>
+        <exclude>
+            <file>./src/Altair/Filesystem/Adapter/FlysystemAdapter.php</file>
+        </exclude>
+    </source>
+
+    <coverage>
+        <report>
+            <clover outputFile="coverage.xml"/>
+        </report>
+    </coverage>
+
     <php>
+        <ini name="date.timezone" value="UTC"/>
         <!--
-        <env name="REDIS_HOST" value="127.0.0.1" />
-        <env name="REDIS_PORT" value="6379" />
+        <env name="REDIS_HOST" value="127.0.0.1"/>
+        <env name="REDIS_PORT" value="6379"/>
         -->
     </php>
 </phpunit>

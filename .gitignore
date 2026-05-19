@@ -34,3 +34,15 @@ coverage.xml
 
 # php cs fixer
 .php_cs.cache
+.php-cs-fixer.cache
+
+# phpunit cache
+.phpunit.cache
+.phpunit.result.cache
+
+# phpstan
+phpstan.neon.cache
+
+# rector
+rector.cache
+
