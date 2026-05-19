@@ -216,7 +216,7 @@ The codebase is mid-migration from PHP 7.2 / abandoned deps to PHP 8.3. Phase 1 
 
 Run `composer rector:fix` after `composer update`. Rector will apply:
 
-- Constructor property promotion (~all classes with N-arg constructors that assign to `$this->x = $x`).
+- Constructor property promotion (still many old-style two-step constructors outside of HTTP middleware).
 - Native param/return/property types from PHPDoc.
 - `match` expressions replacing `switch` chains.
 - Nullsafe `?->`, `??=`, first-class callables, `str_contains/starts_with/ends_with`.
@@ -225,22 +225,43 @@ Run `composer rector:fix` after `composer update`. Rector will apply:
 
 **After Rector, run `composer cs:fix && composer test`.** Expect some Rector edits to need manual cleanup.
 
-### Phase 3 — PENDING (manual breaking-change migrations)
+### Phase 3a — COMPLETE (HTTP middleware to PSR-15)
 
-These cannot be done by Rector. File-level scope:
+All `Altair\Http\Middleware\*` classes migrated:
 
-| File(s) | Migration |
-|---|---|
-| `src/Altair/Http/Configuration/RelayConfiguration.php` | Relay v1 `RelayBuilder` → Relay v2 `new Relay(array $queue)` (PSR-15) |
-| `tests/Http/Middleware/AbstractMiddlewareTest.php` | Same — and middlewares now implement `Psr\Http\Server\MiddlewareInterface::process()` |
-| `src/Altair/Configuration/EnvironmentConfiguration.php` | `new Dotenv($path, $file)` → `Dotenv::createImmutable($path, $file)->load()` (immutability via `safeLoad()` if needed) |
-| `src/Altair/Filesystem/Configuration/{Rackspace,Azure,WebDAV,ZipArchive,GridFs}AdapterConfiguration.php` | **Delete** — adapters removed in Flysystem v3 |
-| `src/Altair/Filesystem/Configuration/{AwsS3,Local,Sftp,Ftp,Dropbox}AdapterConfiguration.php` | Rewrite for Flysystem v3 adapter constructors (signatures changed) |
-| `src/Altair/Filesystem/Contracts/FilesystemAdapterInterface.php` | Align with `League\Flysystem\FilesystemAdapter` (v3) |
-| Various PSR-7 consumers | PSR-7 v2 added return types — implementations may need signature updates |
-| Value objects (CacheItem, Cookie, immutable DTOs) | Convert to `readonly` props / `readonly class` (PHP 8.2+) |
-| Sentinel `class const` constants representing closed sets | Promote to **enums** (`BackedEnum`) |
-| Middleware contracts | Replace `Altair\Http\Contracts\MiddlewareInterface` with `Psr\Http\Server\MiddlewareInterface` where it's a true PSR-15 middleware |
+- `Altair\Http\Contracts\MiddlewareInterface` now `extends Psr\Http\Server\MiddlewareInterface`; keeps the `ATTRIBUTE_*` typed class constants (PHP 8.3).
+- All 14 middleware implement `process(ServerRequestInterface, RequestHandlerInterface): ResponseInterface`. Short-circuiting middleware receive `ResponseFactoryInterface` via constructor injection.
+- `relay/middleware` v1 adapters (`AbstractContentHandlerMiddleware`, `FormContentMiddleware`, `JsonContentMiddleware`) are reimplemented inline — the package is gone in Relay 2.
+- `Altair\Http\Resolver\ContainerResolver` no longer implements the removed `Relay\ResolverInterface`; it's a plain `__invoke(object|string): object` callable, which is what Relay 2 accepts.
+- `Altair\Http\Configuration\RelayConfiguration` uses `new Relay($queue->toArray(), $resolver)` (Relay 2 ctor).
+- `tests/Http/Middleware/AbstractMiddlewareTest::dispatch()` builds a PSR-15 pipeline using `Relay\Relay::handle()` with an anonymous terminal handler.
+- `Altair\Http\Responder\{Compound,Formatted}Responder` typehint the resolver as `callable` instead of `Relay\ResolverInterface`.
+- **Bug fix as part of migration:** `CsrfMiddleware` previously returned 403 on *valid* tokens (`if ($isPost && validate)` — inverted). Corrected to `if ($unsafeMethod && !validate)`.
+
+Decorator middleware that depend on the next response (CORS, cache headers) must now run **before** terminal middleware (ActionMiddleware) in the queue so they wrap the response that bubbles back up.
+
+### Phase 3b — COMPLETE (Dotenv v2 → v5)
+
+- `Altair\Configuration\EnvironmentConfiguration` now uses `Dotenv\Dotenv::createImmutable($dir, $file)` (or `createMutable` when constructed with `$immutable = false`). The `Dotenv\Loader` class is internal in v5 and no longer used directly.
+- `tests/Configuration/EnvironmentConfigurationTest` migrated from PHPUnit 7 annotation-based exception expectations (`@expectedException`, `@expectedExceptionMessageRegExp`) to method-based (`expectException()`, `expectExceptionMessageMatches()`).
+
+### Phase 3c — COMPLETE (Flysystem v1 → v3)
+
+- **Deleted** configurations for adapters removed in Flysystem v3: Rackspace, Azure, WebDAV, ZipArchive, GridFs.
+- **Rewrote** the survivors against v3 adapter constructors: `LocalFilesystemAdapter`, `FtpAdapter` (uses `FtpConnectionOptions::fromArray`), `AwsS3V3Adapter`, `SftpAdapter` (uses `SftpConnectionProvider`), Spatie `DropboxAdapter`.
+- `Altair\Filesystem\Contracts\FilesystemAdapterInterface` now extends `League\Flysystem\FilesystemOperator` (was `FilesystemInterface` in v1).
+- `Altair\Filesystem\Adapter\FlysystemAdapter` rewritten as a thin explicit decorator (no more magic `__call`) wrapping a `FilesystemOperator`. All v3 methods are forwarded; `exists/prepend/append/listDirectories` rewritten against v3's StorageAttributes/DirectoryListing iterables.
+- `FilesystemAdapterConfiguration` no longer wires a `CachedAdapter` — Flysystem v3 removed caching from core. Wrap with a caching decorator separately if needed.
+- The `FlysystemAdapter.php` exclusion from PHPUnit coverage, PHPStan, and Rector is removed — the new implementation is testable.
+
+### Phase 3d — PENDING (targeted modern idioms)
+
+After `composer update` succeeds and tests pass:
+
+- Value objects (CacheItem, Cookie, immutable DTOs) → `readonly` properties / `readonly class` (PHP 8.2+).
+- Sentinel `class const` constants representing closed sets → promote to **enums** (`BackedEnum`).
+- `Altair\Happen\*` event dispatcher predates PSR-14 — consider adding `psr/event-dispatcher` and implementing the standard interfaces alongside the existing API.
+- Rector-driven cleanup of remaining PHPDoc-only types throughout the codebase.
 
 ### Phase 4 — PENDING (static analysis + test attribute migration)
 

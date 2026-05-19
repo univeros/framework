@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,29 +17,19 @@ use Altair\Container\Definition;
 use Altair\Http\Collection\MiddlewareCollection;
 use Altair\Http\Resolver\ContainerResolver;
 use Relay\Relay;
-use Relay\RelayBuilder;
-use Relay\ResolverInterface;
 
 class RelayConfiguration implements ConfigurationInterface
 {
-    /**
-     * @inheritDoc
-     */
     public function apply(Container $container): void
     {
-        $relayBuilderDefinition = new Definition(['resolver' => ResolverInterface::class]);
-        $containerResolverDefinition = new Definition([':container' => $container]);
-        $factory = function (RelayBuilder $builder, MiddlewareCollection $queue): Relay {
-            return $builder->newInstance($queue);
-        };
-
         $container
-            ->define(RelayBuilder::class, $relayBuilderDefinition)
-            ->define(ContainerResolver::class, $containerResolverDefinition)
-            ->delegate(Relay::class, $factory)
-            ->alias(
-                ResolverInterface::class,
-                ContainerResolver::class
+            ->define(ContainerResolver::class, new Definition([':container' => $container]))
+            ->delegate(
+                Relay::class,
+                static fn (
+                    MiddlewareCollection $queue,
+                    ContainerResolver $resolver,
+                ): Relay => new Relay($queue->toArray(), $resolver),
             );
     }
 }

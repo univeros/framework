@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,96 +18,58 @@ use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
 use Altair\Http\Traits\ResolverAwareTrait;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Relay\ResolverInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
+/**
+ * Terminal middleware: marshals the request-bound Action through its domain/input/responder collaborators
+ * and returns the produced response. Any decorator middleware (CORS, cache headers, etc.) must run before
+ * this middleware in the pipeline so they wrap the response that bubbles back up.
+ */
 class ActionMiddleware implements MiddlewareInterface
 {
     use ResolverAwareTrait;
 
-    /**
-     * @param ResolverInterface $resolver
-     */
-    public function __construct(ResolverInterface $resolver)
-    {
+    public function __construct(
+        callable $resolver,
+        private readonly ResponseFactoryInterface $responseFactory,
+    ) {
         $this->resolver = $resolver;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ) {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $action = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);
         $request = $request->withoutAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);
-        $response = $this->handle($action, $request, $response);
 
-        return $next($request, $response);
+        if (!$action instanceof Action) {
+            return $handler->handle($request);
+        }
+
+        return $this->handle($action, $request);
     }
 
-    /**
-     * Use the action collaborators to get a response.
-     *
-     * @param Action $action
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     *
-     * @return ResponseInterface
-     */
-    protected function handle(
-        Action $action,
-        ServerRequestInterface $request,
-        ResponseInterface $response
-    ) {
+    private function handle(Action $action, ServerRequestInterface $request): ResponseInterface
+    {
         /** @var DomainInterface $domain */
         $domain = $this->resolve($action->getDomainClassName());
         /** @var InputInterface $input */
         $input = $this->resolve($action->getInputClassName());
         /** @var ResponderInterface $responder */
         $responder = $this->resolve($action->getResponderClassName());
-        $payload = $this->payload($domain, $input, $request);
-        $response = $this->response($responder, $request, $response, $payload);
 
-        return $response;
+        $payload = $this->payload($domain, $input, $request);
+
+        return $responder($request, $this->responseFactory->createResponse(), $payload);
     }
 
-    /**
-     * Execute the domain to get a payload using input from the request.
-     *
-     * @param DomainInterface $domain
-     * @param InputInterface $input
-     * @param ServerRequestInterface $request
-     *
-     * @return PayloadInterface
-     */
-    protected function payload(
+    private function payload(
         DomainInterface $domain,
         InputInterface $input,
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): PayloadInterface {
         return $domain($input($request));
-    }
-
-    /**
-     * Execute the responder to marshall the payload into the response.
-     *
-     * @param ResponderInterface $responder
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param PayloadInterface $payload
-     *
-     * @return ResponseInterface
-     */
-    protected function response(
-        ResponderInterface $responder,
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        PayloadInterface $payload
-    ): ResponseInterface {
-        return $responder($request, $response, $payload);
     }
 }

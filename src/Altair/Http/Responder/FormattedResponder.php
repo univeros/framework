@@ -19,7 +19,6 @@ use Negotiation\AcceptEncoding;
 use Negotiation\Negotiator;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Relay\ResolverInterface;
 
 class FormattedResponder implements ResponderInterface
 {
@@ -35,15 +34,13 @@ class FormattedResponder implements ResponderInterface
     protected $formatters;
 
     /**
-     * FormattedResponder constructor.
-     *
      * @param Negotiator $negotiator
-     * @param ResolverInterface $resolver
+     * @param callable(string): object $resolver
      * @param array $formatters
      */
     public function __construct(
         Negotiator $negotiator,
-        ResolverInterface $resolver,
+        callable $resolver,
         array $formatters = [
             JsonFormatter::class => 1.0
         ]

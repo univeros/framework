@@ -12,7 +12,6 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
     ->withSkip([
-        __DIR__ . '/src/Altair/Filesystem/Adapter/FlysystemAdapter.php',
         __DIR__ . '/tests/bootstrap.php',
     ])
     ->withPhpSets(php83: true)

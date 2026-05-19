@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\CredentialsExtractorInterface;
+use Altair\Http\Contracts\HttpAuthRuleInterface;
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
@@ -20,100 +23,84 @@ use Altair\Http\Exception\AuthorizationException;
 use Altair\Http\Exception\AuthorizationTokenException;
 use Altair\Http\Exception\InvalidTokenException;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
-use Exception;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Throwable;
 
 class TokenAuthenticationMiddleware implements MiddlewareInterface
 {
     use HttpAuthenticationAwareTrait {
-        __construct as init; /* rename to be able to override constructor and still use it from trait */
+        __construct as private initAuthentication;
     }
 
-    protected $tokenExtractor;
-    protected $credentialsExtractor;
-    protected $tokenFactory;
-
     /**
-     * TokenAuthenticationMiddleware constructor.
-     *
-     * @param TokenExtractorInterface $tokenExtractor
-     * @param CredentialsExtractorInterface $credentialsExtractor
-     * @param TokenFactoryInterface $tokenFactory
-     * @param IdentityValidatorInterface $identityValidator
-     * @param array|null $rules
-     * @param array|null $options
+     * @param list<HttpAuthRuleInterface>|null $rules
+     * @param array<string, mixed>|null        $options
      */
     public function __construct(
-        TokenExtractorInterface $tokenExtractor,
-        CredentialsExtractorInterface $credentialsExtractor,
-        TokenFactoryInterface $tokenFactory,
+        private readonly TokenExtractorInterface $tokenExtractor,
+        private readonly CredentialsExtractorInterface $credentialsExtractor,
+        private readonly TokenFactoryInterface $tokenFactory,
         IdentityValidatorInterface $identityValidator,
-        array $rules = null,
-        array $options = null
+        private readonly ResponseFactoryInterface $responseFactory,
+        ?array $rules = null,
+        ?array $options = null,
     ) {
-        $this->init($identityValidator, $rules, $options);
-
-        $this->tokenExtractor = $tokenExtractor;
-        $this->credentialsExtractor = $credentialsExtractor;
-        $this->tokenFactory = $tokenFactory;
+        $this->initAuthentication($identityValidator, $rules, $options);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
         $this->checkAllowance($request->getUri()->getHost(), $request->getUri()->getScheme());
 
         $authToken = null;
         $exception = null;
+        $statusCode = null;
 
         try {
             if ($token = $this->tokenExtractor->extract($request)) {
                 $authToken = $this->tokenFactory->fromTokenString($token);
             } elseif ($credentials = $this->credentialsExtractor->extract($request)) {
                 [$user, $password] = $credentials;
-                if (false === call_user_func($this->identityValidator, ['user' => $user, 'password' => $password])) {
+                if (call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) === false) {
                     throw new AuthorizationException('Invalid credentials.');
                 }
                 $authToken = $this->tokenFactory->fromCredentials($credentials);
             } else {
                 throw new AuthorizationException('No authentication token has been specified.');
             }
-        } catch (InvalidTokenException $e) {
+        } catch (InvalidTokenException | AuthorizationTokenException $e) {
             $exception = $e;
-            $response->withStatus(HttpStatusCodeInterface::HTTP_UNAUTHORIZED);
-        } catch (AuthorizationTokenException $e) {
-            $exception = $e;
-            $response->withStatus(HttpStatusCodeInterface::HTTP_UNAUTHORIZED);
+            $statusCode = HttpStatusCodeInterface::HTTP_UNAUTHORIZED;
         } catch (AuthorizationException $e) {
             $exception = $e;
-            $response->withStatus(HttpStatusCodeInterface::HTTP_FORBIDDEN);
-        } catch (Exception $e) {
+            $statusCode = HttpStatusCodeInterface::HTTP_FORBIDDEN;
+        } catch (Throwable $e) {
             throw $e;
         }
 
-        $statusCode = $response->getStatusCode();
-        if ($statusCode === HttpStatusCodeInterface::HTTP_UNAUTHORIZED ||
-            $statusCode === HttpStatusCodeInterface::HTTP_FORBIDDEN) {
+        if ($statusCode !== null) {
+            $response = $this->responseFactory->createResponse($statusCode);
             if (is_callable($this->onError)) {
-                $callableResponse = call_user_func($this->onError, $request, $response, $exception);
-
-                return $callableResponse instanceof ResponseInterface
-                    ? $callableResponse
-                    : $response;
+                $callableResponse = ($this->onError)($request, $response, $exception);
+                if ($callableResponse instanceof ResponseInterface) {
+                    return $callableResponse;
+                }
             }
+
+            return $response;
         }
 
-        if ($authToken) {
+        if ($authToken !== null) {
             $request = $request->withAttribute(TokenInterface::TOKEN_KEY, $authToken);
         }
 
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,7 +14,7 @@ namespace Altair\Filesystem\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
 use Spatie\Dropbox\Client;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 
@@ -22,14 +24,11 @@ class DropboxAdapterConfiguration implements ConfigurationInterface
 
     public function apply(Container $container): void
     {
-        $factory = function () {
-            $client = new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN'));
-
-            return new DropboxAdapter($client, $this->env->get('FS_DROPBOX_PREFIX', ''));
-        };
-
         $container
-            ->delegate(DropboxAdapter::class, $factory)
-            ->alias(AdapterInterface::class, DropboxAdapter::class);
+            ->delegate(DropboxAdapter::class, fn (): DropboxAdapter => new DropboxAdapter(
+                new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN')),
+                $this->env->get('FS_DROPBOX_PREFIX', ''),
+            ))
+            ->alias(FilesystemAdapter::class, DropboxAdapter::class);
     }
 }

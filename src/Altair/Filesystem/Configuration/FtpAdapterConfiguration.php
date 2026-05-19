@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,8 +14,9 @@ namespace Altair\Filesystem\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use League\Flysystem\Adapter\Ftp;
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\Ftp\FtpAdapter;
+use League\Flysystem\Ftp\FtpConnectionOptions;
+use League\Flysystem\FilesystemAdapter;
 
 class FtpAdapterConfiguration implements ConfigurationInterface
 {
@@ -21,31 +24,23 @@ class FtpAdapterConfiguration implements ConfigurationInterface
 
     public function apply(Container $container): void
     {
-        $factory = function () {
-            $config = array_filter(
-                [
+        $container
+            ->delegate(FtpAdapter::class, fn (): FtpAdapter => new FtpAdapter(
+                FtpConnectionOptions::fromArray(array_filter([
                     'host' => $this->env->get('FS_FTP_HOST'),
-                    'port' => $this->env->get('FS_FTP_PORT'),
+                    'root' => $this->env->get('FS_FTP_ROOT', '/'),
                     'username' => $this->env->get('FS_FTP_USERNAME'),
                     'password' => $this->env->get('FS_FTP_PASSWORD'),
-                    'ssl' => $this->env->get('FS_FTP_SSL'),
-                    'timeout' => $this->env->get('FS_FTP_TIMEOUT'),
-                    'root' => $this->env->get('FS_FTP_ROOT'),
-                    'permPrivate' => $this->env->get('FS_FTP_PERM_PRIVATE'),
-                    'permPublic' => $this->env->get('FS_FTP_PERM_PUBLIC'),
-                    'passive' => $this->env->get('FS_FTP_PASSIVE'),
-                    'transferMode' => $this->env->get('FS_FTP_TRANSFER_MODE'),
+                    'port' => $this->env->get('FS_FTP_PORT', 21),
+                    'ssl' => $this->env->get('FS_FTP_SSL', false),
+                    'timeout' => $this->env->get('FS_FTP_TIMEOUT', 90),
+                    'passive' => $this->env->get('FS_FTP_PASSIVE', true),
+                    'transferMode' => $this->env->get('FS_FTP_TRANSFER_MODE', FTP_BINARY),
                     'systemType' => $this->env->get('FS_FTP_SYSTEM_TYPE'),
                     'ignorePassiveAddress' => $this->env->get('FS_FTP_IGNORE_PASSIVE_ADDRESS'),
-                    'recurseManually' => $this->env->get('FS_FTP_RECURSE_MANUALLY')
-                ]
-            );
-
-            return new Ftp($config);
-        };
-
-        $container
-            ->delegate(Ftp::class, $factory)
-            ->alias(AdapterInterface::class, Ftp::class);
+                    'recurseManually' => $this->env->get('FS_FTP_RECURSE_MANUALLY', false),
+                ], static fn (mixed $v): bool => $v !== null)),
+            ))
+            ->alias(FilesystemAdapter::class, FtpAdapter::class);
     }
 }

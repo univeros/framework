@@ -1,23 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Altair\Tests\Http\Middleware;
 
 use Altair\Http\Middleware\CorsMiddleware;
 use Neomerx\Cors\Analyzer;
 use Neomerx\Cors\Contracts\Constants\CorsResponseHeaders;
 use Neomerx\Cors\Strategies\Settings;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CorsMiddlewareTest extends AbstractMiddlewareTest
 {
-    private $analyzer;
+    private Analyzer $analyzer;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $settings = (new Settings())
             ->setServerOrigin([
                 'scheme' => 'http',
                 'host' => 'example.com',
-                'port' => 123
+                'port' => 123,
             ])
             ->setRequestAllowedOrigins([
                 'http://good.example.com:321' => true,
@@ -53,7 +56,10 @@ class CorsMiddlewareTest extends AbstractMiddlewareTest
         parent::setUp();
     }
 
-    public function corsProvider()
+    /**
+     * @return list<array{0: string, 1: int}>
+     */
+    public static function corsProvider(): array
     {
         return [
             ['http://not-valid.com:321', 403],
@@ -61,17 +67,13 @@ class CorsMiddlewareTest extends AbstractMiddlewareTest
         ];
     }
 
-    /**
-     * @dataProvider corsProvider
-     * @param mixed $url
-     * @param mixed $statusCode
-     */
-    public function testCors($url, $statusCode)
+    #[DataProvider('corsProvider')]
+    public function testCors(string $url, int $statusCode): void
     {
-        $middleware = new CorsMiddleware($this->analyzer);
+        $middleware = new CorsMiddleware($this->analyzer, $this->responseFactory());
 
         $response = $this->execute([$middleware], $url);
 
-        $this->assertEquals($statusCode, $response->getStatusCode());
+        $this->assertSame($statusCode, $response->getStatusCode());
     }
 }

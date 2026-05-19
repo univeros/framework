@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,29 +12,18 @@
 namespace Altair\Http\Resolver;
 
 use Altair\Container\Container;
-use Relay\ResolverInterface;
 
-class ContainerResolver implements ResolverInterface
+/**
+ * Relay 2 resolver: any callable that turns an entry (class name or object) into an instance.
+ */
+class ContainerResolver
 {
-    /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
-     * ContainerResolver constructor.
-     *
-     * @param Container $container
-     */
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
+    public function __construct(
+        private readonly Container $container,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke($entry)
+    public function __invoke(object|string $entry): object
     {
         return is_object($entry) ? $entry : $this->container->make($entry);
     }

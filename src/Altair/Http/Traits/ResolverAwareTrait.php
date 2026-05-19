@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,19 +14,15 @@ namespace Altair\Http\Traits;
 trait ResolverAwareTrait
 {
     /**
-     * @var \Relay\ResolverInterface
+     * @var callable(string): object
      */
     protected $resolver;
 
     /**
-     * Resolve a class spec into an object.
-     *
-     * @param string $spec Fully-qualified class name
-     *
-     * @return object
+     * Resolve a fully-qualified class name into an object.
      */
-    protected function resolve(string $spec)
+    protected function resolve(string $spec): object
     {
-        return call_user_func($this->resolver, $spec);
+        return ($this->resolver)($spec);
     }
 }
