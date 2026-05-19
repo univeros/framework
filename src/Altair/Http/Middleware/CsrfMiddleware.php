@@ -16,7 +16,7 @@ use Altair\Http\Traits\IpAddressAwareTrait;
 use Altair\Session\SessionManager;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Diactoros\Stream;
+use Laminas\Diactoros\Stream;
 
 class CsrfMiddleware implements MiddlewareInterface
 {

@@ -8,8 +8,8 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
-        "psr/log": "~1.0",
+        "php": ">=8.3",
+        "psr/log": "^3.0",
         "univeros/configuration": "*",
         "univeros/container": "*",
         "univeros/filesystem": "*",
@@ -19,6 +19,5 @@
         "psr-4": {
             "Altair\\Courier\\": ""
         }
-    },
-    "minimum-stability": "dev"
+    }
 }

@@ -8,8 +8,8 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
-        "vlucas/phpdotenv": "^2.4",
+        "php": ">=8.3",
+        "vlucas/phpdotenv": "^5.6",
         "univeros/container": "*",
         "univeros/structure": "*"
     },
@@ -17,6 +17,5 @@
         "psr-4": {
             "Altair\\Configuration\\": ""
         }
-    },
-    "minimum-stability": "dev"
+    }
 }

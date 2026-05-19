@@ -8,8 +8,8 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.0.0",
-        "nesbot/carbon": "~1.20",
+        "php": ">=8.3",
+        "nesbot/carbon": "^3.8",
         "univeros/configuration": "*",
         "univeros/security": "*"
     },
@@ -19,8 +19,7 @@
         }
     },
     "suggest": {
-        "ext-mongo": "The extension is required to use MongoSessionHandler",
-        "predis/predis": "The library is required to use PredisSessionHandler"
-    },
-    "minimum-stability": "dev"
+        "ext-mongodb": "Required to use MongoSessionHandler",
+        "predis/predis": "Required to use PredisSessionHandler"
+    }
 }

@@ -7,7 +7,7 @@ use Altair\Cookie\CookieManager;
 use Altair\Cookie\Factory\SetCookieFactory;
 use Altair\Cookie\SetCookie;
 use PHPUnit\Framework\TestCase;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 
 class SetCookieTest extends TestCase
 {

@@ -8,10 +8,10 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=7.2",
-        "psr/cache": "^1.0",
-        "psr/simple-cache": "^1.0",
-        "psr/log": "~1.0",
+        "php": ">=8.3",
+        "psr/cache": "^3.0",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^3.0",
         "univeros/configuration": "*",
         "univeros/filesystem": "*"
     },
@@ -21,9 +21,8 @@
         }
     },
     "suggest": {
-        "ext-memcached": "The extension is required to use MemcachedCacheItemStorage",
-        "ext-redis": "The extension is required to use RedisCacheItemStorage",
-        "predis/predis": "The library is required to use PredisCacheItemStorage"
-    },
-    "minimum-stability": "dev"
+        "ext-memcached": "Required to use MemcachedCacheItemStorage",
+        "ext-redis": "Required to use RedisCacheItemStorage",
+        "predis/predis": "Required to use PredisCacheItemStorage"
+    }
 }
