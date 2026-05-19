@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,160 +12,160 @@
 namespace Altair\Filesystem\Adapter;
 
 use Altair\Filesystem\Contracts\FilesystemAdapterInterface;
-use League\Flysystem\AdapterInterface;
-use League\Flysystem\Config;
-use League\Flysystem\FilesystemInterface;
-use League\Flysystem\Handler;
-use League\Flysystem\PluginInterface;
+use League\Flysystem\DirectoryAttributes;
+use League\Flysystem\DirectoryListing;
+use League\Flysystem\FilesystemOperator;
+use League\Flysystem\StorageAttributes;
 
 /**
- * Filesystem
- *
- * Adopted adapter functionality from Flysystem
- *
- * @method FilesystemInterface addPlugin(PluginInterface $plugin)
- * @method void assertAbsent($path)
- * @method void assertPresent($path)
- * @method boolean copy($path, $newpath)
- * @method boolean createDir($dirname, array $config = [])
- * @method boolean delete($path)
- * @method boolean deleteDir($dirname)
- * @method Handler get($path, Handler $handler = null)
- * @method AdapterInterface getAdapter()
- * @method Config getConfig()
- * @method array|false getMetadata($path)
- * @method string|false getMimetype($path)
- * @method integer|false getSize($path)
- * @method integer|false getTimestamp($path)
- * @method string|false getVisibility($path)
- * @method array getWithMetadata($path, array $metadata)
- * @method boolean has($path)
- * @method array listContents($directory = '', $recursive = false)
- * @method array listFiles($path = '', $recursive = false)
- * @method array listPaths($path = '', $recursive = false)
- * @method array listWith(array $keys = [], $directory = '', $recursive = false)
- * @method boolean put($path, $contents, array $config = [])
- * @method boolean putStream($path, $resource, array $config = [])
- * @method string|false read($path)
- * @method string|false readAndDelete($path)
- * @method resource|false readStream($path)
- * @method boolean rename($path, $newpath)
- * @method boolean setVisibility($path, $visibility)
- * @method boolean update($path, $contents, array $config = [])
- * @method boolean updateStream($path, $resource, array $config = [])
- * @method boolean write($path, $contents, array $config = [])
- * @method boolean writeStream($path, $resource, array $config = [])
- *
+ * Adapter that decorates a Flysystem v3 FilesystemOperator with prepend/append/exists/listDirectories helpers.
  */
 class FlysystemAdapter implements FilesystemAdapterInterface
 {
-    /**
-     * @var FilesystemInterface
-     */
-    protected $driver;
-
-    /**
-     * FlySystem constructor.
-     *
-     * @param FilesystemInterface $driver
-     */
-    public function __construct(FilesystemInterface $driver)
-    {
-        $this->driver = $driver;
+    public function __construct(
+        private readonly FilesystemOperator $driver,
+    ) {
     }
 
-    /**
-     * Pass dynamic methods call onto Flysystem
-     *
-     * @param  string $method
-     * @param  array $parameters
-     *
-     * @throws \BadMethodCallException
-     * @return mixed
-     *
-     */
-    public function __call($method, array $parameters)
-    {
-        return call_user_func_array([$this->driver, $method], $parameters);
-    }
-
-    /**
-     * Get the Flysystem driver.
-     *
-     * @return \League\Flysystem\FilesystemInterface
-     */
-    public function getDriver(): FilesystemInterface
+    public function getDriver(): FilesystemOperator
     {
         return $this->driver;
     }
 
-    /**
-     * Determine if a file exists.
-     *
-     * @param  string $path
-     *
-     * @return bool
-     */
-    public function exists($path): bool
+    public function exists(string $path): bool
     {
-        return $this->driver->has($path);
+        return $this->driver->fileExists($path) || $this->driver->directoryExists($path);
     }
 
-    /**
-     * Prepend to a file.
-     *
-     * @param  string $path
-     * @param  string $data
-     * @param  string $separator
-     *
-     * @return bool
-     */
-    public function prepend(string $path, string $data, string $separator = PHP_EOL): bool
+    public function prepend(string $path, string $data, string $separator = PHP_EOL): void
     {
-        if ($this->exists($path)) {
-            return $this->driver->put($path, $data . $separator . $this->driver->read($path));
-        }
+        $existing = $this->driver->fileExists($path) ? $this->driver->read($path) : '';
 
-        return $this->driver->put($path, $data);
+        $this->driver->write($path, $existing !== '' ? $data . $separator . $existing : $data);
     }
 
-    /**
-     * Append to a file.
-     *
-     * @param  string $path
-     * @param  string $data
-     * @param  string $separator
-     *
-     * @return bool
-     */
-    public function append(string $path, string $data, string $separator = PHP_EOL): bool
+    public function append(string $path, string $data, string $separator = PHP_EOL): void
     {
-        if ($this->exists($path)) {
-            return $this->driver->put($path, $this->driver->read($path) . $separator . $data);
-        }
+        $existing = $this->driver->fileExists($path) ? $this->driver->read($path) : '';
 
-        return $this->put($path, $data);
+        $this->driver->write($path, $existing !== '' ? $existing . $separator . $data : $data);
     }
 
-    /**
-     * @param string $directory
-     * @param bool $recursive
-     *
-     * @return array
-     */
     public function listDirectories(string $directory = '', bool $recursive = false): array
     {
-        $contents = $this->driver->listContents($directory, $recursive);
+        $listing = $this->driver->listContents($directory, $recursive);
 
-        return array_filter(
-            array_map(
-                function ($obj) {
-                    if ($obj['type'] === 'dir') {
-                        return $obj['path'];
-                    }
-                },
-                $contents
-            )
-        );
+        return array_values(array_map(
+            static fn (StorageAttributes $attributes): string => $attributes->path(),
+            iterator_to_array(
+                $listing->filter(static fn (StorageAttributes $attributes): bool => $attributes instanceof DirectoryAttributes),
+                false,
+            ),
+        ));
+    }
+
+    public function fileExists(string $location): bool
+    {
+        return $this->driver->fileExists($location);
+    }
+
+    public function directoryExists(string $location): bool
+    {
+        return $this->driver->directoryExists($location);
+    }
+
+    public function has(string $location): bool
+    {
+        return $this->driver->has($location);
+    }
+
+    public function read(string $location): string
+    {
+        return $this->driver->read($location);
+    }
+
+    public function readStream(string $location)
+    {
+        return $this->driver->readStream($location);
+    }
+
+    public function listContents(string $location, bool $deep = FilesystemOperator::LIST_SHALLOW): DirectoryListing
+    {
+        return $this->driver->listContents($location, $deep);
+    }
+
+    public function lastModified(string $path): int
+    {
+        return $this->driver->lastModified($path);
+    }
+
+    public function fileSize(string $path): int
+    {
+        return $this->driver->fileSize($path);
+    }
+
+    public function mimeType(string $path): string
+    {
+        return $this->driver->mimeType($path);
+    }
+
+    public function visibility(string $path): string
+    {
+        return $this->driver->visibility($path);
+    }
+
+    public function write(string $location, string $contents, array $config = []): void
+    {
+        $this->driver->write($location, $contents, $config);
+    }
+
+    public function writeStream(string $location, $contents, array $config = []): void
+    {
+        $this->driver->writeStream($location, $contents, $config);
+    }
+
+    public function setVisibility(string $path, string $visibility): void
+    {
+        $this->driver->setVisibility($path, $visibility);
+    }
+
+    public function delete(string $location): void
+    {
+        $this->driver->delete($location);
+    }
+
+    public function deleteDirectory(string $location): void
+    {
+        $this->driver->deleteDirectory($location);
+    }
+
+    public function createDirectory(string $location, array $config = []): void
+    {
+        $this->driver->createDirectory($location, $config);
+    }
+
+    public function move(string $source, string $destination, array $config = []): void
+    {
+        $this->driver->move($source, $destination, $config);
+    }
+
+    public function copy(string $source, string $destination, array $config = []): void
+    {
+        $this->driver->copy($source, $destination, $config);
+    }
+
+    public function publicUrl(string $path, array $config = []): string
+    {
+        return $this->driver->publicUrl($path, $config);
+    }
+
+    public function temporaryUrl(string $path, \DateTimeInterface $expiresAt, array $config = []): string
+    {
+        return $this->driver->temporaryUrl($path, $expiresAt, $config);
+    }
+
+    public function checksum(string $path, array $config = []): string
+    {
+        return $this->driver->checksum($path, $config);
     }
 }

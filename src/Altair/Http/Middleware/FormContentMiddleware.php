@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,9 +11,17 @@
 
 namespace Altair\Http\Middleware;
 
-use Altair\Http\Contracts\MiddlewareInterface;
-use Relay\Middleware\FormContentHandler;
-
-class FormContentMiddleware extends FormContentHandler implements MiddlewareInterface
+class FormContentMiddleware extends AbstractContentHandlerMiddleware
 {
+    protected function contentTypes(): array
+    {
+        return ['application/x-www-form-urlencoded'];
+    }
+
+    protected function parse(string $body): array
+    {
+        parse_str($body, $parsed);
+
+        return $parsed;
+    }
 }

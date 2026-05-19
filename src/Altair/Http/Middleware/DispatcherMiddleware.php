@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,69 +18,50 @@ use Altair\Http\Exception\HttpNotFoundException;
 use FastRoute\Dispatcher;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class DispatcherMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var Dispatcher
-     */
-    protected $dispatcher;
-
-    /**
-     * DispatcherMiddleware constructor.
-     *
-     * @param Dispatcher $dispatcher
-     */
-    public function __construct(Dispatcher $dispatcher)
-    {
-        $this->dispatcher = $dispatcher;
+    public function __construct(
+        private readonly Dispatcher $dispatcher,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /**
-         * @var $action Action
-         */
-        list($action, $args) = $this->dispatch($this->dispatcher, $request->getMethod(), $request->getUri()->getPath());
+        [$action, $args] = $this->dispatch(
+            $this->dispatcher,
+            $request->getMethod(),
+            $request->getUri()->getPath(),
+        );
+
         $request = $request->withAttribute(MiddlewareInterface::ATTRIBUTE_ACTION, $action);
         foreach ($args as $key => $value) {
             $request = $request->withAttribute($key, $value);
         }
 
-        return $next($request, $response);
+        return $handler->handle($request);
     }
 
     /**
-     * @param Dispatcher $dispatcher
-     * @param $method
-     * @param $path
+     * @return array{0: Action, 1: array<string, mixed>}
      *
      * @throws HttpMethodNotAllowedException
      * @throws HttpNotFoundException
-     * @return array
      */
-    private function dispatch(Dispatcher $dispatcher, $method, $path)
+    private function dispatch(Dispatcher $dispatcher, string $method, string $path): array
     {
         $route = $dispatcher->dispatch($method, $path);
         $status = array_shift($route);
-        if (Dispatcher::FOUND === $status) {
-            return $route;
-        }
-        if (Dispatcher::METHOD_NOT_ALLOWED === $status) {
-            $allowed = array_shift($route);
-            throw new HttpMethodNotAllowedException(
-                $allowed,
-                sprintf(
-                    "Cannot access resource '%s' using method '%s'",
-                    $path,
-                    $method
-                ),
-                405
-            );
-        }
-        throw new HttpNotFoundException($path);
+
+        return match ($status) {
+            Dispatcher::FOUND => $route,
+            Dispatcher::METHOD_NOT_ALLOWED => throw new HttpMethodNotAllowedException(
+                array_shift($route),
+                sprintf("Cannot access resource '%s' using method '%s'", $path, $method),
+                405,
+            ),
+            default => throw new HttpNotFoundException($path),
+        };
     }
 }

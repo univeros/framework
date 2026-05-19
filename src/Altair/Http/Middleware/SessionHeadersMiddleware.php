@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,44 +17,17 @@ use Altair\Http\Contracts\CacheLimiterInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class SessionHeadersMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var CookieManager
-     */
-    protected $cookieManager;
-    /**
-     *
-     * The cache limiter type, if any.
-     *
-     * @var string
-     *
-     * @see session_cache_limiter()
-     *
-     */
-    protected $cacheLimiter;
-
-    /**
-     * SessionHeadersMiddleware constructor.
-     *
-     * @param CookieManager $cookieManager
-     * @param CacheLimiterInterface $cacheLimiter
-     */
-    public function __construct(CookieManager $cookieManager, CacheLimiterInterface $cacheLimiter)
-    {
-        $this->cookieManager = $cookieManager;
-        $this->cacheLimiter = $cacheLimiter;
+    public function __construct(
+        private readonly CookieManager $cookieManager,
+        private readonly CacheLimiterInterface $cacheLimiter,
+    ) {
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable|null $next
-     *
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next = null)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $prevName = session_name();
         $prevId = $this->cookieManager->getFromRequest($request, $prevName);
@@ -60,34 +35,29 @@ class SessionHeadersMiddleware implements MiddlewareInterface
             session_id($prevId);
         }
 
-        $response = $next($request, $response);
+        $response = $handler->handle($request);
 
-        // is the session id still the same?
         $nextId = session_id();
-
         if ($nextId !== $prevId) {
-            $cookie = $this->createNewSessionCookie($nextId);
-            $response = $this->cookieManager->setOnResponse($response, $cookie);
+            $response = $this->cookieManager->setOnResponse(
+                $response,
+                $this->createNewSessionCookie($nextId),
+            );
         }
 
-        return $nextId
+        return $nextId !== ''
             ? $this->cacheLimiter->apply($response)
             : $response;
     }
 
-    /**
-     * @param string $sessionId
-     *
-     * @return SetCookie
-     */
-    protected function createNewSessionCookie(string $sessionId): SetCookie
+    private function createNewSessionCookie(string $sessionId): SetCookie
     {
         $params = session_get_cookie_params();
 
         return (new SetCookie(session_name(), $sessionId))
-            ->withDomain(($params['domain']?? null))
-            ->withExpires(($params['lifetime']?? null))
-            ->withSecure(($params['path']?? null))
-            ->withHttpOnly(($params['httponly'] ?? null));
+            ->withDomain($params['domain'] ?? null)
+            ->withExpires($params['lifetime'] ?? null)
+            ->withSecure($params['path'] ?? null)
+            ->withHttpOnly($params['httponly'] ?? null);
     }
 }

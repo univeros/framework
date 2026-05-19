@@ -15,7 +15,6 @@ use Altair\Http\Exception\InvalidResponderException;
 use Altair\Http\Traits\ResolverAwareTrait;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Relay\ResolverInterface;
 
 class CompoundResponder implements ResponderInterface
 {
@@ -27,13 +26,13 @@ class CompoundResponder implements ResponderInterface
     protected $responders;
 
     /**
-     * @param ResolverInterface $resolver
+     * @param callable(string): object $resolver
      * @param array $responders
      *
      * @throws InvalidResponderException
      */
     public function __construct(
-        ResolverInterface $resolver,
+        callable $resolver,
         array $responders = [
             FormattedResponder::class,
             RedirectResponder::class,

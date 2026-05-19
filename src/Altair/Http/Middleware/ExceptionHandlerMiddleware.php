@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,98 +16,63 @@ use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Contracts\StatusCodeValidatorInterface;
 use Altair\Http\Support\DefaultErrorHandler;
-use Exception;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Throwable;
 
 class ExceptionHandlerMiddleware implements MiddlewareInterface
 {
-    protected $handler;
-    protected $validator;
-    protected $capture;
+    private readonly ErrorHandlerInterface $handler;
 
-    /**
-     * ExceptionHandlerMiddleware constructor.
-     *
-     * @param ErrorHandlerInterface|null $handler
-     * @param StatusCodeValidatorInterface|null $validator
-     * @param bool $capture
-     */
     public function __construct(
-        ErrorHandlerInterface $handler = null,
-        StatusCodeValidatorInterface $validator = null,
-        bool $capture = false
+        private readonly ResponseFactoryInterface $responseFactory,
+        ?ErrorHandlerInterface $handler = null,
+        private readonly ?StatusCodeValidatorInterface $validator = null,
+        private readonly bool $capture = false,
     ) {
-        $this->handler = $handler?? new DefaultErrorHandler();
-        $this->validator = $validator;
-        $this->capture = $capture;
+        $this->handler = $handler ?? new DefaultErrorHandler();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         ob_start();
         $level = ob_get_level();
-        $output = '';
-        try {
-            /** @var ResponseInterface $response */
-            $response = $next($request, $response);
 
-            return $this->getIsError($response->getStatusCode())
-                ? $this->handleError($request, $response, null, $response->getStatusCode())
+        try {
+            $response = $handler->handle($request);
+
+            return $this->isError($response->getStatusCode())
+                ? $this->handleError($request, null, $response->getStatusCode())
                 : $response;
         } catch (Throwable $e) {
             if (!$this->capture) {
                 throw $e;
             }
 
-            return $this->handleError($request, $response, $e);
-        } catch (Exception $e) {
-            if (!$this->capture) {
-                throw $e;
-            }
-
-            return $this->handleError($request, $response, $e);
+            return $this->handleError($request, $e);
         } finally {
             while (ob_get_level() >= $level) {
-                $output .= ob_get_clean();
+                ob_end_clean();
             }
         }
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param null $exception
-     * @param int $code
-     *
-     * @return ResponseInterface
-     */
-    protected function handleError(
+    private function handleError(
         ServerRequestInterface $request,
-        ResponseInterface $response,
-        $exception = null,
-        $code = HttpStatusCodeInterface::HTTP_INTERNAL_SERVER_ERROR
+        ?Throwable $exception,
+        int $code = HttpStatusCodeInterface::HTTP_INTERNAL_SERVER_ERROR,
     ): ResponseInterface {
         $request = $request->withAttribute(MiddlewareInterface::ATTRIBUTE_EXCEPTION, $exception);
 
-        return call_user_func($this->handler, $request, $response->withStatus($code));
+        return ($this->handler)($request, $this->responseFactory->createResponse($code));
     }
 
-    /**
-     * Checks whether a status code is an error code.
-     *
-     * @param int $code
-     *
-     * @return bool
-     */
-    protected function getIsError(int $code): bool
+    private function isError(int $code): bool
     {
-        return null !== $this->validator
-            ? call_user_func($this->validator, $code)
-            : $code >= HttpStatusCodeInterface::HTTP_BAD_REQUEST && $code < HttpStatusCodeInterface::HTTP_MAX_RANGE;
+        return $this->validator !== null
+            ? ($this->validator)($code)
+            : ($code >= HttpStatusCodeInterface::HTTP_BAD_REQUEST && $code < HttpStatusCodeInterface::HTTP_MAX_RANGE);
     }
 }

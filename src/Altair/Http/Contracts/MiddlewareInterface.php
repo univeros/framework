@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,26 +11,14 @@
 
 namespace Altair\Http\Contracts;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface as PsrMiddlewareInterface;
 
-interface MiddlewareInterface
+interface MiddlewareInterface extends PsrMiddlewareInterface
 {
-    const ATTRIBUTE_IP_ADDRESS = 'altair:http:ip-address';
-    const ATTRIBUTE_ACTION = 'altair:http:action';
-    const ATTRIBUTE_FORMAT = 'altair:http:format';
-    const ATTRIBUTE_USERNAME = 'altair:http:username';
-    const ATTRIBUTE_EXCEPTION = 'altair:http:exception';
-    const ATTRIBUTE_CSRF_HEADER = 'X-XSRF-TOKEN'; // TODO: validate CSRF tokens from headers.
-
-    /**
-     * Relay Middleware capable invokable class method.
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
-     *
-     * @return mixed
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next);
+    public const string ATTRIBUTE_IP_ADDRESS = 'altair:http:ip-address';
+    public const string ATTRIBUTE_ACTION = 'altair:http:action';
+    public const string ATTRIBUTE_FORMAT = 'altair:http:format';
+    public const string ATTRIBUTE_USERNAME = 'altair:http:username';
+    public const string ATTRIBUTE_EXCEPTION = 'altair:http:exception';
+    public const string ATTRIBUTE_CSRF_HEADER = 'X-XSRF-TOKEN';
 }

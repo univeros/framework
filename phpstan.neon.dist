@@ -3,8 +3,6 @@ parameters:
     phpVersion: 80300
     paths:
         - src
-    excludePaths:
-        - src/Altair/Filesystem/Adapter/FlysystemAdapter.php
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
     tmpDir: .phpstan-cache

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,8 +14,10 @@ namespace Altair\Filesystem\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use League\Flysystem\AdapterInterface;
-use League\Flysystem\Sftp\SftpAdapter;
+use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
+use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
+use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
 
 class SftpAdapterConfiguration implements ConfigurationInterface
 {
@@ -21,31 +25,23 @@ class SftpAdapterConfiguration implements ConfigurationInterface
 
     public function apply(Container $container): void
     {
-        $factory = function () {
-            $config = array_filter(
-                [
-                    'host' => $this->env->get('FS_SFTP_HOST'),
-                    'hostFingerPrint' => $this->env->get('FS_SFTP_HOST_FINGERPRINT'),
-                    'port' => $this->env->get('FS_SFTP_PORT'),
-                    'username' => $this->env->get('FS_SFTP_USERNAME'),
-                    'password' => $this->env->get('FS_SFTP_PASSWORD'),
-                    'useAgent' => $this->env->get('FS_SFTP_USE_AGENT'),
-                    'agent' => $this->env->get('FS_SFTP_AGENT'),
-                    'timeout' => $this->env->get('FS_SFTP_TIMEOUT'),
-                    'root' => $this->env->get('FS_SFTP_ROOT'),
-                    'privateKey' => $this->env->get('FS_SFTP_PRIVATE_KEY'),
-                    'permPrivate' => $this->env->get('FS_SFTP_PERM_PRIVATE'),
-                    'permPublic' => $this->env->get('FS_SFTP_PERM_PUBLIC'),
-                    'directoryPerm' => $this->env->get('FS_SFTP_DIRECTORY_PERM'),
-                    'NetSftpConnection' => $this->env->get('FS_SFTP_NET_SFTP_CONNECTION')
-                ]
-            );
-
-            return new SftpAdapter($config);
-        };
-
         $container
-            ->delegate(SftpAdapter::class, $factory)
-            ->alias(AdapterInterface::class, SftpAdapter::class);
+            ->delegate(SftpAdapter::class, fn (): SftpAdapter => new SftpAdapter(
+                new SftpConnectionProvider(
+                    $this->env->get('FS_SFTP_HOST'),
+                    $this->env->get('FS_SFTP_USERNAME'),
+                    $this->env->get('FS_SFTP_PASSWORD'),
+                    $this->env->get('FS_SFTP_PRIVATE_KEY'),
+                    $this->env->get('FS_SFTP_PASSPHRASE'),
+                    (int) $this->env->get('FS_SFTP_PORT', 22),
+                    (bool) $this->env->get('FS_SFTP_USE_AGENT', false),
+                    (int) $this->env->get('FS_SFTP_TIMEOUT', 10),
+                    (int) $this->env->get('FS_SFTP_MAX_TRIES', 4),
+                    $this->env->get('FS_SFTP_HOST_FINGERPRINT'),
+                ),
+                $this->env->get('FS_SFTP_ROOT', '/'),
+                PortableVisibilityConverter::fromArray([]),
+            ))
+            ->alias(FilesystemAdapter::class, SftpAdapter::class);
     }
 }

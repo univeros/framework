@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,52 +15,44 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Exception\InvalidArgumentException;
 use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
-use Altair\Container\Definition;
-use Dotenv\Loader;
+use Dotenv\Dotenv;
 
 class EnvironmentConfiguration implements ConfigurationInterface
 {
-    protected $filePath;
-    protected $immutable;
+    private readonly string $directory;
+    private readonly string $fileName;
 
     /**
-     * EnvironmentConfiguration constructor.
-     *
-     * @param string $filePath
-     * @param bool $immutable don't override already existing environment variables if set to true
+     * @param string $filePath  Full path to the env file (e.g. /app/.env)
+     * @param bool   $immutable When true, existing environment variables are not overridden
      */
-    public function __construct(string $filePath, bool $immutable = true)
-    {
+    public function __construct(
+        string $filePath,
+        private readonly bool $immutable = true,
+    ) {
         if (!is_file($filePath) || !is_readable($filePath)) {
-            throw new InvalidArgumentException("Invalid environment file path: '$filePath'");
+            throw new InvalidArgumentException("Invalid environment file path: '{$filePath}'");
         }
-        $this->filePath = $filePath;
-        $this->immutable = $immutable;
+
+        $this->directory = dirname($filePath);
+        $this->fileName = basename($filePath);
     }
 
-    /**
-     * @inheritDoc
-     */
     public function apply(Container $container): void
     {
         $container
             ->share(Env::class)
-            ->define(
-                Loader::class,
-                new Definition(
-                    [
-                        ':filePath' => $this->filePath,
-                        ':immutable' => $this->immutable
-                    ]
-                )
+            ->delegate(
+                Dotenv::class,
+                fn (): Dotenv => $this->immutable
+                    ? Dotenv::createImmutable($this->directory, $this->fileName)
+                    : Dotenv::createMutable($this->directory, $this->fileName),
             )
             ->prepare(
                 Env::class,
-                static function (Env $env, Container $container) {
-                    // ensure Loader loads environment file prior using Env::class
-                    $loader = $container->make(Loader::class);
-                    $loader->load();
-                }
+                static function (Env $env, Container $container): void {
+                    $container->make(Dotenv::class)->load();
+                },
             );
     }
 }

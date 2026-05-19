@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,53 +11,34 @@
 
 namespace Altair\Filesystem\Contracts;
 
-use League\Flysystem\FilesystemInterface;
+use League\Flysystem\FilesystemOperator;
 
-interface FilesystemAdapterInterface extends FilesystemInterface
+interface FilesystemAdapterInterface extends FilesystemOperator
 {
     /**
-     * Get the Flysystem driver.
-     *
-     * @return \League\Flysystem\FilesystemInterface
+     * Get the underlying Flysystem operator.
      */
-    public function getDriver();
+    public function getDriver(): FilesystemOperator;
 
     /**
-     * Determine if a file exists.
-     *
-     * @param  string $path
-     *
-     * @return bool
+     * Determine if a file exists at the given path.
      */
-    public function exists($path): bool;
+    public function exists(string $path): bool;
 
     /**
-     * Prepend to a file.
-     *
-     * @param  string $path
-     * @param  string $data
-     * @param  string $separator
-     *
-     * @return bool
+     * Prepend content to a file (creates it if missing).
      */
-    public function prepend(string $path, string $data, string $separator = PHP_EOL): bool;
+    public function prepend(string $path, string $data, string $separator = PHP_EOL): void;
 
     /**
-     * Append to a file.
-     *
-     * @param  string $path
-     * @param  string $data
-     * @param  string $separator
-     *
-     * @return bool
+     * Append content to a file (creates it if missing).
      */
-    public function append(string $path, string $data, string $separator = PHP_EOL): bool;
+    public function append(string $path, string $data, string $separator = PHP_EOL): void;
 
     /**
-     * @param string $directory
-     * @param bool $recursive
+     * List subdirectories under `$directory`.
      *
-     * @return array
+     * @return list<string>
      */
     public function listDirectories(string $directory = '', bool $recursive = false): array;
 }

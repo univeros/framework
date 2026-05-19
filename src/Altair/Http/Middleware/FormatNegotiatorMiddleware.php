@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,42 +15,28 @@ use Altair\Http\Contracts\FormatNegotiatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class FormatNegotiatorMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var FormatNegotiatorInterface
-     */
-    protected $negotiator;
-
-    /**
-     * FormatNegotiatorMiddleware constructor.
-     *
-     * @param FormatNegotiatorInterface $negotiator
-     */
-    public function __construct(FormatNegotiatorInterface $negotiator)
-    {
-        $this->negotiator = $negotiator;
+    public function __construct(
+        private readonly FormatNegotiatorInterface $negotiator,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $format = $this->negotiator->getFromServerRequestUriPath(
-            $request
-        ) ?: $this->negotiator->getFromServerRequestHeaderLine($request) ?: FormatNegotiatorInterface::DEFAULT_FORMAT;
+        $format = $this->negotiator->getFromServerRequestUriPath($request)
+            ?: $this->negotiator->getFromServerRequestHeaderLine($request)
+            ?: FormatNegotiatorInterface::DEFAULT_FORMAT;
         $contentType = $this->negotiator->getContentTypeByFormat($format);
 
-        /** @var ResponseInterface $response */
-        $response = $next(
+        $response = $handler->handle(
             $request->withAttribute(MiddlewareInterface::ATTRIBUTE_FORMAT, $format),
-            $response->withHeader('Content-Type', $contentType)
         );
 
-        return !$response->hasHeader('Content-Type')
-            ? $response->withHeader('Content-Type', $contentType)
-            : $response;
+        return $response->hasHeader('Content-Type')
+            ? $response
+            : $response->withHeader('Content-Type', $contentType);
     }
 }

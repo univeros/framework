@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,88 +12,78 @@
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\HttpAuthRuleInterface;
+use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
 use Altair\Http\Validator\DigestSignatureValidator;
+use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 class DigestAuthenticationMiddleware implements MiddlewareInterface
 {
     use HttpAuthenticationAwareTrait {
-        __construct as init; /* rename to be able to override constructor and still use it from trait */
+        __construct as private initAuthentication;
     }
 
-    /**
-     * @var string Digest Authentication only attribute.
-     */
-    protected $nonce;
+    private readonly ?string $nonce;
 
     /**
-     * DigestAuthenticationMiddleware constructor.
-     *
-     * @param DigestSignatureValidator $identityValidator
-     * @param HttpAuthRuleInterface[] $rules
-     * @param array $options
+     * @param list<HttpAuthRuleInterface>|null $rules
+     * @param array<string, mixed>|null        $options
      */
-    public function __construct(DigestSignatureValidator $identityValidator, array $rules = null, array $options = null)
-    {
-        $this->init($identityValidator, $rules, $options);
-
-        $this->nonce = $options['nonce']?? null;
+    public function __construct(
+        DigestSignatureValidator $identityValidator,
+        private readonly ResponseFactoryInterface $responseFactory,
+        ?array $rules = null,
+        ?array $options = null,
+    ) {
+        $this->initAuthentication($identityValidator, $rules, $options);
+        $this->nonce = $options['nonce'] ?? null;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $host = $request->getUri()->getHost();
-        $scheme = $request->getUri()->getScheme();
-
         if (!$this->shouldAuthenticateRequest($request)) {
-            return $next($request, $response);
+            return $handler->handle($request);
         }
 
-        $this->checkAllowance($host, $scheme);
+        $this->checkAllowance($request->getUri()->getHost(), $request->getUri()->getScheme());
 
         $authorization = $this->parseAuthorizationHeader($request);
 
-        if ($authorization) {
+        if ($authorization !== null) {
             $arguments = [
                 'authorization' => $authorization,
                 'realm' => $this->realm,
-                'method' => $request->getMethod()
+                'method' => $request->getMethod(),
             ];
-            if (true === call_user_func($this->identityValidator, $arguments)) {
-                return $next(
+            if (call_user_func($this->identityValidator, $arguments) === true) {
+                return $handler->handle(
                     $request->withAttribute(MiddlewareInterface::ATTRIBUTE_USERNAME, $authorization['username']),
-                    $response
                 );
             }
         }
 
-        return $response
-            ->withStatus(401)
-            ->withHeader(
-                'WWW-Authenticate',
-                'Digest realm="' . $this->realm . '",qop="auth",nonce="' .
-                ($this->nonce ?: uniqid()) . '",opaque="' . md5($this->realm) . '"'
-            );
+        return $this->responseFactory
+            ->createResponse(HttpStatusCodeInterface::HTTP_UNAUTHORIZED)
+            ->withHeader('WWW-Authenticate', sprintf(
+                'Digest realm="%s",qop="auth",nonce="%s",opaque="%s"',
+                $this->realm,
+                $this->nonce ?? uniqid(),
+                md5($this->realm),
+            ));
     }
 
     /**
-     * Parses the header for a basic authentication.
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return array|null
+     * @return array<string, string>|null
      */
-    protected function parseAuthorizationHeader(ServerRequestInterface $request): ?array
+    private function parseAuthorizationHeader(ServerRequestInterface $request): ?array
     {
         $header = $request->getHeaderLine('Authorization');
 
-        if (strpos($header, 'Digest') !== 0) {
+        if (!str_starts_with($header, 'Digest')) {
             return null;
         }
 
@@ -99,21 +91,19 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
         $data = [];
 
         preg_match_all(
-            '@(' . implode('|', array_values($parts)) . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@',
+            '@(' . implode('|', $parts) . ')=(?:([\'"])([^\2]+?)\2|([^\s,]+))@',
             substr($header, 7),
             $matches,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
-        $parts = array_flip($parts);
+        $expected = array_flip($parts);
 
-        if ($matches) {
-            foreach ($matches as $match) {
-                $data[$match[1]] = $match[3]?? $match[4];
-                unset($parts[$match[1]]);
-            }
+        foreach ($matches as $match) {
+            $data[$match[1]] = $match[3] ?? $match[4];
+            unset($expected[$match[1]]);
         }
 
-        return empty($parts) ? $data : null;
+        return $expected === [] ? $data : null;
     }
 }

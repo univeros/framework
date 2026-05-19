@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,8 +14,9 @@ namespace Altair\Filesystem\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use League\Flysystem\Adapter\Local;
-use League\Flysystem\AdapterInterface;
+use League\Flysystem\FilesystemAdapter;
+use League\Flysystem\Local\LocalFilesystemAdapter;
+use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
 
 class LocalAdapterConfiguration implements ConfigurationInterface
 {
@@ -21,16 +24,13 @@ class LocalAdapterConfiguration implements ConfigurationInterface
 
     public function apply(Container $container): void
     {
-        $factory = function () {
-            return new Local(
-                $this->env->get('FS_LOCAL_PATH'),
-                $this->env->get('FS_LOCAL_LOCK', LOCK_EX),
-                $this->env->get('FS_LOCAL_DISALLOW_LINKS', Local::DISALLOW_LINKS)
-            );
-        };
-
         $container
-            ->delegate(Local::class, $factory)
-            ->alias(AdapterInterface::class, Local::class);
+            ->delegate(LocalFilesystemAdapter::class, fn (): LocalFilesystemAdapter => new LocalFilesystemAdapter(
+                $this->env->get('FS_LOCAL_PATH'),
+                PortableVisibilityConverter::fromArray([]),
+                $this->env->get('FS_LOCAL_LOCK', LOCK_EX),
+                $this->env->get('FS_LOCAL_DISALLOW_LINKS', LocalFilesystemAdapter::DISALLOW_LINKS),
+            ))
+            ->alias(FilesystemAdapter::class, LocalFilesystemAdapter::class);
     }
 }

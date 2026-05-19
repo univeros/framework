@@ -27,9 +27,6 @@
         <include>
             <directory suffix=".php">./src</directory>
         </include>
-        <exclude>
-            <file>./src/Altair/Filesystem/Adapter/FlysystemAdapter.php</file>
-        </exclude>
     </source>
 
     <coverage>

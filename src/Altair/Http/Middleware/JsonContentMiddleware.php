@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,25 +11,29 @@
 
 namespace Altair\Http\Middleware;
 
-use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\HttpBadRequestException;
-use Relay\Middleware\JsonContentHandler;
+use JsonException;
 
-class JsonContentMiddleware extends JsonContentHandler implements MiddlewareInterface
+class JsonContentMiddleware extends AbstractContentHandlerMiddleware
 {
-    /**
-     * @inheritDoc
-     */
-    public function __construct($assoc = true, $maxDepth = 512, $options = 0)
-    {
-        return parent::__construct($assoc, $maxDepth, $options);
+    public function __construct(
+        private readonly bool $associative = true,
+        private readonly int $maxDepth = 512,
+        private readonly int $flags = 0,
+    ) {
     }
 
-    /**
-     * @inheritDoc
-     */
-    protected function throwException($message)
+    protected function contentTypes(): array
     {
-        throw new HttpBadRequestException($message);
+        return ['application/json', 'text/json', 'application/x-json'];
+    }
+
+    protected function parse(string $body): array|object|null
+    {
+        try {
+            return json_decode($body, $this->associative, $this->maxDepth, $this->flags | JSON_THROW_ON_ERROR);
+        } catch (JsonException $e) {
+            throw new HttpBadRequestException($e->getMessage(), previous: $e);
+        }
     }
 }

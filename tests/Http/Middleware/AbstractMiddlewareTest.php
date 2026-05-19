@@ -1,73 +1,87 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Altair\Tests\Http\Middleware;
 
-use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
-use Relay\RelayBuilder;
 use Laminas\Diactoros\Response;
+use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\Stream;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+use Relay\Relay;
 
 abstract class AbstractMiddlewareTest extends TestCase
 {
     /**
-     * @param string $uri
-     * @param array  $headers
-     * @param array  $server
-     *
-     * @return ServerRequest
+     * @param array<string, string|array<string>> $headers
+     * @param array<string, mixed>                $server
      */
-    protected function request($uri = '', array $headers = [], array $server = [])
+    protected function request(string $uri = '', array $headers = [], array $server = []): ServerRequest
     {
-        return (new ServerRequest($server, [], $uri, null, 'php://temp', $headers))->withUri(new Uri($uri));
+        return (new ServerRequest($server, [], $uri, null, 'php://temp', $headers))
+            ->withUri(new Uri($uri));
     }
+
     /**
-     * @param array $headers
-     *
-     * @return Response
+     * @param array<string, string|array<string>> $headers
      */
-    protected function response(array $headers = [])
+    protected function response(array $headers = []): Response
     {
         return new Response('php://temp', 200, $headers);
     }
-    /**
-     * @param string $content
-     *
-     * @return Stream
-     */
-    protected function stream($content = '')
+
+    protected function stream(string $content = ''): Stream
     {
         $stream = new Stream('php://temp', 'r+');
-        if ($content) {
+        if ($content !== '') {
             $stream->write($content);
         }
+
         return $stream;
     }
-    /**
-     * @param callable[]    $middlewares
-     * @param ServerRequest $request
-     * @param Response      $response
-     *
-     * @return ResponseInterface
-     */
-    protected function dispatch(array $middlewares, ServerRequest $request, Response $response)
+
+    protected function responseFactory(): ResponseFactoryInterface
     {
-        $dispatcher = (new RelayBuilder())->newInstance($middlewares);
-        return $dispatcher($request, $response);
+        return new ResponseFactory();
     }
+
     /**
-     * @param callable[] $middlewares
-     * @param string     $url
-     * @param array      $headers
+     * Dispatch a PSR-15 middleware pipeline against a request, terminating with a no-op handler that returns 200.
      *
-     * @return ResponseInterface
+     * @param list<MiddlewareInterface> $middlewares
      */
-    protected function execute(array $middlewares, $url = '', array $headers = [])
+    protected function dispatch(array $middlewares, ServerRequestInterface $request): ResponseInterface
     {
-        $request = $this->request($url, $headers);
-        $response = $this->response();
-        return $this->dispatch($middlewares, $request, $response);
+        $relay = new Relay([...$middlewares, $this->terminalHandler()]);
+
+        return $relay->handle($request);
+    }
+
+    /**
+     * @param list<MiddlewareInterface> $middlewares
+     * @param array<string, string|array<string>> $headers
+     */
+    protected function execute(array $middlewares, string $url = '', array $headers = []): ResponseInterface
+    {
+        return $this->dispatch($middlewares, $this->request($url, $headers));
+    }
+
+    private function terminalHandler(): MiddlewareInterface
+    {
+        return new class () implements MiddlewareInterface {
+            public function process(
+                ServerRequestInterface $request,
+                RequestHandlerInterface $handler,
+            ): ResponseInterface {
+                return new Response('php://temp', 200);
+            }
+        };
     }
 }
