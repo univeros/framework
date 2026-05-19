@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\AlphaNumFilter;
 
 class AlphaNumFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [0, '0'],

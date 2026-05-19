@@ -5,7 +5,7 @@ use Altair\Tests\Structure\HashableObject;
 
 trait put
 {
-    public function putDataProvider()
+    public static function putDataProvider()
     {
         $o = new \stdClass();
 
@@ -34,7 +34,7 @@ trait put
         ];
     }
 
-    public function putHashableDataProvider()
+    public static function putHashableDataProvider()
     {
         // Two objects with the same hash code and equals.
         $h1 = new HashableObject(1);

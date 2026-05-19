@@ -43,9 +43,9 @@ abstract class AbstractRuleTest extends TestCase
         $this->assertFalse($this->assertValue($value));
     }
 
-    abstract public function trueProvider();
+    abstract public static function trueProvider();
 
-    abstract public function falseProvider();
+    abstract public static function falseProvider();
 
     protected function assertPayload($value)
     {

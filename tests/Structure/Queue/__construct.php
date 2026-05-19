@@ -5,7 +5,7 @@ use Altair\Structure\Queue;
 
 trait __construct
 {
-    public function constructDataProvider()
+    public static function constructDataProvider()
     {
         return [
             [[]],

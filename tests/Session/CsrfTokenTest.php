@@ -13,14 +13,12 @@ class CsrfTokenTest extends TestCase
 {
     private $tmpDir;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->tmpDir = __DIR__ . '/tmp';
         @mkdir($this->tmpDir);
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         rmdir($this->tmpDir);
     }
 

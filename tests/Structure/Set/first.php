@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait first
 {
-    public function firstDataProvider()
+    public static function firstDataProvider()
     {
         // initial, returned
         return [

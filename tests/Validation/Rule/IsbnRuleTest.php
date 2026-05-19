@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class IsbnRuleTest extends TestCase
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             // from -ronanguilloux/IsoCodes package
@@ -38,7 +38,7 @@ class IsbnRuleTest extends TestCase
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             // from -ronanguilloux/IsoCodes package

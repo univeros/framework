@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ZipCodeRuleTest extends TestCase
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             // source ronanguilloux/IsoCodes
@@ -58,7 +58,7 @@ class ZipCodeRuleTest extends TestCase
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             // source ronanguilloux/IsoCodes

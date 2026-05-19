@@ -59,6 +59,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->heap);
@@ -140,6 +141,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Get iterator.
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         while (!$this->isEmpty()) {

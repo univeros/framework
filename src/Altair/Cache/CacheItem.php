@@ -38,71 +38,49 @@ final class CacheItem implements CacheItemInterface
         return $this->key;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function get()
+    public function get(): mixed
     {
         return $this->value;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function isHit(): bool
     {
         return $this->isHit;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function set($value)
+    public function set(mixed $value): static
     {
         $this->value = $value;
 
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function expiresAt($expiration)
+    public function expiresAt(?DateTimeInterface $expiration): static
     {
-        if (null === $expiration) {
-            $this->expirationTime = $this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null;
-        } elseif ($expiration instanceof DateTimeInterface) {
-            $this->expirationTime = $expiration->getTimestamp();
-        } else {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'The expiration time must be null or implement DateTimeInterface, %s given',
-                    gettype($expiration)
-                )
-            );
-        }
+        $this->expirationTime = $expiration === null
+            ? ($this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null)
+            : $expiration->getTimestamp();
 
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function expiresAfter($time)
+    public function expiresAfter(int|DateInterval|null $time): static
     {
-        if (null === $time) {
+        if ($time === null) {
             $this->expirationTime = $this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null;
-        } elseif ($time instanceof DateInterval) {
-            $this->expirationTime = DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))
+
+            return $this;
+        }
+
+        if ($time instanceof DateInterval) {
+            $this->expirationTime = (int) DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))
                 ->add($time)
                 ->format('U');
-        } elseif (is_int($time)) {
-            $this->expirationTime = time() + $time;
-        } else {
-            throw new InvalidArgumentException(
-                sprintf('The expiration time must be an integer, a DateInterval or null, %s given', gettype($time))
-            );
+
+            return $this;
         }
+
+        $this->expirationTime = time() + $time;
 
         return $this;
     }

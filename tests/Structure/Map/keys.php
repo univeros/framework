@@ -5,7 +5,7 @@ use Altair\Structure\Set;
 
 trait keys
 {
-    public function keysDataProvider()
+    public static function keysDataProvider()
     {
         return [
             [[], []],

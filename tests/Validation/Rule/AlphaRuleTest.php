@@ -5,7 +5,7 @@ use Altair\Validation\Rule\AlphaRule;
 
 class AlphaRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['alphaOnly'],
@@ -15,7 +15,7 @@ class AlphaRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             ['  '],

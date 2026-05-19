@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\LowerCaseFilter;
 
 class LowerCaseFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['AbcDe', 'abcde'],

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait putAll
 {
-    public function putAllDataProvider()
+    public static function putAllDataProvider()
     {
         // values, values
         return [

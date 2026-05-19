@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait get
 {
-    public function getDataProvider()
+    public static function getDataProvider()
     {
         // initial, key, expected
         return [

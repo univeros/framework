@@ -76,7 +76,7 @@ class CookieFactoryTest extends TestCase
         }
     }
 
-    public function parsingFromCookieStringDataProvider()
+    public static function parsingFromCookieStringDataProvider()
     {
         return [
             ['someCookie=something', 'someCookie', 'something'],
@@ -85,7 +85,7 @@ class CookieFactoryTest extends TestCase
         ];
     }
 
-    public function createCollectionFromCookieStringDataProvider()
+    public static function createCollectionFromCookieStringDataProvider()
     {
         return [
             [
@@ -105,7 +105,7 @@ class CookieFactoryTest extends TestCase
         ];
     }
 
-    public function provideCookieStringAndExpectedCookiesData()
+    public static function provideCookieStringAndExpectedCookiesData()
     {
         return [
             [

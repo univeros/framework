@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait set
 {
-    public function setDataProvider()
+    public static function setDataProvider()
     {
         // initial, index, value, expected
         return [

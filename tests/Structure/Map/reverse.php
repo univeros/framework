@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait reverse
 {
-    public function reversedDataProvider()
+    public static function reversedDataProvider()
     {
         $reverse = function ($a) {
             return [$a[0], array_reverse($a[1], 1)];

@@ -124,7 +124,7 @@ class CookieManagerTest extends TestCase
         }
     }
 
-    public function provideCookieStringAndExpectedCookiesData()
+    public static function provideCookieStringAndExpectedCookiesData()
     {
         return [
             [
@@ -141,7 +141,7 @@ class CookieManagerTest extends TestCase
         ];
     }
 
-    public function setCookieStringsAndExpectedSetCookiesDataProvider()
+    public static function setCookieStringsAndExpectedSetCookiesDataProvider()
     {
         return [
             [

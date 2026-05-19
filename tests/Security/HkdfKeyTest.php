@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class HkdfKeyTest extends TestCase
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [

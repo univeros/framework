@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait contains
 {
-    public function containsDataProvider()
+    public static function containsDataProvider()
     {
         $sample = $this->sample();
 

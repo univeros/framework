@@ -5,7 +5,7 @@ use Altair\Validation\Rule\MaxRule;
 
 class MaxRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             [1],
@@ -14,7 +14,7 @@ class MaxRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [[]],

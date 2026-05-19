@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait join
 {
-    public function joinDataProvider()
+    public static function joinDataProvider()
     {
         // values, glue
         $data = [];

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait reduce
 {
-    public function reduceDataProvider()
+    public static function reduceDataProvider()
     {
         // values, initial, callback, expected
         return [
@@ -38,7 +38,7 @@ trait reduce
         ];
     }
 
-    public function reduceWithoutInitialDataProvider()
+    public static function reduceWithoutInitialDataProvider()
     {
         // values, callback, expected
         return [

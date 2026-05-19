@@ -33,7 +33,7 @@ class CookieStrTest extends TestCase
         $this->assertEquals('value', $pair[1]);
     }
 
-    public function setCookieStringDataProvider()
+    public static function setCookieStringDataProvider()
     {
         return [
             [

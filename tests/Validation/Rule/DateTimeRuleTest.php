@@ -5,7 +5,7 @@ use Altair\Validation\Rule\DateTimeRule;
 
 class DateTimeRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['Nov 7, 1979, 12:34pm'],
@@ -21,7 +21,7 @@ class DateTimeRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             ['  '],

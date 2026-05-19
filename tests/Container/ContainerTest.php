@@ -285,7 +285,7 @@ class ContainerTest extends TestCase
         $this->assertEquals($expectedResult, $container->execute($toInvoke, new Definition($definition)));
     }
 
-    public function provideExecutionExpectations()
+    public static function provideExecutionExpectations()
     {
         $return = [];
         // 0 -------------------------------------------------------------------------------------->

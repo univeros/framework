@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _empty
 {
-    public function emptyDataProvider()
+    public static function emptyDataProvider()
     {
         // initial, key, empty
         return [

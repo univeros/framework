@@ -21,7 +21,7 @@ class RuleResolverTest extends TestCase
         $this->assertTrue($rule instanceof RuleInterface);
     }
 
-    public function rulesProvider()
+    public static function rulesProvider()
     {
         return [
             [AlphaRule::class],

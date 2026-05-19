@@ -115,10 +115,7 @@ class Container implements ContainerInterface
         $this->making = [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function get($id)
+    public function get(string $id): mixed
     {
         if (!$this->isset($id)) {
             throw new NotFoundException(sprintf('Class or alias %s not found.', $id));
@@ -127,10 +124,7 @@ class Container implements ContainerInterface
         return $this->make($id);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function has($id)
+    public function has(string $id): bool
     {
         return $this->isset($id);
     }

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait _empty
 {
-    public function emptyDataProvider()
+    public static function emptyDataProvider()
     {
         // initial, index, empty
         return [

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait shift
 {
-    public function shiftDataProvider()
+    public static function shiftDataProvider()
     {
         // initial, expected, result
         return [

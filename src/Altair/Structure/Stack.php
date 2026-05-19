@@ -76,6 +76,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->internal);
@@ -112,6 +113,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * @return \Generator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -124,6 +126,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws OutOfBoundsException
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
@@ -138,6 +141,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         throw new Error('Not supported');
@@ -148,6 +152,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Error('Not supported');
@@ -158,6 +163,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         throw new Error('Not supported');

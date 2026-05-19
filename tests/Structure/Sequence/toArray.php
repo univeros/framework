@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait toArray
 {
-    public function toArrayDataProvider()
+    public static function toArrayDataProvider()
     {
         return $this->basicDataProvider();
     }

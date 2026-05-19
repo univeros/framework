@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait union
 {
-    public function unionDataProvider()
+    public static function unionDataProvider()
     {
         // Values in A and values in B.
         // A, B, expected result

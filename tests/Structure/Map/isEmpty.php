@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait isEmpty
 {
-    public function isEmptyDataProvider()
+    public static function isEmptyDataProvider()
     {
         // values, is empty
         return [

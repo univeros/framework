@@ -28,7 +28,7 @@ abstract class AbstractFilterTest extends TestCase
         $this->assertTrue($this->parseValue($value, $expected));
     }
 
-    abstract public function dataProvider();
+    abstract public static function dataProvider();
 
     protected function parsePayload($value, $expected)
     {

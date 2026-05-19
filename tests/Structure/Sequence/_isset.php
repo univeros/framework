@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait _isset
 {
-    public function issetDataProvider()
+    public static function issetDataProvider()
     {
         // initial, index, isset
         return [

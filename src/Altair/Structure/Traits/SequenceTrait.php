@@ -303,6 +303,7 @@ trait SequenceTrait
     /**
      * @return \Generator
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         foreach ($this->internal as $value) {
@@ -313,6 +314,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
@@ -335,6 +337,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         // Unset should be quiet, so we shouldn't allow 'remove' to throw.
@@ -346,6 +349,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         if ($offset < 0 || $offset >= count($this)) {

@@ -5,7 +5,7 @@ use Altair\Structure\Vector;
 
 trait values
 {
-    public function valuesDataProvider()
+    public static function valuesDataProvider()
     {
         return [
             [[], []],

@@ -68,20 +68,16 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         $this->ensureCommitDeferred();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getItem($key)
+    public function getItem(string $key): CacheItemInterface
     {
         foreach ($this->getItems([$key]) as $item) {
             return $item;
         }
+
+        return ($this->cacheItemFactory)($key, null, false);
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function getItems(array $keys = [])
+    public function getItems(array $keys = []): iterable
     {
         $this->ensureCommitDeferred();
         $ids = array_map(
@@ -100,10 +96,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return $this->createCacheItemsGenerator($items, array_combine($ids, $keys));
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function hasItem($key): bool
+    public function hasItem(string $key): bool
     {
         $id = $this->makeId($key);
 
@@ -138,10 +131,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return false;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function deleteItem($key): bool
+    public function deleteItem(string $key): bool
     {
         return $this->deleteItems([$key]);
     }

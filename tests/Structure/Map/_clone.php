@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _clone
 {
-    public function cloneDataProvider()
+    public static function cloneDataProvider()
     {
         return $this->basicDataProvider();
     }

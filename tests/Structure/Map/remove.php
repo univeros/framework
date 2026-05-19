@@ -5,7 +5,7 @@ use Altair\Tests\Structure\HashableObject;
 
 trait remove
 {
-    public function removeDataProvider()
+    public static function removeDataProvider()
     {
         $o = new \stdClass();
 
@@ -22,7 +22,7 @@ trait remove
         ];
     }
 
-    public function removeHashableDataProvider()
+    public static function removeHashableDataProvider()
     {
         // Two objects with the same hash code and equals.
         $h1 = new HashableObject(1);

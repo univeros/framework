@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\MaxFilter;
 
 class MaxFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [1, 1],

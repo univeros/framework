@@ -6,7 +6,7 @@ use Altair\Validation\Rule\InRule;
 
 class InRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['val0'],
@@ -15,7 +15,7 @@ class InRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [5],

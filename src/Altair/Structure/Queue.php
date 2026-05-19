@@ -103,6 +103,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * Get iterator.
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -115,6 +116,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws OutOfBoundsException
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
@@ -129,6 +131,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         throw new Error('Not supported');
@@ -139,6 +142,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Error('Not supported');
@@ -149,6 +153,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         throw new Error('Not supported');

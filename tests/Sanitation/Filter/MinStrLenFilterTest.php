@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\MinStrLengthFilter;
 
 class MinStrLenFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['antonio', 'antonio'],

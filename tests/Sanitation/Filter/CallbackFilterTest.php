@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\CallbackFilter;
 
 class CallbackFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [true, true],

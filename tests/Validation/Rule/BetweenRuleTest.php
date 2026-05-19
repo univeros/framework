@@ -5,7 +5,7 @@ use Altair\Validation\Rule\BetweenRule;
 
 class BetweenRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             [2],
@@ -16,7 +16,7 @@ class BetweenRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [-1],

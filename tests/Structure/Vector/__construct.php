@@ -5,7 +5,7 @@ use Altair\Structure\Vector;
 
 trait __construct
 {
-    public function constructDataProvider()
+    public static function constructDataProvider()
     {
         return array_map(function ($a) {
             return [$a, $a];

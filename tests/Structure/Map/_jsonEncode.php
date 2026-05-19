@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _jsonEncode
 {
-    public function jsonEncodeDataProvider()
+    public static function jsonEncodeDataProvider()
     {
         return $this->basicDataProvider();
     }

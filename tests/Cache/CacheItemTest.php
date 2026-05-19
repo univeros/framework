@@ -10,8 +10,7 @@ class CacheItemTest extends TestCase
 {
     private $fn;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->fn = Closure::bind(
             function (string $key, $value, bool $isHit) {
                 $cacheItem = new CacheItem();

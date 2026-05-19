@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _isset
 {
-    public function issetDataProvider()
+    public static function issetDataProvider()
     {
         // initial, key, isset
         return [

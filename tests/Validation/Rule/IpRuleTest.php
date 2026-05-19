@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class IpRuleTest extends TestCase
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['127.0.0.1', null, '127.*'],
@@ -32,7 +32,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [''],
@@ -44,7 +44,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public function invalidIpsForNetworkRangeProvider()
+    public static function invalidIpsForNetworkRangeProvider()
     {
         return [
             ['127.0.0.1', null, '127.0.1.*'],
@@ -59,7 +59,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public function invalidNetworkRangeProvider()
+    public static function invalidNetworkRangeProvider()
     {
         return [
             ['127.0.0.1', null, '127.0.1./*'],

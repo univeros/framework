@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait sort
 {
-    public function sortedDataProvider()
+    public static function sortedDataProvider()
     {
         return [
             [[

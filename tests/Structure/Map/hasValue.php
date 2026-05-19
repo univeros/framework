@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait hasValue
 {
-    public function hasValueDataProvider()
+    public static function hasValueDataProvider()
     {
         // initial, value, expected
         return [

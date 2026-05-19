@@ -5,7 +5,7 @@ use Altair\Validation\Rule\RegexRule;
 
 class RegexRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['+1234567890'],
@@ -16,7 +16,7 @@ class RegexRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [[]],

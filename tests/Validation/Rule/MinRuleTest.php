@@ -5,7 +5,7 @@ use Altair\Validation\Rule\MinRule;
 
 class MinRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             [4],
@@ -14,7 +14,7 @@ class MinRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [[]],

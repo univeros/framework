@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait unshift
 {
-    public function unshiftDataProvider()
+    public static function unshiftDataProvider()
     {
         return $this->basicDataProvider();
     }

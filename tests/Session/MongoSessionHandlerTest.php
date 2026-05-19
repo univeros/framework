@@ -18,15 +18,13 @@ class MongoSessionHandlerTest extends TestCase
      */
     private $handler;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $client = new Client();
         $this->collection = $client->selectCollection('sessionhandlertest', 'sessions');
         $this->handler = new MongoSessionHandler($this->collection);
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         $this->collection->drop();
     }
 

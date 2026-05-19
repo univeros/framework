@@ -12,8 +12,7 @@ class CacheItemKeyValidatorTest extends TestCase
      */
     private $validator;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->validator = new CacheItemKeyValidator();
     }
 
@@ -35,7 +34,7 @@ class CacheItemKeyValidatorTest extends TestCase
         $this->assertTrue($this->validator->validate($key));
     }
 
-    public function provideInvalidKey()
+    public static function provideInvalidKey()
     {
         return [
             [''],
@@ -56,7 +55,7 @@ class CacheItemKeyValidatorTest extends TestCase
         ];
     }
 
-    public function provideValidKey()
+    public static function provideValidKey()
     {
         return [
             ['one'],

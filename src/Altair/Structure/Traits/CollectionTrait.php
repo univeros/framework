@@ -81,6 +81,7 @@ trait CollectionTrait
      *
      * @see JsonSerializable
      */
+    #[\ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -101,6 +102,7 @@ trait CollectionTrait
      *
      * @return int
      */
+    #[\ReturnTypeWillChange]
     public function count(): int
     {
         return count($this->internal);

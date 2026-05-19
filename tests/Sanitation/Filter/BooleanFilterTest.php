@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\BooleanFilter;
 
 class BooleanFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [true, true],

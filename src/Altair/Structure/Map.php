@@ -421,6 +421,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Get iterator.
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         foreach ($this->internal as $pair) {
@@ -431,6 +432,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         $this->put($offset, $value);
@@ -455,6 +457,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         $this->remove($offset);
@@ -463,6 +466,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         return $this->get($offset) !== null;

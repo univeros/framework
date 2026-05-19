@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Queue;
 
 trait pop
 {
-    public function popDataProvider()
+    public static function popDataProvider()
     {
         // initial, returned, expected result
         return [
