@@ -5,7 +5,7 @@ use Altair\Validation\Rule\EmailRule;
 
 class EmailRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['test@test.com'],
@@ -15,7 +15,7 @@ class EmailRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             [''],

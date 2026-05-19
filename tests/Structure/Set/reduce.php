@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait reduce
 {
-    public function reduceDataProvider()
+    public static function reduceDataProvider()
     {
         // values, initial, callback
         return [

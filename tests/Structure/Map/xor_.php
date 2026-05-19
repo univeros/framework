@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait xor_
 {
-    public function xorDataProvider()
+    public static function xorDataProvider()
     {
         // Keys in either A or B, but not both.
         // A, B, expected result

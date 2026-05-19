@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\MaxStrLengthFilter;
 
 class MaxStrLenFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['abcde', 'abc'],

@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\RegexFilter;
 
 class RegexFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['+1234567890', ''],

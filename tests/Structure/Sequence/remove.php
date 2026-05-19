@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait remove
 {
-    public function removeDataProvider()
+    public static function removeDataProvider()
     {
         // initial, index, return, expected
         return [

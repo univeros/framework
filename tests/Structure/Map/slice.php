@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait slice
 {
-    public function sliceDataProvider()
+    public static function sliceDataProvider()
     {
         $a = ['a', 'b', 'c'];
         $n = count($a);

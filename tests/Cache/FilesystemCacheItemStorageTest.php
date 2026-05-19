@@ -12,16 +12,14 @@ class FilesystemCacheItemStorageTest extends AbstractStorageTestCase
      */
     private $fs;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->fs = new Filesystem();
         $this->fs->makeDirectory(__DIR__ . '/tmp');
         $this->store = new FilesystemCacheItemStorage($this->fs, __DIR__ . '/tmp');
         parent::setUp();
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         parent::tearDown();
         $this->fs->deleteDirectory(__DIR__ . '/tmp');
     }

@@ -5,7 +5,7 @@ use Altair\Structure\Pair;
 
 trait _var_dump
 {
-    public function varDumpDataProvider()
+    public static function varDumpDataProvider()
     {
         // values, expected array repr
         return [

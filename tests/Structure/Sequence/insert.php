@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait insert
 {
-    public function insertDataProvider()
+    public static function insertDataProvider()
     {
         $s = $this->sample();
 

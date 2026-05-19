@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\IntegerFilter;
 
 class IntegerFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ["+1234567890", 1234567890],

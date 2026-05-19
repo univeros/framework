@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait sum
 {
-    public function sumDataProvider()
+    public static function sumDataProvider()
     {
         return [
             // Empty

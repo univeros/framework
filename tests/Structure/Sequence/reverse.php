@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait reverse
 {
-    public function reversedDataProvider()
+    public static function reversedDataProvider()
     {
         return array_map(
             function ($a) {

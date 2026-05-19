@@ -17,15 +17,13 @@ class FilesystemTest extends TestCase
      */
     private $fs;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->tmpDir = __DIR__ . '/tmp';
         $this->fs = new Filesystem();
         $this->fs->makeDirectory($this->tmpDir);
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         $this->fs->deleteDirectory($this->tmpDir);
     }
 

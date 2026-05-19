@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait _serialize
 {
-    public function serializeDataProvider()
+    public static function serializeDataProvider()
     {
         return [
             [

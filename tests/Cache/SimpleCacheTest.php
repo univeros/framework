@@ -23,16 +23,14 @@ class SimpleCacheTest extends TestCase
      */
     private $cache;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->fs = new Filesystem();
         $this->fs->makeDirectory(__DIR__ . '/tmp');
         $this->pool = new CacheItemPool(new FilesystemCacheItemStorage($this->fs, __DIR__ . '/tmp'));
         $this->cache = new SimpleCache($this->pool);
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         $this->cache->clear();
         $this->fs->deleteDirectory(__DIR__ . '/tmp');
     }

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Deque;
 
 trait allocate
 {
-    public function allocateDataProvider()
+    public static function allocateDataProvider()
     {
         $m = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
 

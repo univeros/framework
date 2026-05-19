@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait pop
 {
-    public function popDataProvider()
+    public static function popDataProvider()
     {
         // initial, expected, result
         return [

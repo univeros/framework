@@ -89,7 +89,7 @@ class SetCookieFactoryTest extends TestCase
         $this->assertEquals($expectedSetCookie, $setCookie);
     }
 
-    public function setCookieStringAndExpectedSetCookieDataProvider()
+    public static function setCookieStringAndExpectedSetCookieDataProvider()
     {
         return [
             [
@@ -108,7 +108,7 @@ class SetCookieFactoryTest extends TestCase
         ];
     }
 
-    public function setCookieStringsAndExpectedSetCookiesDataProvider()
+    public static function setCookieStringsAndExpectedSetCookiesDataProvider()
     {
         return [
             [

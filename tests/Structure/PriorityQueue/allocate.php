@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait allocate
 {
-    public function allocateDataProvider()
+    public static function allocateDataProvider()
     {
         // initial, allocation, expected capacity
         return [

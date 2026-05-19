@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait diff
 {
-    public function diffDataProvider()
+    public static function diffDataProvider()
     {
         // Values in A but not in B.
         // A, B, expected result

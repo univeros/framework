@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\TrimFilter;
 
 class TrimFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [' antonio ', 'antonio'],

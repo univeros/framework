@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait push
 {
-    public function pushDataProvider()
+    public static function pushDataProvider()
     {
         // initial, values, expected
         return [

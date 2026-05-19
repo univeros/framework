@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\BetweenFilter;
 
 class BetweenFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [2, 2],

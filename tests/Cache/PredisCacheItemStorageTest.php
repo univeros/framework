@@ -7,8 +7,7 @@ use Predis\Client;
 
 class PredisCacheItemStorageTest extends AbstractStorageTestCase
 {
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $redis = new Client(['host' => 'localhost', 'port' => 6379]);
 
         $this->store = new PredisCacheItemStorage($redis, 'test');

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait last
 {
-    public function lastDataProvider()
+    public static function lastDataProvider()
     {
         // initial, returned
         return [

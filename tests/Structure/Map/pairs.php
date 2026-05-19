@@ -5,7 +5,7 @@ use Altair\Structure\Vector;
 
 trait pairs
 {
-    public function pairsDataProvider()
+    public static function pairsDataProvider()
     {
         return [
             [[], []],

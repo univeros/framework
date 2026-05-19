@@ -5,7 +5,7 @@ use Altair\Validation\Rule\IbanRule;
 
 class IbanRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             // https://ssl.ibanrechner.de/sample_accounts.html?&L=0
@@ -373,7 +373,7 @@ class IbanRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             ['SMZ0322509800000000270100'],

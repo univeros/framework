@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait skip
 {
-    public function skipDataProvider()
+    public static function skipDataProvider()
     {
         // values, position, returned pair
         return [
@@ -16,7 +16,7 @@ trait skip
         ];
     }
 
-    public function skipOutOfRangeDataProvider()
+    public static function skipOutOfRangeDataProvider()
     {
         return [
             [[], -1],

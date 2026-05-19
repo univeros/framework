@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait merge
 {
-    public function mergeDataProvider()
+    public static function mergeDataProvider()
     {
         // A, B, expected
         return [

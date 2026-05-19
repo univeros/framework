@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\AlphaFilter;
 
 class AlphaFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['alphaOnly', 'alphaOnly'],

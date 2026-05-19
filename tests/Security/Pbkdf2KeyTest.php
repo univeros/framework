@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class Pbkdf2KeyTest extends TestCase
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             [

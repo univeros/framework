@@ -15,8 +15,7 @@ class PdoSessionHandlerTest extends TestCase
      */
     private $adapter;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $pdo = new PDO('sqlite::memory:');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
@@ -24,8 +23,7 @@ class PdoSessionHandlerTest extends TestCase
         $this->adapter->getConnection()->exec($this->getCreateSqliteTableStmt());
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         if ($this->dbFile) {
             @unlink($this->dbFile);
         }

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 trait pop
 {
-    public function popDataProvider()
+    public static function popDataProvider()
     {
         // initial, returned, expected result
         return [

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait union
 {
-    public function unionDataProvider()
+    public static function unionDataProvider()
     {
         // A, B, expected
         return [

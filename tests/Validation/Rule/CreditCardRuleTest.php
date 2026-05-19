@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CreditCardRuleTest extends TestCase
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             ['visaelectron', ['4917300800000000', '4913183913639755', '4917558220925391', '4026433620435706']],
@@ -28,7 +28,7 @@ class CreditCardRuleTest extends TestCase
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             ['visaelectron', ['30052526839118', '30294073805171', '30521225806875']],

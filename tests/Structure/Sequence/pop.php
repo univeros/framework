@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait pop
 {
-    public function popDataProvider()
+    public static function popDataProvider()
     {
         // initial, expected, returned
         return [

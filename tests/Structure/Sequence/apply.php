@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait apply
 {
-    public function applyDataProvider()
+    public static function applyDataProvider()
     {
         // values, callback
         return [

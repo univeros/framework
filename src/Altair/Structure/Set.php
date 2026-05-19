@@ -293,6 +293,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Get iterator.
      */
+    #[\ReturnTypeWillChange]
     public function getIterator()
     {
         foreach ($this->internal as $key => $value) {
@@ -305,6 +306,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws OutOfBoundsException
      */
+    #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         if ($offset === null) {
@@ -319,6 +321,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->internal->skip($offset)->key;
@@ -329,6 +332,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetExists($offset)
     {
         throw new Error('Not supported');
@@ -339,6 +343,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws Error
      */
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new Error('Not supported');

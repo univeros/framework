@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Queue;
 
 trait push
 {
-    public function pushDataProvider()
+    public static function pushDataProvider()
     {
         return $this->basicDataProvider();
     }

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait get
 {
-    public function getDataProvider()
+    public static function getDataProvider()
     {
         // initial, index, return
         return [

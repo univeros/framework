@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait peek
 {
-    public function peekDataProvider()
+    public static function peekDataProvider()
     {
         // initial, expected
         return [

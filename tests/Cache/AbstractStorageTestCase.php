@@ -12,8 +12,7 @@ abstract class AbstractStorageTestCase extends TestCase
      */
     protected $store;
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         $this->store->clear();
     }
 

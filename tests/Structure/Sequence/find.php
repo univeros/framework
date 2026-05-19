@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait find
 {
-    public function findDataProvider()
+    public static function findDataProvider()
     {
         // initial, value, expected
         return [

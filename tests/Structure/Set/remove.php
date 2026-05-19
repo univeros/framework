@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait remove
 {
-    public function removeDataProvider()
+    public static function removeDataProvider()
     {
         list($unique, $duplicates) = $this->getUniqueAndDuplicateData();
 

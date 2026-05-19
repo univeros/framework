@@ -22,7 +22,7 @@ class FilterResolverTest extends TestCase
         $this->assertTrue($rule instanceof FilterInterface);
     }
 
-    public function filterProvider()
+    public static function filterProvider()
     {
         return [
             [AlphaFilter::class],

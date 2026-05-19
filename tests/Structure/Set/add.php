@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait add
 {
-    public function addDataProvider()
+    public static function addDataProvider()
     {
         list($unique, $duplicates) = $this->getUniqueAndDuplicateData();
 

@@ -5,7 +5,7 @@ use Altair\Validation\Rule\AlphaNumRule;
 
 class AlphaNumRuleTest extends AbstractRuleTest
 {
-    public function trueProvider()
+    public static function trueProvider()
     {
         return [
             [0],
@@ -23,7 +23,7 @@ class AlphaNumRuleTest extends AbstractRuleTest
         ];
     }
 
-    public function falseProvider()
+    public static function falseProvider()
     {
         return [
             ['  '],

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait apply
 {
-    public function applyDataProvider()
+    public static function applyDataProvider()
     {
         // values, callback
         return [

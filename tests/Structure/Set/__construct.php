@@ -5,7 +5,7 @@ use Altair\Structure\Set;
 
 trait __construct
 {
-    public function constructDataProvider()
+    public static function constructDataProvider()
     {
         list($unique, $duplicated) = $this->getUniqueAndDuplicateData();
 

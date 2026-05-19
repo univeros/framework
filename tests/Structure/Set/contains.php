@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait contains
 {
-    public function containsDataProvider()
+    public static function containsDataProvider()
     {
         list($sample, $duplicates) = $this->getUniqueAndDuplicateData();
 

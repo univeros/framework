@@ -6,7 +6,7 @@ use Altair\Sanitation\Filter\TitleCaseFilter;
 
 class TitleCaseFilterTest extends AbstractFilterTest
 {
-    public function dataProvider()
+    public static function dataProvider()
     {
         return [
             ['antonio', 'Antonio'],

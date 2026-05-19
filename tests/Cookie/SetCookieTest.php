@@ -38,7 +38,7 @@ class SetCookieTest extends TestCase
         $this->assertEquals($setCookieString, (string)$setCookie);
     }
 
-    public function parsesFromSetCookieStringDataProvider()
+    public static function parsesFromSetCookieStringDataProvider()
     {
         return [
             [

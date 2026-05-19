@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait intersect
 {
-    public function intersectDataProvider()
+    public static function intersectDataProvider()
     {
         // Keys in A that are also in B.
         // A, B, expected result

@@ -5,7 +5,7 @@ use Altair\Structure\Contracts\VectorInterface;
 
 trait allocate
 {
-    public function allocateDataProvider()
+    public static function allocateDataProvider()
     {
         $m = VectorInterface::MIN_VECTOR_CAPACITY;
 

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait rotate
 {
-    public function rotateDataProvider()
+    public static function rotateDataProvider()
     {
         // values, rotation, expected
         return [

@@ -18,15 +18,13 @@ class CacheItemPoolTest extends TestCase
      */
     private $pool;
 
-    protected function setUp()
-    {
+    protected function setUp(): void    {
         $this->fs = new Filesystem();
         $this->fs->makeDirectory(__DIR__ . '/tmp');
         $this->pool = new CacheItemPool(new FilesystemCacheItemStorage($this->fs, __DIR__ . '/tmp'));
     }
 
-    protected function tearDown()
-    {
+    protected function tearDown(): void    {
         $this->pool->clear();
         $this->fs->deleteDirectory(__DIR__ . '/tmp');
     }

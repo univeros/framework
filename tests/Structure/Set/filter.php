@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait filter
 {
-    public function filterDataProvider()
+    public static function filterDataProvider()
     {
         // values, callback
         return [
