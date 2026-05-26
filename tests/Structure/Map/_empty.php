@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _empty
 {
     public static function emptyDataProvider(): array
@@ -15,9 +17,7 @@ trait _empty
         ];
     }
 
-    /**
-     * @dataProvider emptyDataProvider
-     */
+    #[DataProvider('emptyDataProvider')]
     public function testArrayAccessEmpty(array $initial, mixed $key, bool $empty): void
     {
         $instance = static::getInstance();
@@ -29,9 +29,7 @@ trait _empty
         $this->assertEquals($empty, empty($instance[$key]));
     }
 
-    /**
-     * @dataProvider emptyDataProvider
-     */
+    #[DataProvider('emptyDataProvider')]
     public function testArrayAccessEmptyByReference(array $initial, mixed $key, bool $empty): void
     {
         $instance = static::getInstance([$initial]);

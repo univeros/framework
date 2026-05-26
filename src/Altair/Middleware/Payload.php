@@ -84,7 +84,7 @@ class Payload implements PayloadInterface, JsonSerializable
      * @inheritDoc
      */
     #[\Override]
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         return $this->attributes;
     }

@@ -6,6 +6,7 @@ use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Rule\IsbnRule;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class IsbnRuleTest extends TestCase
 {
     public static function trueProvider(): array
@@ -67,40 +68,40 @@ class IsbnRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param null|mixed $type
      */
+    #[DataProvider('trueProvider')]
     public function testPayloadTrue(string $value, int $type = null): void
     {
         $this->assertTrue($this->assertPayload($value, $type));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param null|mixed $type
      */
+    #[DataProvider('falseProvider')]
     public function testPayloadFalse(string|int $value, int $type = null): void
     {
         $this->assertFalse($this->assertPayload($value, $type));
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param null|mixed $type
      */
+    #[DataProvider('trueProvider')]
     public function testValueTrue(string $value, int $type = null): void
     {
         $this->assertTrue($this->assertValue($value, $type));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param null|mixed $type
      */
+    #[DataProvider('falseProvider')]
     public function testValueFalse(string|int $value, int $type = null): void
     {
         $this->assertFalse($this->assertValue($value, $type));

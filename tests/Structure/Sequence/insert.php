@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait insert
 {
     public static function insertDataProvider(): array
@@ -29,9 +31,7 @@ trait insert
         ];
     }
 
-    /**
-     * @dataProvider insertDataProvider
-     */
+    #[DataProvider('insertDataProvider')]
     public function testInsertVariadic(array $initial, mixed $index, array $values): void
     {
         $expected = $initial;
@@ -44,9 +44,7 @@ trait insert
         $this->assertToArray($expected, $instance);
     }
 
-    /**
-     * @dataProvider insertDataProvider
-     */
+    #[DataProvider('insertDataProvider')]
     public function testInsert(array $initial, mixed $index, array $values): void
     {
         $expected = $initial;
@@ -62,9 +60,7 @@ trait insert
         $this->assertToArray($expected, $instance);
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testInsertIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -72,9 +68,7 @@ trait insert
         $instance->insert($index);
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testInsertIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();

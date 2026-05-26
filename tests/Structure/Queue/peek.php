@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Queue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait peek
 {
     public static function peekDataProvider(): array
@@ -12,9 +14,7 @@ trait peek
         ];
     }
 
-    /**
-     * @dataProvider peekDataProvider
-     */
+    #[DataProvider('peekDataProvider')]
     public function testPeek(mixed $initial, mixed $returned): void
     {
         $instance = static::getInstance($initial);

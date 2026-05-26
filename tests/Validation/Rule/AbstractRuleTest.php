@@ -5,35 +5,28 @@ use Altair\Middleware\Payload;
 use Altair\Validation\Contracts\PayloadInterface;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 abstract class AbstractRuleTest extends TestCase
 {
-    /**
-     * @dataProvider trueProvider
-     */
+    #[DataProvider('trueProvider')]
     public function testPayloadTrue(mixed $value): void
     {
         $this->assertTrue($this->assertPayload($value));
     }
 
-    /**
-     * @dataProvider falseProvider
-     */
+    #[DataProvider('falseProvider')]
     public function testPayloadFalse(mixed $value): void
     {
         $this->assertFalse($this->assertPayload($value));
     }
 
-    /**
-     * @dataProvider trueProvider
-     */
+    #[DataProvider('trueProvider')]
     public function testValueTrue(mixed $value): void
     {
         $this->assertTrue($this->assertValue($value));
     }
 
-    /**
-     * @dataProvider falseProvider
-     */
+    #[DataProvider('falseProvider')]
     public function testValueFalse(mixed $value): void
     {
         $this->assertFalse($this->assertValue($value));

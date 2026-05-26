@@ -6,19 +6,16 @@ use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Contracts\PayloadInterface;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 abstract class AbstractFilterTest extends TestCase
 {
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testFilteredPayload(mixed $value, mixed $expected): void
     {
         $this->assertTrue($this->parsePayload($value, $expected));
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testFilteredValue(mixed $value, mixed $expected): void
     {
         $this->assertTrue($this->parseValue($value, $expected));

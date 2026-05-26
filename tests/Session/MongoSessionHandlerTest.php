@@ -7,6 +7,7 @@ use MongoDB\Client;
 use MongoDB\Collection;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 class MongoSessionHandlerTest extends TestCase
 {
     /**
@@ -62,9 +63,7 @@ class MongoSessionHandlerTest extends TestCase
         $this->assertEquals('data', $data);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testSessionGc(): void
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);

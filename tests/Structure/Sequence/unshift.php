@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait unshift
 {
     public static function unshiftDataProvider()
@@ -8,9 +10,7 @@ trait unshift
         return static::basicDataProvider();
     }
 
-    /**
-     * @dataProvider unshiftDataProvider
-     */
+    #[DataProvider('unshiftDataProvider')]
     public function testUnshiftVariadic(array $initial, array $values): void
     {
         $instance = static::getInstance($initial);
@@ -23,9 +23,7 @@ trait unshift
         $this->assertEquals(count($expected), count($instance));
     }
 
-    /**
-     * @dataProvider unshiftDataProvider
-     */
+    #[DataProvider('unshiftDataProvider')]
     public function testUnshift(array $initial, array $values): void
     {
         $instance = static::getInstance($initial);

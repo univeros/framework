@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _clone
 {
     public static function cloneDataProvider()
@@ -8,9 +10,7 @@ trait _clone
         return static::basicDataProvider();
     }
 
-    /**
-     * @dataProvider cloneDataProvider
-     */
+    #[DataProvider('cloneDataProvider')]
     public function testClone(mixed $values, array $expected): void
     {
         $instance = static::getInstance($values);

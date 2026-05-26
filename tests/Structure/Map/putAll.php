@@ -9,6 +9,7 @@ use Altair\Structure\Stack;
 use Altair\Structure\Queue;
 use Altair\Structure\PriorityQueue;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait putAll
 {
     public static function putAllDataProvider(): array
@@ -24,9 +25,7 @@ trait putAll
         ];
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAll(array $values): void
     {
         $instance = static::getInstance();
@@ -34,9 +33,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllUsingIterator(array $values): void
     {
         $instance = static::getInstance();
@@ -44,9 +41,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromSet(array $values): void
     {
         $instance = static::getInstance();
@@ -55,9 +50,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromMap(array $values): void
     {
         $instance = static::getInstance();
@@ -66,9 +59,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromVector(array $values): void
     {
         $instance = static::getInstance();
@@ -77,9 +68,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromDeque(array $values): void
     {
         $instance = static::getInstance();
@@ -88,9 +77,7 @@ trait putAll
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromStack(array $values): void
     {
         $instance = static::getInstance();
@@ -100,9 +87,7 @@ trait putAll
         $this->assertCount(0, $stack);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromQueue(array $values): void
     {
         $instance = static::getInstance();
@@ -112,9 +97,7 @@ trait putAll
         $this->assertCount(0, $queue);
     }
 
-    /**
-     * @dataProvider putAllDataProvider
-     */
+    #[DataProvider('putAllDataProvider')]
     public function testPutAllFromPriorityQueue(array $values): void
     {
         $instance = static::getInstance();

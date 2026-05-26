@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\PriorityQueue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait pop
 {
     public static function popDataProvider(): array
@@ -13,9 +15,7 @@ trait pop
         ];
     }
 
-    /**
-     * @dataProvider popDataProvider
-     */
+    #[DataProvider('popDataProvider')]
     public function testPop(array $initial, mixed $expected, array $result): void
     {
         $instance = static::getInstance($initial);

@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait contains
 {
     public static function containsDataProvider(): array
@@ -24,9 +26,7 @@ trait contains
         ];
     }
 
-    /**
-     * @dataProvider containsDataProvider
-     */
+    #[DataProvider('containsDataProvider')]
     public function testContains(
         array $initial,
         array $values,

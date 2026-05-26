@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait intersect
 {
     public static function intersectDataProvider(): array
@@ -17,9 +19,7 @@ trait intersect
         ];
     }
 
-    /**
-     * @dataProvider intersectDataProvider
-     */
+    #[DataProvider('intersectDataProvider')]
     public function testIntersect(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
@@ -28,9 +28,7 @@ trait intersect
         $this->assertEquals($expected, $a->intersect($b)->toArray());
     }
 
-    /**
-     * @dataProvider intersectDataProvider
-     */
+    #[DataProvider('intersectDataProvider')]
     public function testIntersectWithSelf(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);

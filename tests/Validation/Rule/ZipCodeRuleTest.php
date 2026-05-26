@@ -6,6 +6,7 @@ use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Rule\ZipCodeRule;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class ZipCodeRuleTest extends TestCase
 {
     public static function trueProvider(): array
@@ -168,40 +169,40 @@ class ZipCodeRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param mixed $country
      */
+    #[DataProvider('trueProvider')]
     public function testPayloadTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertPayload($value, $country));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param mixed $country
      */
+    #[DataProvider('falseProvider')]
     public function testPayloadFalse(string $value, string $country): void
     {
         $this->assertFalse($this->assertPayload($value, $country));
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param mixed $country
      */
+    #[DataProvider('trueProvider')]
     public function testValueTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertValue($value, $country));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param mixed $country
      */
+    #[DataProvider('falseProvider')]
     public function testValueFalse(string $value, string $country): void
     {
         $this->assertFalse($this->assertValue($value, $country));

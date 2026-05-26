@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 use Altair\Structure\Set;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait __construct
 {
     public static function constructDataProvider(): array
@@ -19,17 +20,13 @@ trait __construct
         ];
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstruct(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Set($values));
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstructUsingIterable(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Set(new \ArrayIterator($values)));

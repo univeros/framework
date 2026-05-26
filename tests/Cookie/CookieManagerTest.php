@@ -14,13 +14,14 @@ use Psr\Http\Message\ResponseInterface;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ServerRequest;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class CookieManagerTest extends TestCase
 {
     /**
      * @param $cookieString
      *
-     * @dataProvider provideCookieStringAndExpectedCookiesData
      */
+    #[DataProvider('provideCookieStringAndExpectedCookiesData')]
     public function testGetCookiesFromRequest(string $cookieString, array $names): void
     {
         $request = $this->createStub(RequestInterface::class);
@@ -98,10 +99,7 @@ class CookieManagerTest extends TestCase
         $this->assertNull($setCookie->getValue());
     }
 
-    /**
-     *
-     * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
-     */
+    #[DataProvider('setCookieStringsAndExpectedSetCookiesDataProvider')]
     public function testGetSetCookiesFromResponse(array $setCookieStrings, array $names, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);

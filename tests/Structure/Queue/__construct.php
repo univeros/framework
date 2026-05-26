@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Queue;
 
 use Altair\Structure\Queue;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait __construct
 {
     public static function constructDataProvider(): array
@@ -16,17 +17,13 @@ trait __construct
         ];
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstruct(array $values): void
     {
         $this->assertToArray($values, new Queue($values));
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstructUsingIterable(array $values): void
     {
         $this->assertToArray($values, new Queue(new \ArrayIterator($values)));

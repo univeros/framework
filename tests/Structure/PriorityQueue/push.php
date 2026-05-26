@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\PriorityQueue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait push
 {
     public static function pushDataProvider(): array
@@ -15,9 +17,7 @@ trait push
         ];
     }
 
-    /**
-     * @dataProvider pushDataProvider
-     */
+    #[DataProvider('pushDataProvider')]
     public function testPush(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);

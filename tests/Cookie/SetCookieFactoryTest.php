@@ -8,6 +8,7 @@ use Altair\Cookie\SetCookie;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class SetCookieFactoryTest extends TestCase
 {
     public function testCreate(): void
@@ -37,8 +38,8 @@ class SetCookieFactoryTest extends TestCase
 
     /**
      * @param SetCookie[] $expectedSetCookies
-     * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
      */
+    #[DataProvider('setCookieStringsAndExpectedSetCookiesDataProvider')]
     public function testParsingFromCookieStrings(array $setCookieStrings, array $expectedSetCookies): void
     {
         $setCookies = SetCookieFactory::createCollectionFromCookieStrings($setCookieStrings);
@@ -52,10 +53,7 @@ class SetCookieFactoryTest extends TestCase
         }
     }
 
-    /**
-     *
-     * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
-     */
+    #[DataProvider('setCookieStringsAndExpectedSetCookiesDataProvider')]
     public function testCreatesFromResponse(array $setCookieStrings, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);
@@ -75,8 +73,8 @@ class SetCookieFactoryTest extends TestCase
     /**
      * @param $cookieString
      *
-     * @dataProvider setCookieStringAndExpectedSetCookieDataProvider
      */
+    #[DataProvider('setCookieStringAndExpectedSetCookieDataProvider')]
     public function testParsingFromCookieString(string $cookieString, SetCookie $expectedSetCookie): void
     {
         $setCookie = SetCookieFactory::createFromCookieString($cookieString);

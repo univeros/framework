@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Stack;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait push
 {
     public static function pushDataProvider()
@@ -8,9 +10,7 @@ trait push
         return static::basicDataProvider();
     }
 
-    /**
-     * @dataProvider pushDataProvider
-     */
+    #[DataProvider('pushDataProvider')]
     public function testPushVariadic(array $values, array $expected): void
     {
         $instance = static::getInstance();
@@ -20,9 +20,7 @@ trait push
         $this->assertCount(count($expected), $instance);
     }
 
-    /**
-     * @dataProvider pushDataProvider
-     */
+    #[DataProvider('pushDataProvider')]
     public function testPush(array $values, array $expected): void
     {
         $instance = static::getInstance();
@@ -35,9 +33,7 @@ trait push
         $this->assertCount(count($expected), $instance);
     }
 
-    /**
-     * @dataProvider pushDataProvider
-     */
+    #[DataProvider('pushDataProvider')]
     public function testArrayAccessPush(array $values, array $expected): void
     {
         $instance = static::getInstance();

@@ -7,6 +7,7 @@ use Altair\Session\Handler\PdoSessionHandler;
 use PDO;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 class PdoSessionHandlerTest extends TestCase
 {
     private $dbFile;
@@ -41,9 +42,7 @@ class PdoSessionHandlerTest extends TestCase
         $handler->close();
     }
 
-    /**
-     * @runInSeparateProcess
-     */
+    #[RunInSeparateProcess]
     public function testSessionGc(): void
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);

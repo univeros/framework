@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait set
 {
     public static function setDataProvider(): array
@@ -18,9 +20,7 @@ trait set
         ];
     }
 
-    /**
-     * @dataProvider setDataProvider
-     */
+    #[DataProvider('setDataProvider')]
     public function testSet(mixed $initial, mixed $index, mixed $value, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -33,9 +33,7 @@ trait set
         $this->assertEquals(count($initial), count($instance));
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testSetOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -43,9 +41,7 @@ trait set
         $instance->set($index, 1);
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testSetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();
@@ -53,9 +49,7 @@ trait set
         $instance->set($index, 1);
     }
 
-    /**
-     * @dataProvider setDataProvider
-     */
+    #[DataProvider('setDataProvider')]
     public function testArrayAccessSet(mixed $initial, mixed $index, mixed $value, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -64,9 +58,7 @@ trait set
         $this->assertEquals(count($expected), count($instance));
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testArrayAccessSetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -74,9 +66,7 @@ trait set
         $instance[$index] = 1;
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testArrayAccessSetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);

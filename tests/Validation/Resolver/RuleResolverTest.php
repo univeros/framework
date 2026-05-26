@@ -7,12 +7,13 @@ use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\Rule\AlphaRule;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class RuleResolverTest extends TestCase
 {
     /**
-     * @dataProvider rulesProvider
      * @param mixed $entry
      */
+    #[DataProvider('rulesProvider')]
     public function testResolver(string|array $entry): void
     {
         $resolver = $this->getResolver();

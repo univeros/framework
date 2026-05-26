@@ -6,6 +6,7 @@ use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Rule\CreditCardRule;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class CreditCardRuleTest extends TestCase
 {
     public static function trueProvider(): array
@@ -49,10 +50,10 @@ class CreditCardRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider trueProvider
      * @param $type
      * @param $values
      */
+    #[DataProvider('trueProvider')]
     public function testValidCards(string $type, array $values): void
     {
         $rule = new CreditCardRule($type);
@@ -63,10 +64,10 @@ class CreditCardRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider falseProvider
      * @param $type
      * @param $values
      */
+    #[DataProvider('falseProvider')]
     public function testInvalidCards(string $type, array $values): void
     {
         $rule = new CreditCardRule($type);

@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Deque;
 
 use Altair\Structure\Deque;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait __construct
 {
     public static function constructDataProvider(): array
@@ -17,17 +18,13 @@ trait __construct
         ]);
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstruct(mixed $values, array $expected): void
     {
         $this->assertToArray($expected, new Deque($values));
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstructUsingNonArrayIterable(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Deque(new \ArrayIterator($values)));

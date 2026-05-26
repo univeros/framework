@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait merge
 {
     public static function mergeDataProvider(): array
@@ -16,9 +18,7 @@ trait merge
         ];
     }
 
-    /**
-     * @dataProvider mergeDataProvider
-     */
+    #[DataProvider('mergeDataProvider')]
     public function testMerge(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -27,9 +27,7 @@ trait merge
         $this->assertToArray($initial, $instance);
     }
 
-    /**
-     * @dataProvider mergeDataProvider
-     */
+    #[DataProvider('mergeDataProvider')]
     public function testMergeWithSelf(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);

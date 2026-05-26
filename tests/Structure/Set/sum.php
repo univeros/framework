@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait sum
 {
     public static function sumDataProvider(): array
@@ -29,9 +31,7 @@ trait sum
         ];
     }
 
-    /**
-     * @dataProvider sumDataProvider
-     */
+    #[DataProvider('sumDataProvider')]
     public function testSum(mixed $values): void
     {
         $instance = static::getInstance($values);

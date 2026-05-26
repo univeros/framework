@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait remove
 {
     public static function removeDataProvider(): array
@@ -34,9 +36,7 @@ trait remove
         ];
     }
 
-    /**
-     * @dataProvider removeDataProvider
-     */
+    #[DataProvider('removeDataProvider')]
     public function testRemove(
         array $initial,
         array $values,
@@ -59,9 +59,7 @@ trait remove
         }
     }
 
-    /**
-     * @dataProvider removeDataProvider
-     */
+    #[DataProvider('removeDataProvider')]
     public function testRemoveVariadic(
         array $initial,
         array $values,

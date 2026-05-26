@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 use Altair\Tests\Structure\HashableObject;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait remove
 {
     public static function removeDataProvider(): array
@@ -34,9 +35,7 @@ trait remove
         ];
     }
 
-    /**
-     * @dataProvider removeHashableDataProvider
-     */
+    #[DataProvider('removeHashableDataProvider')]
     public function testRemoveHashable(array $initial, mixed $key, mixed $expected, array $result): void
     {
         $this->testRemove($initial, $key, $expected, $result);
@@ -98,9 +97,7 @@ trait remove
         $this->assertToArray($reference, $instance);
     }
 
-    /**
-     * @dataProvider removeDataProvider
-     */
+    #[DataProvider('removeDataProvider')]
     public function testRemove(array $initial, mixed $key, mixed $expected, array $result): void
     {
         $instance = static::getInstance();

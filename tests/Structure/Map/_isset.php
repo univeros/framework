@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _isset
 {
     public static function issetDataProvider(): array
@@ -15,9 +17,7 @@ trait _isset
         ];
     }
 
-    /**
-     * @dataProvider issetDataProvider
-     */
+    #[DataProvider('issetDataProvider')]
     public function testArrayAccessIsset(array $initial, mixed $key, bool $isset): void
     {
         $instance = static::getInstance();
@@ -29,9 +29,7 @@ trait _isset
         $this->assertEquals($isset, isset($instance[$key]));
     }
 
-    /**
-     * @dataProvider issetDataProvider
-     */
+    #[DataProvider('issetDataProvider')]
     public function testArrayAccessIssetByReference(array $initial, mixed $key, bool $isset): void
     {
         $instance = static::getInstance([$initial]);

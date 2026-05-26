@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 use Altair\Structure\Stack;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait __construct
 {
     public static function constructDataProvider(): array
@@ -16,17 +17,13 @@ trait __construct
         ];
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstruct(array $values): void
     {
         $this->assertToArray(array_reverse($values), new Stack($values));
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstructUsingIterable(array $values): void
     {
         $this->assertToArray(array_reverse($values), new Stack(new \ArrayIterator($values)));

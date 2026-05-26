@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait xor_
 {
     public static function xorDataProvider(): array
@@ -15,9 +17,7 @@ trait xor_
         ];
     }
 
-    /**
-     * @dataProvider xorDataProvider
-     */
+    #[DataProvider('xorDataProvider')]
     public function testXor(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
@@ -26,9 +26,7 @@ trait xor_
         $this->assertEquals($expected, $a->xor($b)->toArray());
     }
 
-    /**
-     * @dataProvider xorDataProvider
-     */
+    #[DataProvider('xorDataProvider')]
     public function testXorWithSelf(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);

@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\PriorityQueue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _serialize
 {
     public static function serializeDataProvider(): array
@@ -12,9 +14,7 @@ trait _serialize
         ];
     }
 
-    /**
-     * @dataProvider serializeDataProvider
-     */
+    #[DataProvider('serializeDataProvider')]
     public function testSerialize(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

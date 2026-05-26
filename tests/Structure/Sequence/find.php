@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait find
 {
     public static function findDataProvider(): array
@@ -23,9 +25,7 @@ trait find
         ];
     }
 
-    /**
-     * @dataProvider findDataProvider
-     */
+    #[DataProvider('findDataProvider')]
     public function testFind(mixed $initial, mixed $value, mixed $expected): void
     {
         $instance = static::getInstance($initial);

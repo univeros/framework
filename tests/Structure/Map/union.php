@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait union
 {
     public static function unionDataProvider(): array
@@ -16,9 +18,7 @@ trait union
         ];
     }
 
-    /**
-     * @dataProvider unionDataProvider
-     */
+    #[DataProvider('unionDataProvider')]
     public function testUnion(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -28,9 +28,7 @@ trait union
         $this->assertToArray($initial, $instance);
     }
 
-    /**
-     * @dataProvider unionDataProvider
-     */
+    #[DataProvider('unionDataProvider')]
     public function testUnionWithSelf(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);

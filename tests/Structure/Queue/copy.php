@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Queue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait copy
 {
-    /**
-     * @dataProvider basicDataProvider
-     */
+    #[DataProvider('basicDataProvider')]
     public function testCopy(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

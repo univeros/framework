@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait hasKey
 {
     public static function hasKeyDataProvider(): array
@@ -13,9 +15,7 @@ trait hasKey
         ];
     }
 
-    /**
-     * @dataProvider hasKeyDataProvider
-     */
+    #[DataProvider('hasKeyDataProvider')]
     public function testHasKey(array $initial, mixed $key, bool $has): void
     {
         $instance = static::getInstance($initial);

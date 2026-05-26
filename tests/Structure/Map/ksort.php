@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait ksort
 {
     public static function sortKeyDataProvider(): array
@@ -23,9 +25,7 @@ trait ksort
         ];
     }
 
-    /**
-     * @dataProvider sortKeyDataProvider
-     */
+    #[DataProvider('sortKeyDataProvider')]
     public function testSortedByKey(array $values): void
     {
         $instance = static::getInstance($values);
@@ -38,9 +38,7 @@ trait ksort
         $this->assertToArray($values, $instance);
     }
 
-    /**
-     * @dataProvider sortKeyDataProvider
-     */
+    #[DataProvider('sortKeyDataProvider')]
     public function testSortedByKeyUsingComparator(array $values): void
     {
         $instance = static::getInstance($values);

@@ -4,6 +4,7 @@ namespace Altair\Tests\Validation\Rule;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Rule\InRule;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class InRuleTest extends AbstractRuleTest
 {
     #[\Override]
@@ -29,36 +30,36 @@ class InRuleTest extends AbstractRuleTest
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      */
+    #[DataProvider('trueProvider')]
     public function testPayloadTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertPayloadWithStringHaystack($value));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      */
+    #[DataProvider('falseProvider')]
     public function testPayloadFalseWithStringHaystack(int|string $value): void
     {
         $this->assertFalse($this->assertPayloadWithStringHaystack($value));
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      */
+    #[DataProvider('trueProvider')]
     public function testValueTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertValueWithStringHaystack($value));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      */
+    #[DataProvider('falseProvider')]
     public function testValueFalseWithStringHaystack(int|string $value): void
     {
         $this->assertFalse($this->assertValueWithStringHaystack($value));
