@@ -36,7 +36,7 @@ class Pbkdf2Key extends AbstractKey
     #[Override]
     public function derive(): string
     {
-        $outputKey = hash_pbkdf2($this->algorithm, $this->key, $this->salt, $this->iterations, $this->length, true);
+        $outputKey = hash_pbkdf2($this->algorithm, $this->key, (string) $this->salt, $this->iterations, $this->length, true);
 
         if ($outputKey === false) {
             throw new InvalidConfigException('Invalid parameters to hash_pbkdf2().');

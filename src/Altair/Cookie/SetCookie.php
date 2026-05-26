@@ -23,12 +23,12 @@ final readonly class SetCookie extends AbstractCookie implements SetCookieInterf
     public function __construct(
         string $name,
         ?string $value = null,
-        protected int $expires = 0,
-        protected int $maxAge = 0,
-        protected ?string $path = null,
-        protected ?string $domain = null,
-        protected bool $secure = false,
-        protected bool $httpOnly = false,
+        private int $expires = 0,
+        private int $maxAge = 0,
+        private ?string $path = null,
+        private ?string $domain = null,
+        private bool $secure = false,
+        private bool $httpOnly = false,
     ) {
         parent::__construct($name, $value);
     }

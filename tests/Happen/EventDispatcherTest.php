@@ -130,7 +130,7 @@ class EventDispatcherTest extends TestCase
     {
         $dispatcher = new EventDispatcher();
 
-        $result = $dispatcher->removeListener('does-not-exist', fn() => null);
+        $result = $dispatcher->removeListener('does-not-exist', fn(): null => null);
 
         $this->assertSame($dispatcher, $result);
     }
@@ -138,8 +138,8 @@ class EventDispatcherTest extends TestCase
     public function testRemoveAllListenersClearsThemForGivenEvent(): void
     {
         $dispatcher = new EventDispatcher();
-        $dispatcher->addListener('user.created', fn() => null);
-        $dispatcher->addListener('user.created', fn() => null);
+        $dispatcher->addListener('user.created', fn(): null => null);
+        $dispatcher->addListener('user.created', fn(): null => null);
 
         $dispatcher->removeAllListeners('user.created');
 
@@ -229,7 +229,7 @@ class EventDispatcherTest extends TestCase
             public function provideListeners(EventDispatcherInterface $acceptor): ListenerProviderInterface
             {
                 $this->called = true;
-                $acceptor->addListener('seeded', static fn() => null);
+                $acceptor->addListener('seeded', static fn(): null => null);
 
                 return $this;
             }

@@ -225,7 +225,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     $this->log(
                         'Failed to save cache item with key ":key" (:type)',
                         [
-                            'key' => substr((string) $id, \strlen((string) $this->namespace)),
+                            'key' => substr((string) $id, \strlen($this->namespace)),
                             'type' => get_debug_type($value),
                             'exception' => $e instanceof Exception ? $e : null,
                         ]
@@ -288,7 +288,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 $this->log(
                     'Failed to save cache item with key ":key" (:type)',
                     [
-                        'key' => substr((string) $id, \strlen((string) $this->namespace)),
+                        'key' => substr((string) $id, \strlen($this->namespace)),
                         'type' => get_debug_type($value),
                         'exception' => $e instanceof Exception ? $e : null,
                     ]

@@ -21,6 +21,7 @@ class JsonContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = null;
         $body = new Stream('php://temp', 'r+');
         $body->write('{"name":"alice","age":30}');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
@@ -35,6 +36,7 @@ class JsonContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = 'unchanged';
         $body = new Stream('php://temp', 'r+');
         $body->write('not-json');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'text/plain')
             ->withBody($body);
@@ -58,6 +60,7 @@ class JsonContentMiddlewareTest extends AbstractMiddlewareTest
     {
         $body = new Stream('php://temp', 'r+');
         $body->write('{not valid json}');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
@@ -72,6 +75,7 @@ class JsonContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = null;
         $body = new Stream('php://temp', 'r+');
         $body->write('{"k":"v"}');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);

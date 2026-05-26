@@ -91,7 +91,7 @@ class FormattedResponder implements ResponderInterface
     {
         $priorities = [];
 
-        foreach ($this->formatters as $formatter => $quality) {
+        foreach (array_keys($this->formatters) as $formatter) {
             foreach (\call_user_func([$formatter, 'accepts']) as $type) {
                 $priorities[$type] = $formatter;
             }

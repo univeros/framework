@@ -88,7 +88,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 
         $middleware = $this->middlewares[$index];
 
-        if ($this->resolver !== null) {
+        if ($this->resolver instanceof MiddlewareResolverInterface) {
             $middleware = \call_user_func($this->resolver, $middleware);
             $this->middlewares[$index] = $middleware;
         }

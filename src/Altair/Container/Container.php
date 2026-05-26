@@ -29,6 +29,7 @@ use Altair\Structure\Map;
 use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
+use ReflectionMethod;
 
 class Container implements ContainerInterface
 {
@@ -428,7 +429,7 @@ class Container implements ContainerInterface
         try {
             $constructor = $this->reflector->getConstructor($className);
 
-            if (!$constructor) {
+            if (!$constructor instanceof ReflectionMethod) {
                 $object = $this->instantiateWithoutConstructorParameters($className);
             } elseif (!$constructor->isPublic()) {
                 throw new InjectionException(\sprintf("'%s' does not have public constructor.", $className));

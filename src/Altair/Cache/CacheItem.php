@@ -24,11 +24,17 @@ final class CacheItem implements CacheItemInterface
     // CacheItemPool (see createCacheItemFactoryClosure / createDeferredMergerClosure).
     // Static analysers cannot see those references — do not "clean up" as unused.
     protected $key;
+
     protected $value;
+
     protected $isHit;
+
     protected $expirationTime;
+
     protected $defaultLifespan;
+
     protected array $tags = [];
+
     protected ?CacheItemTagValidatorInterface $tagValidator = null;
 
     #[Override]
@@ -60,9 +66,9 @@ final class CacheItem implements CacheItemInterface
     #[Override]
     public function expiresAt(?DateTimeInterface $expiration): static
     {
-        $this->expirationTime = $expiration === null
-            ? ($this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null)
-            : $expiration->getTimestamp();
+        $this->expirationTime = $expiration instanceof DateTimeInterface
+            ? ($expiration->getTimestamp())
+            : ($this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null);
 
         return $this;
     }

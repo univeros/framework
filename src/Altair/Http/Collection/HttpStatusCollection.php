@@ -69,7 +69,6 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     {
         $reason = $this->filterReasonPhrase($reason);
         return $this->fetchCode($reason);
-        throw new OutOfBoundsException(\sprintf("No Http status code is associated to '%s'", $code));
     }
 
     /**

@@ -118,7 +118,7 @@ class IsbnRuleTest extends TestCase
         return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
-    protected function assertValue($value, $type = null)
+    protected function assertValue($value, $type = null): bool
     {
         $rule = $this->buildRule($type);
 

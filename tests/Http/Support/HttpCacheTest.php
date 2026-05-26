@@ -13,6 +13,7 @@ class HttpCacheTest extends TestCase
 {
     private HttpCache $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = new HttpCache();

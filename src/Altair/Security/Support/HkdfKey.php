@@ -22,7 +22,6 @@ class HkdfKey extends AbstractKey
      * HkdfKey constructor.
      *
      * @param string|null $salt
-     * @param string|null $context
      *
      * @throws InvalidConfigException
      */
@@ -62,7 +61,7 @@ class HkdfKey extends AbstractKey
         }
 
         if ($this->length !== 0) {
-            $outputKey = mb_substr($outputKey, 0, $this->length, '8bit');
+            return mb_substr($outputKey, 0, $this->length, '8bit');
         }
 
         return $outputKey;

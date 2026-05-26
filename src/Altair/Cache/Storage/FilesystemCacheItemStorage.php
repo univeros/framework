@@ -62,9 +62,11 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
             if (!$this->filesystem->exists($file)) {
                 continue;
             }
+
             if (!$this->filesystem->isFile($file)) {
                 continue;
             }
+
             if (!($item = $this->filesystem->getRequiredFileValue($file))) {
                 continue;
             }

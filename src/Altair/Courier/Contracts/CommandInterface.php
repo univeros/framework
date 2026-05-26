@@ -16,8 +16,6 @@ interface CommandInterface
     /**
      * Process a message
      *
-     *
-     * @return void
      */
     public function exec(CommandMessageInterface $message): void;
 }

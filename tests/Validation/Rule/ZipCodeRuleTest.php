@@ -219,7 +219,7 @@ class ZipCodeRuleTest extends TestCase
         return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
-    protected function assertValue($value, $country)
+    protected function assertValue($value, $country): bool
     {
         $rule = $this->buildRule($country);
 

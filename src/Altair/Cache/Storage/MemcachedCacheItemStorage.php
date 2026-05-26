@@ -68,6 +68,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
         if (false !== $this->client->get($key)) {
             return true;
         }
+
         return Memcached::RES_SUCCESS === $this->client->getResultCode();
     }
 
@@ -88,7 +89,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     {
         $success = true;
 
-        foreach ($this->checkResponse((array) $this->client->deleteMulti($keys)) as $result) {
+        foreach ($this->checkResponse($this->client->deleteMulti($keys)) as $result) {
             if (Memcached::RES_SUCCESS !== $result && Memcached::RES_NOTFOUND !== $result) {
                 $success = false;
             }
@@ -126,7 +127,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
         throw new CacheException(
             \sprintf(
                 'MemcachedStorage client error: %s.',
-                strtolower((string) $this->client->getResultMessage())
+                strtolower($this->client->getResultMessage())
             )
         );
     }

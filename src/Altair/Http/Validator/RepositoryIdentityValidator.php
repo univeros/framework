@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Http\Validator;
 
+use Altair\Data\Contracts\EntityInterface;
 use Altair\Data\Contracts\QueryRepositoryInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Override;
@@ -44,7 +45,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
 
         $user = $this->repository->findOneBy([$this->options['username'] => $user]);
 
-        if (null !== $user) {
+        if ($user instanceof EntityInterface) {
             return password_verify((string) $password, (string) $user->get($this->options['hash']));
         }
 

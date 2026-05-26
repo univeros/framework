@@ -49,7 +49,7 @@ class RulesRunner implements RulesRunnerInterface
     #[Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = null !== $this->queue && !$this->queue->isEmpty() ? $this->queue->pop() : null;
+        $entry = $this->queue instanceof Queue && !$this->queue->isEmpty() ? $this->queue->pop() : null;
         $middleware = $this->resolve($entry);
 
         return $middleware($payload, $this);
