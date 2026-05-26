@@ -9,8 +9,8 @@
 
 namespace Altair\Happen\Listener;
 
-use Altair\Happen\EventInterface;
-use Altair\Happen\ListenerInterface;
+use Altair\Happen\Contracts\EventInterface;
+use Altair\Happen\Contracts\ListenerInterface;
 
 class CallbackListener implements ListenerInterface
 {

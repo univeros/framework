@@ -10,7 +10,7 @@
 namespace Altair\Happen\Factory;
 
 use Altair\Happen\Listener\CallbackListener;
-use Altair\Happen\ListenerInterface;
+use Altair\Happen\Contracts\ListenerInterface;
 
 class ListenerFactory
 {

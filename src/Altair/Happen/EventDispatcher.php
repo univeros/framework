@@ -9,6 +9,11 @@
 
 namespace Altair\Happen;
 
+use Altair\Happen\Contracts\EventDispatcherInterface;
+use Altair\Happen\Contracts\EventInterface;
+use Altair\Happen\Contracts\EventStackInterface;
+use Altair\Happen\Contracts\EventSubscriberInterface;
+use Altair\Happen\Contracts\ListenerProviderInterface;
 use Altair\Happen\Factory\ListenerFactory;
 
 class EventDispatcher implements EventDispatcherInterface
@@ -57,17 +62,19 @@ class EventDispatcher implements EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
             if (is_string($params)) {
-                $this->addListener($name, ListenerFactory::create([$subscriber, $params]));
+                $this->addListener($name, [$subscriber, $params]);
             } elseif (is_string($params[0])) {
-                [$method, $priority] = $params;
-                $this->addListener($name, ListenerFactory::create([$subscriber, $method]), $priority?? 0);
+                [$method, $priority] = $params + [null, 0];
+                $this->addListener($name, [$subscriber, $method], $priority ?? 0);
             } else {
                 foreach ($params as $listener) {
-                    [$method, $priority] = $listener;
-                    $this->addListener($name, ListenerFactory::create([$subscriber, $method]), $priority?? 0);
+                    [$method, $priority] = $listener + [null, 0];
+                    $this->addListener($name, [$subscriber, $method], $priority ?? 0);
                 }
             }
         }
+
+        return $this;
     }
 
     /**
@@ -107,7 +114,7 @@ class EventDispatcher implements EventDispatcherInterface
     #[\Override]
     public function getListeners(string $name): array
     {
-        return $this->sortedListeners[$name]?? ($this->sortedListeners = $this->getSortedListeners($name));
+        return $this->sortedListeners[$name] ??= $this->getSortedListeners($name);
     }
 
     /**
@@ -166,6 +173,8 @@ class EventDispatcher implements EventDispatcherInterface
                 $this->removeListener($name, [$subscriber, is_string($params) ? $params : $params[0]]);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -176,18 +185,11 @@ class EventDispatcher implements EventDispatcherInterface
      */
     protected function invokeListeners(string $name, EventInterface $event): self
     {
-        $listeners = $this->getListeners($name);
-
-        foreach ($listeners as $listener) {
+        foreach ($this->getListeners($name) as $listener) {
             if ($event->isPropagationStopped()) {
                 break;
             }
-
-            $callable = $listener instanceof ListenerInterface
-                ? $listener->__invoke(...)
-                : [$listener, null];
-
-            $callable($event);
+            $listener($event);
         }
 
         return $this;
