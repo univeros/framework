@@ -47,34 +47,63 @@ env:
   SPLITSH_VERSION: v1.0.1
 
 jobs:
+  # GitHub Actions doesn't allow matrix.* in job-level if: conditions —
+  # the matrix is what defines the jobs. To support a "single package only"
+  # input, we compute the matrix dynamically in this setup job and the
+  # split job consumes it via fromJSON.
+  setup-matrix:
+    name: Compute matrix
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.compute.outputs.matrix }}
+    steps:
+      - name: Build matrix JSON
+        id: compute
+        env:
+          PACKAGE: ${{ github.event.inputs.package }}
+        run: |
+          set -euo pipefail
+          full='[
+            {"name":"cache",         "path":"src/Altair/Cache"},
+            {"name":"common",        "path":"src/Altair/Common"},
+            {"name":"configuration", "path":"src/Altair/Configuration"},
+            {"name":"container",     "path":"src/Altair/Container"},
+            {"name":"cookie",        "path":"src/Altair/Cookie"},
+            {"name":"courier",       "path":"src/Altair/Courier"},
+            {"name":"data",          "path":"src/Altair/Data"},
+            {"name":"filesystem",    "path":"src/Altair/Filesystem"},
+            {"name":"happen",        "path":"src/Altair/Happen"},
+            {"name":"http",          "path":"src/Altair/Http"},
+            {"name":"middleware",    "path":"src/Altair/Middleware"},
+            {"name":"sanitation",    "path":"src/Altair/Sanitation"},
+            {"name":"security",      "path":"src/Altair/Security"},
+            {"name":"session",       "path":"src/Altair/Session"},
+            {"name":"structure",     "path":"src/Altair/Structure"},
+            {"name":"validation",    "path":"src/Altair/Validation"}
+          ]'
+
+          if [[ -z "${PACKAGE}" ]]; then
+            matrix=$(jq -c '.' <<< "$full")
+          else
+            matrix=$(jq -c --arg p "$PACKAGE" '[.[] | select(.name == $p)]' <<< "$full")
+            if [[ "$(jq 'length' <<< "$matrix")" -eq 0 ]]; then
+              echo "::error::Unknown package '${PACKAGE}'"
+              exit 1
+            fi
+          fi
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "Selected packages:"
+          jq '.[].name' <<< "$matrix"
+
   split:
     name: Split ${{ matrix.package.name }}
+    needs: setup-matrix
     runs-on: ubuntu-latest
-
-    # When `package` input is provided, restrict the matrix to that one entry
-    # via the per-job `if:` guard below.
     strategy:
       fail-fast: false
       matrix:
-        package:
-          - { name: cache,         path: src/Altair/Cache }
-          - { name: common,        path: src/Altair/Common }
-          - { name: configuration, path: src/Altair/Configuration }
-          - { name: container,     path: src/Altair/Container }
-          - { name: cookie,        path: src/Altair/Cookie }
-          - { name: courier,       path: src/Altair/Courier }
-          - { name: data,          path: src/Altair/Data }
-          - { name: filesystem,    path: src/Altair/Filesystem }
-          - { name: happen,        path: src/Altair/Happen }
-          - { name: http,          path: src/Altair/Http }
-          - { name: middleware,    path: src/Altair/Middleware }
-          - { name: sanitation,    path: src/Altair/Sanitation }
-          - { name: security,      path: src/Altair/Security }
-          - { name: session,       path: src/Altair/Session }
-          - { name: structure,     path: src/Altair/Structure }
-          - { name: validation,    path: src/Altair/Validation }
-
-    if: github.event.inputs.package == '' || github.event.inputs.package == matrix.package.name
+        package: ${{ fromJSON(needs.setup-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout (full history)
