@@ -40,7 +40,7 @@
         "league/flysystem-aws-s3-v3": "^3.29",
         "league/flysystem-sftp-v3": "^3.29",
         "league/flysystem-ftp": "^3.29",
-        "mongodb/mongodb": "^1.20",
+        "mongodb/mongodb": "^2.0",
         "pda/pheanstalk": "^5.0",
         "phpstan/phpstan": "^1.12",
         "phpunit/phpunit": "^11.4",

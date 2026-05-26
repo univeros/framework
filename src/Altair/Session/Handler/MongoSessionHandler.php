@@ -88,7 +88,6 @@ class MongoSessionHandler implements SessionHandlerInterface
                 ],
                 [
                     'upsert' => true,
-                    'multiple' => false
                 ]
             );
         } catch (MongoDBException) {
