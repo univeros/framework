@@ -1,0 +1,16 @@
+{
+    "name": "univeros/sample-package",
+    "description": "Fixture package used by AgentSpec test cases.",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.3",
+        "ext-json": "*",
+        "psr/log": "^3.0",
+        "univeros/structure": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Tests\\AgentSpec\\Fixtures\\SamplePackage\\": ""
+        }
+    }
+}
