@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Altair\Courier\Traits;
 
-use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\LogMessageInterface;
 
 trait LogMessageTrait
@@ -27,15 +26,15 @@ trait LogMessageTrait
     }
 
     /**
-     * Returns the instance with a LogMessageInterface $message so user can extract its log information
-     * to use it on its logger system.
+     * Stores a LogMessageInterface $message on the command message so downstream
+     * middleware (notably CommandLoggerMiddleware) can surface it via getLogMessage().
      *
-     *
+     * Named setLogMessage, not withLogMessage, because the command-bus dispatch is
+     * mutation-based: CommandInterface::exec() returns void, and middleware reads
+     * the log message from the same instance after $next() returns.
      */
-    public function withLogMessage(LogMessageInterface $message): CommandMessageInterface
+    public function setLogMessage(LogMessageInterface $message): void
     {
         $this->logMessage = $message;
-
-        return $this;
     }
 }
