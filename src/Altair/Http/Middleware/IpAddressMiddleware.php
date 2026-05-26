@@ -31,7 +31,7 @@ class IpAddressMiddleware implements MiddlewareInterface
     ];
 
     /**
-     * @param list<string>|null $headers
+     * @param list<string> $headers
      */
     public function __construct(
         private readonly array $headers = self::DEFAULT_HEADERS,

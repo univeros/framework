@@ -1,0 +1,371 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/FilesystemCacheItemStorage.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between '\\\\\\\\' and '/' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/FilesystemCacheItemStorage.php
+
+		-
+			message: "#^Class Predis\\\\Connection\\\\Aggregate\\\\PredisCluster not found\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/PredisCacheItemStorage.php
+
+		-
+			message: "#^Class Predis\\\\Connection\\\\Aggregate\\\\RedisCluster not found\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/PredisCacheItemStorage.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between 0 and int\\<1, max\\> is always false\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/PredisCacheItemStorage.php
+
+		-
+			message: "#^Iterating over an object of an unknown class Predis\\\\Connection\\\\Aggregate\\\\PredisCluster\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/PredisCacheItemStorage.php
+
+		-
+			message: "#^Variable \\$pipe in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$serialized, \\$id, \\$value$#"
+			count: 1
+			path: src/Altair/Cache/Storage/PredisCacheItemStorage.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between 0 and int\\<1, max\\> is always false\\.$#"
+			count: 1
+			path: src/Altair/Cache/Storage/RedisCacheItemStorage.php
+
+		-
+			message: "#^Call to function array_key_exists\\(\\) with mixed and array\\{\\} will always evaluate to false\\.$#"
+			count: 1
+			path: src/Altair/Common/Support/Arr.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$array with type array\\|object is not subtype of native type array\\.$#"
+			count: 1
+			path: src/Altair/Common/Support/Arr.php
+
+		-
+			message: "#^Method Altair\\\\Container\\\\Collection\\\\AliasesCollection\\:\\:define\\(\\) should return Altair\\\\Container\\\\Collection\\\\AliasesCollection but returns Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
+			count: 1
+			path: src/Altair/Container/Collection/AliasesCollection.php
+
+		-
+			message: "#^Call to an undefined method ReflectionFunctionAbstract\\:\\:invokeArgs\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Container/Executable.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$reflection with type ReflectionFunctionAbstract is not subtype of native type ReflectionFunction\\.$#"
+			count: 1
+			path: src/Altair/Container/Executable.php
+
+		-
+			message: "#^Parameter \\#1 \\$reflection of method Altair\\\\Container\\\\Executable\\:\\:invokeClosure\\(\\) expects ReflectionFunction, ReflectionFunctionAbstract given\\.$#"
+			count: 1
+			path: src/Altair/Container/Executable.php
+
+		-
+			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PairInterface\\:\\:\\$value\\.$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Courier/Service/InMemoryCommandLocatorService.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
+
+		-
+			message: "#^PHPDoc tag @var for property Altair\\\\Http\\\\Base\\\\Payload\\:\\:\\$settingsCollection with type Altair\\\\Structure\\\\Map\\|null is not subtype of native type Altair\\\\Http\\\\Collection\\\\SettingsCollection\\.$#"
+			count: 1
+			path: src/Altair/Http/Base/Payload.php
+
+		-
+			message: "#^Instanceof between array and Traversable will always evaluate to false\\.$#"
+			count: 1
+			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Method Altair\\\\Http\\\\Collection\\\\HttpStatusCollection\\:\\:getResponseClass\\(\\) should return string but returns int\\.$#"
+			count: 1
+			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Parameter \\#1 \\$string of function substr expects string, int given\\.$#"
+			count: 1
+			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Result of \\|\\| is always true\\.$#"
+			count: 1
+			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 2
+			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Decoder not found\\.$#"
+			count: 1
+			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
+
+		-
+			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Encoder not found\\.$#"
+			count: 1
+			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
+
+		-
+			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Parser not found\\.$#"
+			count: 2
+			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
+
+		-
+			message: "#^Cannot cast Lcobucci\\\\JWT\\\\UnencryptedToken to string\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenGenerator.php
+
+		-
+			message: "#^Cannot instantiate interface Lcobucci\\\\JWT\\\\Signer\\\\Key\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenGenerator.php
+
+		-
+			message: "#^Call to method getMessage\\(\\) on an unknown class Lcobucci\\\\JWT\\\\Validation\\\\InvalidTokenException\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Cannot instantiate interface Lcobucci\\\\JWT\\\\Signer\\\\Key\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Caught class Lcobucci\\\\JWT\\\\Validation\\\\InvalidTokenException not found\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Instantiated class Lcobucci\\\\Clock\\\\SystemClock not found\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Instantiated class Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\ValidAt not found\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Parameter \\#1 \\.\\.\\.\\$issuers of class Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\IssuedBy constructor expects non\\-empty\\-string, Psr\\\\Http\\\\Message\\\\UriInterface given\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Parameter \\#3 \\.\\.\\.\\$constraints of method Lcobucci\\\\JWT\\\\Validator\\:\\:assert\\(\\) expects Lcobucci\\\\JWT\\\\Validation\\\\Constraint, Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\ValidAt given\\.$#"
+			count: 1
+			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
+
+		-
+			message: "#^Offset 'domain' on array\\{lifetime\\: int\\<0, max\\>, path\\: non\\-falsy\\-string, domain\\: string, secure\\: bool, httponly\\: bool, samesite\\: string\\} on left side of \\?\\? always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Altair/Http/Middleware/SessionHeadersMiddleware.php
+
+		-
+			message: "#^Offset 'lifetime' on array\\{lifetime\\: int\\<0, max\\>, path\\: non\\-falsy\\-string, domain\\: string, secure\\: bool, httponly\\: bool, samesite\\: string\\} on left side of \\?\\? always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Altair/Http/Middleware/SessionHeadersMiddleware.php
+
+		-
+			message: "#^Offset 'path' on array\\{lifetime\\: int\\<0, max\\>, path\\: non\\-falsy\\-string, domain\\: string, secure\\: bool, httponly\\: bool, samesite\\: string\\} on left side of \\?\\? always exists and is not nullable\\.$#"
+			count: 1
+			path: src/Altair/Http/Middleware/SessionHeadersMiddleware.php
+
+		-
+			message: "#^Using nullsafe method call on non\\-nullable type Altair\\\\Cookie\\\\Cookie\\. Use \\-\\> instead\\.$#"
+			count: 1
+			path: src/Altair/Http/Middleware/SessionHeadersMiddleware.php
+
+		-
+			message: "#^Parameter \\#1 \\$reason of method Altair\\\\Http\\\\Collection\\\\HttpStatusCollection\\:\\:getStatusCode\\(\\) expects string, int\\|null given\\.$#"
+			count: 1
+			path: src/Altair/Http/Responder/StatusResponder.php
+
+		-
+			message: "#^PHPDoc tag @return with type resource is incompatible with native type GdImage\\|false\\.$#"
+			count: 1
+			path: src/Altair/Http/Support/DefaultErrorHandler.php
+
+		-
+			message: "#^Call to an undefined method Negotiation\\\\AcceptHeader\\:\\:getValue\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Http/Support/FormatNegotiator.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: src/Altair/Http/Validator/DigestSignatureValidator.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Altair/Http/Validator/DigestSignatureValidator.php
+
+		-
+			message: "#^PHPDoc tag @return with type mixed is not subtype of native type int\\|null\\.$#"
+			count: 1
+			path: src/Altair/Sanitation/Filter/IntegerFilter.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Sanitation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"
+			count: 1
+			path: src/Altair/Sanitation/FiltersRunner.php
+
+		-
+			message: "#^Property Altair\\\\Sanitation\\\\Sanitizer\\:\\:\\$payload \\(Altair\\\\Middleware\\\\Payload\\) does not accept Altair\\\\Middleware\\\\Contracts\\\\PayloadInterface\\.$#"
+			count: 2
+			path: src/Altair/Sanitation/Sanitizer.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between non\\-falsy\\-string and false will always evaluate to false\\.$#"
+			count: 1
+			path: src/Altair/Security/Support/Pbkdf2Key.php
+
+		-
+			message: "#^Return type \\(void\\) of method Altair\\\\Session\\\\Handler\\\\FileSessionHandler\\:\\:gc\\(\\) should be compatible with return type \\(int\\|false\\) of method SessionHandlerInterface\\:\\:gc\\(\\)$#"
+			count: 1
+			path: src/Altair/Session/Handler/FileSessionHandler.php
+
+		-
+			message: "#^Method Altair\\\\Session\\\\Handler\\\\MongoSessionHandler\\:\\:gc\\(\\) should return int\\|false but returns true\\.$#"
+			count: 1
+			path: src/Altair/Session/Handler/MongoSessionHandler.php
+
+		-
+			message: "#^Method Altair\\\\Session\\\\Handler\\\\PdoSessionHandler\\:\\:gc\\(\\) should return int\\|false but returns true\\.$#"
+			count: 1
+			path: src/Altair/Session/Handler/PdoSessionHandler.php
+
+		-
+			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PairInterface\\:\\:\\$value\\.$#"
+			count: 4
+			path: src/Altair/Structure/Map.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 10
+			path: src/Altair/Structure/Map.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Structure/Pair.php
+
+		-
+			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\:\\:\\$priority \\(int\\) does not accept null\\.$#"
+			count: 1
+			path: src/Altair/Structure/PriorityNode.php
+
+		-
+			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\:\\:\\$stamp \\(int\\) does not accept null\\.$#"
+			count: 1
+			path: src/Altair/Structure/PriorityNode.php
+
+		-
+			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$priority\\.$#"
+			count: 2
+			path: src/Altair/Structure/PriorityQueue.php
+
+		-
+			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$stamp\\.$#"
+			count: 2
+			path: src/Altair/Structure/PriorityQueue.php
+
+		-
+			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$value\\.$#"
+			count: 3
+			path: src/Altair/Structure/PriorityQueue.php
+
+		-
+			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:copy\\(\\) should return static\\(Altair\\\\Structure\\\\PriorityQueue\\) but returns Altair\\\\Structure\\\\PriorityQueue\\.$#"
+			count: 1
+			path: src/Altair/Structure/PriorityQueue.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Structure/PriorityQueue.php
+
+		-
+			message: "#^Call to an undefined method Altair\\\\Structure\\\\Queue\\:\\:adjustCapacity\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Structure/Queue.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/Altair/Structure/Queue.php
+
+		-
+			message: "#^Call to an undefined method Altair\\\\Structure\\\\Set\\:\\:adjustCapacity\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Structure/Set.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 7
+			path: src/Altair/Structure/Set.php
+
+		-
+			message: "#^Call to an undefined method Altair\\\\Structure\\\\Stack\\:\\:adjustCapacity\\(\\)\\.$#"
+			count: 1
+			path: src/Altair/Structure/Stack.php
+
+		-
+			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			count: 2
+			path: src/Altair/Structure/Stack.php
+
+		-
+			message: "#^Binary operation \"\\*\\=\" between non\\-empty\\-string and 2 results in an error\\.$#"
+			count: 1
+			path: src/Altair/Validation/Rule/CreditCardRule.php
+
+		-
+			message: "#^Binary operation \"\\-\" between 32 and string results in an error\\.$#"
+			count: 1
+			path: src/Altair/Validation/Rule/IpRule.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between 1 and 0 will always evaluate to false\\.$#"
+			count: 1
+			path: src/Altair/Validation/Rule/IsbnRule.php
+
+		-
+			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Validation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"
+			count: 1
+			path: src/Altair/Validation/RulesRunner.php
+
+		-
+			message: "#^Property Altair\\\\Validation\\\\Validator\\:\\:\\$payload \\(Altair\\\\Middleware\\\\Payload\\) does not accept Altair\\\\Middleware\\\\Contracts\\\\PayloadInterface\\.$#"
+			count: 2
+			path: src/Altair/Validation/Validator.php

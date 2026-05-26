@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,27 +11,27 @@
 
 namespace Altair\Http\Exception;
 
-use Exception;
 use Psr\Http\Message\ResponseInterface;
+use Throwable;
 
 class HttpMethodNotAllowedException extends HttpBadRequestException
 {
-    protected $allowed = [];
-
-    public function __construct($allowed = [], $message = '', $code = 0, Exception $previous = null)
-    {
+    /**
+     * @param list<string> $allowed
+     */
+    public function __construct(
+        protected array $allowed = [],
+        string $message = '',
+        int $code = 0,
+        ?Throwable $previous = null,
+    ) {
         parent::__construct($message, $code, $previous);
     }
 
-    /**
-     * @return ResponseInterface
-     */
-    public function withResponse(ResponseInterface $response)
+    public function withResponse(ResponseInterface $response): ResponseInterface
     {
-        if (!empty($this->allowed)) {
-            return $response->withHeader('Allow', implode(',', $this->allowed));
-        }
-
-        return $response;
+        return $this->allowed === []
+            ? $response
+            : $response->withHeader('Allow', implode(',', $this->allowed));
     }
 }
