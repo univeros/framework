@@ -13,7 +13,6 @@ namespace Altair\Tests\Courier;
 
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Support\LogMessage;
-use Altair\Courier\Traits\LogMessageTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
 
