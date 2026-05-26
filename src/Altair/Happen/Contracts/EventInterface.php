@@ -10,8 +10,13 @@
 namespace Altair\Happen;
 
 use Altair\Happen\Exception\InvalidArgumentException;
+use Psr\EventDispatcher\StoppableEventInterface;
 
-interface EventInterface
+/**
+ * Altair's event contract. Extends PSR-14's StoppableEventInterface so events
+ * are interoperable with any PSR-14 dispatcher.
+ */
+interface EventInterface extends StoppableEventInterface
 {
     /**
      * Stop event propagation.
