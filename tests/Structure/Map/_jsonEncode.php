@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _jsonEncode
 {
     public static function jsonEncodeDataProvider()
@@ -8,9 +10,7 @@ trait _jsonEncode
         return static::basicDataProvider();
     }
 
-    /**
-     * @dataProvider jsonEncodeDataProvider
-     */
+    #[DataProvider('jsonEncodeDataProvider')]
     public function testJsonEncode(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);

@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait rotate
 {
     public static function rotateDataProvider(): array
@@ -41,9 +43,7 @@ trait rotate
         ];
     }
 
-    /**
-     * @dataProvider rotateDataProvider
-     */
+    #[DataProvider('rotateDataProvider')]
     public function testRotate(array $values, int $rotation, array $expected): void
     {
         $instance = static::getInstance($values);

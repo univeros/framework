@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 use Altair\Structure\Map;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait __construct
 {
     public static function constructDataProvider(): array
@@ -16,17 +17,13 @@ trait __construct
         ]);
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstruct(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Map($values));
     }
 
-    /**
-     * @dataProvider constructDataProvider
-     */
+    #[DataProvider('constructDataProvider')]
     public function testConstructUsingNonArrayIterable(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Map(new \ArrayIterator($values)));

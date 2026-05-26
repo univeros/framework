@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 use Altair\Tests\Structure\HashableObject;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait put
 {
     public static function putDataProvider(): array
@@ -50,9 +51,7 @@ trait put
         ];
     }
 
-    /**
-     * @dataProvider putDataProvider
-     */
+    #[DataProvider('putDataProvider')]
     public function testPut(array $pairs, array $expected): void
     {
         $instance = static::getInstance();
@@ -80,9 +79,7 @@ trait put
         $this->assertEquals(self::MANY, count($instance->toArray()));
     }
 
-    /**
-     * @dataProvider putHashableDataProvider
-     */
+    #[DataProvider('putHashableDataProvider')]
     public function testPutHashable(array $pairs, array $expected): void
     {
         $this->testPut($pairs, $expected);

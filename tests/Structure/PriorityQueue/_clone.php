@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\PriorityQueue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _clone
 {
-    /**
-     * @dataProvider basicDataProvider
-     */
+    #[DataProvider('basicDataProvider')]
     public function testClone(mixed $values, array $expected): void
     {
         $instance = static::getInstance($values);

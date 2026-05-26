@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _unset
 {
-    /**
-     * @dataProvider removeDataProvider
-     */
+    #[DataProvider('removeDataProvider')]
     public function testArrayAccessUnset(mixed $initial, mixed $index, mixed $return, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -14,9 +14,7 @@ trait _unset
         $this->assertEquals(count($expected), count($instance));
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testArrayAccessUnsetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -24,9 +22,7 @@ trait _unset
         unset($instance[$index]);
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testArrayAccessUnsetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);

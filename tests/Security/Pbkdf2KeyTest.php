@@ -4,6 +4,7 @@ namespace Altair\Tests\Security;
 use Altair\Security\Support\Pbkdf2Key;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class Pbkdf2KeyTest extends TestCase
 {
     public static function dataProvider(): array
@@ -33,9 +34,7 @@ class Pbkdf2KeyTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProvider
-     */
+    #[DataProvider('dataProvider')]
     public function testPbkdf2(string $password, string $salt, int $iterations, int $length, string $okm): void
     {
         $derivedKey = (new Pbkdf2Key($password, $salt, $length, $iterations))->derive();

@@ -8,12 +8,13 @@ use Altair\Sanitation\Filter\MinFilter;
 use Altair\Sanitation\Resolver\FilterResolver;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class FilterResolverTest extends TestCase
 {
     /**
-     * @dataProvider filterProvider
      * @param mixed $entry
      */
+    #[DataProvider('filterProvider')]
     public function testResolver(string|array $entry): void
     {
         $resolver = $this->getResolver();

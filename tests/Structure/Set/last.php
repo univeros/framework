@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait last
 {
     public static function lastDataProvider(): array
@@ -13,9 +15,7 @@ trait last
         ];
     }
 
-    /**
-     * @dataProvider lastDataProvider
-     */
+    #[DataProvider('lastDataProvider')]
     public function testLast(mixed $initial, mixed $expected): void
     {
         $instance = static::getInstance($initial);

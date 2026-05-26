@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait remove
 {
     public static function removeDataProvider(): array
@@ -18,9 +20,7 @@ trait remove
         ];
     }
 
-    /**
-     * @dataProvider removeDataProvider
-     */
+    #[DataProvider('removeDataProvider')]
     public function testRemove(mixed $initial, mixed $index, mixed $return, array $expected): void
     {
         $instance = static::getInstance($initial);
@@ -31,9 +31,7 @@ trait remove
         $this->assertEquals($return, $returned);
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testRemoveIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -41,9 +39,7 @@ trait remove
         $instance->remove($index);
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testRemoveIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);

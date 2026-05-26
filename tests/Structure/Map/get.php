@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait get
 {
     public static function getDataProvider(): array
@@ -11,9 +13,7 @@ trait get
         ];
     }
 
-    /**
-     * @dataProvider getDataProvider
-     */
+    #[DataProvider('getDataProvider')]
     public function testGet(array $initial, mixed $key, mixed $expected): void
     {
         $instance = static::getInstance($initial);

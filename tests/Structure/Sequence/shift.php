@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait shift
 {
     public static function shiftDataProvider(): array
@@ -15,9 +17,7 @@ trait shift
         ];
     }
 
-    /**
-     * @dataProvider shiftDataProvider
-     */
+    #[DataProvider('shiftDataProvider')]
     public function testShift(array $initial, mixed $expected, array $result): void
     {
         $instance = static::getInstance($initial);

@@ -44,5 +44,6 @@ coverage.xml
 phpstan.neon.cache
 
 # rector
-rector.cache
+.rector.cache
+/.rector-cache/
 

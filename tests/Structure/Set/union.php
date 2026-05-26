@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 use Altair\Tests\Structure\HashableObject;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait union
 {
     public static function unionDataProvider(): array
@@ -18,9 +19,7 @@ trait union
         ];
     }
 
-    /**
-     * @dataProvider unionDataProvider
-     */
+    #[DataProvider('unionDataProvider')]
     public function testUnion(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
@@ -29,9 +28,7 @@ trait union
         $this->assertEquals($expected, $a->union($b)->toArray());
     }
 
-    /**
-     * @dataProvider unionDataProvider
-     */
+    #[DataProvider('unionDataProvider')]
     public function testUnionWithSelf(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);

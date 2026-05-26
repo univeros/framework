@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait toArray
 {
     public static function toArrayDataProvider()
@@ -8,9 +10,7 @@ trait toArray
         return static::basicDataProvider();
     }
 
-    /**
-     * @dataProvider toArrayDataProvider
-     */
+    #[DataProvider('toArrayDataProvider')]
     public function testToArray(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

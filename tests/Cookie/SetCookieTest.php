@@ -9,6 +9,7 @@ use Altair\Cookie\SetCookie;
 use PHPUnit\Framework\TestCase;
 use Laminas\Diactoros\Response;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class SetCookieTest extends TestCase
 {
     public function testThatCanBeAddedToAResponse(): void
@@ -24,10 +25,7 @@ class SetCookieTest extends TestCase
         $this->assertEquals($setCookie->getValue(), $cookie->getValue());
     }
 
-    /**
-     *
-     * @dataProvider parsesFromSetCookieStringDataProvider
-     */
+    #[DataProvider('parsesFromSetCookieStringDataProvider')]
     public function testParsesFromSetCookieString(string $setCookieString, SetCookieInterface $expectedSetCookie): void
     {
         $setCookie = SetCookieFactory::createFromCookieString($setCookieString);

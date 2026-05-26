@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _serialize
 {
-    /**
-     * @dataProvider basicDataProvider
-     */
+    #[DataProvider('basicDataProvider')]
     public function testSerialize(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

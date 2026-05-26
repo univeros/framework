@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait isEmpty
 {
     public static function isEmptyDataProvider(): array
@@ -12,9 +14,7 @@ trait isEmpty
         ];
     }
 
-    /**
-     * @dataProvider isEmptyDataProvider
-     */
+    #[DataProvider('isEmptyDataProvider')]
     public function testIsEmpty(array $values, bool $isEmpty): void
     {
         $instance = static::getInstance($values);

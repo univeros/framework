@@ -7,6 +7,7 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class ContainerTest extends TestCase
 {
     public function testMakeInstanceInjectsSimpleConcreteDependency(): void
@@ -232,7 +233,7 @@ class ContainerTest extends TestCase
         $callable
             ->expects($this->once())
             ->method('__invoke')
-            ->will($this->returnValue(new TestDependency()));
+            ->willReturn(new TestDependency());
 
         $container->delegate(TestDependency::class, $callable);
         $obj = $container->make(TestDependency::class);
@@ -272,9 +273,7 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
     }
 
-    /**
-     * @dataProvider provideExecutionExpectations
-     */
+    #[DataProvider('provideExecutionExpectations')]
     public function testProvisionedInvokables(mixed $toInvoke, mixed $definition, mixed $expectedResult): void
     {
         $container = new Container();

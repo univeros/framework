@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _isset
 {
     public static function issetDataProvider(): array
@@ -32,36 +34,28 @@ trait _isset
         ];
     }
 
-    /**
-     * @dataProvider issetDataProvider
-     */
+    #[DataProvider('issetDataProvider')]
     public function testArrayAccessIsset(mixed $initial, mixed $index, bool $isset): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($isset, isset($instance[$index]));
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testArrayAccessIssetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testArrayAccessIssetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
     }
 
-    /**
-     * @dataProvider issetDataProvider
-     */
+    #[DataProvider('issetDataProvider')]
     public function testArrayAccessIssetByReference(mixed $initial, mixed $index, bool $isset): void
     {
         $instance = static::getInstance([$initial]);

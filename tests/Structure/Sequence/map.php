@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait map
 {
     public static function mapDataProvider(): array
@@ -22,9 +24,7 @@ trait map
         ];
     }
 
-    /**
-     * @dataProvider mapDataProvider
-     */
+    #[DataProvider('mapDataProvider')]
     public function testMap(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);

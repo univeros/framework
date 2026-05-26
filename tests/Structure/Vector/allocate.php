@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Vector;
 
 use Altair\Structure\Contracts\VectorInterface;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait allocate
 {
     public static function allocateDataProvider(): array
@@ -23,9 +24,7 @@ trait allocate
         ];
     }
 
-    /**
-     * @dataProvider allocateDataProvider
-     */
+    #[DataProvider('allocateDataProvider')]
     public function testAllocate(int $initial, int $allocate, int $expected): void
     {
         $instance = static::getInstance();

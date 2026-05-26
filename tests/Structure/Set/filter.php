@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait filter
 {
     public static function filterDataProvider(): array
@@ -18,9 +20,7 @@ trait filter
         ];
     }
 
-    /**
-     * @dataProvider filterDataProvider
-     */
+    #[DataProvider('filterDataProvider')]
     public function testFilter(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);
@@ -32,9 +32,7 @@ trait filter
         $this->assertEquals($expected, $filtered->toArray());
     }
 
-    /**
-     * @dataProvider filterDataProvider
-     */
+    #[DataProvider('filterDataProvider')]
     public function testFilterWithoutCallback(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);

@@ -61,11 +61,12 @@ class StandardReflection implements ReflectionInterface
     #[\Override]
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
-        $reflectionClass = $parameter->getClass();
+        $type = $parameter->getType();
+        if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
+            return null;
+        }
 
-        return $reflectionClass instanceof ReflectionClass
-            ? $reflectionClass->getName()
-            : null;
+        return $type->getName();
     }
 
     /**

@@ -70,13 +70,9 @@ class Filesystem
      */
     public function readLines(string $path): array
     {
-        // Read file into an array of lines with auto-detected line endings
-        $autodetect = ini_get('auto_detect_line_endings');
-        ini_set('auto_detect_line_endings', '1');
-        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        ini_set('auto_detect_line_endings', $autodetect);
-
-        return $lines;
+        // auto_detect_line_endings was deprecated in PHP 8.1; PHP now handles CRLF/CR
+        // line endings natively for file()/fgets() without configuration.
+        return file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
 
     /**

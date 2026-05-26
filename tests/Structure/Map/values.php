@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 use Altair\Structure\Vector;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait values
 {
     public static function valuesDataProvider(): array
@@ -16,9 +17,7 @@ trait values
         ];
     }
 
-    /**
-     * @dataProvider valuesDataProvider
-     */
+    #[DataProvider('valuesDataProvider')]
     public function testValues(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);

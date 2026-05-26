@@ -5,14 +5,15 @@ namespace Altair\Tests\Cookie;
 use Altair\Cookie\Support\CookieStr;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class CookieStrTest extends TestCase
 {
     /**
      * @param $string
      * @param $count
      *
-     * @dataProvider  setCookieStringDataProvider
      */
+    #[DataProvider('setCookieStringDataProvider')]
     public function testSplit(string $string, int $count): void
     {
         $attributes = (new CookieStr())->split($string);

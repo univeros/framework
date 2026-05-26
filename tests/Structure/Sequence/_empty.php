@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _empty
 {
     public static function emptyDataProvider(): array
@@ -35,36 +37,28 @@ trait _empty
         ];
     }
 
-    /**
-     * @dataProvider emptyDataProvider
-     */
+    #[DataProvider('emptyDataProvider')]
     public function testArrayAccessEmpty(mixed $initial, mixed $index, bool $empty): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($empty, empty($instance[$index]));
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testArrayAccessEmptyIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testArrayAccessEmptyIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
     }
 
-    /**
-     * @dataProvider emptyDataProvider
-     */
+    #[DataProvider('emptyDataProvider')]
     public function testArrayAccessEmptyByReference(mixed $initial, mixed $index, bool $empty): void
     {
         $instance = static::getInstance([$initial]);

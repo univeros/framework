@@ -3,6 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 use Altair\Structure\Pair;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _var_dump
 {
     public static function varDumpDataProvider(): array
@@ -24,9 +25,7 @@ trait _var_dump
         ];
     }
 
-    /**
-     * @dataProvider varDumpDataProvider
-     */
+    #[DataProvider('varDumpDataProvider')]
     public function testVarDump(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

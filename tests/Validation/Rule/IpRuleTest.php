@@ -7,6 +7,7 @@ use Altair\Validation\Exception\InvalidArgumentException;
 use Altair\Validation\Rule\IpRule;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class IpRuleTest extends TestCase
 {
     public static function trueProvider(): array
@@ -68,53 +69,53 @@ class IpRuleTest extends TestCase
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
+    #[DataProvider('trueProvider')]
     public function testPayloadTrue(string $value, $options = null, string $range = null): void
     {
         $this->assertTrue($this->assertPayload($value, $options, $range));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
+    #[DataProvider('falseProvider')]
     public function testPayloadFalse(string $value, int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertPayload($value, $options, $range));
     }
 
     /**
-     * @dataProvider trueProvider
      * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
+    #[DataProvider('trueProvider')]
     public function testValueTrue(string $value, $options = null, string $range = null): void
     {
         $this->assertTrue($this->assertValue($value, $options, $range));
     }
 
     /**
-     * @dataProvider falseProvider
      * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
+    #[DataProvider('falseProvider')]
     public function testValueFalse(string $value, int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));
     }
 
     /**
-     * @dataProvider invalidIpsForNetworkRangeProvider
      * @param $value
      */
+    #[DataProvider('invalidIpsForNetworkRangeProvider')]
     public function testInvalidIpsForRange(string $value, $options = null, string $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));

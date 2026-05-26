@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait slice
 {
     public static function sliceDataProvider(): array
@@ -20,9 +22,7 @@ trait slice
         return $data;
     }
 
-    /**
-     * @dataProvider sliceDataProvider
-     */
+    #[DataProvider('sliceDataProvider')]
     public function testSlice(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
@@ -34,9 +34,7 @@ trait slice
         $this->assertToArray($expected, $sliced);
     }
 
-    /**
-     * @dataProvider sliceDataProvider
-     */
+    #[DataProvider('sliceDataProvider')]
     public function testSliceWithoutLength(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);

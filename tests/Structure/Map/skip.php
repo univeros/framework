@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait skip
 {
     public static function skipDataProvider(): array
@@ -27,9 +29,7 @@ trait skip
         ];
     }
 
-    /**
-     * @dataProvider skipDataProvider
-     */
+    #[DataProvider('skipDataProvider')]
     public function testSkip(array $values, int $position, array $expected): void
     {
         $instance = static::getInstance($values);
@@ -38,9 +38,7 @@ trait skip
         $this->assertEquals($expected, [$pair->key, $pair->value]);
     }
 
-    /**
-     * @dataProvider skipOutOfRangeDataProvider
-     */
+    #[DataProvider('skipOutOfRangeDataProvider')]
     public function testSkipIndexOutOfRange(array $values, int $position): void
     {
         $this->expectIndexOutOfRangeException();

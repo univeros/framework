@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _foreach
 {
-    /**
-     * @dataProvider basicDataProvider
-     */
+    #[DataProvider('basicDataProvider')]
     public function testForEach(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

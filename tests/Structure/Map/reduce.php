@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait reduce
 {
     public static function reduceDataProvider(): array
@@ -62,9 +64,7 @@ trait reduce
         ];
     }
 
-    /**
-     * @dataProvider reduceDataProvider
-     */
+    #[DataProvider('reduceDataProvider')]
     public function testReduce(array $values, mixed $initial, callable $callback, mixed $expected): void
     {
         $instance = static::getInstance($values);
@@ -75,9 +75,7 @@ trait reduce
         $this->assertEquals($expected, $reduced);
     }
 
-    /**
-     * @dataProvider reduceWithoutInitialDataProvider
-     */
+    #[DataProvider('reduceWithoutInitialDataProvider')]
     public function testReduceWithoutInitial(array $values, callable $callback, mixed $expected): void
     {
         $instance = static::getInstance($values);

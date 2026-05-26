@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait join
 {
     public static function joinDataProvider(): array
@@ -23,9 +25,7 @@ trait join
         return $data;
     }
 
-    /**
-     * @dataProvider joinDataProvider
-     */
+    #[DataProvider('joinDataProvider')]
     public function testJoin(array $values, mixed $glue): void
     {
         $instance = static::getInstance($values);
@@ -33,9 +33,7 @@ trait join
         $this->assertEquals($expected, $instance->join($glue));
     }
 
-    /**
-     * @dataProvider joinDataProvider
-     */
+    #[DataProvider('joinDataProvider')]
     public function testJoinWithoutGlue(array $values, mixed $glue): void
     {
         $instance = static::getInstance($values);

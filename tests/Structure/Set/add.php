@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait add
 {
     public static function addDataProvider(): array
@@ -37,9 +39,7 @@ trait add
         ];
     }
 
-    /**
-     * @dataProvider addDataProvider
-     */
+    #[DataProvider('addDataProvider')]
     public function testAdd(
         array $initial,
         array $values,
@@ -55,9 +55,7 @@ trait add
         $this->assertToArray($expected, $instance);
     }
 
-    /**
-     * @dataProvider addDataProvider
-     */
+    #[DataProvider('addDataProvider')]
     public function testArrayAccessAdd(
         array $initial,
         array $values,
@@ -73,9 +71,7 @@ trait add
         $this->assertToArray($expected, $instance);
     }
 
-    /**
-     * @dataProvider addDataProvider
-     */
+    #[DataProvider('addDataProvider')]
     public function testAddVariadic(
         array $initial,
         array $values,

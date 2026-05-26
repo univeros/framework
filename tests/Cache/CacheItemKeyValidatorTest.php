@@ -5,6 +5,7 @@ namespace Altair\Tests\Cache;
 use Altair\Cache\Validator\CacheItemKeyValidator;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class CacheItemKeyValidatorTest extends TestCase
 {
     private CacheItemKeyValidator $validator;
@@ -15,18 +16,18 @@ class CacheItemKeyValidatorTest extends TestCase
     }
 
     /**
-     * @dataProvider provideInvalidKey
      * @param mixed $key
      */
+    #[DataProvider('provideInvalidKey')]
     public function testInvalidKey(string|bool|int|float|\Exception|array|null $key): void
     {
         $this->assertFalse($this->validator->validate($key));
     }
 
     /**
-     * @dataProvider provideValidKey
      * @param mixed $key
      */
+    #[DataProvider('provideValidKey')]
     public function testValiddKey(string $key): void
     {
         $this->assertTrue($this->validator->validate($key));

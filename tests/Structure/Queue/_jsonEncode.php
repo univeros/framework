@@ -1,11 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Queue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait _jsonEncode
 {
-    /**
-     * @dataProvider basicDataProvider
-     */
+    #[DataProvider('basicDataProvider')]
     public function testJsonEncode(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);

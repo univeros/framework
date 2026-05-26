@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\PriorityQueue;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait allocate
 {
     public static function allocateDataProvider(): array
@@ -19,9 +21,7 @@ trait allocate
         ];
     }
 
-    /**
-     * @dataProvider allocateDataProvider
-     */
+    #[DataProvider('allocateDataProvider')]
     public function testAllocate(int $initial, int $allocate, int $expected): void
     {
         $instance = static::getInstance();

@@ -4,6 +4,7 @@ namespace Altair\Tests\Security;
 use Altair\Security\Support\HkdfKey;
 use PHPUnit\Framework\TestCase;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 class HkdfKeyTest extends TestCase
 {
     public static function dataProvider(): array
@@ -34,7 +35,6 @@ class HkdfKeyTest extends TestCase
     }
 
     /**
-     * @dataProvider dataProvider
      *
      * @param $ikm
      * @param $salt
@@ -42,6 +42,7 @@ class HkdfKeyTest extends TestCase
      * @param $l
      * @param $okm
      */
+    #[DataProvider('dataProvider')]
     public function testHkdf(string $ikm, string $salt, string $info, int $l, string $okm): void
     {
         $derivedKey = (new HkdfKey(hex2bin($ikm), hex2bin($salt), hex2bin($info), $l))->derive();

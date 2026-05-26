@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait reverse
 {
     public static function reversedDataProvider(): array
@@ -11,9 +13,7 @@ trait reverse
         );
     }
 
-    /**
-     * @dataProvider reversedDataProvider
-     */
+    #[DataProvider('reversedDataProvider')]
     public function testReversed(array $values, array $expected): void
     {
         $instance = static::getInstance($values);

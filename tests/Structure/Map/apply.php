@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait apply
 {
     public static function applyDataProvider(): array
@@ -20,9 +22,7 @@ trait apply
         ];
     }
 
-    /**
-     * @dataProvider applyDataProvider
-     */
+    #[DataProvider('applyDataProvider')]
     public function testApply(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);

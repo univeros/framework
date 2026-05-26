@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Sequence;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait get
 {
     public static function getDataProvider(): array
@@ -20,9 +22,7 @@ trait get
         ];
     }
 
-    /**
-     * @dataProvider getDataProvider
-     */
+    #[DataProvider('getDataProvider')]
     public function testGet(array $initial, mixed $index, mixed $return): void
     {
         $instance = static::getInstance($initial);
@@ -33,9 +33,7 @@ trait get
         $this->assertEquals($return, $returned);
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testGetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -43,9 +41,7 @@ trait get
         $instance->get($index);
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testGetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();
@@ -53,18 +49,14 @@ trait get
         $instance->get($index);
     }
 
-    /**
-     * @dataProvider getDataProvider
-     */
+    #[DataProvider('getDataProvider')]
     public function testArrayAccessGet(array $initial, mixed $index, mixed $return): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($return, $instance[$index]);
     }
 
-    /**
-     * @dataProvider badIndexDataProvider
-     */
+    #[DataProvider('badIndexDataProvider')]
     public function testArrayAccessGetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
@@ -72,9 +64,7 @@ trait get
         $instance[$index];
     }
 
-    /**
-     * @dataProvider outOfRangeDataProvider
-     */
+    #[DataProvider('outOfRangeDataProvider')]
     public function testArrayAccessGetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);

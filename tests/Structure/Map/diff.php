@@ -1,6 +1,8 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+
+use PHPUnit\Framework\Attributes\DataProvider;
 trait diff
 {
     public static function diffDataProvider(): array
@@ -17,9 +19,7 @@ trait diff
         ];
     }
 
-    /**
-     * @dataProvider diffDataProvider
-     */
+    #[DataProvider('diffDataProvider')]
     public function testDiff(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
@@ -28,9 +28,7 @@ trait diff
         $this->assertEquals($expected, $a->diff($b)->toArray());
     }
 
-    /**
-     * @dataProvider diffDataProvider
-     */
+    #[DataProvider('diffDataProvider')]
     public function testDiffWithSelf(array $a, array $b, array $expected): void
     {
         $map = static::getInstance($a);
