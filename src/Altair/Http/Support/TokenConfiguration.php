@@ -12,40 +12,29 @@ namespace Altair\Http\Support;
 use Altair\Http\Contracts\TokenConfigurationInterface;
 use Lcobucci\JWT\Signer;
 
-final class TokenConfiguration implements TokenConfigurationInterface
+final readonly class TokenConfiguration implements TokenConfigurationInterface
 {
-    private $publicKey;
-    private $ttl;
-    private $signer;
-    private $timestamp;
-    private $privateKey;
+    private int $timestamp;
 
     /**
      * TokenGeneratorConfiguration constructor.
      *
-     * @param string $publicKey
-     * @param int $ttl
-     * @param Signer $signer
      * @param int|null $timestamp
-     * @param string|null $privateKey
      */
     public function __construct(
-        string $publicKey,
-        int $ttl,
-        Signer $signer,
+        private string $publicKey,
+        private int $ttl,
+        private Signer $signer,
         int $timestamp = null,
-        string $privateKey = null
+        private ?string $privateKey = null
     ) {
-        $this->publicKey = $publicKey;
-        $this->ttl = $ttl;
-        $this->signer = $signer;
         $this->timestamp = $timestamp ?: time();
-        $this->privateKey = $privateKey;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPublicKey(): string
     {
         return $this->publicKey;
@@ -54,6 +43,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getTtl(): int
     {
         return $this->ttl;
@@ -62,6 +52,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSigner(): Signer
     {
         return $this->signer;
@@ -70,6 +61,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getTimestamp():int
     {
         return $this->timestamp;
@@ -78,6 +70,7 @@ final class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPrivateKey(): ?string
     {
         return $this->privateKey;
@@ -86,8 +79,9 @@ final class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getExpirationTimestamp(): int
     {
-        return $this->getTimestamp() + $this->getTtl();
+        return $this->timestamp + $this->ttl;
     }
 }

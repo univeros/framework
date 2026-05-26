@@ -14,31 +14,23 @@ use Exception;
 
 class PayloadValidator
 {
-    /**
-     * @var EncrypterInterface
-     */
-    protected $encrypter;
-    /**
-     * @var array the payload to validate against
-     */
-    protected $payload;
 
     /**
      * PayloadValidator constructor.
-     *
-     * @param EncrypterInterface $encrypter
-     * @param array $payload
      */
-    public function __construct(EncrypterInterface $encrypter, array $payload)
+    public function __construct(
+        protected EncrypterInterface $encrypter,
+        /**
+         * @var array the payload to validate against
+         */
+        protected array $payload
+    )
     {
-        $this->encrypter = $encrypter;
-        $this->payload = $payload;
     }
 
     /**
      * Determines whether the payload has a valid format.
      * @throws Exception
-     * @return bool
      */
     public function validate(): bool
     {
@@ -48,7 +40,6 @@ class PayloadValidator
     /**
      * Checks whether the passed payload has a valid mac value
      * @throws Exception
-     * @return bool
      */
     protected function hasValidMac(): bool
     {
@@ -57,7 +48,7 @@ class PayloadValidator
         $mac = hash_hmac(EncrypterInterface::HASH_SHA256_ALGORITHM, $data, $bytes, true);
 
         return hash_equals(
-            hash_hmac(EncrypterInterface::HASH_SHA256_ALGORITHM, $this->payload['mac'], $bytes, true),
+            hash_hmac(EncrypterInterface::HASH_SHA256_ALGORITHM, (string) $this->payload['mac'], $bytes, true),
             $mac
         );
     }

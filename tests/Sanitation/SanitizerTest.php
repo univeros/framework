@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class SanitizerTest extends TestCase
 {
-    public function testFilters()
+    public function testFilters(): void
     {
         $sanitizer = $this->getSanitizer();
 
@@ -55,7 +55,7 @@ class SanitizerTest extends TestCase
         $this->assertEquals('Hello world', $sanitized->lowerCaseUpperCaseFirst);
     }
 
-    protected function getSanitizer()
+    protected function getSanitizer(): Sanitizer
     {
         return new Sanitizer(new FiltersRunner(new FilterResolver(new Container())));
     }

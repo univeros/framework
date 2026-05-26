@@ -20,9 +20,10 @@ class MemcachedCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
-        $factory = function () {
+        $factory = function (): \Memcached {
             $memcached = new Memcached();
             $memcached->addServers([
                 [

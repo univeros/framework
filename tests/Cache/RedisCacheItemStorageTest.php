@@ -7,6 +7,7 @@ use Redis;
 
 class RedisCacheItemStorageTest extends AbstractStorageTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         if (!extension_loaded('redis')) {

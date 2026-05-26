@@ -16,6 +16,7 @@ use Altair\Session\SessionManager;
 
 class SessionManagerConfiguration implements ConfigurationInterface
 {
+    #[\Override]
     public function apply(Container $container): void
     {
         // This manager should be working with Altair's Http Component

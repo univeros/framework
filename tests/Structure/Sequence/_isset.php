@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait _isset
 {
-    public static function issetDataProvider()
+    public static function issetDataProvider(): array
     {
         // initial, index, isset
         return [
@@ -34,10 +34,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessIsset($initial, $index, bool $isset)
+    public function testArrayAccessIsset(mixed $initial, mixed $index, bool $isset): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($isset, isset($instance[$index]));
@@ -45,10 +43,8 @@ trait _isset
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessIssetIndexBadIndex($initial, $index)
+    public function testArrayAccessIssetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
@@ -56,10 +52,8 @@ trait _isset
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessIssetIndexOutOfRange($initial, $index)
+    public function testArrayAccessIssetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
@@ -67,10 +61,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessIssetByReference($initial, $index, bool $isset)
+    public function testArrayAccessIssetByReference(mixed $initial, mixed $index, bool $isset): void
     {
         $instance = static::getInstance([$initial]);
         $this->assertEquals($isset, isset($instance[0][$index]));

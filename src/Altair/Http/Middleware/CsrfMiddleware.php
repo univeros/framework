@@ -35,6 +35,7 @@ class CsrfMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isUnsafeMethod($request) && !$this->validateCsrfTokenFromRequest($request)) {
@@ -63,6 +64,7 @@ class CsrfMiddleware implements MiddlewareInterface
         if (!is_array($data) || !isset($data[self::PARAM])) {
             return false;
         }
+
         $token = base64_decode((string) $data[self::PARAM], true);
         if ($token === false) {
             return false;

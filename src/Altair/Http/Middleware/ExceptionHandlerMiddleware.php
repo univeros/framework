@@ -24,17 +24,11 @@ use Throwable;
 
 class ExceptionHandlerMiddleware implements MiddlewareInterface
 {
-    private readonly ErrorHandlerInterface $handler;
-
-    public function __construct(
-        private readonly ResponseFactoryInterface $responseFactory,
-        ?ErrorHandlerInterface $handler = null,
-        private readonly ?StatusCodeValidatorInterface $validator = null,
-        private readonly bool $capture = false,
-    ) {
-        $this->handler = $handler ?? new DefaultErrorHandler();
+    public function __construct(private readonly ResponseFactoryInterface $responseFactory, private readonly ErrorHandlerInterface $handler = new DefaultErrorHandler(), private readonly ?StatusCodeValidatorInterface $validator = null, private readonly bool $capture = false)
+    {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         ob_start();
@@ -46,12 +40,12 @@ class ExceptionHandlerMiddleware implements MiddlewareInterface
             return $this->isError($response->getStatusCode())
                 ? $this->handleError($request, null, $response->getStatusCode())
                 : $response;
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             if (!$this->capture) {
-                throw $e;
+                throw $throwable;
             }
 
-            return $this->handleError($request, $e);
+            return $this->handleError($request, $throwable);
         } finally {
             while (ob_get_level() >= $level) {
                 ob_end_clean();
@@ -71,7 +65,7 @@ class ExceptionHandlerMiddleware implements MiddlewareInterface
 
     private function isError(int $code): bool
     {
-        return $this->validator !== null
+        return $this->validator instanceof StatusCodeValidatorInterface
             ? ($this->validator)($code)
             : ($code >= HttpStatusCodeInterface::HTTP_BAD_REQUEST && $code < HttpStatusCodeInterface::HTTP_MAX_RANGE);
     }

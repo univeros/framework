@@ -15,24 +15,25 @@ use Memcached;
 
 class MemcachedCacheItemStorage implements CacheItemStorageInterface
 {
-    protected $client;
+    protected \Memcached $client;
+
     protected $maxIdLength = 250;
 
     /**
      * MemcachedCacheItemPoolStorage constructor.
-     *
-     * @param Memcached $memcached
      */
     public function __construct(Memcached $memcached)
     {
         if (!(extension_loaded('memcached') && version_compare(phpversion('memcached'), '2.2.0', '>='))) {
             throw new CacheException('Memcached >= 2.2.0 is required.');
         }
+
         $opt = $memcached->getOption(Memcached::OPT_SERIALIZER);
         if (Memcached::SERIALIZER_PHP !== $opt && Memcached::SERIALIZER_IGBINARY !== $opt) {
             throw new CacheException('MemcachedStorage: "serializer" option must be "php" or "igbinary".');
         }
-        $this->maxIdLength -= strlen($memcached->getOption(Memcached::OPT_PREFIX_KEY));
+
+        $this->maxIdLength -= strlen((string) $memcached->getOption(Memcached::OPT_PREFIX_KEY));
 
         $this->client = $memcached;
     }
@@ -40,6 +41,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxIdLength(): ?int
     {
         return $this->maxIdLength;
@@ -48,6 +50,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getItems(array $keys = []): array
     {
         return $this->checkResponse($this->client->getMulti($keys));
@@ -56,14 +59,19 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    public function hasItem(string $key): bool
+    #[\Override]
+    public function hasItem(string $key) : bool
     {
-        return false !== $this->client->get($key) || Memcached::RES_SUCCESS === $this->client->getResultCode();
+        if (false !== $this->client->get($key)) {
+            return true;
+        }
+        return Memcached::RES_SUCCESS === $this->client->getResultCode();
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         return $this->checkResponse($this->client->flush());
@@ -72,6 +80,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
         $success = true;
@@ -88,7 +97,8 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    public function save(array $values, int $lifespan)
+    #[\Override]
+    public function save(array $values, int $lifespan): bool
     {
         return Memcached::RES_SUCCESS === $this->checkResponse($this->client->setMulti($values, $lifespan));
     }
@@ -102,7 +112,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
      *
      * @return mixed
      */
-    protected function checkResponse($result)
+    protected function checkResponse(mixed $result)
     {
         $code = $this->client->getResultCode();
 
@@ -113,7 +123,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
         throw new CacheException(
             sprintf(
                 'MemcachedStorage client error: %s.',
-                strtolower($this->client->getResultMessage())
+                strtolower((string) $this->client->getResultMessage())
             )
         );
     }

@@ -17,8 +17,6 @@ interface MiddlewareResolverInterface
      * MiddlewareInterface.
      *
      * @param mixed $entry The middleware queue entry.
-     *
-     * @return MiddlewareInterface
      */
-    public function __invoke($entry): MiddlewareInterface;
+    public function __invoke(mixed $entry): MiddlewareInterface;
 }

@@ -20,9 +20,10 @@ class RedisCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
-        $factory = function () {
+        $factory = function (): PredisCacheItemStorage {
             $client = new Client(
                 [
                     'host' => $this->env->get('CACHE_REDIS_HOST', 'localhost'),

@@ -10,20 +10,16 @@ abstract class AbstractFilterTest extends TestCase
 {
     /**
      * @dataProvider dataProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testFilteredPayload($value, $expected)
+    public function testFilteredPayload(mixed $value, mixed $expected): void
     {
         $this->assertTrue($this->parsePayload($value, $expected));
     }
 
     /**
      * @dataProvider dataProvider
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testFilteredValue($value, $expected)
+    public function testFilteredValue(mixed $value, mixed $expected): void
     {
         $this->assertTrue($this->parseValue($value, $expected));
     }
@@ -35,9 +31,7 @@ abstract class AbstractFilterTest extends TestCase
         $rule = $this->buildFilter();
         $payload = $this->buildPayload($value);
 
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 

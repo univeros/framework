@@ -8,11 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class CacheItemTest extends TestCase
 {
-    private $fn;
+    private ?\Closure $fn;
 
+    #[\Override]
     protected function setUp(): void    {
         $this->fn = Closure::bind(
-            function (string $key, $value, bool $isHit) {
+            function (string $key, $value, bool $isHit): CacheItem {
                 $cacheItem = new CacheItem();
                 $cacheItem->{'key'} = $key;
                 $cacheItem->{'value'} = $value;
@@ -25,7 +26,7 @@ class CacheItemTest extends TestCase
         );
     }
 
-    public function testKey()
+    public function testKey(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, $key = 'somekey', null, false);
@@ -33,7 +34,7 @@ class CacheItemTest extends TestCase
         $this->assertEquals($key, $item->getKey());
     }
 
-    public function testExpiresAfterInterval()
+    public function testExpiresAfterInterval(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -44,12 +45,13 @@ class CacheItemTest extends TestCase
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
         $property->setAccessible(true);
+
         $value = $property->getValue($item);
         $this->assertNotNull($value);
         $this->assertGreaterThan(time(), $value);
     }
 
-    public function testExpiresAfterSeconds()
+    public function testExpiresAfterSeconds(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -62,7 +64,7 @@ class CacheItemTest extends TestCase
         $this->assertGreaterThan(time(), $property->getValue($item));
     }
 
-    public function testExpiresAfterNull()
+    public function testExpiresAfterNull(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -74,7 +76,7 @@ class CacheItemTest extends TestCase
         $this->assertNull($property->getValue($item));
     }
 
-    public function testExpiresAt()
+    public function testExpiresAt(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -87,7 +89,7 @@ class CacheItemTest extends TestCase
         $this->assertEquals($dt->format('U'), $property->getValue($item));
     }
 
-    public function testExpiresAtNull()
+    public function testExpiresAtNull(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -99,7 +101,7 @@ class CacheItemTest extends TestCase
         $this->assertNull($property->getValue($item));
     }
 
-    public function testHit()
+    public function testHit(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -109,7 +111,7 @@ class CacheItemTest extends TestCase
         $this->assertTrue($item->isHit());
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);
@@ -118,7 +120,7 @@ class CacheItemTest extends TestCase
         $this->assertEquals($value, $item->get());
     }
 
-    public function testValue()
+    public function testValue(): void
     {
         /** @var CacheItem $item */
         $item = call_user_func($this->fn, 'somekey', null, false);

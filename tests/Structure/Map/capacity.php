@@ -5,7 +5,7 @@ use Altair\Structure\Contracts\CapacityInterface;
 
 trait capacity
 {
-    public function testCapacity()
+    public function testCapacity(): void
     {
         $min = CapacityInterface::MIN_CAPACITY;
 
@@ -24,7 +24,7 @@ trait capacity
         $this->assertEquals($min * 2, $instance->capacity());
     }
 
-    public function testAutoTruncate()
+    public function testAutoTruncate(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
         $expected = $instance->capacity() / 2;
@@ -36,7 +36,7 @@ trait capacity
         $this->assertEquals($expected, $instance->capacity());
     }
 
-    public function testClearResetsCapacity()
+    public function testClearResetsCapacity(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
         $instance = $instance->clear();

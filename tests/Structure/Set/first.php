@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait first
 {
-    public static function firstDataProvider()
+    public static function firstDataProvider(): array
     {
         // initial, returned
         return [
@@ -15,15 +15,14 @@ trait first
 
     /**
      * @dataProvider firstDataProvider
-     * @param mixed $expected
      */
-    public function testFirst(array $initial, $expected)
+    public function testFirst(array $initial, mixed $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->first());
     }
 
-    public function testFirstNowAllowedWhenEmpty()
+    public function testFirstNowAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

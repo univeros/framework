@@ -3,23 +3,21 @@ namespace Altair\Tests\Structure\Map;
 
 trait map
 {
-    public static function mapDataProvider()
+    public static function mapDataProvider(): array
     {
         // values, callback
         return [
             // Test mapping an empty map produces an empty map.
             [
                 [],
-                function () {
+                function (): void {
                 }
             ],
 
             // Test basic mapping where integers are doubled.
             [
                 [1, 2, 3],
-                function ($k, $v) {
-                    return $v * 2;
-                }
+                fn($k, $v): int|float => $v * 2
             ],
         ];
     }
@@ -27,7 +25,7 @@ trait map
     /**
      * @dataProvider mapDataProvider
      */
-    public function testMap(array $values, callable $callback)
+    public function testMap(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);
 
@@ -38,18 +36,18 @@ trait map
         $this->assertEquals($expected, $mapped->toArray());
     }
 
-    public function testMapCallbackThrowsException()
+    public function testMapCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
 
         try {
             $mapped = $instance->map(
-                function ($value) {
+                function ($value): void {
                     throw new \Exception();
                 }
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
 
@@ -59,20 +57,20 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
-    public function testMapCallbackThrowsExceptionLaterOn()
+    public function testMapCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
 
         try {
             $mapped = $instance->map(
-                function ($key, $value) {
+                function ($key, $value): void {
                     if ($value === 3) {
                         throw new \Exception();
                     }
                 }
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
 
@@ -82,7 +80,7 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
-    public function testMapDoesNotLeakWhenCallbackFails()
+    public function testMapDoesNotLeakWhenCallbackFails(): void
     {
         $instance = static::getInstance([
             "a" => new \stdClass(),
@@ -91,15 +89,16 @@ trait map
         ]);
         $mapped = null;
         try {
-            $mapped = $instance->map(function ($key, $value) {
+            $mapped = $instance->map(function ($key, $value): void {
                 if ($key === "c") {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertNull($mapped);
             return;
         }
+
         $this->fail('Exception should have been caught');
     }
 }

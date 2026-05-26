@@ -12,11 +12,15 @@ namespace Altair\Security\Contracts;
 interface EncrypterInterface
 {
     public const AES_128_CBC_CIPHER = 'AES-128-CBC';
+
     public const AES_192_CBC_CIPHER = 'AES-192-CBC';
+
     public const AES_256_CBC_CIPHER = 'AES-256-CBC';
 
     public const AES_128_CBC_CIPHER_KEY_LENGTH = 16;
+
     public const AES_192_CBC_CIPHER_KEY_LENGTH = 24;
+
     public const AES_256_CBC_CIPHER_KEY_LENGTH = 32;
 
     public const BLOCK_SIZE = 16;
@@ -26,16 +30,13 @@ interface EncrypterInterface
     /**
      * Encrypts a given value. Returns a base64encode'd JSON string.
      *
-     * @param mixed $value
      *
-     * @return string
      */
-    public function encrypt($value): string;
+    public function encrypt(mixed $value): string;
 
     /**
      * Decrypts a value. The value represents a base64encode'd JSON string with the values required for decryption.
      *
-     * @param string $payload
      *
      * @return mixed
      */
@@ -47,8 +48,6 @@ interface EncrypterInterface
      * @param string $iv initialization vector
      * @param string $data the data to be protected
      * @param bool $raw whether it should be raw
-     *
-     * @return string
      */
     public function hash(string $iv, string $data, bool $raw = false): string;
 }

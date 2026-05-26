@@ -8,17 +8,12 @@ use PHPUnit\Framework\TestCase;
 
 class CallableCommandLocatorServiceTest extends TestCase
 {
-    public function testItFindsCorrectCommandHandlerUsingFunctionCallable()
+    public function testItFindsCorrectCommandHandlerUsingFunctionCallable(): void
     {
-        $callable = static function ($name) {
-            switch ($name) {
-                case 'TestCommandMessage':
-                    return new TestCommand();
-                case 'TestCommandWithErrorLogMessage':
-                    return new TestCommandInjectsErrorLogMessage();
-            }
-
-            return null;
+        $callable = static fn($name): TestCommand|TestCommandInjectsErrorLogMessage|null => match ($name) {
+            'TestCommandMessage' => new TestCommand(),
+            'TestCommandWithErrorLogMessage' => new TestCommandInjectsErrorLogMessage(),
+            default => null,
         };
 
         $locator = new CallableCommandLocatorService($callable);
@@ -31,7 +26,7 @@ class CallableCommandLocatorServiceTest extends TestCase
         $this->assertInstanceOf(TestCommandInjectsErrorLogMessage::class, $command);
     }
 
-    public function testItFindsCorrectCommandHandlerUsingCallableClass()
+    public function testItFindsCorrectCommandHandlerUsingCallableClass(): void
     {
         $callable = new CallableClass();
 
@@ -45,10 +40,10 @@ class CallableCommandLocatorServiceTest extends TestCase
         $this->assertInstanceOf(TestCommandInjectsErrorLogMessage::class, $command);
     }
 
-    public function testItThrowsException()
+    public function testItThrowsException(): void
     {
         $locator = new CallableCommandLocatorService(
-            function () {
+            function (): void {
             }
         );
         $this->assertFalse($locator->has('none'));

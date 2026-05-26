@@ -18,8 +18,6 @@ class CallbackRule extends AbstractRule
 
     /**
      * CallbackRule constructor.
-     *
-     * @param callable $callable
      */
     public function __construct(callable $callable)
     {
@@ -29,6 +27,7 @@ class CallbackRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         return call_user_func($this->callable, $value);
@@ -37,6 +36,7 @@ class CallbackRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid value.', $value);

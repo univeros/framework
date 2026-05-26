@@ -33,6 +33,7 @@ class CacheMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $key = $this->getCacheKey($request);
@@ -43,9 +44,11 @@ class CacheMiddleware implements MiddlewareInterface
             foreach ($item->get() as $name => $header) {
                 $cached = $cached->withHeader($name, $header);
             }
+
             if ($this->cacheUtil->isNotModified($request, $cached)) {
                 return $cached;
             }
+
             $this->cache->deleteItem($key);
         }
 

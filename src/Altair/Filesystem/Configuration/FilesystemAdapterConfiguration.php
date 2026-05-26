@@ -19,6 +19,7 @@ use League\Flysystem\FilesystemOperator;
 
 class FilesystemAdapterConfiguration implements ConfigurationInterface
 {
+    #[\Override]
     public function apply(Container $container): void
     {
         // The concrete FilesystemAdapter (Local/S3/Ftp/Sftp/Dropbox) is registered by a sibling configuration.

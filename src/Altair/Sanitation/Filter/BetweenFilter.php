@@ -12,34 +12,22 @@ namespace Altair\Sanitation\Filter;
 class BetweenFilter extends AbstractFilter
 {
     /**
-     * @var mixed the minimum value
-     */
-    protected $min;
-    /**
-     * @var mixed the maximum value
-     */
-    protected $max;
-
-    /**
      * BetweenFilter constructor.
-     *
-     * @param mixed $min
-     * @param mixed $max
      */
-    public function __construct($min, $max)
+    public function __construct(protected mixed $min, protected mixed $max)
     {
-        $this->min = $min;
-        $this->max = $max;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function parse($value)
     {
         if ($value < $this->min) {
             return $this->min;
         }
+
         if ($value > $this->max) {
             return $this->max;
         }

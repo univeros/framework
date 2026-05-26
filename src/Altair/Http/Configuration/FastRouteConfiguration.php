@@ -19,35 +19,26 @@ use function FastRoute\simpleDispatcher;
 class FastRouteConfiguration implements ConfigurationInterface
 {
     /**
-     * @var RouteCollection
-     */
-    protected $routeCollection;
-
-    /**
      * FastRouteConfiguration constructor.
-     *
-     * @param RouteCollection $routeCollection
      */
-    public function __construct(RouteCollection $routeCollection)
+    public function __construct(protected RouteCollection $routeCollection)
     {
-        $this->routeCollection = $routeCollection;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
-        $factory = function () {
-            return simpleDispatcher(
-                function (RouteCollector $routeCollector) {
-                    foreach ($this->routeCollection as $request => $action) {
-                        [$method, $path] = explode(' ', $request, 2);
-                        $routeCollector->addRoute($method, $path, $action);
-                    }
+        $factory = fn() => simpleDispatcher(
+            function (RouteCollector $routeCollector): void {
+                foreach ($this->routeCollection as $request => $action) {
+                    [$method, $path] = explode(' ', $request, 2);
+                    $routeCollector->addRoute($method, $path, $action);
                 }
-            );
-        };
+            }
+        );
         $container->delegate(Dispatcher::class, $factory);
     }
 }

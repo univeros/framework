@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait _unset
 {
-    public function testArrayAccessUnset()
+    public function testArrayAccessUnset(): void
     {
         $set = static::getInstance();
         $this->expectArrayAccessUnsupportedException();

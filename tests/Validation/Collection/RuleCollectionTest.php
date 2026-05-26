@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class RuleCollectionTest extends TestCase
 {
-    public function testValidRules()
+    public function testValidRules(): void
     {
         $entity = new ValidEntity();
 
@@ -28,7 +28,7 @@ class RuleCollectionTest extends TestCase
         $this->assertTrue($ruleCollection->hasKey('testAttribute'));
     }
 
-    public function testExceptionsWithClassNotImplementingRuleInterface()
+    public function testExceptionsWithClassNotImplementingRuleInterface(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -36,7 +36,7 @@ class RuleCollectionTest extends TestCase
         $ruleCollection->put('fail', ValidEntity::class);
     }
 
-    public function testExceptionsWithWrongConfigurationNoClassKey()
+    public function testExceptionsWithWrongConfigurationNoClassKey(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

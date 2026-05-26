@@ -12,38 +12,19 @@ namespace Altair\Cookie;
 abstract class AbstractCookie
 {
     /**
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * @var string
-     */
-    protected $value;
-
-    /**
      * AbstractCookie constructor.
      *
-     * @param string $name
      * @param string|null $value
      */
-    protected function __construct(string $name, string $value = null)
+    protected function __construct(protected string $name, protected ?string $value = null)
     {
-        $this->name = $name;
-        $this->value = $value;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return null|string
-     */
     public function getValue(): ?string
     {
         return $this->value;

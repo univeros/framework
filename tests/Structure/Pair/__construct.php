@@ -5,7 +5,7 @@ use Altair\Structure\Pair;
 
 trait __construct
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $pair = new Pair('a', 1);
         $this->assertEquals('a', $pair->key);

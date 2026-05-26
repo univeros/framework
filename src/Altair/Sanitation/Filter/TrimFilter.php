@@ -11,10 +11,7 @@ namespace Altair\Sanitation\Filter;
 
 class TrimFilter extends AbstractFilter
 {
-    /**
-     * @var string
-     */
-    protected $chars;
+    protected string $chars;
 
     /**
      * TrimFilter constructor.
@@ -29,7 +26,8 @@ class TrimFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?string
     {
         if (!is_string($value)) {
             return null;

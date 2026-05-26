@@ -36,10 +36,12 @@ class SpamBlockerMiddleware implements MiddlewareInterface
         if (!is_file($path)) {
             throw new RuntimeException(sprintf('The spammers file "%s" does not exists.', $path));
         }
+
         $entries = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         $this->list = $entries === false ? [] : array_values($entries);
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $referer = parse_url($request->getHeaderLine('Referer'), PHP_URL_HOST) ?: '';

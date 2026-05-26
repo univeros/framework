@@ -14,9 +14,7 @@ class CookieStr
     /**
      * Splits cookie string by the cookie delimiter.
      *
-     * @param string $value
      *
-     * @return array
      */
     public function split(string $value): array
     {
@@ -28,8 +26,6 @@ class CookieStr
      * value the second -ie [cookie-name, cookie-value]
      *
      * @param string $value the cookie representation string
-     *
-     * @return array
      */
     public function splitPair(string $value): array
     {
@@ -39,9 +35,7 @@ class CookieStr
         }
 
         return array_map(
-            function ($part) {
-                return urldecode($part);
-            },
+            fn($part): string => urldecode((string) $part),
             $pairParts
         );
     }

@@ -16,9 +16,7 @@ interface RulesRunnerInterface extends MiddlewareRunnerInterface
     /**
      * Resets internal queue with new rules returns itself.
      *
-     * @param array $rules
      *
-     * @return RulesRunnerInterface
      */
     public function withRules(array $rules): RulesRunnerInterface;
 }

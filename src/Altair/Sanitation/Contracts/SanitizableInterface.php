@@ -28,8 +28,6 @@ interface SanitizableInterface
      *      ],
      *      'keyC' => RuleD::class
      * ]);
-     *
-     * @return FilterCollection
      */
     public function getFilters(): FilterCollection;
 }

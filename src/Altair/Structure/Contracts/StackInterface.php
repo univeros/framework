@@ -34,9 +34,7 @@ interface StackInterface extends CollectionInterface
     /**
      * Pushes zero or more values into the front of the queue.
      *
-     * @param mixed ...$values
      *
-     * @return StackInterface
      */
-    public function push(...$values): StackInterface;
+    public function push(mixed ...$values): StackInterface;
 }

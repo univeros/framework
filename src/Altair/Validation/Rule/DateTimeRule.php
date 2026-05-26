@@ -16,11 +16,13 @@ class DateTimeRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if ($value instanceof DateTime) {
             return (bool)$value;
         }
+
         if (!is_scalar($value) || trim($value) === '') {
             return false;
         }
@@ -32,9 +34,11 @@ class DateTimeRule extends AbstractRule
         // errors show as warnings
         return $datetime === false || $errors['warnings'] ? false : (bool)$datetime;
     }
+
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid date time value.', $value);

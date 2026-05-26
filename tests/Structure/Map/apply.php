@@ -3,21 +3,19 @@ namespace Altair\Tests\Structure\Map;
 
 trait apply
 {
-    public static function applyDataProvider()
+    public static function applyDataProvider(): array
     {
         // values, callback
         return [
             [
                 [],
-                function () {
+                function (): void {
                 }
             ],
 
             [
                 [1, 2, 3],
-                function ($k, $v) {
-                    return $v * 2;
-                }
+                fn($k, $v): int|float => $v * 2
             ],
         ];
     }
@@ -25,7 +23,7 @@ trait apply
     /**
      * @dataProvider applyDataProvider
      */
-    public function testApply(array $values, callable $callback)
+    public function testApply(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);
         $instance->apply($callback);
@@ -34,17 +32,17 @@ trait apply
         $this->assertToArray($expected, $instance);
     }
 
-    public function testApplyCallbackThrowsException()
+    public function testApplyCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
 
         try {
             $instance->apply(
-                function ($value) {
+                function ($value): void {
                     throw new \Exception();
                 }
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
 
             return;
@@ -53,13 +51,13 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-    public function testApplyCallbackThrowsExceptionLaterOn()
+    public function testApplyCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
 
         try {
             $instance->apply(
-                function ($key, $value) {
+                function ($key, $value): string {
                     if ($value === 3) {
                         throw new \Exception();
                     }
@@ -67,7 +65,7 @@ trait apply
                     return '*';
                 }
             );
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray(['*', '*', 3], $instance);
 
             return;
@@ -76,7 +74,7 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-    public function testApplyDoesNotLeakWhenCallbackFails()
+    public function testApplyDoesNotLeakWhenCallbackFails(): void
     {
         $instance = static::getInstance([
             "a" => new \stdClass(),
@@ -86,12 +84,12 @@ trait apply
         $result = null;
 
         try {
-            $result = $instance->apply(function ($key, $value) {
+            $result = $instance->apply(function ($key, $value): void {
                 if ($key === "c") {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertNull($result);
             return;
         }

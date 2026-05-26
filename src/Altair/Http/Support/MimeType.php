@@ -1007,10 +1007,6 @@ class MimeType
         '123' => 'application/vnd.lotus-1-2-3',
     ];
 
-    /**
-     * @param ResponseInterface $response
-     * @return string
-     */
     public function getFromResponseHeaderLine(ResponseInterface $response): string
     {
         $mime = strtolower($response->getHeaderLine('Content-Type'));
@@ -1018,10 +1014,6 @@ class MimeType
         return trim($mime[0]);
     }
 
-    /**
-     * @param string $file
-     * @return string
-     */
     public function getFromFileExtension(string $file): string
     {
         $file = new SplFileInfo($file);
@@ -1030,9 +1022,11 @@ class MimeType
         if ($extension === '') {
             return static::DEFAULT_MIME_TYPE;
         }
+
         if (array_key_exists($extension, $this->mimeTypes)) {
             return $this->mimeTypes[$extension];
         }
+
         if (function_exists('finfo_open') && $file->isFile()) {
             $path = $file->getPath();
             $fileInfo = finfo_open(FILEINFO_MIME);
@@ -1040,6 +1034,7 @@ class MimeType
             finfo_close($fileInfo);
             return $mimeType;
         }
+
         return static::DEFAULT_MIME_TYPE;
     }
 }

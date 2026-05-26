@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _isset
 {
-    public static function issetDataProvider()
+    public static function issetDataProvider(): array
     {
         // initial, key, isset
         return [
@@ -17,9 +17,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
-     * @param mixed $key
      */
-    public function testArrayAccessIsset(array $initial, $key, bool $isset)
+    public function testArrayAccessIsset(array $initial, mixed $key, bool $isset): void
     {
         $instance = static::getInstance();
 
@@ -32,9 +31,8 @@ trait _isset
 
     /**
      * @dataProvider issetDataProvider
-     * @param mixed $key
      */
-    public function testArrayAccessIssetByReference(array $initial, $key, bool $isset)
+    public function testArrayAccessIssetByReference(array $initial, mixed $key, bool $isset): void
     {
         $instance = static::getInstance([$initial]);
         $this->assertEquals($isset, isset($instance[0][$key]));

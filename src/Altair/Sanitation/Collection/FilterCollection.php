@@ -19,6 +19,7 @@ class FilterCollection extends Map
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function put($key, $value): MapInterface
     {
         $this->parseFilters($value);
@@ -29,6 +30,7 @@ class FilterCollection extends Map
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $filters) {
@@ -41,10 +43,8 @@ class FilterCollection extends Map
 
     /**
      * Ensures the key is a valid string. Keys supposed to be attributes or keys of the 'subject' to filter.
-     *
-     * @param mixed $key
      */
-    protected function filterKey($key): void
+    protected function filterKey(mixed $key): void
     {
         if (!is_string($key)) {
             throw new InvalidArgumentException(
@@ -58,10 +58,8 @@ class FilterCollection extends Map
 
     /**
      * Ensures filters are implementing the appropriate interface.
-     *
-     * @param mixed $filters
      */
-    protected function parseFilters($filters): void
+    protected function parseFilters(mixed $filters): void
     {
         if (is_string($filters)) {
             if (!in_array(FilterInterface::class, class_implements($filters), false)) {
@@ -78,6 +76,7 @@ class FilterCollection extends Map
                 if (is_string($filter)) {
                     $filter = ['class' => $filter];
                 }
+
                 $class = $filter['class'] ?? null;
                 if ($class === null || !in_array(FilterInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(

@@ -11,7 +11,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testPushVariadic(array $values, array $expected)
+    public function testPushVariadic(array $values, array $expected): void
     {
         $instance = static::getInstance();
         $instance->push(...$values);
@@ -23,7 +23,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testPush(array $values, array $expected)
+    public function testPush(array $values, array $expected): void
     {
         $instance = static::getInstance();
 
@@ -38,7 +38,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testArrayAccessPush(array $values, array $expected)
+    public function testArrayAccessPush(array $values, array $expected): void
     {
         $instance = static::getInstance();
 
@@ -50,7 +50,7 @@ trait push
         $this->assertCount(count($expected), $instance);
     }
 
-    public function testPushCircularReference()
+    public function testPushCircularReference(): void
     {
         $instance = static::getInstance();
         $instance->push($instance);

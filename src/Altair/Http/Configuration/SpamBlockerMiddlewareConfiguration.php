@@ -22,6 +22,7 @@ class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         // There are a couple of great sources to get a good lit of domain spammers.

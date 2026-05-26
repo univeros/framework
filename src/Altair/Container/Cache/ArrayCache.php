@@ -19,10 +19,9 @@ class ArrayCache implements ReflectionCacheInterface
     protected $cache = [];
 
     /**
-     * @param string $key
-     *
      * @return bool|mixed
      */
+    #[\Override]
     public function get(string $key)
     {
         // some maybe have null values and still valid (ie no constructor)
@@ -32,6 +31,7 @@ class ArrayCache implements ReflectionCacheInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function put(string $key, $data): ReflectionCacheInterface
     {
         $this->cache[$key] = $data;

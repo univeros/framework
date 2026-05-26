@@ -39,6 +39,7 @@ class ActionMiddleware implements MiddlewareInterface
         $this->resolver = $resolver;
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $action = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);

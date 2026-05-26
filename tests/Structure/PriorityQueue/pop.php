@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait pop
 {
-    public static function popDataProvider()
+    public static function popDataProvider(): array
     {
         // initial, expected, result
         return [
@@ -15,9 +15,8 @@ trait pop
 
     /**
      * @dataProvider popDataProvider
-     * @param mixed $expected
      */
-    public function testPop(array $initial, $expected, array $result)
+    public function testPop(array $initial, mixed $expected, array $result): void
     {
         $instance = static::getInstance($initial);
 
@@ -25,7 +24,7 @@ trait pop
         $this->assertToArray($result, $instance);
     }
 
-    public function testPopAll()
+    public function testPopAll(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
 
@@ -36,7 +35,7 @@ trait pop
         $this->assertEquals(count($instance), 0);
     }
 
-    public function testPopNowAllowedWhenEmpty()
+    public function testPopNowAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

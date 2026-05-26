@@ -25,9 +25,7 @@ class CookieCollection extends Map
     /**
      * Adds a cookie to the collection
      *
-     * @param Cookie $cookie
      *
-     * @return CookieCollection
      */
     public function putCookie(Cookie $cookie): CookieCollection
     {
@@ -46,11 +44,12 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function put($key, $value): MapInterface
     {
         $pair = $this->lookupKey($key);
 
-        if ($pair) {
+        if ($pair instanceof PairInterface) {
             $pair->value = new Cookie($key, $value);
         } else {
             $this->adjustCapacity();
@@ -63,6 +62,7 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $value) {
@@ -79,23 +79,20 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function sort(callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 
-        if ($comparator) {
+        if ($comparator !== null) {
             usort(
                 $pairs,
-                function ($a, $b) use ($comparator) {
-                    return $comparator($a->value->getValue(), $b->value->getValue());
-                }
+                fn($a, $b) => $comparator($a->value->getValue(), $b->value->getValue())
             );
         } else {
             usort(
                 $pairs,
-                function ($a, $b) {
-                    return $a->value->getValue() <=> $b->value->getValue();
-                }
+                fn($a, $b): int => $a->value->getValue() <=> $b->value->getValue()
             );
         }
 
@@ -105,6 +102,7 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function values(): VectorInterface
     {
         $sequence = new Vector();
@@ -119,7 +117,8 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    public function sum()
+    #[\Override]
+    public function sum(): never
     {
         throw new InvalidCallException(sprintf('This method is not supported: %s', __FUNCTION__));
     }
@@ -127,9 +126,7 @@ class CookieCollection extends Map
     /**
      * Injects cookie collection into request header.
      *
-     * @param RequestInterface $request
      *
-     * @return RequestInterface
      */
     public function injectIntoRequestHeader(RequestInterface $request): RequestInterface
     {
@@ -140,9 +137,8 @@ class CookieCollection extends Map
      * Returns item if a value is found.
      *
      * @param mixed $value
-     *
-     * @return PairInterface|null
      */
+    #[\Override]
     protected function lookupValue($value): ?PairInterface
     {
         foreach ($this->internal as $pair) {
@@ -156,9 +152,8 @@ class CookieCollection extends Map
      * Converts pairs to array.
      *
      * @param $pairs
-     *
-     * @return array
      */
+    #[\Override]
     protected function pairsToArray($pairs): array
     {
         $array = [];

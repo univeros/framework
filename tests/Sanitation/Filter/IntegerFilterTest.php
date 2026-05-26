@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\IntegerFilter;
 
 class IntegerFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             ["+1234567890", 1234567890],
@@ -23,6 +24,7 @@ class IntegerFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
         return new IntegerFilter();

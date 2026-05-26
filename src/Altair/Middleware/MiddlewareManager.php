@@ -16,25 +16,21 @@ use Altair\Middleware\Contracts\PayloadInterface;
 class MiddlewareManager implements MiddlewareManagerInterface
 {
     /**
-     * @var Runner
-     */
-    protected $runner;
-
-    /**
      * Manager constructor.
-     *
-     * @param MiddlewareRunnerInterface $runner
      */
-    public function __construct(MiddlewareRunnerInterface $runner)
+    public function __construct(
+        /**
+         * @var Runner
+         */
+        protected MiddlewareRunnerInterface $runner
+    )
     {
-        $this->runner = $runner;
     }
 
     /**
-     * @param PayloadInterface $payload
-     *
      * @return PayloadInterface
      */
+    #[\Override]
     public function __invoke(PayloadInterface $payload)
     {
         $runner = $this->runner;

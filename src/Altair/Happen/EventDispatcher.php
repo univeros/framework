@@ -17,6 +17,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @var array keeps reference of the registered listeners.
      */
     protected $listeners = [];
+
     /**
      * @var array keeps reference of sorted listeners by priority.
      */
@@ -25,6 +26,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addListener(
         string $name,
         callable $listener,
@@ -39,6 +41,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addListenerProvider(ListenerProviderInterface $provider): EventDispatcherInterface
     {
         $provider->provideListeners($this);
@@ -49,6 +52,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
@@ -69,9 +73,10 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function dispatch(string $name, EventInterface $event = null): EventInterface
     {
-        $event = $event ?? new Event($name);
+        $event ??= new Event($name);
 
         $this
             ->invokeListeners($name, $event)
@@ -83,6 +88,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function dispatchStack(EventStackInterface $eventStack): array
     {
         $events = [];
@@ -98,6 +104,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getListeners(string $name): array
     {
         return $this->sortedListeners[$name]?? ($this->sortedListeners = $this->getSortedListeners($name));
@@ -106,14 +113,16 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasListeners(string $name): bool
     {
-        return !(!isset($this->listeners[$name]) || count($this->listeners[$name]) === 0);
+        return isset($this->listeners[$name]) && count($this->listeners[$name]) !== 0;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function removeListener(string $name, callable $listener): EventDispatcherInterface
     {
         if (!isset($this->listeners[$name])) {
@@ -132,6 +141,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function removeAllListeners(string $name): EventDispatcherInterface
     {
         if ($this->hasListeners($name)) {
@@ -144,6 +154,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function removeSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
@@ -160,8 +171,6 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * Invokes all listeners of an event.
      *
-     * @param string $name
-     * @param EventInterface $event
      *
      * @return $this
      */
@@ -173,8 +182,9 @@ class EventDispatcher implements EventDispatcherInterface
             if ($event->isPropagationStopped()) {
                 break;
             }
+
             $callable = $listener instanceof ListenerInterface
-                ? [$listener, '__invoke']
+                ? $listener->__invoke(...)
                 : [$listener, null];
 
             $callable($event);
@@ -187,8 +197,6 @@ class EventDispatcher implements EventDispatcherInterface
      * Sorts the internal list of listeners for the given event by priority.
      *
      * @param string $name The name of the event
-     *
-     * @return array
      */
     protected function getSortedListeners(string $name): array
     {

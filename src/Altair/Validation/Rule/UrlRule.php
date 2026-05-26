@@ -14,6 +14,7 @@ class UrlRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -31,12 +32,13 @@ class UrlRule extends AbstractRule
         $scheme = trim($result['scheme']?? '');
         $host = trim($result['host']?? '');
 
-        return !(empty($scheme) || empty($host));
+        return $scheme !== '' && $scheme !== '0' && ($host !== '' && $host !== '0');
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid URL.', $value);

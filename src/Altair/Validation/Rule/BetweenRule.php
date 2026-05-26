@@ -12,29 +12,16 @@ namespace Altair\Validation\Rule;
 class BetweenRule extends AbstractRule
 {
     /**
-     * @var mixed the minimum value
-     */
-    protected $min;
-    /**
-     * @var mixed the maximum value
-     */
-    protected $max;
-
-    /**
      * BetweenRule constructor.
-     *
-     * @param mixed $min
-     * @param mixed $max
      */
-    public function __construct($min, $max)
+    public function __construct(protected mixed $min, protected mixed $max)
     {
-        $this->min = $min;
-        $this->max = $max;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -47,6 +34,7 @@ class BetweenRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not between "%s" and "%s"', $value, $this->min, $this->max);

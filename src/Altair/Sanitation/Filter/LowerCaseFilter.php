@@ -12,25 +12,16 @@ namespace Altair\Sanitation\Filter;
 class LowerCaseFilter extends AbstractFilter
 {
     /**
-     * @var bool
-     */
-    protected $firstOnly;
-
-    /**
      * LowerCaseFilter constructor.
-     *
-     * @param bool $firstOnly
      */
-    public function __construct(bool $firstOnly = false)
+    public function __construct(protected bool $firstOnly = false)
     {
-        $this->firstOnly = $firstOnly;
     }
 
     /**
      * @param mixed $value
-     *
-     * @return null|string
      */
+    #[\Override]
     public function parse($value): ?string
     {
         if (!is_scalar($value)) {
@@ -40,17 +31,14 @@ class LowerCaseFilter extends AbstractFilter
         return $this->firstOnly ? $this->getFirstToLower($value) : strtolower($value);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
+    
     protected function getFirstToLower(string $value): string
     {
         $length = mb_strlen($value);
         if ($length === 0) {
             return '';
         }
+
         if ($length > 1) {
             $head = mb_substr($value, 0, 1);
             $tail = mb_substr($value, 1);

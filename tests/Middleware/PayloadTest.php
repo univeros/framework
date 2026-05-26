@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class PayloadTest extends TestCase
 {
-    public function testAttribute()
+    public function testAttribute(): void
     {
         $payload = new Payload(['attr1'=> 1]);
 
@@ -21,7 +21,7 @@ class PayloadTest extends TestCase
         $this->assertSame(2, $new->getAttribute('attr2'));
     }
 
-    public function testAttributes()
+    public function testAttributes(): void
     {
         $attrs = ['a' => 1, 'b' => 2, 'c' => 3];
         $payload = new Payload($attrs);

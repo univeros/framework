@@ -24,14 +24,12 @@ class AliasesCollection extends Map
      *
      * @param string $original The typehint to replace
      * @param string $alias The implementation name
-     * @param SharesCollection $sharesCollection
      *
      * @throws \InvalidArgumentException if any argument is empty or not a string
-     * @return self
      */
     public function define(string $original, string $alias, SharesCollection $sharesCollection): self
     {
-        if ((empty($original) || !is_string($original)) || (empty($alias) || !is_string($alias))) {
+        if (($original === '' || $original === '0' || !is_string($original)) || ($alias === '' || $alias === '0' || !is_string($alias))) {
             throw new InvalidArgumentException('"$original" and/or "$alias" cannot be empty.');
         }
 
@@ -42,7 +40,7 @@ class AliasesCollection extends Map
             throw new InvalidArgumentException(
                 sprintf(
                     'Cannot alias class %s to %s because it is currently shared',
-                    $this->normalizeName(get_class($sharesCollection->get($original))),
+                    $this->normalizeName($sharesCollection->get($original)::class),
                     $alias
                 )
             );
@@ -56,11 +54,7 @@ class AliasesCollection extends Map
         return $this->put($original, $alias);
     }
 
-    /**
-     * @param string $name
-     *
-     * @return array
-     */
+    
     public function resolve(string $name): array
     {
         $normalizedName = $this->normalizeName($name);
@@ -75,8 +69,6 @@ class AliasesCollection extends Map
 
     /**
      * @param $name
-     *
-     * @return string
      */
     public function getNormalized(string $name): string
     {

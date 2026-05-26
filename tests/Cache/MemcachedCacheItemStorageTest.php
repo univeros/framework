@@ -7,6 +7,7 @@ use Memcached;
 
 class MemcachedCacheItemStorageTest extends AbstractStorageTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         if (!extension_loaded('memcached')) {

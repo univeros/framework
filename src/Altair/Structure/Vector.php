@@ -9,6 +9,8 @@
 
 namespace Altair\Structure;
 
+use Altair\Structure\Traits\SequenceTrait;
+use Altair\Structure\Traits\CapacityTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\VectorInterface;
 use ArrayAccess;
@@ -26,8 +28,8 @@ use IteratorAggregate;
  */
 class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, CapacityInterface
 {
-    use Traits\SequenceTrait;
-    use Traits\CapacityTrait;
+    use SequenceTrait;
+    use CapacityTrait;
 
     /**
      * Creates an instance using the values of an array or Traversable object.
@@ -38,7 +40,7 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
     {
         $this->capacity = VectorInterface::MIN_VECTOR_CAPACITY;
 
-        if (func_num_args()) {
+        if (func_num_args() !== 0) {
             $this->pushAll($this->normalizeItems(($values??[])));
         }
     }
@@ -54,18 +56,17 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
         // structure drops low enough.
         if ($size < $this->capacity / 4) {
             $this->capacity = max(VectorInterface::MIN_VECTOR_CAPACITY, $this->capacity / 2);
-        } else {
+        } elseif ($size >= $this->capacity) {
             // Also check if we should increase capacity when the size changes.
-            if ($size >= $this->capacity) {
-                $this->increaseCapacity();
-            }
+            $this->increaseCapacity();
         }
     }
 
     /**
      * Increase capacity.
      */
-    protected function increaseCapacity()
+    #[\Override]
+    protected function increaseCapacity(): static
     {
         $size = count($this);
 

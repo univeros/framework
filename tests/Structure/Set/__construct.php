@@ -5,9 +5,9 @@ use Altair\Structure\Set;
 
 trait __construct
 {
-    public static function constructDataProvider()
+    public static function constructDataProvider(): array
     {
-        list($unique, $duplicated) = static::getUniqueAndDuplicateData();
+        [$unique, $duplicated] = static::getUniqueAndDuplicateData();
 
         return [
             [[],            []],
@@ -22,7 +22,7 @@ trait __construct
     /**
      * @dataProvider constructDataProvider
      */
-    public function testConstruct(array $values, array $expected)
+    public function testConstruct(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Set($values));
     }
@@ -30,12 +30,12 @@ trait __construct
     /**
      * @dataProvider constructDataProvider
      */
-    public function testConstructUsingIterable(array $values, array $expected)
+    public function testConstructUsingIterable(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Set(new \ArrayIterator($values)));
     }
 
-    public function testConstructNoParams()
+    public function testConstructNoParams(): void
     {
         $this->assertToArray([], new Set());
     }

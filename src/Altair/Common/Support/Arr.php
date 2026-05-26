@@ -33,7 +33,7 @@ class Arr // - Thanks @yii
     {
         $args = func_get_args();
         $res = array_shift($args);
-        while (!empty($args)) {
+        while ($args !== []) {
             $next = array_shift($args);
             foreach ($next as $k => $v) {
                 if (is_int($k)) {
@@ -91,30 +91,36 @@ class Arr // - Thanks @yii
      *
      * @return mixed the value of the element if found, default value otherwise
      */
-    public static function getValue(array $array, $key, $default = null)
+    public static function getValue(array $array, $key, mixed $default = null)
     {
         if ($key instanceof Closure) {
             return $key($array, $default);
         }
+
         if (is_array($key)) {
             $lastKey = array_pop($key);
             foreach ($key as $keyPart) {
                 $array = static::getValue($array, $keyPart);
             }
+
             $key = $lastKey;
         }
+
         if (is_array($array) && (isset($array[$key]) || array_key_exists($key, $array))) {
             return $array[$key];
         }
-        if (($pos = strrpos($key, '.')) !== false) {
-            $array = static::getValue($array, substr($key, 0, $pos), $default);
-            $key = substr($key, $pos + 1);
+
+        if (($pos = strrpos((string) $key, '.')) !== false) {
+            $array = static::getValue($array, substr((string) $key, 0, $pos), $default);
+            $key = substr((string) $key, $pos + 1);
         }
+
         if (is_object($array)) {
             // this is expected to fail if the property does not exist, or __get() is not implemented
             // it is not reliably possible to check whether a property is accessible beforehand
             return $array->$key;
         }
+
         if (is_array($array)) {
             return (isset($array[$key]) || array_key_exists($key, $array)) ? $array[$key] : $default;
         }
@@ -142,9 +148,9 @@ class Arr // - Thanks @yii
      *
      * @return mixed|null the value of the element if found, default value otherwise
      */
-    public static function remove(array &$array, string $key, $default = null)
+    public static function remove(array &$array, string $key, mixed $default = null)
     {
-        if (is_array($array) && (isset($array[$key]) || array_key_exists($key, $array))) {
+        if (isset($array[$key]) || array_key_exists($key, $array)) {
             $value = $array[$key];
             unset($array[$key]);
 
@@ -175,12 +181,10 @@ class Arr // - Thanks @yii
     public static function removeValue(array &$array, string $value): array
     {
         $result = [];
-        if (is_array($array)) {
-            foreach ($array as $key => $val) {
-                if ($val === $value) {
-                    $result[$key] = $val;
-                    unset($array[$key]);
-                }
+        foreach ($array as $key => $val) {
+            if ($val === $value) {
+                $result[$key] = $val;
+                unset($array[$key]);
             }
         }
 
@@ -299,10 +303,12 @@ class Arr // - Thanks @yii
                 if (!array_key_exists($value, $lastArray)) {
                     $lastArray[$value] = [];
                 }
+
                 $lastArray = &$lastArray[$value];
             }
+
             if ($key === null) {
-                if (!empty($groups)) {
+                if ($groups !== []) {
                     $lastArray[] = $element;
                 }
             } else {
@@ -311,9 +317,11 @@ class Arr // - Thanks @yii
                     if (is_float($value)) {
                         $value = (string)$value;
                     }
+
                     $lastArray[$value] = $element;
                 }
             }
+
             unset($lastArray);
         }
 
@@ -340,11 +348,9 @@ class Arr // - Thanks @yii
      * });
      * ```
      *
-     * @param array $array
      * @param string|Closure $name
      * @param bool $keepKeys whether to maintain the array keys. If false, the resulting array
      * will be re-indexed with integers.
-     *
      * @return array the list of column values
      */
     public static function getColumn(array $array, $name, bool $keepKeys = true): array
@@ -398,12 +404,10 @@ class Arr // - Thanks @yii
      * // ]
      * ```
      *
-     * @param array $array
      * @param string|\Closure $from
      * @param string|\Closure $to
      * @param string|\Closure $group
      *
-     * @return array
      */
     public static function map(array $array, $from, $to, $group = null): array
     {
@@ -439,6 +443,7 @@ class Arr // - Thanks @yii
             // http://php.net/manual/en/function.array-key-exists.php#107786
             return isset($array[$key]) || array_key_exists($key, $array);
         }
+
         foreach (array_keys($array) as $k) {
             if (strcasecmp($key, $k) === 0) {
                 return true;
@@ -466,23 +471,26 @@ class Arr // - Thanks @yii
      * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */
-    public static function multisort(array &$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR)
+    public static function multisort(array &$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR): void
     {
         $keys = is_array($key) ? $key : [$key];
-        if (empty($keys) || empty($array)) {
+        if ($keys === [] || $array === []) {
             return;
         }
+
         $n = count($keys);
         if (is_scalar($direction)) {
             $direction = array_fill(0, $n, $direction);
         } elseif (count($direction) !== $n) {
             throw new InvalidArgumentException('The length of $direction parameter must be the same as that of $keys.');
         }
+
         if (is_scalar($sortFlag)) {
             $sortFlag = array_fill(0, $n, $sortFlag);
         } elseif (count($sortFlag) !== $n) {
             throw new InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
         }
+
         $args = [];
         foreach ($keys as $i => $k) {
             $flag = $sortFlag[$i];
@@ -490,6 +498,7 @@ class Arr // - Thanks @yii
             $args[] = $direction[$i];
             $args[] = $flag;
         }
+
         // This fix is used for cases when main sorting specified by columns has equal values
         // Without it it will lead to Fatal Error: Nesting level too deep - recursive dependency?
         $args[] = range(1, count($array));
@@ -520,6 +529,7 @@ class Arr // - Thanks @yii
             if (!$valuesOnly && is_string($key)) {
                 $key = htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
             }
+
             if (is_string($value)) {
                 $data[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
             } elseif (is_array($value)) {
@@ -552,6 +562,7 @@ class Arr // - Thanks @yii
             if (!$valuesOnly && is_string($key)) {
                 $key = htmlspecialchars_decode($key, ENT_QUOTES);
             }
+
             if (is_string($value)) {
                 $data[$key] = htmlspecialchars_decode($value, ENT_QUOTES);
             } elseif (is_array($value)) {
@@ -580,11 +591,12 @@ class Arr // - Thanks @yii
      */
     public static function isAssociative(array $array, bool $allStrings = true): bool
     {
-        if (!is_array($array) || empty($array)) {
+        if ($array === []) {
             return false;
         }
+
         if ($allStrings) {
-            foreach ($array as $key => $value) {
+            foreach (array_keys($array) as $key) {
                 if (!is_string($key)) {
                     return false;
                 }
@@ -592,7 +604,8 @@ class Arr // - Thanks @yii
 
             return true;
         }
-        foreach ($array as $key => $value) {
+
+        foreach (array_keys($array) as $key) {
             if (is_string($key)) {
                 return true;
             }
@@ -620,13 +633,16 @@ class Arr // - Thanks @yii
         if (!is_array($array)) {
             return false;
         }
-        if (empty($array)) {
+
+        if ($array === []) {
             return true;
         }
+
         if ($consecutive) {
             return array_keys($array) === range(0, count($array) - 1);
         }
-        foreach ($array as $key => $value) {
+
+        foreach (array_keys($array) as $key) {
             if (!is_int($key)) {
                 return false;
             }
@@ -649,7 +665,7 @@ class Arr // - Thanks @yii
      * @return bool `true` if `$needle` was found in `$haystack`, `false` otherwise.
      * @see http://php.net/manual/en/function.in-array.php
      */
-    public static function isIn($needle, $haystack, bool $strict = false): bool
+    public static function isIn(mixed $needle, $haystack, bool $strict = false): bool
     {
         if ($haystack instanceof \Traversable) {
             foreach ($haystack as $value) {
@@ -677,9 +693,9 @@ class Arr // - Thanks @yii
      * @return bool whether $var is array-like
      * @see http://php.net/manual/en/function.is_array.php
      */
-    public static function isTraversable($var): bool
+    public static function isTraversable(mixed $var): bool
     {
-        return is_array($var) || $var instanceof \Traversable;
+        return is_iterable($var);
     }
 
     /**
@@ -697,7 +713,7 @@ class Arr // - Thanks @yii
      */
     public static function isSubset($needles, $haystack, bool $strict = false): bool
     {
-        if (is_array($needles) || $needles instanceof \Traversable) {
+        if (is_iterable($needles)) {
             foreach ($needles as $needle) {
                 if (!static::isIn($needle, $haystack, $strict)) {
                     return false;
@@ -706,6 +722,7 @@ class Arr // - Thanks @yii
 
             return true;
         }
+
         throw new InvalidArgumentException('Argument $needles must be an array or implement Traversable');
     }
 
@@ -758,7 +775,7 @@ class Arr // - Thanks @yii
         $result = [];
         $forbiddenVars = [];
         foreach ($filters as $var) {
-            $keys = explode('.', $var);
+            $keys = explode('.', (string) $var);
             $globalKey = $keys[0];
             $localKey = $keys[1] ?? null;
             if ($globalKey[0] === '!') {
@@ -768,21 +785,27 @@ class Arr // - Thanks @yii
                 ];
                 continue;
             }
+
             if (empty($array[$globalKey])) {
                 continue;
             }
+
             if ($localKey === null) {
                 $result[$globalKey] = $array[$globalKey];
                 continue;
             }
+
             if (!isset($array[$globalKey][$localKey])) {
                 continue;
             }
+
             if (!array_key_exists($globalKey, $result)) {
                 $result[$globalKey] = [];
             }
+
             $result[$globalKey][$localKey] = $array[$globalKey][$localKey];
         }
+
         foreach ($forbiddenVars as $var) {
             [$globalKey, $localKey] = $var;
             if (array_key_exists($globalKey, $result)) {

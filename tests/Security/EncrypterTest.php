@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class EncrypterTest extends TestCase
 {
-    public function testEncryptionWithHkdfKeyAndAES128CBCCipher()
+    public function testEncryptionWithHkdfKeyAndAES128CBCCipher(): void
     {
         $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER);
@@ -21,7 +21,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithContext()
+    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithContext(): void
     {
         $key = new HkdfKey('test-key', null, 'test-context', EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER);
@@ -31,7 +31,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithSalt()
+    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithSalt(): void
     {
         $salt = (new Salt())->generate(12);
         $key = new HkdfKey('test-key', $salt, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
@@ -42,7 +42,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithSaltAndContext()
+    public function testEncryptionWithHkdfKeyAndAES128CBCCipherWithSaltAndContext(): void
     {
         $salt = (new Salt())->generate(12);
         $key = new HkdfKey('test-key', $salt, 'test-context', EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
@@ -53,7 +53,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES192CBCCipher()
+    public function testEncryptionWithHkdfKeyAndAES192CBCCipher(): void
     {
         $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_192_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_192_CBC_CIPHER);
@@ -63,7 +63,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES192CBCCipherWithContext()
+    public function testEncryptionWithHkdfKeyAndAES192CBCCipherWithContext(): void
     {
         $key = new HkdfKey('test-key', null, 'test-context', EncrypterInterface::AES_192_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_192_CBC_CIPHER);
@@ -73,7 +73,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testFailedEncryptionWithHkdfKeyAndAES192CBCCipherWithDifferentContext()
+    public function testFailedEncryptionWithHkdfKeyAndAES192CBCCipherWithDifferentContext(): void
     {
         $key = new HkdfKey('test-key', null, 'test-context', EncrypterInterface::AES_192_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_192_CBC_CIPHER);
@@ -88,7 +88,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $ee->decrypt($encrypted));
     }
 
-    public function testEncryptionWithHkdfKeyAndAES256CBCCipher()
+    public function testEncryptionWithHkdfKeyAndAES256CBCCipher(): void
     {
         $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_256_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_256_CBC_CIPHER);
@@ -98,7 +98,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithPbkdf2KeyAndAES128CBCCipher()
+    public function testEncryptionWithPbkdf2KeyAndAES128CBCCipher(): void
     {
         $key = new Pbkdf2Key('test-key', 'secret', EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
         $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER);
@@ -108,7 +108,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithPbkdf2KeyAndAES128CBCCipherWithSalt()
+    public function testEncryptionWithPbkdf2KeyAndAES128CBCCipherWithSalt(): void
     {
         $salt = (new Salt())->generate(48);
         $key = new Pbkdf2Key('test-key', $salt, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
@@ -119,7 +119,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithPbkdf2KeyAndAES192CBCCipher()
+    public function testEncryptionWithPbkdf2KeyAndAES192CBCCipher(): void
     {
         $salt = base64_encode(random_bytes(10));
         $key = new Pbkdf2Key('test-key', $salt, EncrypterInterface::AES_192_CBC_CIPHER_KEY_LENGTH);
@@ -130,7 +130,7 @@ class EncrypterTest extends TestCase
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
 
-    public function testEncryptionWithPbkdf2KeyAndAES256CBCCipher()
+    public function testEncryptionWithPbkdf2KeyAndAES256CBCCipher(): void
     {
         $salt = base64_encode(random_bytes(10));
         $key = new Pbkdf2Key('test-key', $salt, EncrypterInterface::AES_256_CBC_CIPHER_KEY_LENGTH);

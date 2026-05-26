@@ -17,9 +17,7 @@ interface InputInterface
     /**
      * Extract domain input from the request.
      *
-     * @param  ServerRequestInterface $request
      *
-     * @return InputCollection
      */
     public function __invoke(ServerRequestInterface $request): InputCollection;
 }

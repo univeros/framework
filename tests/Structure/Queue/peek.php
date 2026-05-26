@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Queue;
 
 trait peek
 {
-    public static function peekDataProvider()
+    public static function peekDataProvider(): array
     {
         // initial, returned, expected result
         return [
@@ -14,10 +14,8 @@ trait peek
 
     /**
      * @dataProvider peekDataProvider
-     * @param mixed $initial
-     * @param mixed $returned
      */
-    public function testPeek($initial, $returned)
+    public function testPeek(mixed $initial, mixed $returned): void
     {
         $instance = static::getInstance($initial);
 
@@ -27,7 +25,7 @@ trait peek
         $this->assertEquals($returned, $value);
     }
 
-    public function testPeekNotAllowedWhenEmpty()
+    public function testPeekNotAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

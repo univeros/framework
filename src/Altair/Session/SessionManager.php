@@ -27,12 +27,14 @@ class SessionManager implements SessionManagerInterface
      * @var array
      */
     protected $cookies;
+
     /**
      * Session cookie parameters.
      *
      * @var array
      */
     protected $cookieParams = [];
+
     /**
      * A callable to invoke when deleting the session cookie. The callable
      * should have the following signature: `function ($cookie_name, $cookie_params)` and must return null;
@@ -42,10 +44,8 @@ class SessionManager implements SessionManagerInterface
      * @see setDeleteCookie()
      */
     protected $deleteCookieCallable;
-    /**
-     * @var SessionHandlerInterface
-     */
-    protected $sessionHandler;
+
+
     /**
      * @var CsrfToken
      */
@@ -54,18 +54,16 @@ class SessionManager implements SessionManagerInterface
     /**
      * SessionManager constructor.
      *
-     * @param ServerRequestInterface $request
      * @param SessionHandlerInterface|null $sessionHandler
      * @param callable|null $deleteCookieCallable
      */
     public function __construct(
         ServerRequestInterface $request,
-        SessionHandlerInterface $sessionHandler = null,
+        protected ?\SessionHandlerInterface $sessionHandler = null,
         callable $deleteCookieCallable = null
     ) {
         $this->cookies = $request->getCookieParams();
         $this->cookieParams = session_get_cookie_params();
-        $this->sessionHandler = $sessionHandler;
         $this->setDeleteCookieCallable($deleteCookieCallable);
 
         register_shutdown_function([$this, 'close']);
@@ -74,6 +72,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getId(): string
     {
         return session_id();
@@ -82,7 +81,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function setId(string $id)
+    #[\Override]
+    public function setId(string $id): void
     {
         session_id($id);
     }
@@ -90,18 +90,20 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function setDeleteCookieCallable(callable $callable = null)
+    #[\Override]
+    public function setDeleteCookieCallable(callable $callable = null): void
     {
-        $this->deleteCookieCallable = $callable?? function ($name, $params) {
+        $this->deleteCookieCallable = $callable?? function ($name, $params): void {
             $path = $params['path']?? null;
             $domain = $params['domain']?? null;
-            setcookie($name, '', time() - 42000, $path, $domain);
+            setcookie($name, '', ['expires' => time() - 42000, 'path' => $path, 'domain' => $domain]);
         };
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSessionBlock(string $name): SessionBlockInterface
     {
         return SessionBlockFactory::create($name, $this);
@@ -110,6 +112,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getName(): string
     {
         return session_name();
@@ -118,7 +121,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function setName(string $name)
+    #[\Override]
+    public function setName(string $name): void
     {
         session_name($name);
     }
@@ -126,6 +130,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSavePath(): string
     {
         return session_save_path();
@@ -134,7 +139,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function setSavePath(string $path)
+    #[\Override]
+    public function setSavePath(string $path): void
     {
         if (!is_dir($path)) {
             throw new InvalidArgumentException(sprintf('Session save path is not a valid directory: %s', $path));
@@ -146,6 +152,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getCookieParams(): array
     {
         return $this->getCookieParams();
@@ -154,7 +161,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function setCookieParams(array $params)
+    #[\Override]
+    public function setCookieParams(array $params): void
     {
         $this->cookieParams = array_merge($this->cookieParams, $params);
         session_set_cookie_params(
@@ -169,6 +177,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getIsActive(): bool
     {
         return session_status() === PHP_SESSION_ACTIVE;
@@ -177,6 +186,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function exists(): bool
     {
         return isset($this->cookies[$this->getName()]);
@@ -185,6 +195,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function start(): bool
     {
         if (!$this->getIsActive()) {
@@ -201,7 +212,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function clear()
+    #[\Override]
+    public function clear(): void
     {
         session_unset();
     }
@@ -209,6 +221,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function resume(): bool
     {
         if ($this->getIsActive()) {
@@ -225,7 +238,8 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
-    public function close()
+    #[\Override]
+    public function close(): void
     {
         if ($this->getIsActive()) {
             session_write_close();
@@ -235,6 +249,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function destroy(): bool
     {
         if (!$this->getIsActive()) {
@@ -255,6 +270,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function regenerateId(bool $deletePrevious = true): bool
     {
         $result = false;
@@ -272,6 +288,7 @@ class SessionManager implements SessionManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getCsrfToken(): CsrfTokenInterface
     {
         if ($this->csrfToken === null) {

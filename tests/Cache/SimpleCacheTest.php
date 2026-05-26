@@ -10,32 +10,28 @@ use PHPUnit\Framework\TestCase;
 
 class SimpleCacheTest extends TestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $fs;
-    /**
-     * @var CacheItemPool
-     */
-    private $pool;
-    /**
-     * @var SimpleCache
-     */
-    private $cache;
+    private Filesystem $fs;
 
+    private CacheItemPool $pool;
+
+    private SimpleCache $cache;
+
+    #[\Override]
     protected function setUp(): void    {
         $this->fs = new Filesystem();
         $this->fs->makeDirectory(__DIR__ . '/tmp');
+
         $this->pool = new CacheItemPool(new FilesystemCacheItemStorage($this->fs, __DIR__ . '/tmp'));
         $this->cache = new SimpleCache($this->pool);
     }
 
+    #[\Override]
     protected function tearDown(): void    {
         $this->cache->clear();
         $this->fs->deleteDirectory(__DIR__ . '/tmp');
     }
 
-    public function testCache()
+    public function testCache(): void
     {
         $this->assertFalse($this->cache->has($key = 'somekey'));
         $this->assertNull($this->cache->get($key));
@@ -45,7 +41,8 @@ class SimpleCacheTest extends TestCase
         $this->cache->delete($key);
         $this->assertFalse($this->cache->has($key));
     }
-    public function testCacheWithExpiry()
+
+    public function testCacheWithExpiry(): void
     {
         $this->cache->set($key = 'somekey', $value = 'somevalue');
         $this->assertEquals($value, $this->cache->get($key));
@@ -57,10 +54,12 @@ class SimpleCacheTest extends TestCase
         sleep(2);
         $this->assertNull($this->cache->get($key));
     }
-    public function testCacheMultiple()
+
+    public function testCacheMultiple(): void
     {
         $this->cache->set($key1 = 'somekey', $value1 = 'somevalue');
         $this->cache->set($key2 = 'otherkey', $value2 = 'othervalue');
+
         $values = $this->cache->getMultiple([$key1, $key2]);
         $this->assertEquals($value1, $values[$key1]);
         $this->assertEquals($value2, $values[$key2]);

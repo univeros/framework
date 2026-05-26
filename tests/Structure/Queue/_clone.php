@@ -5,15 +5,14 @@ trait _clone
 {
     /**
      * @dataProvider basicDataProvider
-     * @param mixed $values
      */
-    public function testClone($values, array $expected)
+    public function testClone(mixed $values, array $expected): void
     {
         $instance = static::getInstance($values);
 
         $clone = clone $instance;
 
-        $this->assertEquals(get_class($instance), get_class($clone));
+        $this->assertEquals($instance::class, $clone::class);
         $this->assertEquals($instance->toArray(), $clone->toArray());
         $this->assertFalse($clone === $instance);
     }

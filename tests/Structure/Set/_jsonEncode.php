@@ -6,7 +6,7 @@ trait _jsonEncode
     /**
      * @dataProvider basicDataProvider
      */
-    public function testJsonEncode(array $initial, array $expected)
+    public function testJsonEncode(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals(json_encode($expected), json_encode($instance));

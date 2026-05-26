@@ -14,29 +14,19 @@ use Altair\Http\Contracts\TokenInterface;
 class Token implements TokenInterface
 {
     /**
-     * @var string
-     */
-    private $token;
-    /**
-     * @var array
-     */
-    private $metadata;
-
-    /**
      * Token constructor.
      *
      * @param $token
-     * @param array $metadata
+     * @param string $token
      */
-    public function __construct($token, array $metadata)
+    public function __construct(private $token, private array $metadata)
     {
-        $this->token = $token;
-        $this->metadata = $metadata;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getToken(): string
     {
         return $this->token;
@@ -45,6 +35,7 @@ class Token implements TokenInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMetadata(string $key = null)
     {
         return null !== $key

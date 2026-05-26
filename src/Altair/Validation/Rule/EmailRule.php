@@ -14,6 +14,7 @@ class EmailRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($input): bool
     {
         // This is a very basic way to test an email. It is highly recommended that you create a custom email validator
@@ -24,6 +25,7 @@ class EmailRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid email address.', $value);

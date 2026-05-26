@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\CallbackFilter;
 
 class CallbackFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             [true, true],
@@ -36,13 +37,13 @@ class CallbackFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
-        $callback = function ($value) {
+        $callback = fn($value): bool =>
             // lets mimic boolean Filter
             // it can be anything though
-            return is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
-        };
+            is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
         return new CallbackFilter($callback);
     }
 }

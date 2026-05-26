@@ -22,31 +22,23 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
      * @var array
      */
     protected $middlewares;
-    /**
-     * @var MiddlewareResolverInterface
-     */
-    protected $resolver;
+
 
     /**
      * CommandRunnerMiddlewareStrategy constructor.
      *
      * @param array|null $middlewares
-     * @param MiddlewareResolverInterface $resolver
      */
-    public function __construct(array $middlewares = null, MiddlewareResolverInterface $resolver = null)
+    public function __construct(array $middlewares = null, protected ?MiddlewareResolverInterface $resolver = null)
     {
         $this->middlewares = $middlewares?? [];
-
-        $this->resolver = $resolver;
     }
 
     /**
      * Returns a new instance with
      *
-     * @param array $middlewares
      *
      * @throws InvalidCommandMiddlewareException
-     * @return CommandRunnerStrategyInterface
      */
     public function withMiddlewares(array $middlewares): CommandRunnerStrategyInterface
     {
@@ -65,11 +57,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
         return new static($middlewares);
     }
 
-    /**
-     * @param CommandMiddlewareInterface $middleware
-     *
-     * @return CommandRunnerStrategyInterface
-     */
+
     public function add(CommandMiddlewareInterface $middleware): CommandRunnerStrategyInterface
     {
         $this->middlewares[] = $middleware;
@@ -79,9 +67,8 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 
     /**
      * Initiates middleware sequence.
-     *
-     * @param CommandMessageInterface $message
      */
+    #[\Override]
     public function run(CommandMessageInterface $message): void
     {
         call_user_func($this->call(0), $message);
@@ -90,16 +77,15 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
     /**
      * Fire up middleware chain.
      *
-     * @param int $index
      *
-     * @return Closure
      */
     protected function call(int $index): Closure
     {
         if (!isset($this->middlewares[$index])) {
-            return function () {
+            return function (): void {
             };
         }
+
         $middleware = $this->middlewares[$index];
 
         if ($this->resolver !== null) {
@@ -107,7 +93,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
             $this->middlewares[$index] = $middleware;
         }
 
-        return function ($message) use ($middleware, $index) {
+        return function ($message) use ($middleware, $index): void {
             $middleware->handle($message, $this->call($index + 1));
         };
     }

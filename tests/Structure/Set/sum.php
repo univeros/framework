@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait sum
 {
-    public static function sumDataProvider()
+    public static function sumDataProvider(): array
     {
         return [
             // Empty
@@ -31,9 +31,8 @@ trait sum
 
     /**
      * @dataProvider sumDataProvider
-     * @param mixed $values
      */
-    public function testSum($values)
+    public function testSum(mixed $values): void
     {
         $instance = static::getInstance($values);
         $this->assertEquals(array_sum($values), $instance->sum());

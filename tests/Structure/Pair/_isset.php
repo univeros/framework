@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _isset
 {
-    public function testPropertyIssetKey()
+    public function testPropertyIssetKey(): void
     {
         $pair = $this->getPair('a', 1);
         $this->assertTrue(isset($pair->key));
@@ -13,7 +13,7 @@ trait _isset
         $this->assertFalse(isset($pair->key));
     }
 
-    public function testPropertyIssetValue()
+    public function testPropertyIssetValue(): void
     {
         $pair = $this->getPair('a', 1);
         $this->assertTrue(isset($pair->value));
@@ -23,7 +23,7 @@ trait _isset
         $this->assertFalse(isset($pair->value));
     }
 
-    public function testPropertyExists()
+    public function testPropertyExists(): void
     {
         $pair = $this->getPair('a', 1);
 

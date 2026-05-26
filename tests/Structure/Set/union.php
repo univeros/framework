@@ -1,9 +1,11 @@
 <?php
 namespace Altair\Tests\Structure\Set;
 
+use Altair\Tests\Structure\HashableObject;
+
 trait union
 {
-    public static function unionDataProvider()
+    public static function unionDataProvider(): array
     {
         // Values in A and values in B.
         // A, B, expected result
@@ -19,7 +21,7 @@ trait union
     /**
      * @dataProvider unionDataProvider
      */
-    public function testUnion(array $initial, array $values, array $expected)
+    public function testUnion(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
         $b = static::getInstance($values);
@@ -30,16 +32,16 @@ trait union
     /**
      * @dataProvider unionDataProvider
      */
-    public function testUnionWithSelf(array $initial, array $values, array $expected)
+    public function testUnionWithSelf(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
         $this->assertEquals($initial, $a->union($a)->toArray());
     }
 
-    public function testUnionWhenOperatingOnSetsWithObjectsWithNonZeroHash()
+    public function testUnionWhenOperatingOnSetsWithObjectsWithNonZeroHash(): void
     {
-        $a = new \Altair\Tests\Structure\HashableObject('a', rand());
-        $b = new \Altair\Tests\Structure\HashableObject('b', rand());
+        $a = new HashableObject('a', random_int(0, mt_getrandmax()));
+        $b = new HashableObject('b', random_int(0, mt_getrandmax()));
 
         $setA = static::getInstance([$a]);
         $setB = static::getInstance([$b]);
@@ -47,10 +49,10 @@ trait union
         $this->assertToArray([$a, $b], $setA->union($setB));
     }
 
-    public function testUnionWhenOperatingOnSetsWithObjectsWithZeroHash()
+    public function testUnionWhenOperatingOnSetsWithObjectsWithZeroHash(): void
     {
-        $a = new \Altair\Tests\Structure\HashableObject('a', 0);
-        $b = new \Altair\Tests\Structure\HashableObject('b', 0);
+        $a = new HashableObject('a', 0);
+        $b = new HashableObject('b', 0);
 
         $setA = static::getInstance([$a]);
         $setB = static::getInstance([$b]);

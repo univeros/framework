@@ -14,7 +14,6 @@ interface MiddlewareManagerInterface
     /**
      * Fires the runner to process all middleware.
      *
-     * @param PayloadInterface $payload
      *
      * @return PayloadInterface
      */

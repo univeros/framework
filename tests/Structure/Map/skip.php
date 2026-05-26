@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait skip
 {
-    public static function skipDataProvider()
+    public static function skipDataProvider(): array
     {
         // values, position, returned pair
         return [
@@ -16,7 +16,7 @@ trait skip
         ];
     }
 
-    public static function skipOutOfRangeDataProvider()
+    public static function skipOutOfRangeDataProvider(): array
     {
         return [
             [[], -1],
@@ -30,7 +30,7 @@ trait skip
     /**
      * @dataProvider skipDataProvider
      */
-    public function testSkip(array $values, int $position, array $expected)
+    public function testSkip(array $values, int $position, array $expected): void
     {
         $instance = static::getInstance($values);
         $pair = $instance->skip($position);
@@ -41,7 +41,7 @@ trait skip
     /**
      * @dataProvider skipOutOfRangeDataProvider
      */
-    public function testSkipIndexOutOfRange(array $values, int $position)
+    public function testSkipIndexOutOfRange(array $values, int $position): void
     {
         $this->expectIndexOutOfRangeException();
         $instance = static::getInstance($values);

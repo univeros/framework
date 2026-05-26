@@ -20,6 +20,7 @@ class FilesystemCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
         $adapterConfiguration = new Definition(

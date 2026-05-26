@@ -21,18 +21,14 @@ class CallbackListener implements ListenerInterface
 
     /**
      * CallbackListener constructor.
-     *
-     * @param callable $callback
      */
     public function __construct(callable $callback)
     {
         $this->callback = $callback;
     }
 
-    /**
-     * @param EventInterface $event
-     */
-    public function __invoke(EventInterface $event)
+    #[\Override]
+    public function __invoke(EventInterface $event): void
     {
         call_user_func($this->callback, $event);
     }

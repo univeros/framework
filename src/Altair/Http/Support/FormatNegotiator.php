@@ -76,6 +76,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getFromServerRequestAttribute(ServerRequestInterface $request): ?string
     {
         return $request->getAttribute(MiddlewareInterface::ATTRIBUTE_FORMAT);
@@ -84,11 +85,12 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getFromServerRequestUriPath(ServerRequestInterface $request): ?string
     {
         $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
-        if (!empty($extension)) {
+        if ($extension !== '' && $extension !== '0') {
             foreach ($this->formats as $format => $data) {
                 if (in_array($extension, $data[0], true)) {
                     return $format;
@@ -102,6 +104,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getFromServerRequestHeaderLine(ServerRequestInterface $request): ?string
     {
         $headers = call_user_func('array_merge', array_column($this->formats, 1));
@@ -121,6 +124,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getContentTypeByFormat(string $format): string
     {
         if (isset($this->formats[$format])) {
@@ -133,20 +137,17 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * Returns the best format value for server request header.
      *
-     * @param string $accept
-     * @param array $priorities
      *
-     * @return null|string
      */
     protected function negotiateHeader(string $accept, array $priorities): ?string
     {
-        if (empty($accept) || empty($priorities)) {
+        if ($accept === '' || $accept === '0' || $priorities === []) {
             return null;
         }
 
         try {
             $best = (new Negotiator())->getBest($accept, $priorities);
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
 

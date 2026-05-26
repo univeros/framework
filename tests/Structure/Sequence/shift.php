@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait shift
 {
-    public static function shiftDataProvider()
+    public static function shiftDataProvider(): array
     {
         // initial, expected, result
         return [
@@ -17,9 +17,8 @@ trait shift
 
     /**
      * @dataProvider shiftDataProvider
-     * @param mixed $expected
      */
-    public function testShift(array $initial, $expected, array $result)
+    public function testShift(array $initial, mixed $expected, array $result): void
     {
         $instance = static::getInstance($initial);
 
@@ -28,14 +27,14 @@ trait shift
         $this->assertEquals(count($initial) - 1, count($instance));
     }
 
-    public function testShiftNotAllowedWhenEmpty()
+    public function testShiftNotAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->shift();
     }
 
-    public function testShiftAll()
+    public function testShiftAll(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
 

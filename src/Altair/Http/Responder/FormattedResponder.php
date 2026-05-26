@@ -24,46 +24,32 @@ class FormattedResponder implements ResponderInterface
 {
     use ResolverAwareTrait;
 
-    /**
-     * @var Negotiator
-     */
-    protected $negotiator;
-    /**
-     * @var array
-     */
-    protected $formatters;
+
+    protected array $formatters;
 
     /**
-     * @param Negotiator $negotiator
      * @param callable(string): object $resolver
-     * @param array $formatters
      */
     public function __construct(
-        Negotiator $negotiator,
+        protected Negotiator $negotiator,
         callable $resolver,
         array $formatters = [
             JsonFormatter::class => 1.0
         ]
     ) {
-        $this->negotiator = $negotiator;
         $this->resolver = $resolver;
         $this->formatters = $this->filterFormatters($formatters);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param PayloadInterface $payload
-     *
-     * @return ResponseInterface
-     */
+
+    #[\Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
     ): ResponseInterface {
         if ((bool)$payload->getOutput()) {
-            $response = $this->format($request, $response, $payload);
+            return $this->format($request, $response, $payload);
         }
 
         return $response;
@@ -71,9 +57,6 @@ class FormattedResponder implements ResponderInterface
 
     /**
      * Returns a copy of FormattedResponder adding the new formatter class
-     * @param string $formatter
-     * @param float $priority
-     * @return FormattedResponder
      */
     public function withFormatter(string $formatter, float $priority): FormattedResponder
     {
@@ -82,22 +65,19 @@ class FormattedResponder implements ResponderInterface
         return $cloned;
     }
 
-    /**
-     * @param array $formatters
-     *
-     * @return array
-     */
+
     protected function filterFormatters(array $formatters): array
     {
         $filtered = [];
         foreach ($formatters as $formatter => $quality) {
             if (!is_subclass_of($formatter, OutputFormatterInterface::class)) {
-                throw new InvalidFormatterException("Invalid output formatter class '{$formatter}''");
+                throw new InvalidFormatterException(sprintf("Invalid output formatter class '%s''", $formatter));
             }
 
             if (!is_float($quality)) {
-                throw new InvalidFormatterException("'{$formatter}' requires a quality float number.");
+                throw new InvalidFormatterException(sprintf("'%s' requires a quality float number.", $formatter));
             }
+
             $filtered[$formatter] = $quality;
         }
 
@@ -106,8 +86,6 @@ class FormattedResponder implements ResponderInterface
 
     /**
      * Retrieve a map of accepted priorities with the responsible formatter.
-     *
-     * @return array
      */
     protected function priorities(): array
     {
@@ -125,11 +103,7 @@ class FormattedResponder implements ResponderInterface
     /**
      * Formats the response with selected formatter
      *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param PayloadInterface $payload
      *
-     * @return ResponseInterface
      */
     protected function format(
         ServerRequestInterface $request,
@@ -150,17 +124,16 @@ class FormattedResponder implements ResponderInterface
      * Uses content negotiation to find the best available output format for
      * the requested content type.
      *
-     * @param ServerRequestInterface $request
      *
-     * @return OutputFormatterInterface|object
      */
-    protected function getFormatter(ServerRequestInterface $request)
+    protected function getFormatter(ServerRequestInterface $request): object
     {
         $accept = $request->getHeaderLine('Accept');
         $priorities = $this->priorities();
         if (!empty($accept)) {
             $preferred = $this->negotiator->getBest($accept, array_keys($priorities));
         }
+
         if (!empty($preferred) && $preferred instanceof AcceptEncoding) {
             $formatter = $priorities[$preferred->getValue()];
         } else {

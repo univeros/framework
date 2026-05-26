@@ -23,6 +23,7 @@ class HttpMessageConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         $container
@@ -40,7 +41,7 @@ class HttpMessageConfiguration implements ConfigurationInterface
             )
             ->delegate(
                 ServerRequest::class,
-                [ServerRequestFactory::class, 'fromGlobals']
+                ServerRequestFactory::fromGlobals(...)
             );
     }
 }

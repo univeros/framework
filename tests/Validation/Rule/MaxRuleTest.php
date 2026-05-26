@@ -5,7 +5,8 @@ use Altair\Validation\Rule\MaxRule;
 
 class MaxRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             [1],
@@ -14,7 +15,8 @@ class MaxRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [[]],
@@ -24,7 +26,8 @@ class MaxRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): MaxRule
     {
         return new MaxRule(3);
     }

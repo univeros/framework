@@ -19,24 +19,28 @@ class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function validate($key): bool
     {
         if (!is_string($key)) {
             $this->reason = sprintf(
                 'Cache key must be string, "%s" given.',
-                is_object($key) ? get_class($key) : gettype($key)
+                get_debug_type($key)
             );
 
             return false;
         }
+
         if (!isset($key[0])) {
             $this->reason = 'Cache key must be greater than zero.';
             return false;
         }
+
         if (false !== strpbrk($key, '{}()/\@:')) {
             $this->reason = sprintf('The key %s is invalid. It contains one ore more reserved characters {}()/\@:', $key);
             return false;
         }
+
         return true;
     }
 }

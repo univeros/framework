@@ -14,7 +14,7 @@ class FilterResolverTest extends TestCase
      * @dataProvider filterProvider
      * @param mixed $entry
      */
-    public function testResolver($entry)
+    public function testResolver(string|array $entry): void
     {
         $resolver = $this->getResolver();
         $rule = call_user_func($resolver, $entry);
@@ -22,7 +22,7 @@ class FilterResolverTest extends TestCase
         $this->assertTrue($rule instanceof FilterInterface);
     }
 
-    public static function filterProvider()
+    public static function filterProvider(): array
     {
         return [
             [AlphaFilter::class],
@@ -30,7 +30,8 @@ class FilterResolverTest extends TestCase
             [['class' => MinFilter::class, ':min' => 1]]
         ];
     }
-    protected function getResolver()
+
+    protected function getResolver(): FilterResolver
     {
         return new FilterResolver(new Container());
     }

@@ -18,8 +18,6 @@ class CallbackFilter extends AbstractFilter
 
     /**
      * CallbackRule constructor.
-     *
-     * @param callable $callable
      */
     public function __construct(callable $callable)
     {
@@ -29,7 +27,8 @@ class CallbackFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): mixed
     {
         return call_user_func($this->callable, $value);
     }

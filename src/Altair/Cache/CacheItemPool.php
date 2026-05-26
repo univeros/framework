@@ -9,6 +9,7 @@
 
 namespace Altair\Cache;
 
+use Psr\Log\LoggerInterface;
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
 use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
@@ -26,35 +27,34 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    protected $store;
-    protected $cacheItemKeyValidator;
-    protected $namespace;
+
+    protected CacheItemKeyValidatorInterface $cacheItemKeyValidator;
+
+    protected string $namespace;
+
     protected $deferred = [];
-    protected $cacheItemFactory;
-    protected $deferredMergerClosure;
+
+    protected \Closure $cacheItemFactory;
+
+    protected \Closure $deferredMergerClosure;
 
     /**
      * CacheItemPool constructor.
      *
-     * @param CacheItemStorageInterface $store
-     * @param string $namespace
-     * @param int $defaultLifespan
      * @param CacheItemKeyValidatorInterface|null $cacheItemKeyValidator
      */
     public function __construct(
-        CacheItemStorageInterface $store,
+        protected CacheItemStorageInterface $store,
         string $namespace = '',
         int $defaultLifespan = 0,
         CacheItemKeyValidatorInterface $cacheItemKeyValidator = null
     ) {
-        $this->store = $store;
-
         if ($this->store instanceof PredisCacheItemStorage) {
             $this->store->useNamespace($namespace);
         }
 
         $this->cacheItemKeyValidator = $cacheItemKeyValidator ?? new CacheItemKeyValidator();
-        $this->namespace = empty($namespace) ? '' : $this->makeId($namespace) . ':';
+        $this->namespace = $namespace === '' || $namespace === '0' ? '' : $this->makeId($namespace) . ':';
 
         $this->cacheItemFactory = $this->createCacheItemFactoryClosure($defaultLifespan);
         $this->deferredMergerClosure = $this->createDeferredMergerClosure();
@@ -68,6 +68,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         $this->ensureCommitDeferred();
     }
 
+    #[\Override]
     public function getItem(string $key): CacheItemInterface
     {
         foreach ($this->getItems([$key]) as $item) {
@@ -77,25 +78,25 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return ($this->cacheItemFactory)($key, null, false);
     }
 
+    #[\Override]
     public function getItems(array $keys = []): iterable
     {
         $this->ensureCommitDeferred();
         $ids = array_map(
-            function ($key) {
-                return $this->makeId($key);
-            },
+            fn($key): string => $this->makeId($key),
             $keys
         );
         try {
             $items = $this->store->getItems($ids);
-        } catch (Exception $e) {
-            $this->log('Failed to fetch requested cache items.', ['keys' => $keys, 'exception' => $e]);
+        } catch (Exception $exception) {
+            $this->log('Failed to fetch requested cache items.', ['keys' => $keys, 'exception' => $exception]);
             $items = [];
         }
 
         return $this->createCacheItemsGenerator($items, array_combine($ids, $keys));
     }
 
+    #[\Override]
     public function hasItem(string $key): bool
     {
         $id = $this->makeId($key);
@@ -103,12 +104,13 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         if (isset($this->deferred[$id])) {
             $this->commit();
         }
+
         try {
             return $this->store->hasItem($id);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $this->log(
                 'Failed to check whether and item with key ":key" is cached.',
-                ['key' => $key, 'exception' => $e]
+                ['key' => $key, 'exception' => $exception]
             );
         }
 
@@ -118,19 +120,21 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         $this->deferred = [];
 
         try {
             return $this->store->clear();
-        } catch (Exception $e) {
-            $this->log('Failed clear the cache.', ['exception' => $e]);
+        } catch (Exception $exception) {
+            $this->log('Failed clear the cache.', ['exception' => $exception]);
         }
 
         return false;
     }
 
+    #[\Override]
     public function deleteItem(string $key): bool
     {
         return $this->deleteItems([$key]);
@@ -139,6 +143,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
         $ids = [];
@@ -151,7 +156,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             if ($this->store->deleteItems($ids)) {
                 return true;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return $this->retryDeleteItems($ids);
@@ -160,6 +165,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(CacheItemInterface $item): bool
     {
         if (!$this->saveDeferred($item)) {
@@ -172,11 +178,13 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function saveDeferred(CacheItemInterface $item): bool
     {
         if (!$item instanceof CacheItem) {
             return false;
         }
+
         $this->deferred[$item->getKey()] = $item;
 
         return true;
@@ -185,6 +193,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function commit(): bool
     {
         $success = true;
@@ -193,10 +202,12 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             $this->deferred,
             $this->namespace
         );
-        $retry = $this->deferred = [];
+        $retry = [];
+        $this->deferred = [];
         if (!empty($expired)) {
             $this->store->deleteItems($expired);
         }
+
         foreach ($merged as $lifespan => $values) {
             try {
                 if (($e = $this->store->save($values, $lifespan)) === true) {
@@ -204,6 +215,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 }
             } catch (Exception $e) {
             }
+
             if (is_array($e) || 1 === count($values)) {
                 foreach (is_array($e) ? $e : array_keys($values) as $id) {
                     $success = false;
@@ -211,8 +223,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     $this->log(
                         'Failed to save cache item with key ":key" (:type)',
                         [
-                            'key' => substr($id, strlen($this->namespace)),
-                            'type' => is_object($value) ? get_class($value) : gettype($value),
+                            'key' => substr((string) $id, strlen((string) $this->namespace)),
+                            'type' => get_debug_type($value),
                             'exception' => $e instanceof Exception ? $e : null,
                         ]
                     );
@@ -230,9 +242,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * When bulk delete has failed, retry them individually.
      *
-     * @param array $ids
      *
-     * @return bool
      */
     protected function retryDeleteItems(array $ids): bool
     {
@@ -245,6 +255,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 }
             } catch (Exception $e) {
             }
+
             $this->log('Failed to delete cache item with key ":key".', ['key' => $key, 'exception' => $e]);
             $success = false;
         }
@@ -255,10 +266,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * When doing bulk save, if it has failed, retry failed individually.
      *
-     * @param array $merged
-     * @param array $data
      *
-     * @return bool
      */
     protected function retryCommit(array $merged, array $data): bool
     {
@@ -273,12 +281,13 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     }
                 } catch (Exception $e) {
                 }
+
                 $success = false;
                 $this->log(
                     'Failed to save cache item with key ":key" (:type)',
                     [
-                        'key' => substr($id, strlen($this->namespace)),
-                        'type' => is_object($value) ? get_class($value) : gettype($value),
+                        'key' => substr((string) $id, strlen((string) $this->namespace)),
+                        'type' => get_debug_type($value),
                         'exception' => $e instanceof Exception ? $e : null,
                     ]
                 );
@@ -301,8 +310,6 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Generates the cache items returning a generator.
      *
-     * @param array $items
-     * @param array $keys
      *
      * @return \Generator
      */
@@ -314,9 +321,10 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 unset($keys[$id]);
                 yield $key => call_user_func($this->cacheItemFactory, $key, $value, true);
             }
-        } catch (Exception $e) {
-            $this->log('Failed to fetch requested items', ['keys' => array_values($keys), 'exception' => $e]);
+        } catch (Exception $exception) {
+            $this->log('Failed to fetch requested items', ['keys' => array_values($keys), 'exception' => $exception]);
         }
+
         foreach ($keys as $key) {
             yield $key => call_user_func($this->cacheItemFactory, $key, null, false);
         }
@@ -327,13 +335,11 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      * Closure to access the protected properties of the object.
      *
      * @param int|null $defaultLifespan
-     *
-     * @return Closure
      */
     protected function createCacheItemFactoryClosure(int $defaultLifespan = null): Closure
     {
         return Closure::bind(
-            static function (string $key, $value, bool $isHit) use ($defaultLifespan) {
+            static function (string $key, $value, bool $isHit) use ($defaultLifespan): CacheItem {
                 $cacheItem = new CacheItem();
                 $cacheItem->{'key'} = $key;
                 $cacheItem->{'value'} = $value;
@@ -350,14 +356,13 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Creates the cache item merger by expiring time closure. Again, we are using the Closure Bind Override method to
      * be able to modify the CacheItem instances on deferred. Are the proposed CacheItemInterface a bit too weak ?
-     *
-     * @return Closure
      */
     protected function createDeferredMergerClosure(): Closure
     {
         return Closure::bind(
-            function (array $deferred, string $namespace) {
-                $merged = $expired = [];
+            function (array $deferred, string $namespace): array {
+                $merged = [];
+                $expired = [];
                 $now = time();
 
                 foreach ($deferred as $key => $item) {
@@ -381,9 +386,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Makes a cache key injecting the namespace if any.
      *
-     * @param string $key
      *
-     * @return string
      */
     protected function makeId(string $key): string
     {
@@ -394,6 +397,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         if (null === $this->store->getMaxIdLength()) {
             return $this->namespace . $key;
         }
+
         $id = $this->namespace . $key;
 
         return strlen($id) > $this->store->getMaxIdLength()
@@ -404,13 +408,10 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Logging helper function. If no logger has been set, then a warning error will be triggered having
      * previously replaced the tokens on the error message (i.e. ':key') for its correspondent value in the context.
-     *
-     * @param string $message
-     * @param array $context
      */
     protected function log(string $message, array $context = [])
     {
-        if (null !== $this->logger) {
+        if ($this->logger instanceof LoggerInterface) {
             $this->logger->warning($message, $context);
         } else {
             $replace_pairs = [];
@@ -419,6 +420,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                     $replace[':' . $key] = $value;
                 }
             }
+
             @trigger_error(strtr($message, $replace_pairs), E_USER_WARNING);
         }
     }

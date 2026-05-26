@@ -14,10 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class QueryParamsTokenExtractor implements TokenExtractorInterface
 {
-    /**
-     * @var string
-     */
-    protected $parameter;
+    protected string $parameter;
 
     /**
      * @param string $parameter Name of the query string parameter
@@ -30,6 +27,7 @@ class QueryParamsTokenExtractor implements TokenExtractorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function extract(ServerRequestInterface $request): ?string
     {
         $query = $request->getQueryParams();

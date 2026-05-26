@@ -28,7 +28,7 @@ trait CollectionTrait
      */
     public function __construct($values = [])
     {
-        if (func_num_args()) {
+        if (func_num_args() !== 0) {
             $this->pushAll($this->normalizeItems($values));
         }
     }
@@ -49,13 +49,10 @@ trait CollectionTrait
      */
     public function __toString()
     {
-        return 'object(' . get_class($this) . ')';
+        return 'object(' . $this::class . ')';
     }
 
-    /**
-     * @return static
-     */
-    public function clear()
+    public function clear(): static
     {
         return new static();
     }
@@ -92,15 +89,13 @@ trait CollectionTrait
      *
      * @return static a shallow copy of the collection.
      */
-    public function copy()
+    public function copy(): static
     {
         return new static($this);
     }
 
     /**
      * Returns the size of the collection.
-     *
-     * @return int
      */
     #[\ReturnTypeWillChange]
     public function count(): int
@@ -126,20 +121,18 @@ trait CollectionTrait
      *
      * The format of the returned array is implementation-dependent. Some implementations may throw an exception if an
      * array representation could not be created (for example when object are used as keys).
-     *
-     * @return array
      */
     abstract public function toArray(): array;
 
     /**
      * Pushes all values of either an array or traversable object.
-     * @param mixed $values
      */
-    protected function pushAll($values): void
+    protected function pushAll(mixed $values): void
     {
         foreach ($values as $value) {
             $this->internal[] = $value;
         }
+
         if ($this instanceof CapacityInterface) {
             $this->adjustCapacity();
         }
@@ -148,21 +141,22 @@ trait CollectionTrait
     /**
      * Results array of items from Collections or array.
      *
-     * @param  mixed $items
      *
-     * @return array
      */
-    protected function normalizeItems($items): array
+    protected function normalizeItems(mixed $items): array
     {
         if (is_array($items)) {
             return $items;
         }
+
         if ($items instanceof CollectionInterface) {
             return $items->toArray();
         }
+
         if ($items instanceof JsonSerializable) {
             return $items->jsonSerialize();
         }
+
         if ($items instanceof Traversable) {
             return iterator_to_array($items);
         }

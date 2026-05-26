@@ -16,6 +16,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -24,6 +25,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getItems(array $keys = []): array
     {
         return [];
@@ -32,6 +34,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasItem(string $key): bool
     {
         return false;
@@ -40,6 +43,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         return true;
@@ -48,6 +52,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
         return true;
@@ -56,7 +61,8 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    public function save(array $values, int $lifespan)
+    #[\Override]
+    public function save(array $values, int $lifespan): bool
     {
         return false;
     }

@@ -16,6 +16,7 @@ class PrivateNoExpireCacheLimiter extends AbstractCacheLimiter
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(ResponseInterface $response): ResponseInterface
     {
         $maxAge = $this->cacheExpire * 60;

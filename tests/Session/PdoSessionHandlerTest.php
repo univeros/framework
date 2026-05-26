@@ -10,11 +10,10 @@ use PHPUnit\Framework\TestCase;
 class PdoSessionHandlerTest extends TestCase
 {
     private $dbFile;
-    /**
-     * @var SqlitePdoSessionAdapter
-     */
-    private $adapter;
 
+    private SqlitePdoSessionAdapter $adapter;
+
+    #[\Override]
     protected function setUp(): void    {
         $pdo = new PDO('sqlite::memory:');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -23,18 +22,20 @@ class PdoSessionHandlerTest extends TestCase
         $this->adapter->getConnection()->exec($this->getCreateSqliteTableStmt());
     }
 
+    #[\Override]
     protected function tearDown(): void    {
         if ($this->dbFile) {
             @unlink($this->dbFile);
         }
     }
 
-    public function testSqliteReadWriteData()
+    public function testSqliteReadWriteData(): void
     {
         $handler = $this->getSqliteHandler();
 
         $handler->open('', 'sid');
         $handler->write('sid', 'test-data');
+
         $data = $handler->read('sid');
         $this->assertEquals('test-data', $data);
         $handler->close();
@@ -43,7 +44,7 @@ class PdoSessionHandlerTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testSessionGc()
+    public function testSessionGc(): void
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);
 
@@ -72,11 +73,12 @@ class PdoSessionHandlerTest extends TestCase
         $this->assertEquals(1, $this->adapter->getConnection()->query('SELECT COUNT(*) FROM sessions')->fetchColumn(), 'Expired session is pruned');
     }
 
-    public function testSessionDestroy()
+    public function testSessionDestroy(): void
     {
         $handler = $this->getSqliteHandler();
 
         $handler->open('', 'sid');
+
         $data = $handler->read('id');
         $this->assertEmpty($data);
 
@@ -98,31 +100,24 @@ class PdoSessionHandlerTest extends TestCase
         $this->assertSame('', $data, 'Destroyed session returns empty string');
     }
 
-    protected function getPersistentSqliteDsn()
+    protected function getPersistentSqliteDsn(): string
     {
         $this->dbFile = tempnam(sys_get_temp_dir(), 'altair_sqlite_sessions');
 
         return 'sqlite:' . $this->dbFile;
     }
 
-    protected function getCreateSqliteTableStmt()
+    protected function getCreateSqliteTableStmt(): string
     {
-        $sql = 'CREATE TABLE sessions (
+        return 'CREATE TABLE sessions (
                 id TEXT NOT NULL PRIMARY KEY, 
                 content BLOB NOT NULL, 
                 session_lifetime INTEGER NOT NULL, 
                 session_time INTEGER NOT NULL)';
-
-        return $sql;
     }
 
-    /**
-     * @return PdoSessionHandler
-     */
-    protected function getSqliteHandler()
+    protected function getSqliteHandler(): PdoSessionHandler
     {
-        $handler = new PdoSessionHandler($this->adapter);
-
-        return $handler;
+        return new PdoSessionHandler($this->adapter);
     }
 }

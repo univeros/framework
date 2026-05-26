@@ -14,7 +14,6 @@ interface CommandInterface
     /**
      * Process a message
      *
-     * @param CommandMessageInterface $message
      *
      * @return void
      */

@@ -18,12 +18,7 @@ class SharesCollection extends Map
 {
     use NameNormalizerTrait;
 
-    /**
-     * @param string $name
-     * @param AliasesCollection $aliasesCollection
-     *
-     * @return MapInterface
-     */
+    
     public function shareClass(string $name, AliasesCollection $aliasesCollection): MapInterface
     {
         [, $normalizedName] = $aliasesCollection->resolve($name);
@@ -33,13 +28,11 @@ class SharesCollection extends Map
 
     /**
      * @param $instance
-     * @param AliasesCollection $aliasesCollection
      *
-     * @return MapInterface
      */
     public function shareInstance($instance, AliasesCollection $aliasesCollection): MapInterface
     {
-        $normalizedName = $this->normalizeName(get_class($instance));
+        $normalizedName = $this->normalizeName($instance::class);
         if (isset($aliasesCollection[$normalizedName])) {
             throw new InvalidArgumentException(
                 sprintf(

@@ -1,56 +1,99 @@
 <?php
 namespace Altair\Tests\Structure;
 
+use Altair\Tests\Structure\Sequence\_clone;
+use Altair\Tests\Structure\Sequence\_echo;
+use Altair\Tests\Structure\Sequence\_empty;
+use Altair\Tests\Structure\Sequence\_foreach;
+use Altair\Tests\Structure\Sequence\_isset;
+use Altair\Tests\Structure\Sequence\_jsonEncode;
+use Altair\Tests\Structure\Sequence\_list;
+use Altair\Tests\Structure\Sequence\_serialize;
+use Altair\Tests\Structure\Sequence\_unset;
+use Altair\Tests\Structure\Sequence\_var_dump;
+use Altair\Tests\Structure\Deque\__construct;
+use Altair\Tests\Structure\Deque\allocate;
+use Altair\Tests\Structure\Deque\capacity;
+use Altair\Tests\Structure\Deque\insert;
+use Altair\Tests\Structure\Deque\remove;
+use Altair\Tests\Structure\Deque\slice;
+use Altair\Tests\Structure\Sequence\apply;
+use Altair\Tests\Structure\Sequence\clear;
+use Altair\Tests\Structure\Sequence\contains;
+use Altair\Tests\Structure\Sequence\copy;
+use Altair\Tests\Structure\Sequence\count;
+use Altair\Tests\Structure\Sequence\filter;
+use Altair\Tests\Structure\Sequence\find;
+use Altair\Tests\Structure\Sequence\first;
+use Altair\Tests\Structure\Sequence\get;
+use Altair\Tests\Structure\Sequence\isEmpty;
+use Altair\Tests\Structure\Sequence\join;
+use Altair\Tests\Structure\Sequence\last;
+use Altair\Tests\Structure\Sequence\map;
+use Altair\Tests\Structure\Sequence\merge;
+use Altair\Tests\Structure\Sequence\pop;
+use Altair\Tests\Structure\Sequence\push;
+use Altair\Tests\Structure\Sequence\reduce;
+use Altair\Tests\Structure\Sequence\reverse;
+use Altair\Tests\Structure\Sequence\rotate;
+use Altair\Tests\Structure\Sequence\set;
+use Altair\Tests\Structure\Sequence\shift;
+use Altair\Tests\Structure\Sequence\sort;
+use Altair\Tests\Structure\Sequence\sum;
+use Altair\Tests\Structure\Sequence\toArray;
+use Altair\Tests\Structure\Sequence\unshift;
+use Altair\Structure\Deque;
+
 class DequeTest extends AbstractCollectionTest
 {
-    use Sequence\_clone;
-    use Sequence\_echo;
-    use Sequence\_empty;
-    use Sequence\_foreach;
-    use Sequence\_isset;
-    use Sequence\_jsonEncode;
-    use Sequence\_list;
-    use Sequence\_serialize;
-    use Sequence\_unset;
-    use Sequence\_var_dump;
+    use _clone;
+    use _echo;
+    use _empty;
+    use _foreach;
+    use _isset;
+    use _jsonEncode;
+    use _list;
+    use _serialize;
+    use _unset;
+    use _var_dump;
 
-    use Deque\__construct;
-    use Deque\allocate;
-    use Deque\capacity;
-    use Deque\insert;
-    use Deque\remove;
-    use Deque\slice;
+    use __construct;
+    use allocate;
+    use capacity;
+    use insert;
+    use remove;
+    use slice;
 
-    use Sequence\apply;
-    use Sequence\clear;
-    use Sequence\contains;
-    use Sequence\copy;
-    use Sequence\count;
-    use Sequence\filter;
-    use Sequence\find;
-    use Sequence\first;
-    use Sequence\get;
+    use apply;
+    use clear;
+    use contains;
+    use copy;
+    use count;
+    use filter;
+    use find;
+    use first;
+    use get;
     use Sequence\insert;
-    use Sequence\isEmpty;
-    use Sequence\join;
-    use Sequence\last;
-    use Sequence\map;
-    use Sequence\merge;
-    use Sequence\pop;
-    use Sequence\push;
-    use Sequence\reduce;
+    use isEmpty;
+    use join;
+    use last;
+    use map;
+    use merge;
+    use pop;
+    use push;
+    use reduce;
     use Sequence\remove;
-    use Sequence\reverse;
-    use Sequence\rotate;
-    use Sequence\set;
-    use Sequence\shift;
+    use reverse;
+    use rotate;
+    use set;
+    use shift;
     use Sequence\slice;
-    use Sequence\sort;
-    use Sequence\sum;
-    use Sequence\toArray;
-    use Sequence\unshift;
+    use sort;
+    use sum;
+    use toArray;
+    use unshift;
 
-    public function testReallocatingWhenHeadNotAtZero()
+    public function testReallocatingWhenHeadNotAtZero(): void
     {
         $instance = $this->getInstance();
 
@@ -67,7 +110,7 @@ class DequeTest extends AbstractCollectionTest
         $this->assertToArray($expected, $instance);
     }
 
-    public function testReallocatingWhenHeadHasWrapped()
+    public function testReallocatingWhenHeadHasWrapped(): void
     {
         $instance = $this->getInstance();
 
@@ -92,7 +135,7 @@ class DequeTest extends AbstractCollectionTest
         $this->assertToArray($expected, $instance);
     }
 
-    public function testRealignmentOfWrappedBufferWithLargeTempSpace()
+    public function testRealignmentOfWrappedBufferWithLargeTempSpace(): void
     {
         $instance = $this->getInstance();   // [_, _, _, _, _, _, _, _]
 
@@ -112,7 +155,7 @@ class DequeTest extends AbstractCollectionTest
         // which would be necessary in the case where the isn't enough space.
 
         $expected = ['d', 'c', 'b', 'a'];
-        $this->assertToArray($expected, $instance->sort(function ($a, $b) {
+        $this->assertToArray($expected, $instance->sort(function ($a, $b): int {
             return $b <=> $a; // Reverse
         }));
 
@@ -130,7 +173,7 @@ class DequeTest extends AbstractCollectionTest
         // Wrapped values:  2
 
         $expected = ['f', 'e', 'd', 'c', 'b', 'a'];
-        $this->assertToArray($expected, $instance->sort(function ($a, $b) {
+        $this->assertToArray($expected, $instance->sort(function ($a, $b): int {
             return $b <=> $a; // Reverse
         }));
 
@@ -147,13 +190,13 @@ class DequeTest extends AbstractCollectionTest
         // Wrapped values:  2
 
         $expected = ['g', 'f', 'e', 'd', 'c', 'b', 'a'];
-        $this->assertToArray($expected, $instance->sort(function ($a, $b) {
+        $this->assertToArray($expected, $instance->sort(function ($a, $b): int {
             return $b <=> $a; // Reverse
         }));
     }
 
-    protected static function getInstance(array $values = [])
+    protected static function getInstance(array $values = []): Deque
     {
-        return new \Altair\Structure\Deque($values);
+        return new Deque($values);
     }
 }

@@ -13,10 +13,7 @@ use Altair\Http\Contracts\IdentityValidatorInterface;
 
 class ArrayIdentityValidator implements IdentityValidatorInterface
 {
-    /**
-     * @var array|null
-     */
-    protected $users;
+    protected array $users;
 
     /**
      * ArrayIdentityValidator constructor.
@@ -31,6 +28,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(array $arguments): bool
     {
         $user = $arguments['user'];
@@ -40,9 +38,10 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
             return false;
         }
 
-        if (preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', $password) && (strlen($password) >= 60)) {
-            return password_verify($password, $this->users[$user]);
+        if (preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', (string) $password) && (strlen((string) $password) >= 60)) {
+            return password_verify((string) $password, (string) $this->users[$user]);
         }
+
         return $password === $this->users[$user];
     }
 }

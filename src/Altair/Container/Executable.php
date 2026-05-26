@@ -21,6 +21,7 @@ class Executable
      * @var ReflectionFunctionAbstract|ReflectionFunction
      */
     protected $callableReflection;
+
     /**
      * @var mixed|null The object to invoke the method on if $reflectionFunction is a ReflectionMethod. In
      * case of static methods it can be null.
@@ -30,7 +31,6 @@ class Executable
     /**
      * Executable constructor.
      *
-     * @param ReflectionFunctionAbstract $reflectionFunction
      * @param mixed|null $object The object to invoke the method on if $reflectionFunction is a ReflectionMethod. In
      * case of static methods, you can pass null to this parameter.
      *
@@ -47,9 +47,8 @@ class Executable
     /**
      * @return mixed
      */
-    public function __invoke()
+    public function __invoke(...$args)
     {
-        $args = func_get_args();
         $reflection = $this->callableReflection;
         if ($reflection instanceof ReflectionMethod) {
             return $reflection->invokeArgs($this->object, $args);
@@ -60,9 +59,6 @@ class Executable
             : $reflection->invokeArgs($args);
     }
 
-    /**
-     * @return ReflectionFunctionAbstract
-     */
     public function getCallableReflection(): ReflectionFunctionAbstract
     {
         return $this->callableReflection;
@@ -76,11 +72,7 @@ class Executable
         return $this->object;
     }
 
-    /**
-     * @param ReflectionMethod $reflection
-     * @param mixed $object
-     */
-    protected function setMethodCallable(ReflectionMethod $reflection, $object): void
+    protected function setMethodCallable(ReflectionMethod $reflection, mixed $object): void
     {
         if (is_object($object)) {
             $this->callableReflection = $reflection;
@@ -94,11 +86,9 @@ class Executable
 
     /**
      * @param ReflectionFunction|ReflectionFunctionAbstract $reflection
-     * @param array $args
      *
-     * @return mixed
      */
-    protected function invokeClosure(ReflectionFunction $reflection, array $args)
+    protected function invokeClosure(ReflectionFunction $reflection, array $args): mixed
     {
         $scope = $reflection->getClosureScopeClass();
 

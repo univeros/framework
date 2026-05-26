@@ -23,22 +23,21 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 {
     use RedisNamespaceValidationAwareTrait;
 
-    protected $client;
+    protected Client $client;
+
     protected $namespace;
 
     /**
      * RedisCacheItemPoolStorage constructor.
-     *
-     * @param Client $redis
-     * @param string $namespace
      */
-    public function __construct(Client $redis, $namespace = '')
+    public function __construct(Client $redis, string $namespace = '')
     {
         $info = $redis->info('Server');
         $info = $info['Server'] ?? $info;
         if (!version_compare($info['redis_version'], '2.8', '>=')) {
             throw new InvalidArgumentException(sprintf('%s requires Redis 2.8 or above.', static::class));
         }
+
         $this->client = $redis;
         $this->useNamespace($namespace);
     }
@@ -46,6 +45,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -55,10 +55,11 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
      * @inheritDoc
      * @throws \ErrorException
      */
+    #[\Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
-        if (!empty($keys)) {
+        if ($keys !== []) {
             $values = $this->client->mget($keys);
             foreach ($keys as $index => $key) {
                 if ($values[$index]) {
@@ -73,6 +74,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasItem(string $key): bool
     {
         return (bool)$this->client->exists($key);
@@ -81,6 +83,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         $success = true;
@@ -113,9 +116,10 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
-        if (!empty($keys)) {
+        if ($keys !== []) {
             return $this->client->del($keys) === count($keys);
         }
 
@@ -125,19 +129,23 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(array $values, int $lifespan)
     {
-        $serialized = $failed = [];
+        $serialized = [];
+        $failed = [];
         foreach ($values as $id => $value) {
             try {
                 $serialized[$id] = serialize($value);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $failed[] = $id;
             }
         }
-        if (empty($serialized)) {
+
+        if ($serialized === []) {
             return $failed;
         }
+
         if (0 >= $lifespan) {
             $this->client->mset($serialized);
 
@@ -145,7 +153,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
         }
 
         $this->client->pipeline(
-            static function ($pipe) use ($serialized, $lifespan) {
+            static function ($pipe) use ($serialized, $lifespan): void {
                 /** @var Client $pipe */
                 foreach ($serialized as $id => $value) {
                     if (0 >= $lifespan) {
@@ -157,14 +165,10 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
             }
         );
 
-        return empty($failed) ? true : $failed;
+        return $failed === [] ? true : $failed;
     }
 
-    /**
-     * @param Client $client
-     *
-     * @return array|null
-     */
+
     protected function getHosts(Client $client): ?array
     {
         $connection = $client->getConnection();

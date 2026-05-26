@@ -15,11 +15,13 @@ class EntityTest extends TestCase
      * @var array
      */
     protected $data;
+
     /**
      * @var EntityInterface
      */
     protected $entity;
 
+    #[\Override]
     protected function setUp(): void    {
         $this->data = [
             'id' => 42,
@@ -30,7 +32,7 @@ class EntityTest extends TestCase
         $this->entity = new Entity($this->data);
     }
 
-    public function testInterfaces()
+    public function testInterfaces(): void
     {
         $this->assertInstanceOf(EntityInterface::class, $this->entity);
         $this->assertInstanceOf(JsonSerializable::class, $this->entity);
@@ -38,29 +40,29 @@ class EntityTest extends TestCase
         $this->assertInstanceOf(Serializable::class, $this->entity);
     }
 
-    public function testDateAttribute()
+    public function testDateAttribute(): void
     {
         $this->assertInstanceOf(Carbon::class, $this->entity->asCarbonDate('created_at'));
     }
 
-    public function testJsonEncode()
+    public function testJsonEncode(): void
     {
         $json = json_encode($this->entity);
         $this->assertJson($json);
         $this->assertSame($this->data, json_decode($json, true));
     }
 
-    public function testSerialize()
+    public function testSerialize(): void
     {
         $frozen = serialize($this->entity);
 
         $thawed = unserialize($frozen);
-        $this->assertInstanceOf(get_class($this->entity), $thawed);
+        $this->assertInstanceOf($this->entity::class, $thawed);
         $this->assertNotSame($this->entity, $thawed);
         $this->assertSame($this->data, $thawed->toArray());
     }
 
-    public function testWithData()
+    public function testWithData(): void
     {
         $data = [
             'id' => 43,

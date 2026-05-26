@@ -34,6 +34,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         // should we handle the return value? 0 on timeout, null on error
@@ -52,6 +53,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getDriver(): string
     {
         return self::DRIVER_MYSQL;
@@ -60,6 +62,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSelectSql(): string
     {
         $sql = $this->getIsLockModeTransactional()
@@ -72,6 +75,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
         $maxlifetime = (int)ini_get('session.gc_maxlifetime');

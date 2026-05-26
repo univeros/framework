@@ -13,17 +13,13 @@ use Altair\Http\Contracts\OutputFormatterInterface;
 
 abstract class AbstractHtmlFormatter implements OutputFormatterInterface
 {
-    /**
-     * @return array
-     */
+    #[\Override]
     public static function accepts(): array
     {
         return ['text/html'];
     }
 
-    /**
-     * @return string
-     */
+    #[\Override]
     public function type(): string
     {
         return 'text/html';

@@ -5,7 +5,8 @@ use Altair\Validation\Rule\BetweenRule;
 
 class BetweenRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             [2],
@@ -16,7 +17,8 @@ class BetweenRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [-1],
@@ -25,7 +27,8 @@ class BetweenRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): BetweenRule
     {
         return new BetweenRule(2, 6);
     }

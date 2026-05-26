@@ -9,6 +9,7 @@
 
 namespace Altair\Courier\Strategy;
 
+use Altair\Courier\Exception\UnknownCommandMessageNameException;
 use Altair\Courier\Contracts\CommandLocatorServiceInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMessageNameResolverInterface;
@@ -17,30 +18,16 @@ use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
 class CommandRunnerExecStrategy implements CommandRunnerStrategyInterface
 {
     /**
-     * @var CommandLocatorServiceInterface
-     */
-    private $commandLocator;
-    /**
-     * @var CommandMessageNameResolverInterface
-     */
-    private $nameResolver;
-
-    /**
      * ExecuteStrategy constructor.
-     *
-     * @param CommandLocatorServiceInterface $locator
-     * @param CommandMessageNameResolverInterface $resolver
      */
-    public function __construct(CommandLocatorServiceInterface $locator, CommandMessageNameResolverInterface $resolver)
+    public function __construct(private readonly CommandLocatorServiceInterface $commandLocator, private readonly CommandMessageNameResolverInterface $nameResolver)
     {
-        $this->commandLocator = $locator;
-        $this->nameResolver = $resolver;
     }
 
     /**
-     * @param CommandMessageInterface $message
-     * @throws \Altair\Courier\Exception\UnknownCommandMessageNameException
+     * @throws UnknownCommandMessageNameException
      */
+    #[\Override]
     public function run(CommandMessageInterface $message): void
     {
         $name = $this->nameResolver->resolve($message);

@@ -86,6 +86,7 @@ class IbanRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -107,6 +108,7 @@ class IbanRule extends AbstractRule
         if (!preg_match('/^' . $this->patterns[$country] . '$/', $check)) {
             return false;
         }
+
         $check .= substr($value, 0, 4);
         $check = strtr(
             $check,
@@ -146,6 +148,7 @@ class IbanRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid IBAN.', $value);
@@ -154,15 +157,13 @@ class IbanRule extends AbstractRule
     /**
      * Ensures the IBAN number has the correct values by removing those not required (IBAN prefix) and not valid.
      *
-     * @param string $value
      *
-     * @return string
      */
     protected function sanitize(string $value): string
     {
         $value = strtoupper(ltrim($value));
         $value = preg_replace('/^I?IBAN/', '', $value);
 
-        return preg_replace('/[^a-zA-Z0-9]/', '', $value);
+        return preg_replace('/[^a-zA-Z0-9]/', '', (string) $value);
     }
 }

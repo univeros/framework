@@ -14,8 +14,6 @@ interface MiddlewareInterface
     /**
      * Middleware capable invokable class method.
      *
-     * @param PayloadInterface $payload
-     * @param callable $next
      *
      * @return mixed
      */

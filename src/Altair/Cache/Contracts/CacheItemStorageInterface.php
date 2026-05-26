@@ -9,12 +9,12 @@
 
 namespace Altair\Cache\Contracts;
 
+use Altair\Cache\Exception\InvalidArgumentException;
+
 interface CacheItemStorageInterface
 {
     /**
      * Returns the maximum length of an id that an adapter supports. If null, the key can be of any size.
-     *
-     * @return int|null
      */
     public function getMaxIdLength(): ?int;
 
@@ -56,7 +56,7 @@ interface CacheItemStorageInterface
      * @param string[] $keys
      *          An array of keys that should be removed from the pool.
      *
-     * @throws \Altair\Cache\Exception\InvalidArgumentException If any of the keys in $keys are not a legal value a
+     * @throws InvalidArgumentException If any of the keys in $keys are not a legal value a
      * \Psr\Cache\InvalidArgumentException MUST be thrown.
      *
      * @return bool True if the items were successfully removed. False if there was an error.

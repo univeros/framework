@@ -5,11 +5,8 @@ trait _unset
 {
     /**
      * @dataProvider removeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
-     * @param mixed $return
      */
-    public function testArrayAccessUnset($initial, $index, $return, array $expected)
+    public function testArrayAccessUnset(mixed $initial, mixed $index, mixed $return, array $expected): void
     {
         $instance = static::getInstance($initial);
         unset($instance[$index]);
@@ -19,10 +16,8 @@ trait _unset
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessUnsetIndexBadIndex($initial, $index)
+    public function testArrayAccessUnsetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
@@ -31,17 +26,15 @@ trait _unset
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessUnsetIndexOutOfRange($initial, $index)
+    public function testArrayAccessUnsetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
         unset($instance[$index]);
     }
 
-    public function testArrayAccessUnsetByReference()
+    public function testArrayAccessUnsetByReference(): void
     {
         $instance = static::getInstance([[1]]);
         unset($instance[0][0]);

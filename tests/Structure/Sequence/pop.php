@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait pop
 {
-    public static function popDataProvider()
+    public static function popDataProvider(): array
     {
         // initial, expected, returned
         return [
@@ -14,10 +14,8 @@ trait pop
 
     /**
      * @dataProvider popDataProvider
-     * @param mixed $initial
-     * @param mixed $returned
      */
-    public function testPop($initial, array $expected, $returned)
+    public function testPop(mixed $initial, array $expected, mixed $returned): void
     {
         $instance = static::getInstance($initial);
 
@@ -33,7 +31,7 @@ trait pop
         $instance->pop();
     }
 
-    public function testPopAll()
+    public function testPopAll(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
 

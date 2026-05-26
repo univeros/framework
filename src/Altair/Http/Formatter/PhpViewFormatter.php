@@ -9,7 +9,6 @@
 
 namespace Altair\Http\Formatter;
 
-use Altair\Http\Configuration\PhpViewConfiguration;
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Altair\Http\Exception\RuntimeException;
@@ -18,42 +17,24 @@ use Throwable;
 
 class PhpViewFormatter extends AbstractHtmlFormatter
 {
-    /**
-     * @var string
-     */
-    protected $templatesPath;
-    /**
-     * @var string
-     */
-    protected $layout;
-    /**
-     * @var string
-     */
-    protected $defaultExtension;
+    protected string $templatesPath;
+
+
 
     /**
      * PhpViewFormatter constructor.
-     *
-     * @param string $templatesPath
-     * @param string $layout
-     * @param string $defaultExtension
      */
-    public function __construct(string $templatesPath, string $layout = null, string $defaultExtension = 'php')
+    public function __construct(string $templatesPath, protected ?string $layout = null, protected string $defaultExtension = 'php')
     {
         if (!is_dir($templatesPath)) {
-            throw new InvalidArgumentException("'{$templatesPath}' is not a valid directory path.");
+            throw new InvalidArgumentException(sprintf("'%s' is not a valid directory path.", $templatesPath));
         }
 
         $this->templatesPath = $templatesPath;
-        $this->layout = $layout;
-        $this->defaultExtension = $defaultExtension;
     }
 
-    /**
-     * @param PayloadInterface $payload
-     *
-     * @return string
-     */
+
+    #[\Override]
     public function body(PayloadInterface $payload): string
     {
         return $this->render($payload);
@@ -62,10 +43,8 @@ class PhpViewFormatter extends AbstractHtmlFormatter
     /**
      * Renders the contents of a payload to the template specified with its settings.
      *
-     * @param PayloadInterface $payload
      *
      * @throws Throwable
-     * @return string
      */
     protected function render(PayloadInterface $payload): string
     {
@@ -86,10 +65,8 @@ class PhpViewFormatter extends AbstractHtmlFormatter
      * Renders the contents to a layout specified within the payload settings. If not layout is found, it will use the
      * one configured.
      *
-     * @param PayloadInterface $payload
      * @param $content
      *
-     * @return string
      *
      * @see PhpViewConfiguration::apply()
      */
@@ -115,12 +92,9 @@ class PhpViewFormatter extends AbstractHtmlFormatter
     /**
      * Renders a view file as a PHP script.
      *
-     * @param string $file
-     * @param array $params
      *
      * @throws Exception
      * @throws Throwable
-     * @return string
      */
     protected function renderPhpFile(string $file, array $params = []): string
     {
@@ -133,19 +107,13 @@ class PhpViewFormatter extends AbstractHtmlFormatter
             require($file);
 
             return ob_get_clean();
-        } catch (Exception $e) {
+        } catch (Exception|Throwable $e) {
             while (ob_get_level() > $level) {
                 if (!@ob_end_clean()) {
                     ob_clean();
                 }
             }
-            throw $e;
-        } catch (Throwable $e) {
-            while (ob_get_level() > $level) {
-                if (!@ob_end_clean()) {
-                    ob_clean();
-                }
-            }
+
             throw $e;
         }
     }
@@ -153,9 +121,7 @@ class PhpViewFormatter extends AbstractHtmlFormatter
     /**
      * Returns full path of a given template name
      *
-     * @param string $template
      *
-     * @return string
      */
     protected function getViewFile(string $template): string
     {
@@ -164,10 +130,11 @@ class PhpViewFormatter extends AbstractHtmlFormatter
         if (pathinfo($file, PATHINFO_EXTENSION) !== '') {
             return $file;
         }
+
         $path = $file . '.' . $this->defaultExtension;
 
         if ($this->defaultExtension !== 'php' && !is_file($path)) {
-            $path = $file . '.php';
+            return $file . '.php';
         }
 
         return $path;

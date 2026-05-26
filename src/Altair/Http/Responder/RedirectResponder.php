@@ -19,6 +19,7 @@ class RedirectResponder implements ResponderInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -27,7 +28,7 @@ class RedirectResponder implements ResponderInterface
         $location = $payload->getSetting('redirect');
 
         if (!empty($location)) {
-            $response = $response->withHeader('Location', $location);
+            return $response->withHeader('Location', $location);
         }
 
         return $response;

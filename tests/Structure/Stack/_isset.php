@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 trait _isset
 {
-    public function testArrayAccessIsset()
+    public function testArrayAccessIsset(): void
     {
         $set = static::getInstance();
         $this->expectArrayAccessUnsupportedException();

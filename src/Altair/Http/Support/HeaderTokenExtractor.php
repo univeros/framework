@@ -15,23 +15,16 @@ use Psr\Http\Message\ServerRequestInterface;
 class HeaderTokenExtractor implements TokenExtractorInterface
 {
     /**
-     * @var string
-     */
-    protected $header;
-
-    /**
      * HeaderTokenParser constructor.
-     *
-     * @param string $header
      */
-    public function __construct(string $header)
+    public function __construct(protected string $header)
     {
-        $this->header = $header;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function extract(ServerRequestInterface $request): ?string
     {
         $token = current($request->getHeader($this->header));

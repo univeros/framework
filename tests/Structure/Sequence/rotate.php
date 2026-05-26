@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait rotate
 {
-    public static function rotateDataProvider()
+    public static function rotateDataProvider(): array
     {
         // values, rotation, expected
         return [
@@ -44,7 +44,7 @@ trait rotate
     /**
      * @dataProvider rotateDataProvider
      */
-    public function testRotate(array $values, int $rotation, array $expected)
+    public function testRotate(array $values, int $rotation, array $expected): void
     {
         $instance = static::getInstance($values);
         $instance->rotate($rotation);

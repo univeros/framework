@@ -14,47 +14,32 @@ use Altair\Container\Exception\OutOfBoundsException;
 class Definition
 {
     public const RAW_PREFIX = ':';
+
     public const DELEGATE_PREFIX = '+';
+
     public const DEFINITION_PREFIX = '@';
 
     /**
-     * @var array
-     */
-    protected $arguments = [];
-
-    /**
      * Definition constructor.
-     *
-     * @param array $arguments
      */
-    public function __construct(array $arguments)
+    public function __construct(protected array $arguments)
     {
-        $this->arguments = $arguments;
     }
 
-    /**
-     * @param Definition $definition
-     *
-     * @return Definition
-     */
+
     public function replace(Definition $definition): Definition
     {
         return new static(array_replace($definition->getArguments(), $this->arguments));
     }
 
-    /**
-     * @return array
-     */
     public function getArguments(): array
     {
         return $this->arguments;
     }
 
     /**
-     * @param string $key
      * @param $value
      *
-     * @return Definition
      */
     public function add(string $key, $value): Definition
     {
@@ -64,10 +49,8 @@ class Definition
     }
 
     /**
-     * @param string $key
      * @param $value
      *
-     * @return Definition
      */
     public function addRaw(string $key, $value): Definition
     {
@@ -75,21 +58,15 @@ class Definition
     }
 
     /**
-     * @param string $key
      * @param $value
      *
-     * @return Definition
      */
     public function addDelegate(string $key, $value): Definition
     {
         return $this->add(self::DELEGATE_PREFIX . $key, $value);
     }
 
-    /**
-     * @param int $position
-     *
-     * @return bool
-     */
+
     public function hasIndex(int $position): bool
     {
         return isset($this->arguments[$position]) || array_key_exists($position, $this->arguments);
@@ -97,8 +74,6 @@ class Definition
 
     /**
      * @param $name
-     *
-     * @return bool
      */
     public function has($name): bool
     {
@@ -107,30 +82,24 @@ class Definition
 
     /**
      * @param $name
-     *
-     * @return bool
      */
-    public function hasRaw($name): bool
+    public function hasRaw(string $name): bool
     {
         return $this->has(self::RAW_PREFIX . $name);
     }
 
     /**
      * @param $name
-     *
-     * @return bool
      */
-    public function hasDelegate($name): bool
+    public function hasDelegate(string $name): bool
     {
         return $this->has(self::DELEGATE_PREFIX . $name);
     }
 
     /**
      * @param $name
-     *
-     * @return bool
      */
-    public function hasClassDefinition($name): bool
+    public function hasClassDefinition(string $name): bool
     {
         return $this->has(self::DEFINITION_PREFIX . $name);
     }
@@ -153,7 +122,7 @@ class Definition
     public function get($name)
     {
         if (!array_key_exists($name, $this->arguments) && !isset($this->arguments[$name])) {
-            throw new OutOfBoundsException("'$name' not found in definition.");
+            throw new OutOfBoundsException(sprintf("'%s' not found in definition.", $name));
         }
 
         return $this->arguments[$name];
@@ -164,7 +133,7 @@ class Definition
      *
      * @return mixed
      */
-    public function getRaw($name)
+    public function getRaw(string $name)
     {
         return $this->get(static::RAW_PREFIX . $name);
     }
@@ -174,7 +143,7 @@ class Definition
      *
      * @return mixed
      */
-    public function getDelegate($name)
+    public function getDelegate(string $name)
     {
         return $this->get(static::DELEGATE_PREFIX . $name);
     }
@@ -184,7 +153,7 @@ class Definition
      *
      * @return mixed
      */
-    public function getClassDefinition($name)
+    public function getClassDefinition(string $name)
     {
         return $this->get(static::DEFINITION_PREFIX . $name);
     }

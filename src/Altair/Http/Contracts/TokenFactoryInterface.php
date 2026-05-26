@@ -11,7 +11,6 @@ namespace Altair\Http\Contracts;
 
 use Altair\Http\Exception\AuthorizationTokenException;
 use Altair\Http\Exception\InvalidTokenException;
-use Altair\Http\Middleware\TokenAuthenticationMiddleware;
 
 interface TokenFactoryInterface
 {
@@ -22,11 +21,9 @@ interface TokenFactoryInterface
      * - If a valid token string is present, a corresponding Token instance will be returned.
      * - If the token validation fails for some reason, an AuthorizationTokenException will be thrown.
      *
-     * @param string $token
      *
      * @throws InvalidTokenException
      * @throws AuthorizationTokenException
-     * @return TokenInterface
      *
      */
     public function fromTokenString(string $token): TokenInterface;
@@ -35,9 +32,7 @@ interface TokenFactoryInterface
      * Builds a Token instance from credentials. The credentials are assumed to be valid. An IdentityValidatorInterface
      * object should grant that the credentials given are correct.
      *
-     * @param array $credentials
      *
-     * @return TokenInterface
      * @see TokenAuthenticationMiddleware::__invoke()
      */
     public function fromCredentials(array $credentials): TokenInterface;

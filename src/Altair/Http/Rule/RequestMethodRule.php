@@ -14,10 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestMethodRule implements HttpAuthRuleInterface
 {
-    /**
-     * @var array
-     */
-    protected $options = [
+    protected array $options = [
         'passthrough' => ['OPTIONS']
     ];
 
@@ -34,7 +31,8 @@ class RequestMethodRule implements HttpAuthRuleInterface
     /**
      * @inheritDoc
      */
-    public function __invoke(ServerRequestInterface $request)
+    #[\Override]
+    public function __invoke(ServerRequestInterface $request): bool
     {
         return !in_array($request->getMethod(), $this->options['passthrough'], false);
     }

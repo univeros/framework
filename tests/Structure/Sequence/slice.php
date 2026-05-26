@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait slice
 {
-    public static function sliceDataProvider()
+    public static function sliceDataProvider(): array
     {
         $a = ['a', 'b', 'c'];
         $n = count($a);
@@ -23,7 +23,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSlice(array $values, int $index, int $length)
+    public function testSlice(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -37,7 +37,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSliceWithoutLength(array $values, int $index, int $length)
+    public function testSliceWithoutLength(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -48,7 +48,7 @@ trait slice
         $this->assertToArray($expected, $sliced);
     }
 
-    public function testLargeSliceHalf()
+    public function testLargeSliceHalf(): void
     {
         $n = self::MANY;
         $x = 0;
@@ -60,7 +60,7 @@ trait slice
         $this->assertToArray(range($y, $n), $instance->slice($y));
     }
 
-    public function testLargeSliceOffset()
+    public function testLargeSliceOffset(): void
     {
         $n = self::MANY;
         $x = $n / 4;

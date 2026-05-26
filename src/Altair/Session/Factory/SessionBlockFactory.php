@@ -17,10 +17,7 @@ class SessionBlockFactory
     /**
      * Creates a new session block.
      *
-     * @param string $name
-     * @param SessionManagerInterface $sessionManager
      *
-     * @return SessionBlock
      */
     public static function create(string $name, SessionManagerInterface $sessionManager): SessionBlock
     {

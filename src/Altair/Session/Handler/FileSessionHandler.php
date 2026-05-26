@@ -15,37 +15,20 @@ use SessionHandlerInterface;
 
 class FileSessionHandler implements SessionHandlerInterface
 {
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
-    /**
-     * @var string
-     */
-    protected $path;
-    /**
-     * @var int
-     */
-    protected $minutes;
+
 
     /**
      * FileSessionHandler constructor.
-     *
-     * @param Filesystem $filesystem
-     * @param string $path
-     * @param int $minutes
      */
-    public function __construct(Filesystem $filesystem, string $path, int $minutes)
+    public function __construct(protected Filesystem $filesystem, protected string $path, protected int $minutes)
     {
-        $this->filesystem = $filesystem;
-        $this->path = $path;
-        $this->minutes = $minutes;
     }
 
     /**
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function open($save_path, $name)
     {
         return true;
@@ -55,6 +38,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function close()
     {
         return true;
@@ -64,6 +48,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function destroy($session_id)
     {
         return $this->filesystem->delete($this->path . DIRECTORY_SEPARATOR . $session_id);
@@ -73,7 +58,8 @@ class FileSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
-    public function gc($maxlifetime)
+    #[\Override]
+    public function gc($maxlifetime): void
     {
         $files = $this->filesystem->listAllFiles($this->path);
         $now = time();
@@ -88,6 +74,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function read($session_id)
     {
         $path = $this->path . DIRECTORY_SEPARATOR . $session_id;
@@ -102,6 +89,7 @@ class FileSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function write($session_id, $session_data)
     {
         return (bool)$this->filesystem->put($this->path . DIRECTORY_SEPARATOR . $session_id, $session_data, true);

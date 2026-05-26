@@ -19,38 +19,24 @@ use Exception;
 
 class Encrypter implements EncrypterInterface
 {
-    /**
-     * @var KeyInterface
-     */
-    protected $key;
-    /**
-     * @var string
-     */
-    protected $derivedKey;
-    /**
-     * @var string
-     */
-    protected $cipher;
+
+    protected string $derivedKey;
+
 
     /**
      * Encrypter constructor.
      *
-     * @param KeyInterface $key
-     * @param string $cipher
      *
      * @throws InvalidConfigException
      */
-    public function __construct(KeyInterface $key, string $cipher)
+    public function __construct(protected KeyInterface $key, protected string $cipher)
     {
         if (!extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension.');
         }
+        $this->derivedKey = $this->key->derive();
 
-        $this->key = $key;
-        $this->derivedKey = $key->derive();
-        $this->cipher = $cipher;
-
-        if (!$this->supports($this->derivedKey, $cipher)) {
+        if (!$this->supports($this->derivedKey, $this->cipher)) {
             throw new InvalidConfigException('Unsupported cipher and key length.');
         }
     }
@@ -58,10 +44,7 @@ class Encrypter implements EncrypterInterface
     /**
      * Checks whether a given key and cipher combination is valid.
      *
-     * @param string $key
-     * @param string $cipher
      *
-     * @return bool
      */
     public function supports(string $key, string $cipher): bool
     {
@@ -79,6 +62,7 @@ class Encrypter implements EncrypterInterface
      * @inheritDoc
      * @throws Exception
      */
+    #[\Override]
     public function encrypt($value): string
     {
         $iv = random_bytes(EncrypterInterface::BLOCK_SIZE);
@@ -105,7 +89,8 @@ class Encrypter implements EncrypterInterface
      * @inheritDoc
      * @throws DecryptException
      */
-    public function decrypt(string $payload)
+    #[\Override]
+    public function decrypt(string $payload): mixed
     {
         $data = $this->getPayload($payload);
 
@@ -121,24 +106,23 @@ class Encrypter implements EncrypterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hash(string $iv, string $data, bool $raw = false): string
     {
         return hash_hmac(EncrypterInterface::HASH_SHA256_ALGORITHM, $iv . $data, $this->derivedKey, $raw);
     }
 
     /**
-     * @param string $payload
      *
      * @throws DecryptException
      * @throws Exception
-     * @return array
      */
     protected function getPayload(string $payload): array
     {
         $payload = json_decode(base64_decode($payload), true);
 
         if ((new PayloadValidator($this, $payload))->validate()) {
-            $payload['iv'] = base64_decode($payload['iv']);
+            $payload['iv'] = base64_decode((string) $payload['iv']);
 
             return $payload;
         }

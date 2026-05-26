@@ -14,11 +14,13 @@ class BooleanFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?bool
     {
         if (!is_scalar($value)) {
             return null;
         }
+
         $filtered = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
         return is_bool($filtered) ? $filtered : (bool)$value;

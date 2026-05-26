@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait __get
 {
-    public function testPropertyAccess()
+    public function testPropertyAccess(): void
     {
         $pair = $this->getPair('a', 1);
 
@@ -11,7 +11,7 @@ trait __get
         $this->assertEquals(1, $pair->value);
     }
 
-    public function testBadPropertyAccess()
+    public function testBadPropertyAccess(): void
     {
         $pair = $this->getPair('a', 1);
         $this->expectPropertyDoesNotExistException();

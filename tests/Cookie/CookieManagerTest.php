@@ -18,11 +18,10 @@ class CookieManagerTest extends TestCase
 {
     /**
      * @param $cookieString
-     * @param array $names
      *
      * @dataProvider provideCookieStringAndExpectedCookiesData
      */
-    public function testGetCookiesFromRequest($cookieString, array $names)
+    public function testGetCookiesFromRequest(string $cookieString, array $names): void
     {
         $request = $this->createStub(RequestInterface::class);
         $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
@@ -34,7 +33,7 @@ class CookieManagerTest extends TestCase
         }
     }
 
-    public function testDefaultCookies()
+    public function testDefaultCookies(): void
     {
         $manager = new CookieManager();
         $request = $this->createStub(RequestInterface::class);
@@ -46,7 +45,7 @@ class CookieManagerTest extends TestCase
         $this->assertEquals('value', $cookie->getValue());
     }
 
-    public function testSetOnModifyOnAndRemoveFromRequest()
+    public function testSetOnModifyOnAndRemoveFromRequest(): void
     {
         $cookie = new Cookie('name', 'value');
         $manager = new CookieManager();
@@ -57,9 +56,7 @@ class CookieManagerTest extends TestCase
         $request = $manager->modifyOnRequest(
             $request,
             'name',
-            static function (Cookie $cookie) {
-                return $cookie->withValue('another value');
-            }
+            static fn(Cookie $cookie): Cookie => $cookie->withValue('another value')
         );
 
         $this->assertEquals('another value', $manager->getFromRequest($request, 'name')->getValue());
@@ -72,7 +69,7 @@ class CookieManagerTest extends TestCase
         $this->assertEquals('different value', $cookie->getValue());
     }
 
-    public function testSetOnExpireOnModifyOnAndRemoveFromResponse()
+    public function testSetOnExpireOnModifyOnAndRemoveFromResponse(): void
     {
         $originalSetCookie = new SetCookie('name', 'value');
         $response = new Response();
@@ -89,11 +86,9 @@ class CookieManagerTest extends TestCase
         $response = $manager->modifyOnResponse(
             $response,
             'name',
-            static function (SetCookie $cookie) {
-                return $cookie
-                    ->remember()
-                    ->withValue('another value');
-            }
+            static fn(SetCookie $cookie): SetCookie => $cookie
+                ->remember()
+                ->withValue('another value')
         );
         $setCookie = $manager->getFromResponse($response, 'name');
         $this->assertEquals('another value', $setCookie->getValue());
@@ -104,13 +99,10 @@ class CookieManagerTest extends TestCase
     }
 
     /**
-     * @param array $setCookieStrings
-     * @param array $names
-     * @param array $expectedSetCookies
      *
      * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
      */
-    public function testGetSetCookiesFromResponse(array $setCookieStrings, array $names, array $expectedSetCookies)
+    public function testGetSetCookiesFromResponse(array $setCookieStrings, array $names, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);
         $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
@@ -122,7 +114,7 @@ class CookieManagerTest extends TestCase
         }
     }
 
-    public static function provideCookieStringAndExpectedCookiesData()
+    public static function provideCookieStringAndExpectedCookiesData(): array
     {
         return [
             [
@@ -139,7 +131,7 @@ class CookieManagerTest extends TestCase
         ];
     }
 
-    public static function setCookieStringsAndExpectedSetCookiesDataProvider()
+    public static function setCookieStringsAndExpectedSetCookiesDataProvider(): array
     {
         return [
             [

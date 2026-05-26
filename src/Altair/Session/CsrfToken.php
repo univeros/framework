@@ -15,30 +15,18 @@ use Altair\Session\Contracts\SessionBlockInterface;
 
 class CsrfToken implements CsrfTokenInterface
 {
-    /**
-     * @var SessionBlockInterface
-     */
-    protected $sessionBlock;
-    /**
-     * @var Salt
-     */
-    protected $salt;
 
     /**
      * CsrfToken constructor.
-     *
-     * @param SessionBlockInterface $sessionBlock
-     * @param Salt $salt
      */
-    public function __construct(SessionBlockInterface $sessionBlock, Salt $salt)
+    public function __construct(protected SessionBlockInterface $sessionBlock, protected Salt $salt)
     {
-        $this->sessionBlock = $sessionBlock;
-        $this->salt = $salt;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isValid(string $value): bool
     {
         return hash_equals($this->getValue(), $value);
@@ -47,6 +35,7 @@ class CsrfToken implements CsrfTokenInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getValue(): string
     {
         return $this->sessionBlock->get('value');
@@ -55,7 +44,8 @@ class CsrfToken implements CsrfTokenInterface
     /**
      * @inheritDoc
      */
-    public function generateValue()
+    #[\Override]
+    public function generateValue(): string
     {
         $value = hash('sha512', $this->salt->generate());
         $this->sessionBlock->set('value', $value);

@@ -12,12 +12,13 @@ abstract class AbstractStorageTestCase extends TestCase
      */
     protected $store;
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->store?->clear();
     }
 
-    public function testStore()
+    public function testStore(): void
     {
         $this->assertFalse($this->store->hasItem($key = 'somekey'));
         $this->assertEmpty($this->store->getItems([$key]));

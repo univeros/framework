@@ -11,37 +11,23 @@ namespace Altair\Sanitation\Filter;
 
 class MinStrLengthFilter extends AbstractFilter
 {
-    /**
-     * @var int
-     */
-    protected $min;
-    /**
-     * @var string
-     */
-    protected $pad;
-    /**
-     * @var int
-     */
-    protected $direction;
+
+    protected string $pad;
+
 
     /**
      * MaxStrLengthFilter constructor.
-     *
-     * @param int $min
-     * @param string $pad
-     * @param int $direction
      */
-    public function __construct(int $min, string $pad = null, int $direction = STR_PAD_RIGHT)
+    public function __construct(protected int $min, string $pad = null, protected int $direction = STR_PAD_RIGHT)
     {
-        $this->min = $min;
         $this->pad = $pad?? ' ';
-        $this->direction = $direction;
     }
 
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?string
     {
         if (!is_string($value)) {
             return null;

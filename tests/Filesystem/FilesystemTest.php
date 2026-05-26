@@ -8,69 +8,69 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class FilesystemTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $tmpDir;
-    /**
-     * @var Filesystem
-     */
-    private $fs;
+    private string $tmpDir;
 
+    private Filesystem $fs;
+
+    #[\Override]
     protected function setUp(): void    {
         $this->tmpDir = __DIR__ . '/tmp';
         $this->fs = new Filesystem();
         $this->fs->makeDirectory($this->tmpDir);
     }
 
+    #[\Override]
     protected function tearDown(): void    {
         $this->fs->deleteDirectory($this->tmpDir);
     }
 
-    public function testGetsTheContentsOfAFile()
+    public function testGetsTheContentsOfAFile(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->assertEquals('Hello World', $this->fs->get($this->tmpDir . '/file.txt'));
     }
 
-    public function testGetShared()
+    public function testGetShared(): void
     {
         if (!function_exists('pcntl_fork')) {
             $this->markTestSkipped('Skipping since the pcntl extension is not available');
         }
+
         $content = str_repeat('123456', 1000000);
         $result = 1;
         for ($i = 1; $i <= 20; ++$i) {
             $pid = pcntl_fork();
-            if (!$pid) {
+            if ($pid === 0) {
                 $files = new Filesystem;
                 $files->put($this->tmpDir . '/file.txt', $content, true);
                 $read = $files->get($this->tmpDir . '/file.txt', true);
                 exit(strlen($read) === strlen($content) ? 1 : 0);
             }
         }
+
         while (pcntl_waitpid(0, $status) !== -1) {
             $status = pcntl_wexitstatus($status);
             $result *= $status;
         }
+
         $this->assertTrue($result === 1);
     }
 
-    public function testReadLines()
+    public function testReadLines(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', "Hello\nWorld");
         $lines = $this->fs->readLines($this->tmpDir . '/file.txt');
         $this->assertCount(2, $lines);
     }
 
-    public function testGetsRequiredFileValue()
+    public function testGetsRequiredFileValue(): void
     {
         file_put_contents($this->tmpDir . '/file.php', '<?php return [];');
         $value = $this->fs->getRequiredFileValue($this->tmpDir . '/file.php');
         $this->assertTrue(is_array($value));
     }
 
-    public function testRequireOnceRequiresFilesProperly()
+    public function testRequireOnceRequiresFilesProperly(): void
     {
         mkdir($this->tmpDir . '/foo');
         file_put_contents($this->tmpDir . '/foo/foo.php', '<?php function function_xyz(){};');
@@ -81,7 +81,7 @@ class FilesystemTest extends TestCase
         $this->assertFalse(function_exists('function_xyz_changed'));
     }
 
-    public function testSetChmod()
+    public function testSetChmod(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->fs->chmod($this->tmpDir . '/file.txt', 0755);
@@ -89,7 +89,7 @@ class FilesystemTest extends TestCase
         $this->assertEquals('0755', $filePermission);
     }
 
-    public function testGetChmod()
+    public function testGetChmod(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         chmod($this->tmpDir . '/file.txt', 0755);
@@ -98,14 +98,14 @@ class FilesystemTest extends TestCase
         $this->assertEquals('0755', $filePermission);
     }
 
-    public function testExists()
+    public function testExists(): void
     {
         $this->assertTrue($this->fs->exists($this->tmpDir));
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->assertTrue($this->fs->exists($this->tmpDir . '/file.txt'));
     }
 
-    public function testMove()
+    public function testMove(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
 
@@ -114,28 +114,28 @@ class FilesystemTest extends TestCase
         $this->assertFileDoesNotExist($this->tmpDir . '/file.txt');
     }
 
-    public function testPutContents()
+    public function testPutContents(): void
     {
         $this->fs->put($this->tmpDir . '/file.txt', 'Hello World');
 
         $this->assertStringEqualsFile($this->tmpDir . '/file.txt', 'Hello World');
     }
 
-    public function testPrependContents()
+    public function testPrependContents(): void
     {
         $this->fs->put($this->tmpDir . '/file.txt', 'World');
         $this->fs->prepend($this->tmpDir . '/file.txt', 'Hello ');
         $this->assertStringEqualsFile($this->tmpDir . '/file.txt', 'Hello World');
     }
 
-    public function testAppendContents()
+    public function testAppendContents(): void
     {
         $this->fs->put($this->tmpDir . '/file.txt', 'Hello ');
         $this->fs->append($this->tmpDir . '/file.txt', 'World');
         $this->assertStringEqualsFile($this->tmpDir . '/file.txt', 'Hello World');
     }
 
-    public function testDeletesFiles()
+    public function testDeletesFiles(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->fs->delete($this->tmpDir . '/file.txt');
@@ -154,7 +154,7 @@ class FilesystemTest extends TestCase
         $this->assertFalse($this->fs->exists($this->tmpDir . '/bar.txt'));
     }
 
-    public function testCopyFiles()
+    public function testCopyFiles(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'Hello World');
         $this->fs->copy($this->tmpDir . '/foo.txt', $this->tmpDir . '/bar.txt');
@@ -162,7 +162,7 @@ class FilesystemTest extends TestCase
         $this->assertStringEqualsFile($this->tmpDir . '/bar.txt', 'Hello World');
     }
 
-    public function testLink()
+    public function testLink(): void
     {
         file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->fs->link($this->tmpDir . '/file.txt', $this->tmpDir . '/foo');
@@ -171,13 +171,13 @@ class FilesystemTest extends TestCase
         $this->assertStringEqualsFile($this->tmpDir . '/foo', 'Hello World');
     }
 
-    public function testMakeDirectory()
+    public function testMakeDirectory(): void
     {
         $this->fs->makeDirectory($this->tmpDir . '/test');
         $this->assertTrue($this->fs->isDirectory($this->tmpDir . '/test'));
     }
 
-    public function testMoveDirectory()
+    public function testMoveDirectory(): void
     {
         $this->fs->makeDirectory($this->tmpDir . '/foo');
         $this->fs->put($this->tmpDir . '/foo/file.txt', 'Hello World');
@@ -193,13 +193,13 @@ class FilesystemTest extends TestCase
         $this->assertStringEqualsFile($this->tmpDir . '/foo/file.txt', 'Hello World');
     }
 
-    public function testCopyDirectoryReturnsFalseIfSourceIsNotADirectory()
+    public function testCopyDirectoryReturnsFalseIfSourceIsNotADirectory(): void
     {
         $files = new Filesystem;
         $this->assertFalse($files->copyDirectory($this->tmpDir . '/foo/bar', $this->tmpDir));
     }
 
-    public function testCopyDirectoryMovesEntireDirectory()
+    public function testCopyDirectoryMovesEntireDirectory(): void
     {
         mkdir($this->tmpDir . '/tmp', 0777, true);
         file_put_contents($this->tmpDir . '/tmp/foo.txt', '');
@@ -215,7 +215,7 @@ class FilesystemTest extends TestCase
         $this->assertFileExists($this->tmpDir . '/tmp2/nested/baz.txt');
     }
 
-    public function testDeleteDirectory()
+    public function testDeleteDirectory(): void
     {
         mkdir($this->tmpDir . '/foo');
         file_put_contents($this->tmpDir . '/foo/file.txt', 'Hello World');
@@ -225,7 +225,7 @@ class FilesystemTest extends TestCase
         $this->assertFileDoesNotExist($this->tmpDir . '/foo/file.txt');
     }
 
-    public function testClearDirectory()
+    public function testClearDirectory(): void
     {
         mkdir($this->tmpDir . '/foo');
         file_put_contents($this->tmpDir . '/foo/file.txt', 'Hello World');
@@ -235,7 +235,7 @@ class FilesystemTest extends TestCase
         $this->assertFileDoesNotExist($this->tmpDir . '/foo/file.txt');
     }
 
-    public function testGetFileNameHashSizeAndFileExtension()
+    public function testGetFileNameHashSizeAndFileExtension(): void
     {
         $size = file_put_contents($this->tmpDir . '/file.txt', 'Hello World');
         $this->assertEquals('file', $this->fs->getFileName($this->tmpDir . '/file.txt'));
@@ -245,13 +245,13 @@ class FilesystemTest extends TestCase
         $this->assertEquals('txt', $this->fs->getFileExtension($this->tmpDir . '/file.txt'));
     }
 
-    public function testBasenameReturnsBasename()
+    public function testBasenameReturnsBasename(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         $this->assertEquals('foo.txt', $this->fs->getFileBasename($this->tmpDir . '/foo.txt'));
     }
 
-    public function testFileTypeAndFileMimeType()
+    public function testFileTypeAndFileMimeType(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         $this->assertEquals('file', $this->fs->getType($this->tmpDir . '/foo.txt'));
@@ -259,7 +259,7 @@ class FilesystemTest extends TestCase
         $this->assertEquals('text/plain', $this->fs->getFileMimeType($this->tmpDir . '/foo.txt'));
     }
 
-    public function testIsWritable()
+    public function testIsWritable(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         @chmod($this->tmpDir . '/foo.txt', 0444);
@@ -268,7 +268,7 @@ class FilesystemTest extends TestCase
         $this->assertTrue($this->fs->isWritable($this->tmpDir . '/foo.txt'));
     }
 
-    public function testIsReadable()
+    public function testIsReadable(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
 
@@ -281,10 +281,11 @@ class FilesystemTest extends TestCase
             @chmod($this->tmpDir . '/foo.txt', 0777);
             $this->assertTrue($this->fs->isReadable($this->tmpDir . '/foo.txt'));
         }
+
         $this->assertFalse($this->fs->isReadable($this->tmpDir . '/doesnotexist.txt'));
     }
 
-    public function testGlobFindsFiles()
+    public function testGlobFindsFiles(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         file_put_contents($this->tmpDir . '/bar.txt', 'bar');
@@ -293,7 +294,7 @@ class FilesystemTest extends TestCase
         $this->assertContains($this->tmpDir . '/bar.txt', $glob);
     }
 
-    public function testListFilesFindsFiles()
+    public function testListFilesFindsFiles(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         file_put_contents($this->tmpDir . '/bar.txt', 'bar');
@@ -303,11 +304,12 @@ class FilesystemTest extends TestCase
         foreach ($this->fs->listFiles($this->tmpDir) as $file) {
             $allFiles[] = $file;
         }
+
         $this->assertContains($this->tmpDir . '/foo.txt', $allFiles);
         $this->assertContains($this->tmpDir . '/bar.txt', $allFiles);
     }
 
-    public function testListAllFilesFindsAllFilesRecursive()
+    public function testListAllFilesFindsAllFilesRecursive(): void
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         file_put_contents($this->tmpDir . '/bar.txt', 'bar');
@@ -326,7 +328,7 @@ class FilesystemTest extends TestCase
         $this->assertContains($this->tmpDir . '/tmp2/bar.txt', $allFiles);
     }
 
-    public function testListDirectoriesGetsAllDirectories()
+    public function testListDirectoriesGetsAllDirectories(): void
     {
         mkdir($this->tmpDir . '/foo');
         mkdir($this->tmpDir . '/bar');

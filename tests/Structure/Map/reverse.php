@@ -3,11 +3,9 @@ namespace Altair\Tests\Structure\Map;
 
 trait reverse
 {
-    public static function reversedDataProvider()
+    public static function reversedDataProvider(): array
     {
-        $reverse = function ($a) {
-            return [$a[0], array_reverse($a[1], 1)];
-        };
+        $reverse = fn($a): array => [$a[0], array_reverse($a[1], 1)];
 
         return array_map($reverse, static::basicDataProvider());
     }
@@ -15,7 +13,7 @@ trait reverse
     /**
      * @dataProvider reversedDataProvider
      */
-    public function testReverse(array $values, array $expected)
+    public function testReverse(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $this->assertToArray($expected, $instance->reverse());

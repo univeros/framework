@@ -16,10 +16,7 @@ use Altair\Courier\Support\MessageCommandMap;
 
 class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInterface
 {
-    /**
-     * @var MessageCommandMap
-     */
-    protected $map;
+    protected MessageCommandMap $map;
 
     /**
      * InMemoryCommandLocatorService constructor.
@@ -34,6 +31,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withMap(MessageCommandMap $map): InMemoryCommandLocatorServiceInterface
     {
         return new static($map);
@@ -42,6 +40,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function add(string $messageName, string $commandName): InMemoryCommandLocatorServiceInterface
     {
         $this->map->put($messageName, $commandName);
@@ -49,22 +48,17 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
         return $this;
     }
 
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
+    
+    #[\Override]
     public function has(string $name): bool
     {
         return $this->map->hasKey($name);
     }
 
     /**
-     * @param string $name
-     *
      * @throws UnknownCommandMessageNameException
-     * @return CommandInterface
      */
+    #[\Override]
     public function get(string $name): CommandInterface
     {
         if (!$this->has($name)) {
@@ -78,9 +72,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
      * Returns an instance of the command found on the map. After is found, we check whether the command was previously
      * created, if not, create instance and store in map so it can later be accessed.
      *
-     * @param string $name
      *
-     * @return CommandInterface
      */
     protected function getInstance(string $name): CommandInterface
     {

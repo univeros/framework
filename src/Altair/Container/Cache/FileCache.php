@@ -19,7 +19,7 @@ use Altair\Container\Contracts\ReflectionCacheInterface;
  */
 class FileCache implements ReflectionCacheInterface
 {
-    protected $path;
+    protected string $path;
 
     /**
      * FileCache constructor.
@@ -34,11 +34,12 @@ class FileCache implements ReflectionCacheInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function get(string $key)
     {
         // Multiple calls of ‘include’ do not check for file modification
         // https://github.com/facebook/hhvm/issues/4797
-        $path = "{$this->path}/{$key}";
+        $path = sprintf('%s/%s', $this->path, $key);
         $value = file_exists($path) ? require $path : null;
 
         return $value?? false;
@@ -47,12 +48,13 @@ class FileCache implements ReflectionCacheInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function put(string $key, $data): ReflectionCacheInterface
     {
         $value = var_export($data, true);
         // HHVM fails at __set_state, so just use object cast for now
         $val = str_replace('stdClass::__set_state', '(object)', $value);
-        file_put_contents("{$this->path}/{$key}", '<?php return ' . $val . ';');
+        file_put_contents(sprintf('%s/%s', $this->path, $key), '<?php return ' . $val . ';');
 
         return $this;
     }

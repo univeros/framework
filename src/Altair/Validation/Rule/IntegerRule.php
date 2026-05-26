@@ -14,6 +14,7 @@ class IntegerRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         return is_int($value) || (is_numeric($value) && $value == (int)$value);
@@ -22,6 +23,7 @@ class IntegerRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid integer value.', $value);

@@ -11,7 +11,7 @@ use PHPUnit\Framework\TestCase;
 
 class RunnerTest extends TestCase
 {
-    public function testWithoutResolver()
+    public function testWithoutResolver(): void
     {
         FakeMiddleware::$count = 0;
 
@@ -32,7 +32,7 @@ class RunnerTest extends TestCase
         $this->assertSame('123456', $actual);
     }
 
-    public function testWithCallableResolver()
+    public function testWithCallableResolver(): void
     {
         FakeMiddleware::$count = 0;
 
@@ -44,9 +44,7 @@ class RunnerTest extends TestCase
             ]
         );
 
-        $resolver = function ($class) {
-            return new $class();
-        };
+        $resolver = fn($class): object => new $class();
 
         $runner = new Runner($queue, $resolver);
         $payload = new Payload();
@@ -57,7 +55,7 @@ class RunnerTest extends TestCase
         $this->assertSame('123456', $actual);
     }
 
-    public function testWithMiddlewareResolver()
+    public function testWithMiddlewareResolver(): void
     {
         FakeMiddleware::$count = 0;
 

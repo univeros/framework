@@ -13,29 +13,21 @@ use Altair\Security\Exception\InvalidConfigException;
 
 class HkdfKey extends AbstractKey
 {
-    /**
-     * @var string
-     */
-    protected $context;
-    /**
-     * @var int
-     */
-    protected $hashLength;
+
+    protected int $hashLength;
 
     /**
      * HkdfKey constructor.
      *
-     * @param string $key
      * @param string|null $salt
      * @param string|null $context
-     * @param int $length
      *
      * @throws InvalidConfigException
      */
     public function __construct(
         string $key,
         string $salt = null,
-        string $context = null,
+        protected ?string $context = null,
         int $length = 0
     ) {
         parent::__construct($key, $salt, $length);
@@ -47,13 +39,9 @@ class HkdfKey extends AbstractKey
         if ($length < 0 || $length > 255 * $this->hashLength) {
             throw new InvalidConfigException('Invalid length: ' . $length);
         }
-
-        $this->context = $context;
     }
 
-    /**
-     * @return string
-     */
+    #[\Override]
     public function derive(): string
     {
         $blocks = $this->length !== 0 ? ceil($this->length / $this->hashLength) : 1;
@@ -74,6 +62,7 @@ class HkdfKey extends AbstractKey
         if ($this->length !== 0) {
             $outputKey = mb_substr($outputKey, 0, $this->length, '8bit');
         }
+
         return $outputKey;
     }
 }

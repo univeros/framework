@@ -5,7 +5,8 @@ use Altair\Validation\Rule\RegexRule;
 
 class RegexRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['+1234567890'],
@@ -16,7 +17,8 @@ class RegexRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [[]],
@@ -29,8 +31,9 @@ class RegexRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): RegexRule
     {
-        return new RegexRule('/^[\+\-]?[0-9]+$/');
+        return new RegexRule('/^[\+\-]?\d+$/');
     }
 }

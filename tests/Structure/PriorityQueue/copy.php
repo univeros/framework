@@ -6,7 +6,7 @@ trait copy
     /**
      * @dataProvider basicDataProvider
      */
-    public function testCopy(array $values, array $expected)
+    public function testCopy(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $copy = $instance->copy();
@@ -15,7 +15,7 @@ trait copy
         $this->assertEquals(count($instance), count($copy));
     }
 
-    public function testCopyDoesNotAffectSubject()
+    public function testCopyDoesNotAffectSubject(): void
     {
         $instance = static::getInstance();
         $instance->push('a', 1);

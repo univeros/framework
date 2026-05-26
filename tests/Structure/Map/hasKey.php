@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait hasKey
 {
-    public static function hasKeyDataProvider()
+    public static function hasKeyDataProvider(): array
     {
         // initial, key, has
         return [
@@ -15,15 +15,14 @@ trait hasKey
 
     /**
      * @dataProvider hasKeyDataProvider
-     * @param mixed $key
      */
-    public function testHasKey(array $initial, $key, bool $has)
+    public function testHasKey(array $initial, mixed $key, bool $has): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($has, $instance->hasKey($key));
     }
 
-    public function testHasKeyAfterRemoveAndPut()
+    public function testHasKeyAfterRemoveAndPut(): void
     {
         $instance = static::getInstance(['a' => 1]);
         $this->assertTrue($instance->hasKey('a'));

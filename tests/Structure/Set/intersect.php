@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait intersect
 {
-    public static function intersectDataProvider()
+    public static function intersectDataProvider(): array
     {
         // Values in A that are also in B.
         // A, B, expected result
@@ -20,7 +20,7 @@ trait intersect
     /**
      * @dataProvider intersectDataProvider
      */
-    public function testIntersect(array $initial, array $values, array $expected)
+    public function testIntersect(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
         $b = static::getInstance($values);
@@ -31,7 +31,7 @@ trait intersect
     /**
      * @dataProvider intersectDataProvider
      */
-    public function testIntersectWithSelf(array $initial, array $values, array $expected)
+    public function testIntersectWithSelf(array $initial, array $values, array $expected): void
     {
         $a = static::getInstance($initial);
         $this->assertEquals($initial, $a->intersect($a)->toArray());
@@ -40,7 +40,7 @@ trait intersect
     /**
      * Test that contains still works after intersect.
      */
-    public function testIntersectContains()
+    public function testIntersectContains(): void
     {
         $ab = static::getInstance(['a', 'b']);
         $bc = static::getInstance(['b', 'c']);
@@ -57,7 +57,7 @@ trait intersect
     /**
      * Test that you can't add duplicates after an intersection.
      */
-    public function testIntersectAdd()
+    public function testIntersectAdd(): void
     {
         $ab = static::getInstance(['a', 'b']);
         $bc = static::getInstance(['b', 'c']);

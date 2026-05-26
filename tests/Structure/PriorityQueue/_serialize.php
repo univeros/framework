@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait _serialize
 {
-    public static function serializeDataProvider()
+    public static function serializeDataProvider(): array
     {
         return [
             [
@@ -15,7 +15,7 @@ trait _serialize
     /**
      * @dataProvider serializeDataProvider
      */
-    public function testSerialize(array $values, array $expected)
+    public function testSerialize(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $this->assertSerialized($expected, $instance, true);

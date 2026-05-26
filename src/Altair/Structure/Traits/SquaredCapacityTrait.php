@@ -47,9 +47,7 @@ trait SquaredCapacityTrait
     /**
      * Rounds an integer to the next power of two if not already a power of two.
      *
-     * @param int $capacity
      *
-     * @return int
      */
     private function square(int $capacity): int
     {

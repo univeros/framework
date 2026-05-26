@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait union
 {
-    public static function unionDataProvider()
+    public static function unionDataProvider(): array
     {
         // A, B, expected
         return [
@@ -19,7 +19,7 @@ trait union
     /**
      * @dataProvider unionDataProvider
      */
-    public function testUnion(array $initial, array $values, array $expected)
+    public function testUnion(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
         $other = static::getInstance($values);
@@ -31,7 +31,7 @@ trait union
     /**
      * @dataProvider unionDataProvider
      */
-    public function testUnionWithSelf(array $initial, array $values, array $expected)
+    public function testUnionWithSelf(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
 

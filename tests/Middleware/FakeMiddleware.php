@@ -9,6 +9,7 @@ class FakeMiddleware implements MiddlewareInterface
 {
     public static $count = 0;
 
+    #[\Override]
     public function __invoke(PayloadInterface $payload, callable $next): PayloadInterface
     {
         $count = $payload->getAttribute('count', '');

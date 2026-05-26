@@ -12,23 +12,21 @@ namespace Altair\Validation\Rule;
 class RegexRule extends AbstractRule
 {
     /**
-     * @var string the regular expression to be matched with.
-     */
-    protected $pattern;
-
-    /**
      * RegexRule constructor.
-     *
-     * @param string $pattern
      */
-    public function __construct(string $pattern)
+    public function __construct(
+        /**
+         * @var string the regular expression to be matched with.
+         */
+        protected string $pattern
+    )
     {
-        $this->pattern = $pattern;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -41,6 +39,7 @@ class RegexRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is invalid for pattern "%s".', $value, $this->pattern);

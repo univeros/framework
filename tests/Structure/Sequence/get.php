@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait get
 {
-    public static function getDataProvider()
+    public static function getDataProvider(): array
     {
         // initial, index, return
         return [
@@ -22,10 +22,8 @@ trait get
 
     /**
      * @dataProvider getDataProvider
-     * @param mixed $index
-     * @param mixed $return
      */
-    public function testGet(array $initial, $index, $return)
+    public function testGet(array $initial, mixed $index, mixed $return): void
     {
         $instance = static::getInstance($initial);
 
@@ -37,10 +35,8 @@ trait get
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testGetIndexOutOfRange($initial, $index)
+    public function testGetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
@@ -49,10 +45,8 @@ trait get
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testGetIndexBadIndex($initial, $index)
+    public function testGetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();
         $this->expectWrongIndexTypeException();
@@ -61,10 +55,8 @@ trait get
 
     /**
      * @dataProvider getDataProvider
-     * @param mixed $index
-     * @param mixed $return
      */
-    public function testArrayAccessGet(array $initial, $index, $return)
+    public function testArrayAccessGet(array $initial, mixed $index, mixed $return): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($return, $instance[$index]);
@@ -72,10 +64,8 @@ trait get
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessGetIndexBadIndex($initial, $index)
+    public function testArrayAccessGetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();
@@ -84,17 +74,15 @@ trait get
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessGetIndexOutOfRange($initial, $index)
+    public function testArrayAccessGetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance[$index];
     }
 
-    public function testArrayAccessGetByReference()
+    public function testArrayAccessGetByReference(): void
     {
         $instance = static::getInstance([[1]]);
         $this->assertEquals(1, $instance[0][0]);

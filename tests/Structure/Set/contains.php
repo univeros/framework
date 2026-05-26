@@ -3,9 +3,9 @@ namespace Altair\Tests\Structure\Set;
 
 trait contains
 {
-    public static function containsDataProvider()
+    public static function containsDataProvider(): array
     {
-        list($sample, $duplicates) = static::getUniqueAndDuplicateData();
+        [$sample, $duplicates] = static::getUniqueAndDuplicateData();
 
         // initial, values, contains
         return [
@@ -31,7 +31,7 @@ trait contains
         array $initial,
         array $values,
         bool  $contains
-    ) {
+    ): void {
         $set = static::getInstance($initial);
         $this->assertEquals($contains, $set->contains(...$values));
     }

@@ -5,7 +5,8 @@ use Altair\Validation\Rule\AlphaRule;
 
 class AlphaRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['alphaOnly'],
@@ -15,7 +16,8 @@ class AlphaRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             ['  '],
@@ -32,7 +34,8 @@ class AlphaRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): AlphaRule
     {
         return new AlphaRule();
     }

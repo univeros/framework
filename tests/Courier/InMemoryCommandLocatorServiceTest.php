@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class InMemoryCommandLocatorServiceTest extends TestCase
 {
-    public function testItFindsCorrectCommandHandler()
+    public function testItFindsCorrectCommandHandler(): void
     {
         $mapper = new MessageCommandMap(
             [
@@ -28,7 +28,7 @@ class InMemoryCommandLocatorServiceTest extends TestCase
         $this->assertInstanceOf(TestCommandInjectsErrorLogMessage::class, $command);
     }
 
-    public function testItThrowsException()
+    public function testItThrowsException(): void
     {
         $locator = new InMemoryCommandLocatorService();
         $this->assertFalse($locator->has('none'));
@@ -36,7 +36,7 @@ class InMemoryCommandLocatorServiceTest extends TestCase
         $locator->get('none');
     }
 
-    public function testWithMapReturnsANewInstance()
+    public function testWithMapReturnsANewInstance(): void
     {
         $mapper = new MessageCommandMap(
             [

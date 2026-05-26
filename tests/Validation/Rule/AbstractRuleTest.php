@@ -9,36 +9,32 @@ abstract class AbstractRuleTest extends TestCase
 {
     /**
      * @dataProvider trueProvider
-     * @param mixed $value
      */
-    public function testPayloadTrue($value)
+    public function testPayloadTrue(mixed $value): void
     {
         $this->assertTrue($this->assertPayload($value));
     }
 
     /**
      * @dataProvider falseProvider
-     * @param mixed $value
      */
-    public function testPayloadFalse($value)
+    public function testPayloadFalse(mixed $value): void
     {
         $this->assertFalse($this->assertPayload($value));
     }
 
     /**
      * @dataProvider trueProvider
-     * @param mixed $value
      */
-    public function testValueTrue($value)
+    public function testValueTrue(mixed $value): void
     {
         $this->assertTrue($this->assertValue($value));
     }
 
     /**
      * @dataProvider falseProvider
-     * @param mixed $value
      */
-    public function testValueFalse($value)
+    public function testValueFalse(mixed $value): void
     {
         $this->assertFalse($this->assertValue($value));
     }
@@ -51,9 +47,7 @@ abstract class AbstractRuleTest extends TestCase
     {
         $rule = $this->buildRule();
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 

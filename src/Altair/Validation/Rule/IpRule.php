@@ -13,30 +13,23 @@ use Altair\Validation\Exception\InvalidArgumentException;
 
 class IpRule extends AbstractRule
 {
-    /**
-     * @var int
-     */
-    protected $options;
-    /**
-     * @var array|null
-     */
-    protected $range;
+
+    protected ?array $range;
 
     /**
      * IpRule constructor.
      *
-     * @param int|null $options
      * @param string|null $range
      */
-    public function __construct(int $options = null, string $range = null)
+    public function __construct(protected ?int $options = null, string $range = null)
     {
-        $this->options = $options;
         $this->range = $range !== null ? $this->parseRange($range) : null;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         return $this->assertAddress($value) && $this->assertNetwork($value);
@@ -45,21 +38,19 @@ class IpRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid IP address.', $value);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return array|null
-     */
+
     protected function parseRange(string $value): ?array
     {
         if ($value === '*' || $value === '*.*.*.*' || $value === '0.0.0.0-255.255.255.255') {
             return null;
         }
+
         $range = ['min' => null, 'max' => null, 'mask' => null];
 
         if (mb_strpos($value, '-') !== false) {
@@ -75,6 +66,7 @@ class IpRule extends AbstractRule
         if (!$this->assertAddress($range['min'])) {
             throw new InvalidArgumentException('Invalid network range.');
         }
+
         if (isset($range['max']) && !$this->assertAddress($range['max'])) {
             throw new InvalidArgumentException('Invalid network range.');
         }
@@ -82,12 +74,7 @@ class IpRule extends AbstractRule
         return $range;
     }
 
-    /**
-     * @param string $value
-     * @param array $range
-     *
-     * @return array
-     */
+
     protected function parseRangeUsingWildcards(string $value, array $range): array
     {
         $value = $this->fillAddress($value);
@@ -97,15 +84,10 @@ class IpRule extends AbstractRule
         return $range;
     }
 
-    /**
-     * @param string $value
-     * @param array $range
-     *
-     * @return array
-     */
+
     protected function parseRangeUsingCidr(string $value, array $range): array
     {
-        list($min, $max) = explode('/', $value);
+        [$min, $max] = explode('/', $value);
         $range['min'] = $this->fillAddress($min, '0');
         $isMask = mb_strpos($max, '.') !== false;
         if ($isMask && $this->assertAddress($max)) {
@@ -122,12 +104,7 @@ class IpRule extends AbstractRule
         return $range;
     }
 
-    /**
-     * @param string $input
-     * @param string $char
-     *
-     * @return string
-     */
+
     protected function fillAddress(string $input, string $char = '*'): string
     {
         while (mb_substr_count($input, '.') < 3) {
@@ -137,29 +114,23 @@ class IpRule extends AbstractRule
         return $input;
     }
 
-    /**
-     * @param string $address
-     *
-     * @return bool
-     */
+
     protected function assertAddress(string $address): bool
     {
         return (bool)filter_var($address, FILTER_VALIDATE_IP, ['flags' => $this->options,]);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return bool
-     */
+
     protected function assertNetwork(string $value): bool
     {
         if ($this->range === null) {
             return true;
         }
+
         if (isset($this->range['mask'])) {
             return $this->assertSubnet($value);
         }
+
         $value = sprintf('%u', ip2long($value));
         return bccomp($value, sprintf('%u', ip2long($this->range['min']))) >= 0
             && bccomp($value, sprintf('%u', ip2long($this->range['max']))) <= 0;
@@ -168,9 +139,7 @@ class IpRule extends AbstractRule
     /**
      * Checks whether IP address belongs to a subnet or not.
      *
-     * @param string $value
      *
-     * @return bool
      */
     protected function assertSubnet(string $value): bool
     {

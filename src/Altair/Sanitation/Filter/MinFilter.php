@@ -12,23 +12,23 @@ namespace Altair\Sanitation\Filter;
 class MinFilter extends AbstractFilter
 {
     /**
-     * @var mixed the minimum valid value
-     */
-    protected $min;
-
-    /**
      * MinFilter constructor.
      *
      * @param $min
      */
-    public function __construct($min)
+    public function __construct(
+        /**
+         * @var mixed the minimum valid value
+         */
+        protected mixed $min
+    )
     {
-        $this->min = $min;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function parse($value)
     {
         if (!is_scalar($value)) {

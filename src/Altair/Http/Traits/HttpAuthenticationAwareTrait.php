@@ -22,26 +22,32 @@ trait HttpAuthenticationAwareTrait
      * @var IdentityValidatorInterface
      */
     protected $identityValidator;
+
     /**
      * @var HttpAuthRuleInterface[]|array
      */
     protected $rules;
+
     /**
      * @var bool
      */
     protected $ssl;
+
     /**
      * @var array|string
      */
     protected $allowed;
+
     /**
      * @var string
      */
     protected $realm;
+
     /**
      * @var mixed|null
      */
     protected $onError;
+
     /**
      * @var mixed|string
      */
@@ -50,15 +56,13 @@ trait HttpAuthenticationAwareTrait
     /**
      * Authentication middleware Constructor.
      *
-     * @param IdentityValidatorInterface $identityValidator
      * @param HttpAuthRuleInterface[] $rules
-     * @param array $options
      */
     public function __construct(IdentityValidatorInterface $identityValidator, array $rules = null, array $options = null)
     {
         $this->identityValidator = $identityValidator;
         $this->rules = $rules?? [];
-        if (empty($this->rules)) {
+        if ($this->rules === []) {
             $this->rules[] = new RequestMethodRule(); // OPTIONS by default
         } else {
             foreach ($this->rules as $rule) {
@@ -69,6 +73,7 @@ trait HttpAuthenticationAwareTrait
                 }
             }
         }
+
         $this->realm = $options['realm']?? 'Login';
         $this->environment = $options['environment']?? 'HTTP_AUTHORIZATION';
         $this->ssl = $options['ssl']?? true;
@@ -80,9 +85,7 @@ trait HttpAuthenticationAwareTrait
      * Checks whether the request should be authenticated by firing the rules. If one of them returns false, then
      * request should not be authenticated.
      *
-     * @param ServerRequestInterface $request
      *
-     * @return bool
      */
     protected function shouldAuthenticateRequest(ServerRequestInterface $request): bool
     {
@@ -99,11 +102,8 @@ trait HttpAuthenticationAwareTrait
      * Checks whether the request is over a secured channel. If not, makes sure the host is within one of our allowed
      * and if invalid, throws an error.
      *
-     * @param string $host
-     * @param string $scheme
      *
      * @throws RuntimeException to stop execution
-     * @return void
      */
     protected function checkAllowance(string $host, string $scheme): void
     {

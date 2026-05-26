@@ -3,33 +3,27 @@ namespace Altair\Tests\Structure\Map;
 
 trait filter
 {
-    public static function filterDataProvider()
+    public static function filterDataProvider(): array
     {
         // values, callback, expected
         return [
             // Test filtering an empty sequence produces an empty sequence.
-            [[], function () {
+            [[], function (): void {
             }, []],
 
             // Test only including odd values.
-            [[1, 2, 3], function ($k, $v) {
-                return $k & 1;
-            }, [1 => 2]],
-            [[1, 2, 3], function ($k, $v) {
-                return $v & 1;
-            }, [0 => 1, 2 => 3]],
+            [[1, 2, 3], fn($k, $v): int => $k & 1, [1 => 2]],
+            [[1, 2, 3], fn($k, $v): int => $v & 1, [0 => 1, 2 => 3]],
 
             // Test not asking for the value.
-            [[1, 2, 3], function ($k) {
-                return $k & 1;
-            }, [1 => 2]],
+            [[1, 2, 3], fn($k): int => $k & 1, [1 => 2]],
         ];
     }
 
     /**
      * @dataProvider filterDataProvider
      */
-    public function testFilter(array $values, callable $callback, array $expected)
+    public function testFilter(array $values, callable $callback, array $expected): void
     {
         $instance = static::getInstance($values);
 
@@ -39,16 +33,16 @@ trait filter
         $this->assertEquals($expected, $filtered->toArray());
     }
 
-    public function testFilterCallbackThrowsException()
+    public function testFilterCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $filtered = null;
 
         try {
-            $filtered = $instance->filter(function ($key, $value) {
+            $filtered = $instance->filter(function ($key, $value): void {
                 throw new \Exception();
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($filtered);
 
@@ -58,18 +52,18 @@ trait filter
         $this->fail('Exception should have been caught');
     }
 
-    public function testFilterCallbackThrowsExceptionLaterOn()
+    public function testFilterCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $filtered = null;
 
         try {
-            $filtered = $instance->filter(function ($key, $value) {
+            $filtered = $instance->filter(function ($key, $value): void {
                 if ($value === 3) {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($filtered);
 
@@ -79,7 +73,7 @@ trait filter
         $this->fail('Exception should have been caught');
     }
 
-    public function testFilterDoesNotLeakWhenCallbackFails()
+    public function testFilterDoesNotLeakWhenCallbackFails(): void
     {
         $instance = static::getInstance([
             "a" => new \stdClass(),
@@ -88,19 +82,20 @@ trait filter
         ]);
         $filtered = null;
         try {
-            $filtered = $instance->filter(function ($key, $value) {
+            $filtered = $instance->filter(function ($key, $value): void {
                 if ($key === "c") {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertNull($filtered);
             return;
         }
+
         $this->fail('Exception should have been caught');
     }
 
-    public function testFilterWithoutCallable()
+    public function testFilterWithoutCallable(): void
     {
         $values = [
             'a' => 1,

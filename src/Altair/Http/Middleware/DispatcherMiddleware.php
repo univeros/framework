@@ -27,6 +27,7 @@ class DispatcherMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         [$action, $args] = $this->dispatch(

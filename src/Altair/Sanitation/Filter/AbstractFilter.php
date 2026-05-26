@@ -18,6 +18,7 @@ abstract class AbstractFilter implements FilterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {
         $subject = (object)$payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);

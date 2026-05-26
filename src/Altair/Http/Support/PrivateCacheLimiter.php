@@ -17,6 +17,7 @@ class PrivateCacheLimiter extends AbstractCacheLimiter
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(ResponseInterface $response): ResponseInterface
     {
         return (new PrivateNoExpireCacheLimiter($this->cacheExpire))

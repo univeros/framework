@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait isEmpty
 {
-    public function testIsEmpty()
+    public function testIsEmpty(): void
     {
         $instance = static::getInstance();
         $this->assertTrue($instance->isEmpty());

@@ -18,10 +18,7 @@ use Altair\Sanitation\Contracts\SanitizerInterface;
 
 class Sanitizer implements SanitizerInterface
 {
-    /**
-     * @var FiltersRunnerInterface
-     */
-    protected $runner;
+
     /**
      * @var Payload
      */
@@ -29,23 +26,21 @@ class Sanitizer implements SanitizerInterface
 
     /**
      * Validator constructor.
-     *
-     * @param FiltersRunnerInterface $runner
      */
-    public function __construct(FiltersRunnerInterface $runner)
+    public function __construct(protected FiltersRunnerInterface $runner)
     {
-        $this->runner = $runner;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sanitize(SanitizableInterface $sanitizable): SanitizableInterface
     {
         $this->payload = $this->buildPayload($sanitizable);
 
         foreach ($sanitizable->getFilters() as $key => $value) {
-            $keys = explode(',', preg_replace('/\s+/', '', $key));
+            $keys = explode(',', (string) preg_replace('/\s+/', '', (string) $key));
             foreach ($keys as $attribute) {
                 $filters = is_array($value) ? $value : [$value];
                 $runner = $this->runner->withFilters($filters);
@@ -58,9 +53,7 @@ class Sanitizer implements SanitizerInterface
         return $this->payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
     }
 
-    /**
-     * @return MiddlewarePayloadInterface|null
-     */
+    #[\Override]
     public function getPayload(): ?MiddlewarePayloadInterface
     {
         return $this->payload;
@@ -71,9 +64,7 @@ class Sanitizer implements SanitizerInterface
      * that are going to be filtered. That way we could make use of a LoggingMiddleware class and extract the attributes
      * using "Payload::getAttributes()".
      *
-     * @param SanitizableInterface $sanitizable
      *
-     * @return MiddlewarePayloadInterface
      */
     protected function buildPayload(SanitizableInterface $sanitizable): MiddlewarePayloadInterface
     {
@@ -82,11 +73,12 @@ class Sanitizer implements SanitizerInterface
         ];
 
         foreach ($sanitizable->getFilters()->keys() as $key) {
-            $keys = explode(',', preg_replace('/\s+/', '', $key));
+            $keys = explode(',', (string) preg_replace('/\s+/', '', (string) $key));
             foreach ($keys as $attribute) {
                 if (isset($attributes[$attribute])) {
                     continue;
                 }
+
                 $attributes[$attribute] = $sanitizable->$attribute;
             }
         }

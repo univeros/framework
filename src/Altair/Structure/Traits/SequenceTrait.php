@@ -78,7 +78,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function find($value)
+    public function find($value): int|string|false
     {
         return array_search($value, $this->internal, true);
     }
@@ -128,7 +128,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function last()
+    public function last(): mixed
     {
         if ($this->isEmpty()) {
             throw new UnderflowException('Is empty');
@@ -217,6 +217,7 @@ trait SequenceTrait
         while ($rotations--) {
             $this->push($this->shift());
         }
+
         // MODIFIED
         return new static($this);
     }
@@ -268,7 +269,7 @@ trait SequenceTrait
     {
         $internal = $this->internal;
 
-        if ($comparator) {
+        if ($comparator !== null) {
             usort($internal, $comparator);
         } else {
             sort($internal);
@@ -280,7 +281,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function sum()
+    public function sum(): float|int
     {
         return array_sum($this->internal);
     }
@@ -290,7 +291,7 @@ trait SequenceTrait
      */
     public function unshift(...$values): SequenceInterface
     {
-        if ($values) {
+        if ($values !== []) {
             array_unshift($this->internal, ...$values);
             if ($this instanceof CapacityInterface) {
                 $this->adjustCapacity();
@@ -315,7 +316,7 @@ trait SequenceTrait
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->push($value);
@@ -339,7 +340,7 @@ trait SequenceTrait
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         // Unset should be quiet, so we shouldn't allow 'remove' to throw.
         if (is_int($offset) && $offset >= 0 && $offset < count($this)) {
@@ -360,11 +361,7 @@ trait SequenceTrait
         return $this->get($offset) !== null;
     }
 
-    /**
-     *
-     *
-     * @param int $index
-     */
+    
     protected function checkRange(int $index): void
     {
         if ($index < 0 || $index >= count($this->internal)) {
@@ -372,13 +369,8 @@ trait SequenceTrait
         }
     }
 
-    /**
-     * @param int $rotations
-     * @param int $count
-     *
-     * @return int
-     */
-    protected function normalizeRotations(int $rotations, int $count)
+    
+    protected function normalizeRotations(int $rotations, int $count): int
     {
         if ($rotations < 0) {
             return $count - (abs($rotations) % $count);

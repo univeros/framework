@@ -13,12 +13,10 @@ use DateTime;
 
 class DateTimeFilter extends AbstractFilter
 {
-    protected $format;
+    protected string $format;
 
     /**
      * DateTimeFilter constructor.
-     *
-     * @param string $format
      */
     public function __construct(string $format = null)
     {
@@ -28,11 +26,12 @@ class DateTimeFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function parse($value)
     {
         $value = $this->buildDateTime($value);
 
-        return (null !== $value)
+        return ($value instanceof \DateTime)
             ? $value->format($this->format)
             : $value;
     }
@@ -41,20 +40,21 @@ class DateTimeFilter extends AbstractFilter
      * Creates a new datetime based on the value, otherwise returns null.
      *
      * @param $value
-     *
-     * @return DateTime|null
      */
     protected function buildDateTime($value): ?DateTime
     {
         if ($value instanceof DateTime) {
             return $value;
         }
+
         if (!is_scalar($value)) {
             return null;
         }
+
         if (trim($value) === '') {
             return null;
         }
+
         $datetime = date_create($value);
 
         $errors = DateTime::getLastErrors();

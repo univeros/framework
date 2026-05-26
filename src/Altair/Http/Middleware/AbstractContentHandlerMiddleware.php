@@ -32,6 +32,7 @@ abstract class AbstractContentHandlerMiddleware implements MiddlewareInterface
      */
     abstract protected function parse(string $body): array|object|null;
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->matchesContentType($request)) {

@@ -18,25 +18,22 @@ use SessionHandlerInterface;
 class MongoSessionHandler implements SessionHandlerInterface
 {
     /**
-     * Session collection
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * Class constructor
-     *
-     * @param Collection $collection
      */
-    public function __construct(Collection $collection)
+    public function __construct(
+        /**
+         * Session collection
+         */
+        protected Collection $collection
+    )
     {
-        $this->collection = $collection;
     }
 
     /**
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function open($savePath, $sessionName)
     {
         return true;
@@ -46,6 +43,7 @@ class MongoSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function close()
     {
         return true;
@@ -55,6 +53,7 @@ class MongoSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function read($sessionId)
     {
         $data = $this->collection->findOne(
@@ -70,6 +69,7 @@ class MongoSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function write($sessionId, $data)
     {
         try {
@@ -91,7 +91,7 @@ class MongoSessionHandler implements SessionHandlerInterface
                     'multiple' => false
                 ]
             );
-        } catch (MongoDBException $e) {
+        } catch (MongoDBException) {
             return false;
         }
 
@@ -102,11 +102,12 @@ class MongoSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function destroy($sessionId)
     {
         try {
             $this->collection->deleteOne(['_id' => $sessionId]);
-        } catch (MongoDBException  $e) {
+        } catch (MongoDBException) {
             return false;
         }
 
@@ -117,6 +118,7 @@ class MongoSessionHandler implements SessionHandlerInterface
      * @inheritDoc
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function gc($maxlifetime)
     {
         try {
@@ -125,7 +127,7 @@ class MongoSessionHandler implements SessionHandlerInterface
                     'session_lifetime' => ['$lt' => $this->createUTCDateTime()]
                 ]
             );
-        } catch (MongoDBException $e) {
+        } catch (MongoDBException) {
             return false;
         }
 
@@ -134,10 +136,8 @@ class MongoSessionHandler implements SessionHandlerInterface
 
     /**
      * @param null|int $seconds
-     *
-     * @return UTCDateTime
      */
-    private function createUTCDateTime($seconds = null)
+    private function createUTCDateTime($seconds = null): UTCDateTime
     {
         if (null === $seconds) {
             $seconds = time();

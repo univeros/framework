@@ -18,13 +18,14 @@ use stdClass;
 class FilesystemCacheItemStorage implements CacheItemStorageInterface
 {
     protected $directory;
-    protected $filesystem;
-    protected $tmp;
+
+    protected Filesystem $filesystem;
+
+    protected string $tmp;
 
     /**
      * FilesystemCacheItemPoolStorage constructor.
      *
-     * @param Filesystem $filesystem
      * @param string|null $directory
      */
     public function __construct(Filesystem $filesystem, string $directory = null)
@@ -37,6 +38,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -47,22 +49,28 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      *
      * @throws FileNotFoundException
      */
+    #[\Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
         $now = time();
         foreach ($keys as $id) {
             $file = $this->getFilePath($id);
-            if (!$this->filesystem->exists($file) ||
-                !$this->filesystem->isFile($file) ||
-                !($item = $this->filesystem->getRequiredFileValue($file))
-            ) {
+            if (!$this->filesystem->exists($file)) {
                 continue;
             }
+            if (!$this->filesystem->isFile($file)) {
+                continue;
+            }
+            if (!($item = $this->filesystem->getRequiredFileValue($file))) {
+                continue;
+            }
+
             if ($now >= (int)$item->expiresAt) {
                 $this->filesystem->delete($file);
                 continue;
             }
+
             $items[$id] = $item->value;
         }
 
@@ -74,6 +82,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      *
      * @throws FileNotFoundException
      */
+    #[\Override]
     public function hasItem(string $key): bool
     {
         $file = $this->getFilePath($key);
@@ -85,6 +94,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         return $this->filesystem->clearDirectory($this->directory);
@@ -93,6 +103,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
         $success = true;
@@ -108,6 +119,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(array $values, int $lifespan)
     {
         $success = true;
@@ -123,11 +135,9 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * Modified version to return a boolean when writing contents to the file
      *
-     * @param string $id
      * @param $value
      * @param int|null $expiresAt
      *
-     * @return bool
      */
     protected function put(string $id, $value, int $expiresAt = null): bool
     {
@@ -143,12 +153,15 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         if (false === file_put_contents($this->tmp, $contents)) {
             return false;
         }
+
         if (null !== $expiresAt) {
             touch($this->tmp, $expiresAt);
         }
+
         if (rename($this->tmp, $file)) {
             return true;
         }
+
         $this->filesystem->delete($this->tmp);
 
         return false;
@@ -157,10 +170,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * Returns the full file path where to store the cache value.
      *
-     * @param string $id
-     * @param bool $force
      *
-     * @return string
      */
     protected function getFilePath(string $id, bool $force = false): string
     {
@@ -175,12 +185,11 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     }
 
     /**
-     * @param Filesystem $filesystem
      * @param string $directory
      */
     private function setCacheDirectory(Filesystem $filesystem, ?string $directory): void
     {
-        $directory = $directory ?? sys_get_temp_dir() . '/univeros-cache/';
+        $directory ??= sys_get_temp_dir() . '/univeros-cache/';
 
         if (!$filesystem->exists($directory)) {
             $filesystem->makeDirectory($directory, 0777, true, true);
@@ -202,6 +211,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         if ('\\' === '/' && strlen($path) > 234) { // windows allows max of 258
             throw new InvalidArgumentException(sprintf('Cache directory path is too long "%s"', $path));
         }
+
         $this->directory = $path;
     }
 }

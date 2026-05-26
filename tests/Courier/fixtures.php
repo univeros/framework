@@ -11,7 +11,8 @@ use Psr\Log\LogLevel;
 
 class TestCommand implements CommandInterface
 {
-    public function exec(CommandMessageInterface $message)
+    #[\Override]
+    public function exec(CommandMessageInterface $message): void
     {
         if ($message instanceof TestCommandMessage) {
             $message->value = 'executed';
@@ -21,7 +22,8 @@ class TestCommand implements CommandInterface
 
 class TestCommandInjectsErrorLogMessage implements CommandInterface
 {
-    public function exec(CommandMessageInterface $message)
+    #[\Override]
+    public function exec(CommandMessageInterface $message): void
     {
         $message->withLogMessage(new LogMessage('test message', LogLevel::ERROR));
     }
@@ -32,8 +34,10 @@ class TestCommandMessage implements CommandMessageInterface
     use LogMessageTrait;
 
     public $value;
+
     protected $logMessage;
 
+    #[\Override]
     public function getName(): string
     {
         return 'TestCommandMessage';
@@ -44,6 +48,7 @@ class TestCommandWithErrorLogMessage implements CommandMessageInterface
 {
     use LogMessageTrait;
 
+    #[\Override]
     public function getName(): string
     {
         return 'TestCommandWithErrorLogMessage';
@@ -59,7 +64,8 @@ class StubMiddleware implements CommandMiddlewareInterface
         $this->handler = $handler;
     }
 
-    public function handle(CommandMessageInterface $message, callable $next)
+    #[\Override]
+    public function handle(CommandMessageInterface $message, callable $next): void
     {
         call_user_func($this->handler, $message);
 
@@ -74,10 +80,11 @@ class CallableClass
         TestCommandWithErrorLogMessage::class => TestCommandInjectsErrorLogMessage::class
     ];
 
-    public function __invoke($name)
+    public function __invoke($name): ?object
     {
         if (isset($this->map[$name])) {
             return new $this->map[$name];
         }
+        return null;
     }
 }

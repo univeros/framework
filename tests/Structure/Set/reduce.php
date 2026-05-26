@@ -3,31 +3,26 @@ namespace Altair\Tests\Structure\Set;
 
 trait reduce
 {
-    public static function reduceDataProvider()
+    public static function reduceDataProvider(): array
     {
         // values, initial, callback
         return [
             // Test reducing an empty sequence returns the initial
-            [[], 1, function () {
+            [[], 1, function (): void {
             }],
 
             // Test reducing strings by concatenating them.
-            [['a', 'b', 'c'], '', function ($c, $v) {
-                return $c . $v;
-            }],
+            [['a', 'b', 'c'], '', fn($c, $v): string => $c . $v],
 
             // Test reducing mixed numeric values by multiplying them.
-            [[1, 2.5, '3'], 2, function ($c, $v) {
-                return $c * $v;
-            }],
+            [[1, 2.5, '3'], 2, fn($c, $v): int|float => $c * $v],
         ];
     }
 
     /**
      * @dataProvider reduceDataProvider
-     * @param mixed $initial
      */
-    public function testReduce(array $values, $initial, callable $callback)
+    public function testReduce(array $values, mixed $initial, callable $callback): void
     {
         $instance = static::getInstance($values);
 
@@ -40,9 +35,8 @@ trait reduce
 
     /**
      * @dataProvider reduceDataProvider
-     * @param mixed $initial
      */
-    public function testReduceWithoutInitial(array $values, $initial, callable $callback)
+    public function testReduceWithoutInitial(array $values, mixed $initial, callable $callback): void
     {
         $instance = static::getInstance($values);
 
@@ -53,16 +47,16 @@ trait reduce
         $this->assertEquals($expected, $reduced);
     }
 
-    public function testReduceCallbackThrowsException()
+    public function testReduceCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {
-            $result = $instance->reduce(function ($carry, $value) {
+            $result = $instance->reduce(function ($carry, $value): void {
                 throw new \Exception();
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($result);
 
@@ -72,18 +66,18 @@ trait reduce
         $this->fail('Exception should have been caught');
     }
 
-    public function testReduceCallbackThrowsExceptionLaterOn()
+    public function testReduceCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {
-            $result = $instance->reduce(function ($carry, $value) {
+            $result = $instance->reduce(function ($carry, $value): void {
                 if ($value === 3) {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($result);
 

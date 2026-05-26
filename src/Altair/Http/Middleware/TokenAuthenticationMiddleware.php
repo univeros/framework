@@ -51,6 +51,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
         $this->initAuthentication($identityValidator, $rules, $options);
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {
@@ -71,6 +72,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
                 if (call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) === false) {
                     throw new AuthorizationException('Invalid credentials.');
                 }
+
                 $authToken = $this->tokenFactory->fromCredentials($credentials);
             } else {
                 throw new AuthorizationException('No authentication token has been specified.');
@@ -97,7 +99,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
             return $response;
         }
 
-        if ($authToken !== null) {
+        if ($authToken instanceof TokenInterface) {
             $request = $request->withAttribute(TokenInterface::TOKEN_KEY, $authToken);
         }
 

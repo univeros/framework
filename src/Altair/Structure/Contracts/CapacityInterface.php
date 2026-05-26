@@ -27,8 +27,6 @@ interface CapacityInterface
 
     /**
      * Returns the current capacity of the sequence.
-     *
-     * @return int
      */
     public function capacity(): int;
 }

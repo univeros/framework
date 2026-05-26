@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class CreditCardRuleTest extends TestCase
 {
-    public static function trueProvider()
+    public static function trueProvider(): array
     {
         return [
             ['visaelectron', ['4917300800000000', '4913183913639755', '4917558220925391', '4026433620435706']],
@@ -28,7 +28,7 @@ class CreditCardRuleTest extends TestCase
         ];
     }
 
-    public static function falseProvider()
+    public static function falseProvider(): array
     {
         return [
             ['visaelectron', ['30052526839118', '30294073805171', '30521225806875']],
@@ -53,7 +53,7 @@ class CreditCardRuleTest extends TestCase
      * @param $type
      * @param $values
      */
-    public function testValidCards($type, $values)
+    public function testValidCards(string $type, array $values): void
     {
         $rule = new CreditCardRule($type);
         foreach ($values as $value) {
@@ -67,7 +67,7 @@ class CreditCardRuleTest extends TestCase
      * @param $type
      * @param $values
      */
-    public function testInvalidCards($type, $values)
+    public function testInvalidCards(string $type, array $values): void
     {
         $rule = new CreditCardRule($type);
         foreach ($values as $value) {
@@ -76,12 +76,10 @@ class CreditCardRuleTest extends TestCase
         }
     }
 
-    protected function assertPayload($rule, $value)
+    protected function assertPayload($rule, $value): bool
     {
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
@@ -93,7 +91,7 @@ class CreditCardRuleTest extends TestCase
         return $rule->assert($value);
     }
 
-    protected function buildPayload($value)
+    protected function buildPayload($value): \Altair\Middleware\Contracts\PayloadInterface
     {
         $subject = [
             'test' => $value

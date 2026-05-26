@@ -12,50 +12,41 @@ namespace Altair\Session\Contracts;
 interface SessionBlockInterface
 {
     const CSRF_KEY = 'altair:session:csrf';
+
     const FLASH_KEY = 'altair:session:flash';
 
     /**
      * Returns the value of a key in the session block.
      *
-     * @param string $key
-     * @param mixed $default
      *
      * @return mixed
      */
-    public function get(string $key, $default = null);
+    public function get(string $key, mixed $default = null);
 
     /**
      * Sets the value of a key in the session block.
      *
-     * @param string $key
      * @param $value
      *
-     * @return SessionBlockInterface
      */
     public function set(string $key, $value): SessionBlockInterface;
 
     /**
      * Removes a key from the session block.
      *
-     * @param string $key
      *
-     * @return SessionBlockInterface
      */
     public function remove(string $key): SessionBlockInterface;
 
     /**
      * Checks whether the session block has a specific key.
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function has(string $key): bool;
 
     /**
      * Clear all data from the segment.
-     *
-     * @return SessionBlockInterface
      */
     public function clear(): SessionBlockInterface;
 
@@ -69,7 +60,7 @@ interface SessionBlockInterface
      *
      * @return mixed the flash message or an array of messages if addFlash was used
      */
-    public function getFlash(string $key, $default = null, bool $delete = false);
+    public function getFlash(string $key, mixed $default = null, bool $delete = false);
 
     /**
      * Returns all flash messages.
@@ -105,10 +96,8 @@ interface SessionBlockInterface
      * it is accessed. If false, the flash message will be automatically removed after the next request,
      * regardless if it is accessed or not. If true (default value), the flash message will remain until after
      * it is accessed.
-     *
-     * @return SessionBlockInterface
      */
-    public function setFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface;
+    public function setFlash(string $key, mixed $value = true, bool $immediateRemoval = true): SessionBlockInterface;
 
     /**
      * Appends a flash message. If there are existing flash messages with the same key, the new one will be appended to
@@ -120,10 +109,8 @@ interface SessionBlockInterface
      * it is accessed. If false, the flash message will be automatically removed after the next request,
      * regardless if it is accessed or not. If true (default value), the flash message will remain until after
      * it is accessed.
-     *
-     * @return SessionBlockInterface
      */
-    public function appendFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface;
+    public function appendFlash(string $key, mixed $value = true, bool $immediateRemoval = true): SessionBlockInterface;
 
     /**
      * Removes a flash message.

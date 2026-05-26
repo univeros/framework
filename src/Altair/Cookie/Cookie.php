@@ -10,13 +10,11 @@
 namespace Altair\Cookie;
 
 use Altair\Cookie\Contracts\CookieInterface;
-use Altair\Cookie\Traits\NameAndValueAwareTrait;
 
-class Cookie extends AbstractCookie implements CookieInterface
+class Cookie extends AbstractCookie implements CookieInterface, \Stringable
 {
     /**
      * Cookie constructor.
-     * @param string $name
      * @param string|null $value
      */
     public function __construct(string $name, string $value = null)
@@ -24,18 +22,14 @@ class Cookie extends AbstractCookie implements CookieInterface
         parent::__construct($name, $value);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         return urlencode($this->name) . '=' . urlencode($this->value);
     }
 
     /**
      * @param string|null $value
-     *
-     * @return Cookie
      */
     public function withValue(string $value = null): Cookie
     {

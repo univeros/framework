@@ -21,27 +21,16 @@ use ReflectionParameter;
 class ArgumentsBuilder implements BuilderInterface
 {
     /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
      * ArgumentsBuilder constructor.
-     *
-     * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(protected Container $container)
     {
-        $this->container = $container;
     }
 
     /**
-     * @param ReflectionFunctionAbstract $reflectionFunction
-     * @param Definition $definition
      * @param array|null $reflectionParameters
      * @throws InjectionException
      * @throws ReflectionException
-     * @return array
      */
     public function build(
         ReflectionFunctionAbstract $reflectionFunction,
@@ -53,6 +42,7 @@ class ArgumentsBuilder implements BuilderInterface
         if (!isset($reflectionParameters)) {
             $reflectionParameters = $reflectionFunction->getParameters();
         }
+
         foreach ($reflectionParameters as $position => $reflectionParameter) {
             $name = $reflectionParameter->name;
 
@@ -72,6 +62,7 @@ class ArgumentsBuilder implements BuilderInterface
                     $argument = $this->buildArgumentFromReflectionParameter($reflectionParameter);
                 }
             }
+
             $arguments[] = $argument;
         }
 
@@ -79,8 +70,6 @@ class ArgumentsBuilder implements BuilderInterface
     }
 
     /**
-     * @param ReflectionFunctionAbstract $reflectionFunction
-     * @param ReflectionParameter $reflectionParameter
      * @throws InjectionException
      * @throws \ReflectionException
      * @return mixed|object|null
@@ -105,7 +94,6 @@ class ArgumentsBuilder implements BuilderInterface
     }
 
     /**
-     * @param ReflectionParameter $reflectionParameter
      * @throws InjectionException
      * @throws ReflectionException
      * @return mixed|null
@@ -140,7 +128,6 @@ class ArgumentsBuilder implements BuilderInterface
     }
 
     /**
-     * @param string $name
      * @param $callableOrMethodString
      *
      * @throws InjectionException
@@ -149,7 +136,7 @@ class ArgumentsBuilder implements BuilderInterface
     protected function buildArgumentFromDelegate(string $name, $callableOrMethodString)
     {
         if ($this->container->getExecutableBuilder()->isExecutable($callableOrMethodString) === false) {
-            throw new InjectionException("Unable to create argument '$name' from delegate.");
+            throw new InjectionException(sprintf("Unable to create argument '%s' from delegate.", $name));
         }
 
         $executable = $this->container->getExecutableBuilder()->build($callableOrMethodString);
@@ -158,7 +145,6 @@ class ArgumentsBuilder implements BuilderInterface
     }
 
     /**
-     * @param array $definition
      * @throws InjectionException
      * @throws ReflectionException
      * @return mixed|object|null

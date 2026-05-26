@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\UpperCaseFilter;
 
 class UpperCaseFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             ['AbcDe', 'ABCDE'],
@@ -17,6 +18,7 @@ class UpperCaseFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
         return new UpperCaseFilter();

@@ -28,7 +28,7 @@ interface PayloadInterface
      *
      * @return mixed
      */
-    public function getAttribute($name, $default = null);
+    public function getAttribute($name, mixed $default = null);
 
     /**
      * Retrieve attributes derived from the process.
@@ -54,10 +54,8 @@ interface PayloadInterface
      *
      * @param string $name The attribute name.
      * @param mixed $value The value of the attribute.
-     *
-     * @return PayloadInterface
      */
-    public function withAttribute($name, $value): PayloadInterface;
+    public function withAttribute($name, mixed $value): PayloadInterface;
 
     /**
      * Return an instance with the specified derived payload attributes.
@@ -71,9 +69,7 @@ interface PayloadInterface
      *
      * @see getAttributes()
      *
-     * @param array $attributes
      *
-     * @return PayloadInterface
      */
     public function withAttributes(array $attributes): PayloadInterface;
 
@@ -90,8 +86,6 @@ interface PayloadInterface
      * @see getAttributes()
      *
      * @param string $name The attribute name.
-     *
-     * @return PayloadInterface
      */
     public function withoutAttribute($name): PayloadInterface;
 }

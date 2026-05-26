@@ -18,14 +18,17 @@ interface PdoSessionAdapterInterface
      * Driver name mysql
      */
     const DRIVER_MYSQL = 'mysql';
+
     /**
      * Driver name sqlite
      */
     const DRIVER_SQLITE = 'sqlite';
+
     /**
      * Driver name postgresql
      */
     const DRIVER_POSTGRESQL = 'postgresql';
+
     /**
      * No locking is done. This means sessions are prone to loss of data due to
      * race conditions of concurrent requests to the same session. The last session
@@ -33,6 +36,7 @@ interface PdoSessionAdapterInterface
      * logic to deal with this like an optimistic approach.
      */
     const LOCK_NONE = 0;
+
     /**
      * Creates an application-level lock on a session. The disadvantage is that the
      * lock is not enforced by the database and thus other, unaware parts of the
@@ -41,6 +45,7 @@ interface PdoSessionAdapterInterface
      * This mode is not available for SQLite and not yet implemented for oci and sqlsrv.
      */
     const LOCK_ADVISORY = 1;
+
     /**
      * Issues a real row lock. Since it uses a transaction between opening and
      * closing a session, you have to be careful when you use same database connection
@@ -56,22 +61,16 @@ interface PdoSessionAdapterInterface
 
     /**
      * Returns whether the PDO instance is connected or not.
-     *
-     * @return bool
      */
     public function getIsConnected(): bool;
 
     /**
      * Returns whether the session has expired or not.
-     *
-     * @return bool
      */
     public function getHasSessionExpired(): bool;
 
     /**
      * Returns the internal PDO instance.
-     *
-     * @return PDO
      */
     public function getConnection(): PDO;
 
@@ -102,40 +101,27 @@ interface PdoSessionAdapterInterface
     /**
      * Reads the session data.
      *
-     * @param string $sessionId
      *
-     * @return string
      */
     public function read(string $sessionId): string;
 
     /**
      * Writes the session data
      *
-     * @param string $sessionId
-     * @param string $data
      *
-     * @return bool
      */
     public function write(string $sessionId, string $data): bool;
 
-    /**
-     * @param string $sessionId
-     *
-     * @return PDOStatement
-     */
+
     public function doAdvisoryLocking(string $sessionId): PDOStatement;
 
     /**
      * Returns the driver's name (ie mysql, sqlite, etc)
-     *
-     * @return string
      */
     public function getDriver(): string;
 
     /**
      * Returns the SELECT SQL statement to access the DB.
-     *
-     * @return string
      */
     public function getSelectSql(): string;
 
@@ -143,28 +129,21 @@ interface PdoSessionAdapterInterface
      * Returns the merge/upsert (i.e. insert or update) statement when supported by the database when writing session
      * data.
      *
-     * @param string $sessionId
-     * @param string $data
      *
-     * @return null|PDOStatement
      */
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement;
 
     /**
      * Removes the session from database. Used when destroying session.
      *
-     * @param string $sessionId
      *
-     * @return bool
      */
     public function delete(string $sessionId): bool;
 
     /**
      * Closes the session ensuring everything is clean.
      *
-     * @param bool $gcCalled
      *
-     * @return bool
      */
     public function close(bool $gcCalled = false): bool;
 }

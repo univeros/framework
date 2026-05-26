@@ -18,10 +18,7 @@ use Altair\Validation\Contracts\ValidatorInterface;
 
 class Validator implements ValidatorInterface
 {
-    /**
-     * @var RulesRunnerInterface
-     */
-    protected $runner;
+
     /**
      * @var Payload
      */
@@ -29,19 +26,13 @@ class Validator implements ValidatorInterface
 
     /**
      * Validator constructor.
-     *
-     * @param RulesRunnerInterface $runner
      */
-    public function __construct(RulesRunnerInterface $runner)
+    public function __construct(protected RulesRunnerInterface $runner)
     {
-        $this->runner = $runner;
     }
 
-    /**
-     * @param ValidatableInterface $validatable
-     *
-     * @return bool
-     */
+
+    #[\Override]
     public function validate(ValidatableInterface $validatable): bool
     {
         $this->payload = $this->buildPayload($validatable);
@@ -63,6 +54,7 @@ class Validator implements ValidatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPayload(): ?MiddlewarePayloadInterface
     {
         return $this->payload;
@@ -73,9 +65,7 @@ class Validator implements ValidatorInterface
      * that are going to be validated. That way we could make use of a LoggingMiddleware class and extract the
      * attributes using "Payload::getAttributes()".
      *
-     * @param ValidatableInterface $validatable
      *
-     * @return MiddlewarePayloadInterface
      */
     protected function buildPayload(ValidatableInterface $validatable): MiddlewarePayloadInterface
     {
@@ -89,6 +79,7 @@ class Validator implements ValidatorInterface
                 if (isset($attributes[$attribute])) {
                     continue;
                 }
+
                 $attributes[$attribute] = $validatable->$attribute;
             }
         }
@@ -96,11 +87,7 @@ class Validator implements ValidatorInterface
         return new Payload($attributes);
     }
 
-    /**
-     * @param string $value
-     *
-     * @return string
-     */
+
     protected function sanitize(string $value): string
     {
         return preg_replace('/\s+/', '', $value);

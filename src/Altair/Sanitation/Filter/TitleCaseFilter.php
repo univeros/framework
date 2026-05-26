@@ -14,11 +14,13 @@ class TitleCaseFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?string
     {
         if (!is_string($value)) {
             return null;
         }
+
         return ucwords($value);
     }
 }

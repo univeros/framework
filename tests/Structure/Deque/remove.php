@@ -7,7 +7,7 @@ trait remove
      * Deque has a few edge cases that don't exist for other sequences. These
      * occur when the head of the deque wraps around, ie. h > t.
      */
-    public function testRemoveExtended()
+    public function testRemoveExtended(): void
     {
         $instance = static::getInstance();
 

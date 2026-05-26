@@ -17,25 +17,14 @@ use Psr\Http\Message\ServerRequestInterface;
 class InputParser implements InputInterface
 {
     /**
-     * @var InputCollection
-     */
-    protected $inputCollection;
-
-    /**
      * InputParser constructor.
-     *
-     * @param InputCollection $inputCollection
      */
-    public function __construct(InputCollection $inputCollection)
+    public function __construct(protected InputCollection $inputCollection)
     {
-        $this->inputCollection = $inputCollection;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return InputCollection
-     */
+    
+    #[\Override]
     public function __invoke(ServerRequestInterface $request): InputCollection
     {
         $this->inputCollection->putAll(
@@ -51,11 +40,7 @@ class InputParser implements InputInterface
         return $this->inputCollection;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     *
-     * @return array
-     */
+    
     protected function getParsedBody(ServerRequestInterface $request): array
     {
         $body = $request->getParsedBody();
@@ -64,7 +49,7 @@ class InputParser implements InputInterface
             return [];
         }
 
-        return is_object($body) && $body instanceof JsonSerializable
+        return $body instanceof JsonSerializable
             ? $body->jsonSerialize()
             // if parsed body is an object but doesn't implements JsonSerializable use json parsing instead
             : (is_object($body) ? json_decode(json_encode($body), true) : $body);

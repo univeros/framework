@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait slice
 {
-    public static function sliceDataProvider()
+    public static function sliceDataProvider(): array
     {
         $a = ['a', 'b', 'c'];
         $n = count($a);
@@ -23,7 +23,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSlice(array $values, int $index, int $length)
+    public function testSlice(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -37,7 +37,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSliceWithoutLength(array $values, int $index, int $length)
+    public function testSliceWithoutLength(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -48,7 +48,7 @@ trait slice
         $this->assertToArray($expected, $sliced);
     }
 
-    public function testSliceAfterRemoveOutsideOfSlice()
+    public function testSliceAfterRemoveOutsideOfSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove(3); // d
@@ -56,7 +56,7 @@ trait slice
         $this->assertToArray(['a', 'b', 'c'], $instance->slice(0, 3));
     }
 
-    public function testSliceAfterRemoveAtStartOfSlice()
+    public function testSliceAfterRemoveAtStartOfSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove(1); // b
@@ -68,7 +68,7 @@ trait slice
         ], $instance->slice(1));
     }
 
-    public function testSliceAfterRemoveWithinSlice()
+    public function testSliceAfterRemoveWithinSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove(2); // c

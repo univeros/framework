@@ -20,44 +20,54 @@ trait PdoSessionAdapterAwareTrait
      * @var PDO|null
      */
     protected $pdo;
+
     /**
      * @var array DB connection options
      */
     protected $options;
+
     /**
      * @var string DNS string
      */
     protected $dsn;
+
     /**
      * @var string the DB username
      */
     protected $username;
+
     /**
      * @var string the DB password
      */
     protected $password;
+
     /**
      * @var string the DB table name to store sessions
      */
     protected $table;
+
     /**
      * @var int DB lock mode
      */
     protected $lockMode;
+
     /**
      * @var bool true when the current session exists but expired according to session.gc_maxlifetime
      */
     protected $expired = false;
+
     /**
      * @var bool whether a transaction is active
      */
     protected $activeTransaction = false;
+
     /**
      * It's an array to support multiple reads before closing which is manual, non-standard usage.
      *
      * @var PDOStatement[] An array of statements to release advisory locks
      */
     protected $unlockStatements = [];
+
     /**
      * @var bool True when the current session exists but expired according to session.gc_maxlifetime
      */
@@ -66,12 +76,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * PdoSessionHandler constructor.
      *
-     * @param string $dsn
-     * @param string $username
-     * @param string $password
-     * @param string $table
      * @param int|null $lockMode
-     * @param array $options
      */
     public function __construct(
         string $dsn,
@@ -97,9 +102,6 @@ trait PdoSessionAdapterAwareTrait
         return null !== $this->pdo && $this->pdo instanceof PDO;
     }
 
-    /**
-     * @return bool
-     */
     public function getHasSessionExpired(): bool
     {
         return $this->sessionExpired;
@@ -120,7 +122,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * @inheritDoc
      */
-    public function connect()
+    public function connect(): void
     {
         $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
         $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -156,6 +158,7 @@ trait PdoSessionAdapterAwareTrait
 
                 return is_resource($rows[0][0]) ? stream_get_contents($rows[0][0]) : $rows[0][0];
             }
+
             if ($this->getIsLockModeTransactional() &&
                 PdoSessionAdapterInterface::DRIVER_SQLITE !== $this->getDriver()
             ) {
@@ -178,7 +181,7 @@ trait PdoSessionAdapterAwareTrait
                 } catch (PDOException $e) {
                     // Catch duplicate key error because other connection created the session already.
                     // It would only not be the case when the other connection destroyed the session.
-                    if (0 === strpos($e->getCode(), '23')) {
+                    if (str_starts_with($e->getCode(), '23')) {
                         // Retrieve finished session data written by concurrent connection by restarting the loop.
                         // We have to start a new transaction as a failed query will mark the current transaction as
                         // aborted in PostgreSQL and disallow further queries within it.
@@ -186,6 +189,7 @@ trait PdoSessionAdapterAwareTrait
                         $this->beginTransaction();
                         continue;
                     }
+
                     throw $e;
                 }
             }
@@ -247,7 +251,7 @@ trait PdoSessionAdapterAwareTrait
                 $insertQuery->execute();
             } catch (PDOException $e) {
                 // Handle integrity violation SQLSTATE 23000 (or a subclass like 23505 in Postgres) for duplicate keys
-                if (0 === strpos($e->getCode(), '23')) {
+                if (str_starts_with($e->getCode(), '23')) {
                     $updateQuery->execute();
                 } else {
                     throw $e;
@@ -261,7 +265,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * @inheritDoc
      */
-    public function beginTransaction()
+    public function beginTransaction(): void
     {
         if (!$this->activeTransaction) {
             if (PdoSessionAdapterInterface::DRIVER_SQLITE === $this->getDriver()) {
@@ -270,8 +274,10 @@ trait PdoSessionAdapterAwareTrait
                 if (PdoSessionAdapterInterface::DRIVER_MYSQL === $this->getDriver()) {
                     $this->getConnection()->exec('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
                 }
+
                 $this->getConnection()->beginTransaction();
             }
+
             $this->activeTransaction = true;
         }
     }
@@ -279,7 +285,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * @inheritDoc
      */
-    public function rollback()
+    public function rollback(): void
     {
         // We only need to rollback if we are in a transaction. Otherwise the resulting
         // error would hide the real problem why rollback was called. We might not be
@@ -291,6 +297,7 @@ trait PdoSessionAdapterAwareTrait
             } else {
                 $this->getConnection()->rollBack();
             }
+
             $this->activeTransaction = false;
         }
     }
@@ -298,7 +305,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * @inheritDoc
      */
-    public function commit()
+    public function commit(): void
     {
         if ($this->activeTransaction) {
             try {
@@ -308,6 +315,7 @@ trait PdoSessionAdapterAwareTrait
                 } else {
                     $this->getConnection()->commit();
                 }
+
                 $this->activeTransaction = false;
             } catch (PDOException $e) {
                 $this->rollback();
@@ -355,10 +363,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * Checks whether a transaction has expired.
      *
-     * @param int $lifetime
-     * @param int $createdAt
      *
-     * @return bool
      */
     protected function checkIfSessionExpired(int $lifetime, int $createdAt): bool
     {
@@ -377,8 +382,6 @@ trait PdoSessionAdapterAwareTrait
 
     /**
      * Returns whether the lock mode is transactional
-     *
-     * @return bool
      */
     protected function getIsLockModeTransactional(): bool
     {

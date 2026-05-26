@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\DateTimeFilter;
 
 class DateTimeFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             ['Nov 7, 1979, 12:34pm', '1979-11-07'],
@@ -28,6 +29,7 @@ class DateTimeFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
         return new DateTimeFilter('Y-m-d');

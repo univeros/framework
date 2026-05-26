@@ -9,22 +9,16 @@
 
 namespace Altair\Data\Traits;
 
-use Altair\Data\Contracts\ArrayableInterface;
-
 trait SerializeAwareTrait
 {
     /**
      * @see ArrayableInterface::toArray()
-     *
-     * @return array
      */
     abstract public function toArray(): array;
 
     /**
-     * @param array $data
      *
      * @see AttributesAwareTrait::withData()
-     *
      * @return mixed
      */
     abstract public function withData(array $data);
@@ -32,7 +26,7 @@ trait SerializeAwareTrait
     /**
      * @inheritDoc
      */
-    public function serialize()
+    public function serialize(): string
     {
         return serialize($this->toArray());
     }

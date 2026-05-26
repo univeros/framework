@@ -10,7 +10,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class SetCookieFactoryTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $setCookie = SetCookieFactory::create('name', 'value');
 
@@ -19,7 +19,7 @@ class SetCookieFactoryTest extends TestCase
         $this->assertEquals('value', $setCookie->getValue());
     }
 
-    public function testCreateRemembered()
+    public function testCreateRemembered(): void
     {
         $setCookie = SetCookieFactory::createRemembered('name', 'value');
 
@@ -28,7 +28,7 @@ class SetCookieFactoryTest extends TestCase
         $this->assertGreaterThan($fourYearsFromNow, $setCookie->getExpires());
     }
 
-    public function testCreateExpired()
+    public function testCreateExpired(): void
     {
         $setCookie = SetCookieFactory::createExpired('name');
 
@@ -36,12 +36,10 @@ class SetCookieFactoryTest extends TestCase
     }
 
     /**
-     * @param array $setCookieStrings
      * @param SetCookie[] $expectedSetCookies
-     *
      * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
      */
-    public function testParsingFromCookieStrings(array $setCookieStrings, array $expectedSetCookies)
+    public function testParsingFromCookieStrings(array $setCookieStrings, array $expectedSetCookies): void
     {
         $setCookies = SetCookieFactory::createCollectionFromCookieStrings($setCookieStrings);
 
@@ -55,12 +53,10 @@ class SetCookieFactoryTest extends TestCase
     }
 
     /**
-     * @param array $setCookieStrings
-     * @param array $expectedSetCookies
      *
      * @dataProvider  setCookieStringsAndExpectedSetCookiesDataProvider
      */
-    public function testCreatesFromResponse(array $setCookieStrings, array $expectedSetCookies)
+    public function testCreatesFromResponse(array $setCookieStrings, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);
         $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
@@ -78,18 +74,17 @@ class SetCookieFactoryTest extends TestCase
 
     /**
      * @param $cookieString
-     * @param SetCookie $expectedSetCookie
      *
      * @dataProvider setCookieStringAndExpectedSetCookieDataProvider
      */
-    public function testParsingFromCookieString($cookieString, SetCookie $expectedSetCookie)
+    public function testParsingFromCookieString(string $cookieString, SetCookie $expectedSetCookie): void
     {
         $setCookie = SetCookieFactory::createFromCookieString($cookieString);
 
         $this->assertEquals($expectedSetCookie, $setCookie);
     }
 
-    public static function setCookieStringAndExpectedSetCookieDataProvider()
+    public static function setCookieStringAndExpectedSetCookieDataProvider(): array
     {
         return [
             [
@@ -108,7 +103,7 @@ class SetCookieFactoryTest extends TestCase
         ];
     }
 
-    public static function setCookieStringsAndExpectedSetCookiesDataProvider()
+    public static function setCookieStringsAndExpectedSetCookiesDataProvider(): array
     {
         return [
             [

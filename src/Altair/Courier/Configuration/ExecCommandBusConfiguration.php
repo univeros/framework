@@ -30,11 +30,12 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         $fs = new Filesystem();
 
-        $factory = function () use ($fs) {
+        $factory = function () use ($fs): InMemoryCommandLocatorService {
             // The file should contain all the mapping definitions
             // If using ClassCommandMessageNameResolver and InMemoryCommandLocatorService:
             // [ YourCommandMessage::class => YourCommandHandler::class]

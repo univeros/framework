@@ -25,9 +25,7 @@ class SetCookieCollection extends Map
     /**
      * Adds a SetCookie to the collection
      *
-     * @param SetCookie $cookie
      *
-     * @return SetCookieCollection
      */
     public function putSetCookie(SetCookie $cookie): SetCookieCollection
     {
@@ -46,6 +44,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function put($key, $value): MapInterface
     {
         $pair = $this->lookupKey($key);
@@ -63,6 +62,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $value) {
@@ -79,23 +79,20 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function sort(callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 
-        if ($comparator) {
+        if ($comparator !== null) {
             usort(
                 $pairs,
-                static function ($a, $b) use ($comparator) {
-                    return $comparator($a->value->getValue(), $b->value->getValue());
-                }
+                static fn($a, $b) => $comparator($a->value->getValue(), $b->value->getValue())
             );
         } else {
             usort(
                 $pairs,
-                static function ($a, $b) {
-                    return $a->value->getValue() <=> $b->value->getValue();
-                }
+                static fn($a, $b): int => $a->value->getValue() <=> $b->value->getValue()
             );
         }
 
@@ -105,6 +102,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function values(): VectorInterface
     {
         $sequence = new Vector();
@@ -119,7 +117,8 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    public function sum()
+    #[\Override]
+    public function sum(): never
     {
         throw new InvalidCallException(sprintf('This method is not supported: %s', __FUNCTION__));
     }
@@ -127,9 +126,7 @@ class SetCookieCollection extends Map
     /**
      * Injects cookie collection into request header.
      *
-     * @param ResponseInterface $response
      *
-     * @return ResponseInterface
      */
     public function injectIntoResponseHeader(ResponseInterface $response): ResponseInterface
     {
@@ -145,9 +142,8 @@ class SetCookieCollection extends Map
      * Returns item if a value is found.
      *
      * @param mixed $value
-     *
-     * @return PairInterface|null
      */
+    #[\Override]
     protected function lookupValue($value): ?PairInterface
     {
         foreach ($this->internal as $pair) {
@@ -161,9 +157,8 @@ class SetCookieCollection extends Map
      * Converts pairs to array.
      *
      * @param $pairs
-     *
-     * @return array
      */
+    #[\Override]
     protected function pairsToArray($pairs): array
     {
         $array = [];

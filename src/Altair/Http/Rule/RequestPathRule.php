@@ -14,10 +14,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestPathRule implements HttpAuthRuleInterface
 {
-    /**
-     * @var array
-     */
-    protected $options = [
+    protected array $options = [
         'path' => ['/'],
         'passthrough' => []
     ];
@@ -36,21 +33,22 @@ class RequestPathRule implements HttpAuthRuleInterface
     /**
      * @inheritDoc
      */
-    public function __invoke(ServerRequestInterface $request)
+    #[\Override]
+    public function __invoke(ServerRequestInterface $request): bool
     {
         $uri = '/' . $request->getUri()->getPath();
         $uri = preg_replace('#/+#', '/', $uri);
 
         foreach ((array)$this->options['passthrough'] as $passthrough) {
-            $passthrough = rtrim($passthrough, '/');
-            if ((bool)preg_match("@^{$passthrough}(/.*)?$@", $uri)) {
+            $passthrough = rtrim((string) $passthrough, '/');
+            if ((bool)preg_match(sprintf('@^%s(/.*)?$@', $passthrough), (string) $uri)) {
                 return false;
             }
         }
 
         foreach ((array)$this->options['path'] as $path) {
-            $path = rtrim($path, '/');
-            if ((bool)preg_match("@^{$path}(/.*)?$@", $uri)) {
+            $path = rtrim((string) $path, '/');
+            if ((bool)preg_match(sprintf('@^%s(/.*)?$@', $path), (string) $uri)) {
                 return true;
             }
         }

@@ -31,46 +31,28 @@ class Container implements ContainerInterface
 {
     use NameNormalizerTrait;
 
-    /**
-     * @var ReflectionInterface|CachedReflection
-     */
-    protected $reflector;
-    /**
-     * @var AliasesCollection
-     */
-    protected $aliases;
-    /**
-     * @var ClassDefinitionsCollection
-     */
-    protected $classDefinitions;
-    /**
-     * @var ParameterDefinitionsCollection
-     */
-    protected $parameterDefinitions;
-    /**
-     * @var SharesCollection
-     */
-    protected $shares;
-    /**
-     * @var PreparesCollection
-     */
-    protected $prepares;
-    /**
-     * @var DelegatesCollection
-     */
-    protected $delegates;
+    protected ReflectionInterface $reflector;
+
+    protected AliasesCollection $aliases;
+
+    protected ClassDefinitionsCollection $classDefinitions;
+
+    protected ParameterDefinitionsCollection $parameterDefinitions;
+
+    protected SharesCollection $shares;
+
+    protected PreparesCollection $prepares;
+
+    protected DelegatesCollection $delegates;
+
     /**
      * @var array
      */
     protected $making = [];
-    /**
-     * @var ExecutableBuilder|null
-     */
-    protected $executableBuilder;
-    /**
-     * @var ArgumentsBuilder|null
-     */
-    protected $argumentsBuilder;
+
+    protected ExecutableBuilder $executableBuilder;
+
+    protected ArgumentsBuilder $argumentsBuilder;
 
     /**
      * Container constructor.
@@ -115,6 +97,7 @@ class Container implements ContainerInterface
         $this->making = [];
     }
 
+    #[\Override]
     public function get(string $id): mixed
     {
         if (!$this->isset($id)) {
@@ -124,6 +107,7 @@ class Container implements ContainerInterface
         return $this->make($id);
     }
 
+    #[\Override]
     public function has(string $id): bool
     {
         return $this->isset($id);
@@ -134,12 +118,10 @@ class Container implements ContainerInterface
      *
      * @param string $name The class (or alias) whose constructor arguments we wish to define
      * @param Definition $definition A definition class that holds map of  values/instructions
-     *
-     * @return self
      */
-    public function define($name, Definition $definition): Container
+    public function define(string $name, Definition $definition): Container
     {
-        list(, $normalizedClass) = $this->aliases->resolve($name);
+        [, $normalizedClass] = $this->aliases->resolve($name);
         $this->classDefinitions->put($normalizedClass, $definition);
 
         return $this;
@@ -153,10 +135,8 @@ class Container implements ContainerInterface
      *
      * @param string $paramName The parameter name for which this value applies
      * @param mixed $value The value to inject for this parameter name
-     *
-     * @return self
      */
-    public function defineParameter($paramName, $value): Container
+    public function defineParameter($paramName, mixed $value): Container
     {
         $this->parameterDefinitions->put($paramName, $value);
 
@@ -172,7 +152,6 @@ class Container implements ContainerInterface
      * @param string $alias The implementation name
      *
      * @throws InvalidArgumentException if any argument is empty or not a string
-     * @return self
      */
     public function alias(string $original, string $alias): Container
     {
@@ -187,9 +166,8 @@ class Container implements ContainerInterface
      * @param mixed $nameOrInstance The class or object to share
      *
      * @throws InvalidArgumentException if $nameOrInstance is not a string or an object
-     * @return self
      */
-    public function share($nameOrInstance): Container
+    public function share(mixed $nameOrInstance): Container
     {
         if (is_string($nameOrInstance)) {
             $this->shares->shareClass($nameOrInstance, $this->aliases);
@@ -199,7 +177,7 @@ class Container implements ContainerInterface
             throw new InvalidArgumentException(
                 sprintf(
                     '%s::share() requires a string class name or object instance at Argument 1; %s specified',
-                    __CLASS__,
+                    self::class,
                     gettype($nameOrInstance)
                 )
             );
@@ -214,18 +192,17 @@ class Container implements ContainerInterface
      * Any callable or provisionable invokable may be specified. Preparers are passed two
      * arguments: the instantiated object to be mutated and the current Container instance.
      *
-     * @param string $name
      * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
      *
      * @throws InvalidArgumentException if $callableOrMethodStr is not a callable.
      *
-     * @return self
      */
-    public function prepare(string $name, $callableOrMethodStr): Container
+    public function prepare(string $name, mixed $callableOrMethodStr): Container
     {
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             throw new InvalidArgumentException('Invalid invokable: callable or provisional string required');
         }
+
         [, $normalizedClass] = $this->aliases->resolve($name);
         $this->prepares[$normalizedClass] = $callableOrMethodStr;
 
@@ -235,18 +212,15 @@ class Container implements ContainerInterface
     /**
      * Delegate the creation of $name instances to the specified callable
      *
-     * @param string $name
      * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
-     *
      * @throws InvalidArgumentException if $callableOrMethodStr is not a callable.
-     * @return self
      */
-    public function delegate(string $name, $callableOrMethodStr): Container
+    public function delegate(string $name, mixed $callableOrMethodStr): Container
     {
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             $errorDetail = '';
             if (is_string($callableOrMethodStr)) {
-                $errorDetail = " but received '$callableOrMethodStr'";
+                $errorDetail = sprintf(" but received '%s'", $callableOrMethodStr);
             } elseif (is_array($callableOrMethodStr) && 2 === count($callableOrMethodStr)
                       &&
                       array_key_exists(0, $callableOrMethodStr) &&
@@ -256,14 +230,16 @@ class Container implements ContainerInterface
                     $errorDetail = " but received ['" . $callableOrMethodStr[0] . "', '" . $callableOrMethodStr[1] . "']";
                 }
             }
+
             throw new InvalidArgumentException(
                 sprintf(
                     '%s::delegate expects a valid callable or executable class::method string at Argument 2%s',
-                    __CLASS__,
+                    self::class,
                     $errorDetail
                 )
             );
         }
+
         $normalizedName = $this->normalizeName($name);
         $this->delegates->put($normalizedName, $callableOrMethodStr);
 
@@ -272,7 +248,6 @@ class Container implements ContainerInterface
 
     /**
      * Instantiate/provision a class instance
-     * @param string $name
      * @param Definition|null $definition
      * @throws InjectionException
      * @throws ReflectionException
@@ -290,7 +265,8 @@ class Container implements ContainerInterface
                 )
             );
         }
-        $definition = $definition ?? new Definition([]);
+
+        $definition ??= new Definition([]);
 
         $this->making[$normalizedClass] = count($this->making);
 
@@ -305,7 +281,7 @@ class Container implements ContainerInterface
             $reflectionFunction = $executable->getCallableReflection();
 
             $arguments = $this->argumentsBuilder->build($reflectionFunction, $definition);
-            $object = call_user_func_array([$executable, '__invoke'], $arguments);
+            $object = $executable->__invoke(...$arguments);
         } else {
             $object = $this->provisionInstance($className, $normalizedClass, $definition);
         }
@@ -328,60 +304,41 @@ class Container implements ContainerInterface
      * @param Definition|null $definition
      * @throws InjectionException
      * @throws ReflectionException
-     * @return mixed
      */
-    public function execute($callableOrMethodString, Definition $definition = null)
+    public function execute($callableOrMethodString, Definition $definition = null): mixed
     {
         $executable = $this->executableBuilder->build($callableOrMethodString);
-        $definition = $definition ?? new Definition([]);
+        $definition ??= new Definition([]);
         $arguments = $this->argumentsBuilder->build($executable->getCallableReflection(), $definition);
 
-        return call_user_func_array([$executable, '__invoke'], $arguments);
+        return $executable->__invoke(...$arguments);
     }
 
-    /**
-     * @return ReflectionInterface
-     */
     public function getReflector(): ReflectionInterface
     {
         return $this->reflector;
     }
 
-    /**
-     * @return AliasesCollection
-     */
     public function getAliases(): AliasesCollection
     {
         return $this->aliases;
     }
 
-    /**
-     * @return ClassDefinitionsCollection
-     */
     public function getClassDefinitions(): ClassDefinitionsCollection
     {
         return $this->classDefinitions;
     }
 
-    /**
-     * @return ParameterDefinitionsCollection
-     */
     public function getParameterDefinitions(): ParameterDefinitionsCollection
     {
         return $this->parameterDefinitions;
     }
 
-    /**
-     * @return SharesCollection
-     */
     public function getShares(): SharesCollection
     {
         return $this->shares;
     }
 
-    /**
-     * @return DelegatesCollection
-     */
     public function getDelegates(): DelegatesCollection
     {
         return $this->delegates;
@@ -389,8 +346,6 @@ class Container implements ContainerInterface
 
     /**
      * @param $name
-     *
-     * @return bool
      */
     public function isset($name): bool
     {
@@ -401,17 +356,11 @@ class Container implements ContainerInterface
             isset($this->shares[$name]);
     }
 
-    /**
-     * @return ExecutableBuilder
-     */
     public function getExecutableBuilder(): ExecutableBuilder
     {
         return $this->executableBuilder;
     }
 
-    /**
-     * @return ArgumentsBuilder
-     */
     public function getArgumentsBuilder(): ArgumentsBuilder
     {
         return $this->argumentsBuilder;
@@ -434,6 +383,7 @@ class Container implements ContainerInterface
                 $object = $result;
             }
         }
+
         $interfaces = @class_implements($object);
         if ($interfaces === false) {
             throw new InjectionException(
@@ -444,13 +394,15 @@ class Container implements ContainerInterface
                 )
             );
         }
-        if (empty($interfaces)) {
+
+        if ($interfaces === []) {
             return $object;
         }
+
         $interfaces = array_flip(array_map([$this, 'normalizeName'], $interfaces));
         $prepares = $this->prepares->intersect(new Map($interfaces));
 
-        foreach ($prepares as $interfaceName => $callableOrMethodString) {
+        foreach ($prepares as $callableOrMethodString) {
             $executable = $this->executableBuilder->build($callableOrMethodString);
             $result = $executable($object, $this);
             if ($result instanceof $normalizedClass) {
@@ -464,12 +416,11 @@ class Container implements ContainerInterface
     /**
      * @param $className
      * @param $normalizedClass
-     * @param Definition $definition
      *
      * @throws InjectionException
      * @return mixed|object
      */
-    protected function provisionInstance($className, $normalizedClass, Definition $definition)
+    protected function provisionInstance(string $className, $normalizedClass, Definition $definition)
     {
         try {
             $constructor = $this->reflector->getConstructor($className);
@@ -477,7 +428,7 @@ class Container implements ContainerInterface
             if (!$constructor) {
                 $object = $this->instantiateWithoutConstructorParameters($className);
             } elseif (!$constructor->isPublic()) {
-                throw new InjectionException("'$className' does not have public constructor.");
+                throw new InjectionException(sprintf("'%s' does not have public constructor.", $className));
             } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
                 $reflectionClass = $this->reflector->getClass($className);
                 $definition = isset($this->classDefinitions[$normalizedClass])
@@ -488,7 +439,7 @@ class Container implements ContainerInterface
             } else {
                 $object = $this->instantiateWithoutConstructorParameters($className);
             }
-        } catch (ReflectionException $e) {
+        } catch (ReflectionException) {
             throw new InjectionException('Unable to provision an instance for ' . $className);
         }
 
@@ -501,7 +452,7 @@ class Container implements ContainerInterface
      * @throws InjectionException
      * @return mixed
      */
-    protected function instantiateWithoutConstructorParameters($className)
+    protected function instantiateWithoutConstructorParameters(string $className)
     {
         $reflectionClass = $this->reflector->getClass($className);
         if (!$reflectionClass->isInstantiable()) {

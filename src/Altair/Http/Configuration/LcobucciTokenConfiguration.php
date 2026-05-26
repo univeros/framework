@@ -28,17 +28,16 @@ class LcobucciTokenConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
-        $tokenGeneratorConfigurationFactory = function () {
-            return new TokenConfiguration(
-                $this->env->get('TOKEN_PUBLIC_KEY', 'YOU_SHOULD_CHANGE_THIS'),
-                (int) $this->env->get('TOKEN_TTL', ini_get('session.gc_maxlifetime')),
-                new Sha256(),
-                null,
-                $this->env->get('TOKEN_PRIVATE_KEY')
-            );
-        };
+        $tokenGeneratorConfigurationFactory = fn(): TokenConfiguration => new TokenConfiguration(
+            $this->env->get('TOKEN_PUBLIC_KEY', 'YOU_SHOULD_CHANGE_THIS'),
+            (int) $this->env->get('TOKEN_TTL', ini_get('session.gc_maxlifetime')),
+            new Sha256(),
+            null,
+            $this->env->get('TOKEN_PRIVATE_KEY')
+        );
 
         $container
             ->alias(TokenConfigurationInterface::class, TokenConfiguration::class)

@@ -12,24 +12,17 @@ namespace Altair\Sanitation\Filter;
 class MaxStrLengthFilter extends AbstractFilter
 {
     /**
-     * @var int
-     */
-    protected $max;
-
-    /**
      * MaxStrLengthFilter constructor.
-     *
-     * @param int $max
      */
-    public function __construct(int $max)
+    public function __construct(protected int $max)
     {
-        $this->max = $max;
     }
 
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?string
     {
         if (!is_string($value)) {
             return null;

@@ -22,7 +22,7 @@ class CreditCardRule extends AbstractRule
             'length' => [13, 16],
         ],
         'carteblanche' => [
-            'pattern' => '/^3(0[0-5][0-9]{11}|[68][0-9]{12})/',
+            'pattern' => '/^3(0[0-5]\d{11}|[68]\d{12})/',
             'length' => [14]
         ],
         'maestro' => [
@@ -81,27 +81,24 @@ class CreditCardRule extends AbstractRule
      */
     protected $noLuhn = ['unionpay'];
 
-    /**
-     * @var string
-     */
-    protected $type;
+    protected string $type;
 
     /**
      * CreditCardRule constructor.
-     *
-     * @param string $type
      */
     public function __construct(string $type)
     {
         if (!array_key_exists($type, $this->cards)) {
             throw new InvalidArgumentException(sprintf('Unknown credit card type: "%s".', $type));
         }
+
         $this->type = $type;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         $value = $this->sanitize($value);
@@ -112,9 +109,8 @@ class CreditCardRule extends AbstractRule
 
     /**
      * @param $value
-     *
-     * @return string
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid "%s" credit card number.', $value, $this->type);
@@ -123,9 +119,7 @@ class CreditCardRule extends AbstractRule
     /**
      * Checks whether the value is a valid numeric one.
      *
-     * @param string $value
      *
-     * @return bool
      */
     protected function assertNumeric(string $value): bool
     {
@@ -135,9 +129,7 @@ class CreditCardRule extends AbstractRule
     /**
      * Validates the valid lengths of the credit card number.
      *
-     * @param string $value
      *
-     * @return bool
      */
     protected function assertLength(string $value): bool
     {
@@ -153,9 +145,7 @@ class CreditCardRule extends AbstractRule
     /**
      * Validates whether number matches the credit card pattern.
      *
-     * @param string $value
      *
-     * @return bool
      */
     protected function assertPattern(string $value): bool
     {
@@ -166,8 +156,6 @@ class CreditCardRule extends AbstractRule
      * Validates credit card number using mod10 variant of the luhn algorithm.
      *
      * @param string $value
-     *
-     * @return bool
      */
     protected function assertLuhn($value): bool
     {
@@ -183,11 +171,13 @@ class CreditCardRule extends AbstractRule
             if ($i % 2 === 1) {
                 $currentNum *= 2;
             }
+
             if ($currentNum > 9) {
                 $firstNum = $currentNum % 10;
                 $secondNum = ($currentNum - $firstNum) / 10;
                 $currentNum = $firstNum + $secondNum;
             }
+
             $checksum += $currentNum;
         }
 
@@ -197,9 +187,7 @@ class CreditCardRule extends AbstractRule
     /**
      * Removes any invalid credit card number characters from the value.
      *
-     * @param string $value
      *
-     * @return string
      */
     protected function sanitize(string $value): string
     {

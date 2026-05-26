@@ -19,19 +19,21 @@ class ConfigurationCollection extends Set implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         foreach ($this as $configuration) {
             if (!is_object($configuration)) {
                 $configuration = $container->make($configuration);
             }
+
             if ($configuration instanceof ConfigurationInterface) {
                 $configuration->apply($container);
             } else {
                 throw new InvalidConfigurationException(
                     sprintf(
                         "Configuration class '%s' must implement '%s'",
-                        is_object($configuration) ? get_class($configuration) : $configuration,
+                        is_object($configuration) ? $configuration::class : $configuration,
                         ConfigurationInterface::class
                     )
                 );

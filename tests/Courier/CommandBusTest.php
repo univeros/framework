@@ -19,7 +19,7 @@ use Psr\Log\LogLevel;
 
 class CommandBusTest extends TestCase
 {
-    public function testCommandsUsingExecStrategyWithMessageNameResolver()
+    public function testCommandsUsingExecStrategyWithMessageNameResolver(): void
     {
         $mapper = new MessageCommandMap(
             [
@@ -45,7 +45,7 @@ class CommandBusTest extends TestCase
         $this->assertEquals(LogLevel::ERROR, $testCommandInjectsErrorLogMessage->getLogMessage()->getLevel());
     }
 
-    public function testCommandsUsingExecStrategyWithClassNameResolver()
+    public function testCommandsUsingExecStrategyWithClassNameResolver(): void
     {
         $mapper = new MessageCommandMap(
             [
@@ -71,7 +71,7 @@ class CommandBusTest extends TestCase
         $this->assertEquals(LogLevel::ERROR, $testCommandInjectsErrorLogMessage->getLogMessage()->getLevel());
     }
 
-    public function testItFinishesHandlingAMessageBeforeHandlingTheNext()
+    public function testItFinishesHandlingAMessageBeforeHandlingTheNext(): void
     {
         $originalMessage = new TestCommandMessage();
         $newMessage = new TestCommandMessage();
@@ -97,7 +97,7 @@ class CommandBusTest extends TestCase
         $bus = new CommandBus($strategy);
         $strategy->add(
             new StubMiddleware(
-                function ($actualMessage) use ($originalMessage, $newMessage, $bus, &$flow) {
+                function ($actualMessage) use ($originalMessage, $newMessage, $bus, &$flow): void {
                     if ($actualMessage === $originalMessage) {
                         $flow[] = 'start handling original message';
                         // while handling the original we trigger a new message
@@ -123,7 +123,8 @@ class CommandBusTest extends TestCase
             $flow
         );
     }
-    public function testItFinishesHandlingAMessageBeforeHandlingTheNextWithMiddlewareResolver()
+
+    public function testItFinishesHandlingAMessageBeforeHandlingTheNextWithMiddlewareResolver(): void
     {
         $originalMessage = new TestCommandMessage();
         $newMessage = new TestCommandMessage();
@@ -150,7 +151,7 @@ class CommandBusTest extends TestCase
         $bus = new CommandBus($strategy);
         $strategy->add(
             new StubMiddleware(
-                function ($actualMessage) use ($originalMessage, $newMessage, $bus, &$flow) {
+                function ($actualMessage) use ($originalMessage, $newMessage, $bus, &$flow): void {
                     if ($actualMessage === $originalMessage) {
                         $flow[] = 'start handling original message';
                         // while handling the original we trigger a new message

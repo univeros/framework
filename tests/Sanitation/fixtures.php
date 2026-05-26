@@ -23,25 +23,44 @@ use Altair\Sanitation\Filter\UpperCaseFilter;
 class SanitizableEntity implements SanitizableInterface
 {
     public $alpha;
+
     public $alphaNum;
+
     public $between;
+
     public $boolean;
+
     public $callback;
+
     public $datetime;
+
     public $datetimeFormatted;
+
     public $integer;
+
     public $lowercase;
+
     public $lowercaseFirst;
+
     public $max;
+
     public $min;
+
     public $maxStrLength;
+
     public $minStrLength;
+
     public $regex;
+
     public $trim;
+
     public $uppercase;
+
     public $uppercaseFirst;
+
     public $lowerCaseUpperCaseFirst;
 
+    #[\Override]
     public function getFilters(): FilterCollection
     {
         return new FilterCollection(
@@ -53,9 +72,7 @@ class SanitizableEntity implements SanitizableInterface
                 'callback' => [
                     [
                         'class' => CallbackFilter::class,
-                        ':callable' => function ($value) {
-                            return $value . ':callback';
-                        }
+                        ':callable' => fn($value): string => $value . ':callback'
                     ]
                 ],
                 'datetime' => DateTimeFilter::class,
@@ -81,12 +98,14 @@ class SanitizableEntity implements SanitizableInterface
 
 class FilterA extends AbstractFilter
 {
+    #[\Override]
     public function __invoke(PayloadInterface $payload, callable $next): PayloadInterface
     {
         return parent::__invoke($payload->withAttribute(self::class, 'A executed'), $next);
     }
 
-    public function parse($value)
+    #[\Override]
+    public function parse($value): string
     {
         return 'A:' . $value;
     }
@@ -94,12 +113,14 @@ class FilterA extends AbstractFilter
 
 class FilterB extends AbstractFilter
 {
+    #[\Override]
     public function __invoke(PayloadInterface $payload, callable $next): PayloadInterface
     {
         return parent::__invoke($payload->withAttribute(self::class, 'B executed'), $next);
     }
 
-    public function parse($value)
+    #[\Override]
+    public function parse($value): string
     {
         return $value . ':B';
     }

@@ -9,6 +9,7 @@
 
 namespace Altair\Courier\Resolver;
 
+use Altair\Container\Exception\InjectionException;
 use Altair\Container\Container;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
 use Altair\Courier\Contracts\MiddlewareResolverInterface;
@@ -16,28 +17,20 @@ use Altair\Courier\Contracts\MiddlewareResolverInterface;
 class MiddlewareResolver implements MiddlewareResolverInterface
 {
     /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
      * MiddlewareResolver constructor.
-     *
-     * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(protected Container $container)
     {
-        $this->container = $container;
     }
 
     /**
      * Resolve a class spec into an object, if it is not already instantiated.
      *
      * @param string|object $entry
-     * @throws \Altair\Container\Exception\InjectionException
+     * @throws InjectionException
      * @throws \ReflectionException
-     * @return CommandMiddlewareInterface
      */
+    #[\Override]
     public function __invoke($entry): CommandMiddlewareInterface
     {
         return is_object($entry) ? $entry : $this->container->make($entry);

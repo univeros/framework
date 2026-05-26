@@ -22,6 +22,7 @@ class PredisSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
         // This definition is pretty basic. To improve this configuration, check the multiple connection parameters

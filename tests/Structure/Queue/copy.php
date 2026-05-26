@@ -6,7 +6,7 @@ trait copy
     /**
      * @dataProvider basicDataProvider
      */
-    public function testCopy(array $values, array $expected)
+    public function testCopy(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $copy = $instance->copy();

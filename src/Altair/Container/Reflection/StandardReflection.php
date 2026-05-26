@@ -23,6 +23,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
+    #[\Override]
     public function getClass(string $class): ReflectionClass
     {
         return new ReflectionClass($class);
@@ -32,6 +33,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
+    #[\Override]
     public function getConstructor(string $class): ?ReflectionMethod
     {
         $reflectionClass = $this->getClass($class);
@@ -43,6 +45,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
+    #[\Override]
     public function getConstructorParameters(string $class): ?array
     {
         $reflectionConstructor = $this->getConstructor($class);
@@ -55,6 +58,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
         $reflectionClass = $parameter->getClass();
@@ -68,6 +72,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
+    #[\Override]
     public function getFunction($name): ReflectionFunction
     {
         return new ReflectionFunction($name);
@@ -85,11 +90,12 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
+    #[\Override]
     public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
     {
         $className = is_string($classNameOrInstance)
             ? $classNameOrInstance
-            : get_class($classNameOrInstance);
+            : $classNameOrInstance::class;
 
         return new ReflectionMethod($className, $methodName);
     }

@@ -20,13 +20,10 @@ use OutOfBoundsException;
 class PriorityNode implements PriorityNodeInterface
 {
     /**
-     * @var mixed
-     */
-    public $value;
-    /**
      * @var int
      */
     public $priority;
+
     /**
      * @var int
      */
@@ -34,14 +31,9 @@ class PriorityNode implements PriorityNodeInterface
 
     /**
      * PriorityNode constructor.
-     *
-     * @param mixed $value
-     * @param int $priority
-     * @param int $stamp
      */
-    public function __construct($value, int $priority, int $stamp)
+    public function __construct(public mixed $value, int $priority, int $stamp)
     {
-        $this->value = $value;
         $this->priority = $priority;
         $this->stamp = $stamp;
     }
@@ -50,17 +42,17 @@ class PriorityNode implements PriorityNodeInterface
      * This allows unset($pair->key) to not completely remove the property,
      * but be set to null instead.
      *
-     * @param mixed $name
      *
      * @return mixed|null
      */
-    public function __get($name)
+    public function __get(mixed $name)
     {
         if ($name === 'value' || $name === 'priority' || $name === 'stamp') {
             $this->$name = null;
 
             return;
         }
+
         throw new OutOfBoundsException('Out of bounds');
     }
 }

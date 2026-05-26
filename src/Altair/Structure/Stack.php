@@ -9,6 +9,7 @@
 
 namespace Altair\Structure;
 
+use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\StackInterface;
 use ArrayAccess;
@@ -27,7 +28,7 @@ use OutOfBoundsException;
  */
 class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityInterface
 {
-    use Traits\CollectionTrait;
+    use CollectionTrait;
 
     /**
      * Creates an instance using the values of an array or Traversable object.
@@ -42,6 +43,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function peek()
     {
         return $this->internal->last();
@@ -50,6 +52,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function pop()
     {
         return $this->internal->pop();
@@ -58,6 +61,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function push(...$values): StackInterface
     {
         $this->internal->push(...$values);
@@ -68,7 +72,8 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    public function copy()
+    #[\Override]
+    public function copy(): static
     {
         return new static($this->internal);
     }
@@ -77,6 +82,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function count(): int
     {
         return count($this->internal);
@@ -85,7 +91,8 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    public function allocate(int $capacity)
+    #[\Override]
+    public function allocate(int $capacity): static
     {
         $this->internal->allocate($capacity);
 
@@ -94,9 +101,8 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
 
     /**
      * Returns the current capacity of the stack.
-     *
-     * @return int
      */
+    #[\Override]
     public function capacity(): int
     {
         return $this->internal->capacity();
@@ -105,6 +111,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function toArray(): array
     {
         return array_reverse($this->internal->toArray());
@@ -114,6 +121,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * @return \Generator
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -127,7 +135,8 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * @throws OutOfBoundsException
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    #[\Override]
+    public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
             $this->push($value);
@@ -142,6 +151,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * @throws Error
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function offsetGet($offset)
     {
         throw new Error('Not supported');
@@ -153,6 +163,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * @throws Error
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function offsetUnset($offset)
     {
         throw new Error('Not supported');
@@ -164,6 +175,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * @throws Error
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function offsetExists($offset)
     {
         throw new Error('Not supported');

@@ -20,25 +20,20 @@ interface ReflectionInterface
     /**
      * Retrieves ReflectionClass instances, caching them for future retrieval
      *
-     * @param string $class
      *
-     * @return ReflectionClass
      */
     public function getClass(string $class): ReflectionClass;
 
     /**
      * Retrieves and caches the constructor (ReflectionMethod) for the specified class
      *
-     * @param string $class
      *
-     * @return ReflectionMethod|null
      */
     public function getConstructor(string $class): ?ReflectionMethod;
 
     /**
      * Retrieves and caches an array of constructor parameters for the given class
      *
-     * @param string $class
      *
      * @return ReflectionParameter[]|null
      */
@@ -53,29 +48,21 @@ interface ReflectionInterface
      * the same parameter type-hint or ReflectionClass is needed again we
      * already have it cached.
      *
-     * @param ReflectionFunctionAbstract $function
-     * @param ReflectionParameter $parameter
      *
-     * @return null|string
      */
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string;
 
     /**
      * Retrieves and caches a reflection for the specified function
      *
-     * @param mixed $name
      *
-     * @return ReflectionFunction
      */
-    public function getFunction($name): ReflectionFunction;
+    public function getFunction(mixed $name): ReflectionFunction;
 
     /**
      * Retrieves and caches a reflection for the specified class method
      *
-     * @param mixed $classNameOrInstance
-     * @param string $methodName
      *
-     * @return ReflectionMethod
      */
-    public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod;
+    public function getMethod(mixed $classNameOrInstance, string $methodName): ReflectionMethod;
 }

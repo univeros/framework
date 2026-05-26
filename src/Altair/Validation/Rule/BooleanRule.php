@@ -14,6 +14,7 @@ class BooleanRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -26,6 +27,7 @@ class BooleanRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid boolean value.', $value);

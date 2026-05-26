@@ -11,7 +11,8 @@ namespace Altair\Sanitation\Filter;
 
 class AlphaFilter extends AbstractFilter
 {
-    public function parse($value)
+    #[\Override]
+    public function parse($value): ?string
     {
         return preg_replace('/[^\p{L}]/u', '', (string) $value);
     }
