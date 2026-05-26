@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,10 +15,11 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
 use Altair\Session\Contracts\SessionManagerInterface;
 use Altair\Session\SessionManager;
+use Override;
 
 class SessionManagerConfiguration implements ConfigurationInterface
 {
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         // This manager should be working with Altair's Http Component

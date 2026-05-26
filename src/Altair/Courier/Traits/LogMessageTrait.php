@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -33,7 +35,7 @@ trait LogMessageTrait
     public function withLogMessage(LogMessageInterface $message): CommandMessageInterface
     {
         $this->logMessage = $message;
-        
+
         return $this;
     }
 }

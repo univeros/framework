@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Middleware;
 use Altair\Middleware\Contracts\MiddlewareManagerInterface;
 use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
+use Override;
 
 class MiddlewareManager implements MiddlewareManagerInterface
 {
@@ -23,14 +26,12 @@ class MiddlewareManager implements MiddlewareManagerInterface
          * @var Runner
          */
         protected MiddlewareRunnerInterface $runner
-    )
-    {
-    }
+    ) {}
 
     /**
      * @return PayloadInterface
      */
-    #[\Override]
+    #[Override]
     public function __invoke(PayloadInterface $payload)
     {
         $runner = $this->runner;

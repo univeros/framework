@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -17,17 +19,17 @@ interface PdoSessionAdapterInterface
     /**
      * Driver name mysql
      */
-    const DRIVER_MYSQL = 'mysql';
+    public const DRIVER_MYSQL = 'mysql';
 
     /**
      * Driver name sqlite
      */
-    const DRIVER_SQLITE = 'sqlite';
+    public const DRIVER_SQLITE = 'sqlite';
 
     /**
      * Driver name postgresql
      */
-    const DRIVER_POSTGRESQL = 'postgresql';
+    public const DRIVER_POSTGRESQL = 'postgresql';
 
     /**
      * No locking is done. This means sessions are prone to loss of data due to
@@ -35,7 +37,7 @@ interface PdoSessionAdapterInterface
      * write will win in this case. It might be useful when you implement your own
      * logic to deal with this like an optimistic approach.
      */
-    const LOCK_NONE = 0;
+    public const LOCK_NONE = 0;
 
     /**
      * Creates an application-level lock on a session. The disadvantage is that the
@@ -44,7 +46,7 @@ interface PdoSessionAdapterInterface
      * does not require a transaction.
      * This mode is not available for SQLite and not yet implemented for oci and sqlsrv.
      */
-    const LOCK_ADVISORY = 1;
+    public const LOCK_ADVISORY = 1;
 
     /**
      * Issues a real row lock. Since it uses a transaction between opening and
@@ -52,7 +54,7 @@ interface PdoSessionAdapterInterface
      * that you also use for your application logic. This mode is the default because
      * it's the only reliable solution across DBMSs.
      */
-    const LOCK_TRANSACTIONAL = 2;
+    public const LOCK_TRANSACTIONAL = 2;
 
     /**
      * Connects driver to the database.
@@ -111,7 +113,6 @@ interface PdoSessionAdapterInterface
      *
      */
     public function write(string $sessionId, string $data): bool;
-
 
     public function doAdvisoryLocking(string $sessionId): PDOStatement;
 

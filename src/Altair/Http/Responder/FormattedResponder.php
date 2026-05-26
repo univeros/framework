@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -17,13 +19,13 @@ use Altair\Http\Formatter\JsonFormatter;
 use Altair\Http\Traits\ResolverAwareTrait;
 use Negotiation\AcceptEncoding;
 use Negotiation\Negotiator;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class FormattedResponder implements ResponderInterface
 {
     use ResolverAwareTrait;
-
 
     protected array $formatters;
 
@@ -34,21 +36,20 @@ class FormattedResponder implements ResponderInterface
         protected Negotiator $negotiator,
         callable $resolver,
         array $formatters = [
-            JsonFormatter::class => 1.0
+            JsonFormatter::class => 1.0,
         ]
     ) {
         $this->resolver = $resolver;
         $this->formatters = $this->filterFormatters($formatters);
     }
 
-
-    #[\Override]
+    #[Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
     ): ResponseInterface {
-        if ((bool)$payload->getOutput()) {
+        if ((bool) $payload->getOutput()) {
             return $this->format($request, $response, $payload);
         }
 
@@ -65,17 +66,16 @@ class FormattedResponder implements ResponderInterface
         return $cloned;
     }
 
-
     protected function filterFormatters(array $formatters): array
     {
         $filtered = [];
         foreach ($formatters as $formatter => $quality) {
             if (!is_subclass_of($formatter, OutputFormatterInterface::class)) {
-                throw new InvalidFormatterException(sprintf("Invalid output formatter class '%s''", $formatter));
+                throw new InvalidFormatterException(\sprintf("Invalid output formatter class '%s''", $formatter));
             }
 
-            if (!is_float($quality)) {
-                throw new InvalidFormatterException(sprintf("'%s' requires a quality float number.", $formatter));
+            if (!\is_float($quality)) {
+                throw new InvalidFormatterException(\sprintf("'%s' requires a quality float number.", $formatter));
             }
 
             $filtered[$formatter] = $quality;
@@ -92,7 +92,7 @@ class FormattedResponder implements ResponderInterface
         $priorities = [];
 
         foreach ($this->formatters as $formatter => $quality) {
-            foreach (call_user_func([$formatter, 'accepts']) as $type) {
+            foreach (\call_user_func([$formatter, 'accepts']) as $type) {
                 $priorities[$type] = $formatter;
             }
         }

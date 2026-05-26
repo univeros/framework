@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,6 +15,7 @@ use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
 use Altair\Http\Exception\InvalidResponderException;
 use Altair\Http\Traits\ResolverAwareTrait;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -39,8 +42,7 @@ class CompoundResponder implements ResponderInterface
         $this->responders = $this->filterResponders($responders);
     }
 
-    
-    #[\Override]
+    #[Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -65,7 +67,7 @@ class CompoundResponder implements ResponderInterface
         $filtered = [];
         foreach ($responders as $responder) {
             if (!is_subclass_of($responder, ResponderInterface::class)) {
-                throw new InvalidResponderException(sprintf("Invalid responder '%s'", $responder));
+                throw new InvalidResponderException(\sprintf("Invalid responder '%s'", $responder));
             }
 
             $filtered[] = $responder;

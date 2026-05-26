@@ -16,6 +16,7 @@ use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
 use Altair\Http\Validator\DigestSignatureValidator;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -43,7 +44,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
         $this->nonce = $options['nonce'] ?? null;
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {
@@ -60,7 +61,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
                 'realm' => $this->realm,
                 'method' => $request->getMethod(),
             ];
-            if (call_user_func($this->identityValidator, $arguments) === true) {
+            if (\call_user_func($this->identityValidator, $arguments) === true) {
                 return $handler->handle(
                     $request->withAttribute(MiddlewareInterface::ATTRIBUTE_USERNAME, $authorization['username']),
                 );
@@ -69,7 +70,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
 
         return $this->responseFactory
             ->createResponse(HttpStatusCodeInterface::HTTP_UNAUTHORIZED)
-            ->withHeader('WWW-Authenticate', sprintf(
+            ->withHeader('WWW-Authenticate', \sprintf(
                 'Digest realm="%s",qop="auth",nonce="%s",opaque="%s"',
                 $this->realm,
                 $this->nonce ?? uniqid(),

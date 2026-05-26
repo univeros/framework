@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,25 +11,24 @@
 
 namespace Altair\Courier\Strategy;
 
-use Altair\Courier\Exception\UnknownCommandMessageNameException;
 use Altair\Courier\Contracts\CommandLocatorServiceInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMessageNameResolverInterface;
 use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
+use Altair\Courier\Exception\UnknownCommandMessageNameException;
+use Override;
 
 class CommandRunnerExecStrategy implements CommandRunnerStrategyInterface
 {
     /**
      * ExecuteStrategy constructor.
      */
-    public function __construct(private readonly CommandLocatorServiceInterface $commandLocator, private readonly CommandMessageNameResolverInterface $nameResolver)
-    {
-    }
+    public function __construct(private readonly CommandLocatorServiceInterface $commandLocator, private readonly CommandMessageNameResolverInterface $nameResolver) {}
 
     /**
      * @throws UnknownCommandMessageNameException
      */
-    #[\Override]
+    #[Override]
     public function run(CommandMessageInterface $message): void
     {
         $name = $this->nameResolver->resolve($message);

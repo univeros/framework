@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -72,7 +74,7 @@ interface EventInterface extends StoppableEventInterface
      *
      *
      */
-    public function withArgument(string $key, mixed $content) : EventInterface;
+    public function withArgument(string $key, mixed $content): EventInterface;
 
     /**
      * Returns a new instance with new set of arguments keeping its name.

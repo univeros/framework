@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Happen;
 use Altair\Happen\Contracts\EventInterface;
 use Altair\Happen\Exception\InvalidArgumentException;
 use Carbon\Carbon;
+use Override;
 
 class Event implements EventInterface
 {
@@ -19,7 +22,6 @@ class Event implements EventInterface
      * @var bool Whether no further event listeners should be triggered
      */
     protected $propagationStopped = false;
-
 
     protected array $arguments;
 
@@ -42,7 +44,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getOccurredOn(): int
     {
         return $this->occurredOn;
@@ -51,7 +53,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function stopPropagation(): EventInterface
     {
         $this->propagationStopped = true;
@@ -62,7 +64,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function isPropagationStopped(): bool
     {
         return $this->propagationStopped;
@@ -71,7 +73,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getName(): string
     {
         return $this->name;
@@ -80,7 +82,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getArguments(): array
     {
         return $this->arguments;
@@ -89,20 +91,20 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasArgument(string $key): bool
     {
-        return array_key_exists(strtolower($key), $this->arguments);
+        return \array_key_exists(strtolower($key), $this->arguments);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getArgument(string $key)
     {
         if (!$this->hasArgument($key)) {
-            throw new InvalidArgumentException(sprintf('Argument "%s" not found.', $key));
+            throw new InvalidArgumentException(\sprintf('Argument "%s" not found.', $key));
         }
 
         return $this->arguments[strtolower($key)];
@@ -111,7 +113,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withName(string $name): EventInterface
     {
         $cloned = clone $this;
@@ -123,7 +125,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withArgument(string $key, $content): EventInterface
     {
         $cloned = clone $this;
@@ -135,7 +137,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withArguments(array $arguments): EventInterface
     {
         $cloned = clone $this;

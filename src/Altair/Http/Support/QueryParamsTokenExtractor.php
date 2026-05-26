@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\TokenExtractorInterface;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class QueryParamsTokenExtractor implements TokenExtractorInterface
@@ -21,13 +24,13 @@ class QueryParamsTokenExtractor implements TokenExtractorInterface
      */
     public function __construct($parameter)
     {
-        $this->parameter = (string)$parameter;
+        $this->parameter = (string) $parameter;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function extract(ServerRequestInterface $request): ?string
     {
         $query = $request->getQueryParams();

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,7 +11,9 @@
 
 namespace Altair\Session\Contracts;
 
-interface PdoSessionHandlerInterface extends \SessionHandlerInterface
+use SessionHandlerInterface;
+
+interface PdoSessionHandlerInterface extends SessionHandlerInterface
 {
     /**
      * Returns whether the session has expired or not.

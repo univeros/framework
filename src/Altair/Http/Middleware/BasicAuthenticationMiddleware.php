@@ -16,6 +16,7 @@ use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -40,7 +41,7 @@ class BasicAuthenticationMiddleware implements MiddlewareInterface
         $this->initAuthentication($identityValidator, $rules, $options);
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {
@@ -51,15 +52,15 @@ class BasicAuthenticationMiddleware implements MiddlewareInterface
 
         [$user, $password] = $this->getAuthDataFromServerParams($request->getServerParams());
 
-        if (call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) !== false) {
+        if (\call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) !== false) {
             return $handler->handle($request);
         }
 
         $response = $this->responseFactory
             ->createResponse(HttpStatusCodeInterface::HTTP_UNAUTHORIZED)
-            ->withHeader('WWW-Authenticate', sprintf('Basic realm="%s"', $this->realm));
+            ->withHeader('WWW-Authenticate', \sprintf('Basic realm="%s"', $this->realm));
 
-        if (is_callable($this->onError)) {
+        if (\is_callable($this->onError)) {
             $callableResponse = ($this->onError)($request, $response, ['message' => 'Authentication failed.']);
             if ($callableResponse instanceof ResponseInterface) {
                 return $callableResponse;

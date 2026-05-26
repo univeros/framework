@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,16 +14,17 @@ namespace Altair\Sanitation\Filter;
 use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Contracts\PayloadInterface;
+use Override;
 
 abstract class AbstractFilter implements FilterInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {
-        $subject = (object)$payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
+        $subject = (object) $payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
         $attribute = $payload->getAttribute(PayloadInterface::ATTRIBUTE_KEY);
         $subject->$attribute = $this->parse($subject->$attribute);
 

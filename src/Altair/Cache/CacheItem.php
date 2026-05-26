@@ -15,6 +15,7 @@ use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
+use Override;
 use Psr\Cache\CacheItemInterface;
 
 final class CacheItem implements CacheItemInterface
@@ -30,25 +31,25 @@ final class CacheItem implements CacheItemInterface
     protected array $tags = [];
     protected ?CacheItemTagValidatorInterface $tagValidator = null;
 
-    #[\Override]
+    #[Override]
     public function getKey(): string
     {
         return $this->key;
     }
 
-    #[\Override]
+    #[Override]
     public function get(): mixed
     {
         return $this->value;
     }
 
-    #[\Override]
+    #[Override]
     public function isHit(): bool
     {
         return $this->isHit;
     }
 
-    #[\Override]
+    #[Override]
     public function set(mixed $value): static
     {
         $this->value = $value;
@@ -56,7 +57,7 @@ final class CacheItem implements CacheItemInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function expiresAt(?DateTimeInterface $expiration): static
     {
         $this->expirationTime = $expiration === null
@@ -66,7 +67,7 @@ final class CacheItem implements CacheItemInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function expiresAfter(int|DateInterval|null $time): static
     {
         if ($time === null) {

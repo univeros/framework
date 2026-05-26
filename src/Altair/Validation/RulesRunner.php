@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,10 +16,10 @@ use Altair\Structure\Queue;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Contracts\RulesRunnerInterface;
+use Override;
 
 class RulesRunner implements RulesRunnerInterface
 {
-
     /**
      *
      * A callable to convert queue entries to callables.
@@ -44,7 +46,7 @@ class RulesRunner implements RulesRunnerInterface
      *
      *
      */
-    #[\Override]
+    #[Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
         $entry = null !== $this->queue && !$this->queue->isEmpty() ? $this->queue->pop() : null;
@@ -53,8 +55,7 @@ class RulesRunner implements RulesRunnerInterface
         return $middleware($payload, $this);
     }
 
-
-    #[\Override]
+    #[Override]
     public function withRules(array $rules): RulesRunnerInterface
     {
         $this->queue = new Queue($rules);
@@ -79,6 +80,6 @@ class RulesRunner implements RulesRunnerInterface
             return $entry;
         }
 
-        return call_user_func($this->resolver, $entry);
+        return \call_user_func($this->resolver, $entry);
     }
 }

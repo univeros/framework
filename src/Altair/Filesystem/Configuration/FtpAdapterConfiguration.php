@@ -14,19 +14,20 @@ namespace Altair\Filesystem\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
+use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\Ftp\FtpConnectionOptions;
-use League\Flysystem\FilesystemAdapter;
+use Override;
 
 class FtpAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container
-            ->delegate(FtpAdapter::class, fn (): FtpAdapter => new FtpAdapter(
+            ->delegate(FtpAdapter::class, fn(): FtpAdapter => new FtpAdapter(
                 FtpConnectionOptions::fromArray(array_filter([
                     'host' => $this->env->get('FS_FTP_HOST'),
                     'root' => $this->env->get('FS_FTP_ROOT', '/'),
@@ -40,7 +41,7 @@ class FtpAdapterConfiguration implements ConfigurationInterface
                     'systemType' => $this->env->get('FS_FTP_SYSTEM_TYPE'),
                     'ignorePassiveAddress' => $this->env->get('FS_FTP_IGNORE_PASSIVE_ADDRESS'),
                     'recurseManually' => $this->env->get('FS_FTP_RECURSE_MANUALLY', false),
-                ], static fn (mixed $v): bool => $v !== null)),
+                ], static fn(mixed $v): bool => $v !== null)),
             ))
             ->alias(FilesystemAdapter::class, FtpAdapter::class);
     }

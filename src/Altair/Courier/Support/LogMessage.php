@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,22 +12,20 @@
 namespace Altair\Courier\Support;
 
 use Altair\Courier\Contracts\LogMessageInterface;
+use Override;
 use Psr\Log\LogLevel;
 
 class LogMessage implements LogMessageInterface
 {
-
     /**
      * LogMessage constructor.
      */
-    public function __construct(protected string $message, protected string $level = LogLevel::INFO)
-    {
-    }
+    public function __construct(protected string $message, protected string $level = LogLevel::INFO) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return $this->getMessage();
@@ -34,7 +34,7 @@ class LogMessage implements LogMessageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getLevel(): string
     {
         return $this->level;
@@ -43,7 +43,7 @@ class LogMessage implements LogMessageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMessage(): string
     {
         return $this->message;

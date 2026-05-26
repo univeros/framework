@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,6 +16,7 @@ use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Http\Middleware\SpamBlockerMiddleware;
+use Override;
 
 class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
 {
@@ -22,7 +25,7 @@ class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         // There are a couple of great sources to get a good lit of domain spammers.
@@ -30,7 +33,7 @@ class SpamBlockerMiddlewareConfiguration implements ConfigurationInterface
         // to keep updated your blacklisted domains and also has a more updated list than the original repository it
         // was forked from (https://github.com/piwik/referrer-spam-blacklist)
         $definition = new Definition([
-            ':path' => $this->env->get('HTTP_SPAMMERS_FILE_PATH')
+            ':path' => $this->env->get('HTTP_SPAMMERS_FILE_PATH'),
         ]);
 
         $container

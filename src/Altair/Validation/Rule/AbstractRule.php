@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,16 +14,17 @@ namespace Altair\Validation\Rule;
 use Altair\Middleware\Contracts\PayloadInterface as MiddlewarePayloadInterface;
 use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Contracts\RuleInterface;
+use Override;
 
 abstract class AbstractRule implements RuleInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {
-        $subject = (object)$payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
+        $subject = (object) $payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
         $attribute = $payload->getAttribute(PayloadInterface::ATTRIBUTE_KEY);
 
         if ($this->assert($subject->$attribute)) {
@@ -32,7 +35,7 @@ abstract class AbstractRule implements RuleInterface
 
         $failures = $payload->getAttribute(PayloadInterface::ATTRIBUTE_FAILURES, []);
 
-        $value = is_array($subject->$attribute) ? gettype($subject->$attribute) : $subject->$attribute;
+        $value = \is_array($subject->$attribute) ? \gettype($subject->$attribute) : $subject->$attribute;
         $failures[$attribute] = $this->buildErrorMessage($value);
 
         return $next(

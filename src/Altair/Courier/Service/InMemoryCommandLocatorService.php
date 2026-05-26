@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,6 +15,7 @@ use Altair\Courier\Contracts\CommandInterface;
 use Altair\Courier\Contracts\InMemoryCommandLocatorServiceInterface;
 use Altair\Courier\Exception\UnknownCommandMessageNameException;
 use Altair\Courier\Support\MessageCommandMap;
+use Override;
 
 class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInterface
 {
@@ -25,13 +28,13 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
      */
     public function __construct(MessageCommandMap $map = null)
     {
-        $this->map = $map?? new MessageCommandMap();
+        $this->map = $map ?? new MessageCommandMap();
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withMap(MessageCommandMap $map): InMemoryCommandLocatorServiceInterface
     {
         return new static($map);
@@ -40,7 +43,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function add(string $messageName, string $commandName): InMemoryCommandLocatorServiceInterface
     {
         $this->map->put($messageName, $commandName);
@@ -48,8 +51,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
         return $this;
     }
 
-    
-    #[\Override]
+    #[Override]
     public function has(string $name): bool
     {
         return $this->map->hasKey($name);
@@ -58,11 +60,11 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     /**
      * @throws UnknownCommandMessageNameException
      */
-    #[\Override]
+    #[Override]
     public function get(string $name): CommandInterface
     {
         if (!$this->has($name)) {
-            throw new UnknownCommandMessageNameException(sprintf('Unknown message name: %s', $name));
+            throw new UnknownCommandMessageNameException(\sprintf('Unknown message name: %s', $name));
         }
 
         return $this->getInstance($name);
@@ -77,7 +79,7 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
     protected function getInstance(string $name): CommandInterface
     {
         $command = $this->map->get($name);
-        if (!is_object($command)) {
+        if (!\is_object($command)) {
             $command = new $command();
             $this->map->put($name, $command);
         }

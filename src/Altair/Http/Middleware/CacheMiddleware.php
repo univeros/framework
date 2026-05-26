@@ -14,6 +14,7 @@ namespace Altair\Http\Middleware;
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Support\HttpCache;
+use Override;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
@@ -29,10 +30,9 @@ class CacheMiddleware implements MiddlewareInterface
         private readonly HttpCache $httpCache,
         private readonly string $defaultCacheControl,
         private readonly ResponseFactoryInterface $responseFactory,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $key = $this->getCacheKey($request);
@@ -89,7 +89,7 @@ class CacheMiddleware implements MiddlewareInterface
 
         $etagList = preg_split('@\s*,\s*@', $ifNoneMatch) ?: [];
 
-        return in_array($etag, $etagList, true) || in_array('*', $etagList, true)
+        return \in_array($etag, $etagList, true) || \in_array('*', $etagList, true)
             ? $response->withStatus(HttpStatusCodeInterface::HTTP_NOT_MODIFIED)
             : $response;
     }

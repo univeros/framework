@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,7 +16,7 @@ interface CookieInterface
     /**
      * The name of the cookie header
      */
-    const HEADER = 'Cookie';
+    public const HEADER = 'Cookie';
 
     /**
      * Returns the name of the cookie

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Structure\Traits;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\CollectionInterface;
 use JsonSerializable;
+use ReturnTypeWillChange;
 use Traversable;
 
 /**
@@ -24,11 +27,11 @@ trait CollectionTrait
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|\Traversable|CollectionInterface|null $values
+     * @param array|Traversable|CollectionInterface|null $values
      */
     public function __construct($values = [])
     {
-        if (func_num_args() !== 0) {
+        if (\func_num_args() !== 0) {
             $this->pushAll($this->normalizeItems($values));
         }
     }
@@ -67,7 +70,7 @@ trait CollectionTrait
      */
     public function isEmpty(): bool
     {
-        return count($this) === 0;
+        return \count($this) === 0;
     }
 
     /**
@@ -78,7 +81,7 @@ trait CollectionTrait
      *
      * @see JsonSerializable
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function jsonSerialize()
     {
         return $this->toArray();
@@ -97,10 +100,10 @@ trait CollectionTrait
     /**
      * Returns the size of the collection.
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function count(): int
     {
-        return count($this->internal);
+        return \count($this->internal);
     }
 
     /**
@@ -145,7 +148,7 @@ trait CollectionTrait
      */
     protected function normalizeItems(mixed $items): array
     {
-        if (is_array($items)) {
+        if (\is_array($items)) {
             return $items;
         }
 

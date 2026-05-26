@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,6 +11,7 @@
 
 namespace Altair\Http\Support;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 
 class PublicCacheLimiter extends AbstractCacheLimiter
@@ -16,12 +19,12 @@ class PublicCacheLimiter extends AbstractCacheLimiter
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(ResponseInterface $response): ResponseInterface
     {
         $maxAge = $this->cacheExpire * 60;
         $expires = $this->timestamp($maxAge);
-        $cacheControl = sprintf('public, max-age=%s', $maxAge);
+        $cacheControl = \sprintf('public, max-age=%s', $maxAge);
         $lastModified = $this->timestamp();
 
         return $response

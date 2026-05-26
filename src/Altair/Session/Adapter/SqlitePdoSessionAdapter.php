@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Session\Adapter;
 use Altair\Session\Contracts\PdoSessionAdapterInterface;
 use Altair\Session\Traits\PdoSessionAdapterAwareTrait;
 use Error;
+use Override;
 use PDO;
 use PDOStatement;
 
@@ -34,7 +37,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         throw new Error('SQLite does not support advisory locks.');
@@ -43,7 +46,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getDriver(): string
     {
         return self::DRIVER_SQLITE;
@@ -52,24 +55,24 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getSelectSql(): string
     {
         $sql = 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id';
 
-        return sprintf($sql, $this->table);
+        return \sprintf($sql, $this->table);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
-        $maxlifetime = (int)ini_get('session.gc_maxlifetime');
+        $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
 
-        $sql = sprintf(
-            'INSERT OR REPLACE INTO %s (id, content, session_lifetime, session_time) '.
+        $sql = \sprintf(
+            'INSERT OR REPLACE INTO %s (id, content, session_lifetime, session_time) ' .
             'VALUES (:id, :content, :lifetime, :session_time)',
             $this->table
         );

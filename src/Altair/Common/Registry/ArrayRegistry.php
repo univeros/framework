@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Common\Registry;
 
 use Altair\Common\Contracts\RegistryInterface;
 use Altair\Common\Support\Arr;
+use Override;
 
 class ArrayRegistry implements RegistryInterface
 {
@@ -29,7 +32,7 @@ class ArrayRegistry implements RegistryInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function get(string $key, $default = null)
     {
         return Arr::getValue($this->data, $key, $default);
@@ -38,7 +41,7 @@ class ArrayRegistry implements RegistryInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function set(string $key, $value): static
     {
         $this->data[$key] = $value;

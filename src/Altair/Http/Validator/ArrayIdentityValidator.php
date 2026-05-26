@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Validator;
 
 use Altair\Http\Contracts\IdentityValidatorInterface;
+use Override;
 
 class ArrayIdentityValidator implements IdentityValidatorInterface
 {
@@ -22,13 +25,13 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
      */
     public function __construct(array $users = null)
     {
-        $this->users = $users?? [];
+        $this->users = $users ?? [];
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(array $arguments): bool
     {
         $user = $arguments['user'];
@@ -38,7 +41,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
             return false;
         }
 
-        if (preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', (string) $password) && (strlen((string) $password) >= 60)) {
+        if (preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', (string) $password) && (\strlen((string) $password) >= 60)) {
             return password_verify((string) $password, (string) $this->users[$user]);
         }
 

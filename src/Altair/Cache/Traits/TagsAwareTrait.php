@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -36,7 +38,7 @@ trait TagsAwareTrait
         $cloned = clone $this;
 
         foreach ($tags as $tag) {
-            if (is_string($tag) && isset($cloned->tags[$tag])) {
+            if (\is_string($tag) && isset($cloned->tags[$tag])) {
                 continue;
             }
 

@@ -16,6 +16,7 @@ use Altair\Configuration\Exception\InvalidArgumentException;
 use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
 use Dotenv\Dotenv;
+use Override;
 
 class EnvironmentConfiguration implements ConfigurationInterface
 {
@@ -32,21 +33,21 @@ class EnvironmentConfiguration implements ConfigurationInterface
         private readonly bool $immutable = true,
     ) {
         if (!is_file($filePath) || !is_readable($filePath)) {
-            throw new InvalidArgumentException(sprintf("Invalid environment file path: '%s'", $filePath));
+            throw new InvalidArgumentException(\sprintf("Invalid environment file path: '%s'", $filePath));
         }
 
-        $this->directory = dirname($filePath);
+        $this->directory = \dirname($filePath);
         $this->fileName = basename($filePath);
     }
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container
             ->share(Env::class)
             ->delegate(
                 Dotenv::class,
-                fn (): Dotenv => $this->immutable
+                fn(): Dotenv => $this->immutable
                     ? Dotenv::createImmutable($this->directory, $this->fileName)
                     : Dotenv::createMutable($this->directory, $this->fileName),
             )

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,7 +16,6 @@ use Exception;
 
 class PayloadValidator
 {
-
     /**
      * PayloadValidator constructor.
      */
@@ -24,9 +25,7 @@ class PayloadValidator
          * @var array the payload to validate against
          */
         protected array $payload
-    )
-    {
-    }
+    ) {}
 
     /**
      * Determines whether the payload has a valid format.

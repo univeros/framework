@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -29,7 +31,6 @@ class CookieManager
             : CookieFactory::create($name, $value);
     }
 
-    
     public function setOnRequest(RequestInterface $request, Cookie $cookie): RequestInterface
     {
         return CookieFactory::createCollectionFromRequest($request)
@@ -37,7 +38,6 @@ class CookieManager
             ->injectIntoRequestHeader($request);
     }
 
-    
     public function modifyOnRequest(RequestInterface $request, string $name, callable $modify): RequestInterface
     {
         $cookies = CookieFactory::createCollectionFromRequest($request);
@@ -71,7 +71,6 @@ class CookieManager
             : SetCookieFactory::create($name, $value);
     }
 
-    
     public function setOnResponse(ResponseInterface $response, SetCookie $cookie): ResponseInterface
     {
         return SetCookieFactory::createCollectionFromResponse($response)
@@ -79,13 +78,11 @@ class CookieManager
             ->injectIntoResponseHeader($response);
     }
 
-    
     public function expireOnResponse(ResponseInterface $response, string $name): ResponseInterface
     {
         return $this->setOnResponse($response, SetCookieFactory::createExpired($name));
     }
 
-    
     public function modifyOnResponse(ResponseInterface $response, string $name, callable $modify): ResponseInterface
     {
         $cookies = SetCookieFactory::createCollectionFromResponse($response);

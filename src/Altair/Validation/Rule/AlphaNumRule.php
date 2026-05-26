@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,27 +11,29 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class AlphaNumRule extends AbstractRule
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
-        return (bool)preg_match('/^[\p{L}\p{Nd}]+$/u', (string)$value);
+        return (bool) preg_match('/^[\p{L}\p{Nd}]+$/u', (string) $value);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" have invalid alphanumeric character(s)', $value);
+        return \sprintf('"%s" have invalid alphanumeric character(s)', $value);
     }
 }

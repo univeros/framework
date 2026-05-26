@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\TokenExtractorInterface;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class HeaderTokenExtractor implements TokenExtractorInterface
@@ -17,14 +20,12 @@ class HeaderTokenExtractor implements TokenExtractorInterface
     /**
      * HeaderTokenParser constructor.
      */
-    public function __construct(protected string $header)
-    {
-    }
+    public function __construct(protected string $header) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function extract(ServerRequestInterface $request): ?string
     {
         $token = current($request->getHeader($this->header));

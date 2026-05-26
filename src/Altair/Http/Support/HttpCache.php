@@ -115,6 +115,6 @@ final class HttpCache
     {
         $tags = array_map('trim', explode(',', $ifNoneMatch));
 
-        return in_array('*', $tags, true) || ($responseEtag !== '' && in_array($responseEtag, $tags, true));
+        return \in_array('*', $tags, true) || ($responseEtag !== '' && \in_array($responseEtag, $tags, true));
     }
 }

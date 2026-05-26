@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,7 +13,7 @@ namespace Altair\Cookie\Contracts;
 
 interface SetCookieInterface
 {
-    const HEADER = 'Set-Cookie';
+    public const HEADER = 'Set-Cookie';
 
     /**
      * Returns the name of the cookie

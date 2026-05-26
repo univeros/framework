@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Happen\Listener;
 
 use Altair\Happen\Contracts\EventInterface;
 use Altair\Happen\Contracts\ListenerInterface;
+use Override;
 
 class CallbackListener implements ListenerInterface
 {
@@ -27,9 +30,9 @@ class CallbackListener implements ListenerInterface
         $this->callback = $callback;
     }
 
-    #[\Override]
+    #[Override]
     public function __invoke(EventInterface $event): void
     {
-        call_user_func($this->callback, $event);
+        \call_user_func($this->callback, $event);
     }
 }

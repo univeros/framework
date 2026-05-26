@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -22,6 +24,7 @@ use Altair\Courier\Service\InMemoryCommandLocatorService;
 use Altair\Courier\Strategy\CommandRunnerExecStrategy;
 use Altair\Courier\Support\MessageCommandMap;
 use Altair\Filesystem\Filesystem;
+use Override;
 
 class ExecCommandBusConfiguration implements ConfigurationInterface
 {
@@ -30,7 +33,7 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $fs = new Filesystem();

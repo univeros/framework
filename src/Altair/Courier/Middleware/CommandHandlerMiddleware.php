@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,21 +15,19 @@ use Altair\Courier\Contracts\CommandLocatorServiceInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMessageNameResolverInterface;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
+use Override;
 
 class CommandHandlerMiddleware implements CommandMiddlewareInterface
 {
-
     /**
      * HandlerMiddleware constructor.
      */
-    public function __construct(protected CommandLocatorServiceInterface $commandLocator, protected CommandMessageNameResolverInterface $nameResolver)
-    {
-    }
+    public function __construct(protected CommandLocatorServiceInterface $commandLocator, protected CommandMessageNameResolverInterface $nameResolver) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         $name = $this->nameResolver->resolve($message);

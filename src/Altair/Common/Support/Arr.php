@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Common\Support;
 
 use Altair\Common\Exception\InvalidArgumentException;
 use Closure;
+use Traversable;
 
 class Arr // - Thanks @yii
 {
@@ -31,18 +34,18 @@ class Arr // - Thanks @yii
      */
     public static function merge(array $a, array $b): array
     {
-        $args = func_get_args();
+        $args = \func_get_args();
         $res = array_shift($args);
         while ($args !== []) {
             $next = array_shift($args);
             foreach ($next as $k => $v) {
-                if (is_int($k)) {
+                if (\is_int($k)) {
                     if (isset($res[$k])) {
                         $res[] = $v;
                     } else {
                         $res[$k] = $v;
                     }
-                } elseif (is_array($v) && isset($res[$k]) && is_array($res[$k])) {
+                } elseif (\is_array($v) && isset($res[$k]) && \is_array($res[$k])) {
                     $res[$k] = self::merge($res[$k], $v);
                 } else {
                     $res[$k] = $v;
@@ -83,7 +86,7 @@ class Arr // - Thanks @yii
      * ```
      *
      * @param array|object $array array or object to extract value from
-     * @param string|\Closure|array $key key name of the array element, an array of keys or property name of the object,
+     * @param string|Closure|array $key key name of the array element, an array of keys or property name of the object,
      * or an anonymous function returning the value. The anonymous function signature should be:
      * `function($array, $defaultValue)`.
      * @param mixed $default the default value to be returned if the specified array key does not exist. Not used when
@@ -97,7 +100,7 @@ class Arr // - Thanks @yii
             return $key($array, $default);
         }
 
-        if (is_array($key)) {
+        if (\is_array($key)) {
             $lastKey = array_pop($key);
             foreach ($key as $keyPart) {
                 $array = static::getValue($array, $keyPart);
@@ -106,7 +109,7 @@ class Arr // - Thanks @yii
             $key = $lastKey;
         }
 
-        if (is_array($array) && (isset($array[$key]) || array_key_exists($key, $array))) {
+        if (\is_array($array) && (isset($array[$key]) || \array_key_exists($key, $array))) {
             return $array[$key];
         }
 
@@ -115,14 +118,14 @@ class Arr // - Thanks @yii
             $key = substr((string) $key, $pos + 1);
         }
 
-        if (is_object($array)) {
+        if (\is_object($array)) {
             // this is expected to fail if the property does not exist, or __get() is not implemented
             // it is not reliably possible to check whether a property is accessible beforehand
             return $array->$key;
         }
 
-        if (is_array($array)) {
-            return (isset($array[$key]) || array_key_exists($key, $array)) ? $array[$key] : $default;
+        if (\is_array($array)) {
+            return (isset($array[$key]) || \array_key_exists($key, $array)) ? $array[$key] : $default;
         }
 
         return $default;
@@ -150,7 +153,7 @@ class Arr // - Thanks @yii
      */
     public static function remove(array &$array, string $key, mixed $default = null)
     {
-        if (isset($array[$key]) || array_key_exists($key, $array)) {
+        if (isset($array[$key]) || \array_key_exists($key, $array)) {
             $value = $array[$key];
             unset($array[$key]);
 
@@ -284,8 +287,8 @@ class Arr // - Thanks @yii
      * ```
      *
      * @param array $array the array that needs to be indexed or grouped
-     * @param string|\Closure|null $key the column name or anonymous function which result will be used to index the array
-     * @param string|string[]|\Closure[]|null $groups the array of keys, that will be used to group the input array
+     * @param string|Closure|null $key the column name or anonymous function which result will be used to index the array
+     * @param string|string[]|Closure[]|null $groups the array of keys, that will be used to group the input array
      * by one or more keys. If the $key attribute or its value for the particular element is null and $groups is not
      * defined, the array element will be discarded. Otherwise, if $groups is specified, array element will be added
      * to the result array without any key.
@@ -295,12 +298,12 @@ class Arr // - Thanks @yii
     public static function index(array $array, $key, $groups = []): array
     {
         $result = [];
-        $groups = (array)$groups;
+        $groups = (array) $groups;
         foreach ($array as $element) {
             $lastArray = &$result;
             foreach ($groups as $group) {
                 $value = static::getValue($element, $group);
-                if (!array_key_exists($value, $lastArray)) {
+                if (!\array_key_exists($value, $lastArray)) {
                     $lastArray[$value] = [];
                 }
 
@@ -314,8 +317,8 @@ class Arr // - Thanks @yii
             } else {
                 $value = static::getValue($element, $key);
                 if ($value !== null) {
-                    if (is_float($value)) {
-                        $value = (string)$value;
+                    if (\is_float($value)) {
+                        $value = (string) $value;
                     }
 
                     $lastArray[$value] = $element;
@@ -404,9 +407,9 @@ class Arr // - Thanks @yii
      * // ]
      * ```
      *
-     * @param string|\Closure $from
-     * @param string|\Closure $to
-     * @param string|\Closure $group
+     * @param string|Closure $from
+     * @param string|Closure $to
+     * @param string|Closure $group
      *
      */
     public static function map(array $array, $from, $to, $group = null): array
@@ -441,7 +444,7 @@ class Arr // - Thanks @yii
         if ($caseSensitive) {
             // Function `isset` checks key faster but skips `null`, `array_key_exists` handles this case
             // http://php.net/manual/en/function.array-key-exists.php#107786
-            return isset($array[$key]) || array_key_exists($key, $array);
+            return isset($array[$key]) || \array_key_exists($key, $array);
         }
 
         foreach (array_keys($array) as $k) {
@@ -457,7 +460,7 @@ class Arr // - Thanks @yii
      * Sorts an array of objects or arrays (with the same structure) by one or several keys.
      *
      * @param array $array the array to be sorted. The array will be modified after calling this method.
-     * @param string|\Closure|array $key the key(s) to be sorted by. This refers to a key name of the sub-array
+     * @param string|Closure|array $key the key(s) to be sorted by. This refers to a key name of the sub-array
      * elements, a property name of the objects, or an anonymous function returning the values for comparison
      * purpose. The anonymous function signature should be: `function($item)`.
      * To sort by multiple keys, provide an array of keys here.
@@ -473,21 +476,21 @@ class Arr // - Thanks @yii
      */
     public static function multisort(array &$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR): void
     {
-        $keys = is_array($key) ? $key : [$key];
+        $keys = \is_array($key) ? $key : [$key];
         if ($keys === [] || $array === []) {
             return;
         }
 
-        $n = count($keys);
-        if (is_scalar($direction)) {
+        $n = \count($keys);
+        if (\is_scalar($direction)) {
             $direction = array_fill(0, $n, $direction);
-        } elseif (count($direction) !== $n) {
+        } elseif (\count($direction) !== $n) {
             throw new InvalidArgumentException('The length of $direction parameter must be the same as that of $keys.');
         }
 
-        if (is_scalar($sortFlag)) {
+        if (\is_scalar($sortFlag)) {
             $sortFlag = array_fill(0, $n, $sortFlag);
-        } elseif (count($sortFlag) !== $n) {
+        } elseif (\count($sortFlag) !== $n) {
             throw new InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
         }
 
@@ -501,7 +504,7 @@ class Arr // - Thanks @yii
 
         // This fix is used for cases when main sorting specified by columns has equal values
         // Without it it will lead to Fatal Error: Nesting level too deep - recursive dependency?
-        $args[] = range(1, count($array));
+        $args[] = range(1, \count($array));
         $args[] = SORT_ASC;
         $args[] = SORT_NUMERIC;
         $args[] = &$array;
@@ -526,13 +529,13 @@ class Arr // - Thanks @yii
     {
         $data = [];
         foreach ($array as $key => $value) {
-            if (!$valuesOnly && is_string($key)) {
+            if (!$valuesOnly && \is_string($key)) {
                 $key = htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
             }
 
-            if (is_string($value)) {
+            if (\is_string($value)) {
                 $data[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 $data[$key] = static::htmlEncode($value, $valuesOnly, $charset);
             } else {
                 $data[$key] = $value;
@@ -559,13 +562,13 @@ class Arr // - Thanks @yii
     {
         $data = [];
         foreach ($array as $key => $value) {
-            if (!$valuesOnly && is_string($key)) {
+            if (!$valuesOnly && \is_string($key)) {
                 $key = htmlspecialchars_decode($key, ENT_QUOTES);
             }
 
-            if (is_string($value)) {
+            if (\is_string($value)) {
                 $data[$key] = htmlspecialchars_decode($value, ENT_QUOTES);
-            } elseif (is_array($value)) {
+            } elseif (\is_array($value)) {
                 $data[$key] = static::htmlDecode($value);
             } else {
                 $data[$key] = $value;
@@ -597,7 +600,7 @@ class Arr // - Thanks @yii
 
         if ($allStrings) {
             foreach (array_keys($array) as $key) {
-                if (!is_string($key)) {
+                if (!\is_string($key)) {
                     return false;
                 }
             }
@@ -606,7 +609,7 @@ class Arr // - Thanks @yii
         }
 
         foreach (array_keys($array) as $key) {
-            if (is_string($key)) {
+            if (\is_string($key)) {
                 return true;
             }
         }
@@ -630,7 +633,7 @@ class Arr // - Thanks @yii
      */
     public static function isIndexed(array $array, bool $consecutive = false): bool
     {
-        if (!is_array($array)) {
+        if (!\is_array($array)) {
             return false;
         }
 
@@ -639,11 +642,11 @@ class Arr // - Thanks @yii
         }
 
         if ($consecutive) {
-            return array_keys($array) === range(0, count($array) - 1);
+            return array_keys($array) === range(0, \count($array) - 1);
         }
 
         foreach (array_keys($array) as $key) {
-            if (!is_int($key)) {
+            if (!\is_int($key)) {
                 return false;
             }
         }
@@ -658,7 +661,7 @@ class Arr // - Thanks @yii
      * but additionally works for objects that implement the [[\Traversable]] interface.
      *
      * @param mixed $needle The value to look for.
-     * @param array|\Traversable $haystack The set of values to search.
+     * @param array|Traversable $haystack The set of values to search.
      * @param bool $strict Whether to enable strict (`===`) comparison.
      *
      * @throws InvalidArgumentException if `$haystack` is neither traversable nor an array.
@@ -667,14 +670,14 @@ class Arr // - Thanks @yii
      */
     public static function isIn(mixed $needle, $haystack, bool $strict = false): bool
     {
-        if ($haystack instanceof \Traversable) {
+        if ($haystack instanceof Traversable) {
             foreach ($haystack as $value) {
                 if ($needle === $value && (!$strict || $needle === $value)) {
                     return true;
                 }
             }
-        } elseif (is_array($haystack)) {
-            return in_array($needle, $haystack, $strict);
+        } elseif (\is_array($haystack)) {
+            return \in_array($needle, $haystack, $strict);
         } else {
             throw new InvalidArgumentException('Argument $haystack must be an array or implement Traversable');
         }
@@ -704,8 +707,8 @@ class Arr // - Thanks @yii
      * This method will return `true`, if all elements of `$needles` are contained in
      * `$haystack`. If at least one element is missing, `false` will be returned.
      *
-     * @param array|\Traversable $needles The values that must **all** be in `$haystack`.
-     * @param array|\Traversable $haystack The set of value to search.
+     * @param array|Traversable $needles The values that must **all** be in `$haystack`.
+     * @param array|Traversable $haystack The set of value to search.
      * @param bool $strict Whether to enable strict (`===`) comparison.
      *
      * @throws InvalidArgumentException if `$haystack` or `$needles` is neither traversable nor an array.
@@ -799,7 +802,7 @@ class Arr // - Thanks @yii
                 continue;
             }
 
-            if (!array_key_exists($globalKey, $result)) {
+            if (!\array_key_exists($globalKey, $result)) {
                 $result[$globalKey] = [];
             }
 
@@ -808,7 +811,7 @@ class Arr // - Thanks @yii
 
         foreach ($forbiddenVars as $var) {
             [$globalKey, $localKey] = $var;
-            if (array_key_exists($globalKey, $result)) {
+            if (\array_key_exists($globalKey, $result)) {
                 unset($result[$globalKey][$localKey]);
             }
         }

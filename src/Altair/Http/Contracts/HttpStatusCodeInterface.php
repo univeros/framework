@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -39,7 +41,7 @@ interface HttpStatusCodeInterface
     public const int HTTP_SWITCHING_PROTOCOLS = 101;
 
     public const int HTTP_PROCESSING = 102;
-                // RFC2518
+    // RFC2518
     public const int HTTP_OK = 200;
 
     public const int HTTP_CREATED = 201;
@@ -55,11 +57,11 @@ interface HttpStatusCodeInterface
     public const int HTTP_PARTIAL_CONTENT = 206;
 
     public const int HTTP_MULTI_STATUS = 207;
-              // RFC4918
+    // RFC4918
     public const int HTTP_ALREADY_REPORTED = 208;
-          // RFC5842
+    // RFC5842
     public const int HTTP_IM_USED = 226;
-                   // RFC3229
+    // RFC3229
     public const int HTTP_MULTIPLE_CHOICES = 300;
 
     public const int HTTP_MOVED_PERMANENTLY = 301;
@@ -77,7 +79,7 @@ interface HttpStatusCodeInterface
     public const int HTTP_TEMPORARY_REDIRECT = 307;
 
     public const int HTTP_PERMANENT_REDIRECT = 308;
-      // RFC7238
+    // RFC7238
     public const int HTTP_BAD_REQUEST = 400;
 
     public const int HTTP_UNAUTHORIZED = 401;
@@ -115,25 +117,25 @@ interface HttpStatusCodeInterface
     public const int HTTP_EXPECTATION_FAILED = 417;
 
     public const int HTTP_IM_A_TEAPOT = 418;
-                                                     // RFC2324
+    // RFC2324
     public const int HTTP_MISDIRECTED_REQUEST = 421;
 
     public const int HTTP_UNPROCESSABLE_ENTITY = 422;
-                                            // RFC4918
+    // RFC4918
     public const int HTTP_LOCKED = 423;
-                                                          // RFC4918
+    // RFC4918
     public const int HTTP_FAILED_DEPENDENCY = 424;
-                                               // RFC4918
+    // RFC4918
     public const int HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL = 425;
-       // RFC2817
+    // RFC2817
     public const int HTTP_UPGRADE_REQUIRED = 426;
-                                                // RFC2817
+    // RFC2817
     public const int HTTP_PRECONDITION_REQUIRED = 428;
-                                           // RFC6585
+    // RFC6585
     public const int HTTP_TOO_MANY_REQUESTS = 429;
-                                               // RFC6585
+    // RFC6585
     public const int HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
-                                 // RFC6585
+    // RFC6585
     public const int HTTP_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 
     public const int HTTP_INTERNAL_SERVER_ERROR = 500;
@@ -149,12 +151,12 @@ interface HttpStatusCodeInterface
     public const int HTTP_VERSION_NOT_SUPPORTED = 505;
 
     public const int HTTP_VARIANT_ALSO_NEGOTIATES = 506;
-                                         // RFC2295
+    // RFC2295
     public const int HTTP_INSUFFICIENT_STORAGE = 507;
-                                            // RFC4918
+    // RFC4918
     public const int HTTP_LOOP_DETECTED = 508;
-                                                   // RFC5842
+    // RFC5842
     public const int HTTP_NOT_EXTENDED = 510;
-                                                    // RFC2774
+    // RFC2774
     public const int HTTP_NETWORK_AUTHENTICATION_REQUIRED = 511;                             // RFC6585
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,21 +16,22 @@ use Altair\Container\Container;
 use Altair\Http\Collection\RouteCollection;
 use FastRoute\Dispatcher;
 use FastRoute\RouteCollector;
+
 use function FastRoute\simpleDispatcher;
+
+use Override;
 
 class FastRouteConfiguration implements ConfigurationInterface
 {
     /**
      * FastRouteConfiguration constructor.
      */
-    public function __construct(protected RouteCollection $routeCollection)
-    {
-    }
+    public function __construct(protected RouteCollection $routeCollection) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $factory = fn() => simpleDispatcher(

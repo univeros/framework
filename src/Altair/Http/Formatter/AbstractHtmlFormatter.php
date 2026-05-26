@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,16 +12,17 @@
 namespace Altair\Http\Formatter;
 
 use Altair\Http\Contracts\OutputFormatterInterface;
+use Override;
 
 abstract class AbstractHtmlFormatter implements OutputFormatterInterface
 {
-    #[\Override]
+    #[Override]
     public static function accepts(): array
     {
         return ['text/html'];
     }
 
-    #[\Override]
+    #[Override]
     public function type(): string
     {
         return 'text/html';

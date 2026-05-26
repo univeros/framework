@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,6 +16,7 @@ use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Altair\Http\Exception\OutOfBoundsException;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -22,14 +25,12 @@ class StatusResponder implements ResponderInterface
     /**
      * StatusResponder constructor.
      */
-    public function __construct(protected HttpStatusCollection $httpStatusCollection)
-    {
-    }
+    public function __construct(protected HttpStatusCollection $httpStatusCollection) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -49,7 +50,7 @@ class StatusResponder implements ResponderInterface
      */
     private function hasStatus(PayloadInterface $payload): bool
     {
-        return (bool)$payload->getStatus();
+        return (bool) $payload->getStatus();
     }
 
     /**

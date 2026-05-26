@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,10 +13,10 @@ namespace Altair\Http\Validator;
 
 use Altair\Data\Contracts\QueryRepositoryInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
+use Override;
 
 class RepositoryIdentityValidator implements IdentityValidatorInterface
 {
-
     protected array $options;
 
     /**
@@ -34,7 +36,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"] ?? null;

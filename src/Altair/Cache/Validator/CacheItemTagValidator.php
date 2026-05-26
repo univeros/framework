@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Cache\Validator;
 
 use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
 use Altair\Cache\Traits\FailureReasonAwareTrait;
+use Override;
 
 class CacheItemTagValidator implements CacheItemTagValidatorInterface
 {
@@ -19,7 +22,7 @@ class CacheItemTagValidator implements CacheItemTagValidatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function validate(string $tag): bool
     {
         if (!isset($tag[0])) {
@@ -29,7 +32,7 @@ class CacheItemTagValidator implements CacheItemTagValidatorInterface
         }
 
         if (false !== strpbrk($tag, '{}()/\@:')) {
-            $this->reason = sprintf('Cache tag "%s" contains reserved characters {}()/\@:', $tag);
+            $this->reason = \sprintf('Cache tag "%s" contains reserved characters {}()/\@:', $tag);
 
             return false;
         }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,13 +16,14 @@ use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Session\Handler\MongoSessionHandler;
 use MongoDB\Client;
+use Override;
 use SessionHandlerInterface;
 
 class MongoSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $factory = fn() => (new Client(

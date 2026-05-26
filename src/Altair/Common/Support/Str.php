@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -62,8 +64,8 @@ class Str
     {
         $words = preg_split('/(\s+)/u', trim($value), -1, PREG_SPLIT_DELIM_CAPTURE);
 
-        return count($words) / 2 > $count
-            ? implode('', array_slice($words, 0, ($count * 2) - 1)) . $suffix
+        return \count($words) / 2 > $count
+            ? implode('', \array_slice($words, 0, ($count * 2) - 1)) . $suffix
             : $value;
     }
 
@@ -121,7 +123,7 @@ class Str
      */
     public function countWords(string $value): int
     {
-        return count(preg_split('/\s+/u', $value, -1, PREG_SPLIT_NO_EMPTY));
+        return \count(preg_split('/\s+/u', $value, -1, PREG_SPLIT_NO_EMPTY));
     }
 
     /**
@@ -135,7 +137,7 @@ class Str
     {
         $position = strpos($subject, $search);
         if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
+            return substr_replace($subject, $replace, $position, \strlen($search));
         }
 
         return $subject;
@@ -152,7 +154,7 @@ class Str
     {
         $position = strrpos($subject, $search);
         if ($position !== false) {
-            return substr_replace($subject, $replace, $position, strlen($search));
+            return substr_replace($subject, $replace, $position, \strlen($search));
         }
 
         return $subject;

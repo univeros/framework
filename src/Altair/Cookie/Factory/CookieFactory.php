@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -26,7 +28,6 @@ class CookieFactory
         return new Cookie($name, $value);
     }
 
-    
     public static function createFromPairString(string $pair): Cookie
     {
         [$name, $value] = (new CookieStr())->splitPair($pair);
@@ -36,7 +37,6 @@ class CookieFactory
         return $value !== null ? $cookie->withValue($value) : $cookie;
     }
 
-    
     public static function createCollectionFromCookieString(string $string): CookieCollection
     {
         $pairs = (new CookieStr())->split($string);
@@ -49,7 +49,6 @@ class CookieFactory
         );
     }
 
-    
     public static function createCollectionFromRequest(RequestInterface $request): CookieCollection
     {
         $string = $request->getHeaderLine(CookieInterface::HEADER);

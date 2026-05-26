@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,14 +15,16 @@ use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
 use Altair\Cache\Support\CacheItemUnserializer;
 use Altair\Cache\Traits\RedisNamespaceValidationAwareTrait;
+use ErrorException;
 use Exception;
+use Override;
 use Redis;
 
 class RedisCacheItemStorage implements CacheItemStorageInterface
 {
     use RedisNamespaceValidationAwareTrait;
 
-    protected \Redis $client;
+    protected Redis $client;
 
     protected $namespace;
 
@@ -32,7 +36,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
         $info = $redis->info('Server');
         $info = $info['Server'] ?? $info;
         if (!version_compare($info['redis_version'], '2.8', '>=')) {
-            throw new InvalidArgumentException(sprintf('%s requires Redis 2.8 or above.', static::class));
+            throw new InvalidArgumentException(\sprintf('%s requires Redis 2.8 or above.', static::class));
         }
 
         $this->client = $redis;
@@ -42,7 +46,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -50,9 +54,9 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
@@ -71,16 +75,16 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasItem(string $key): bool
     {
-        return (bool)$this->client->exists($key);
+        return (bool) $this->client->exists($key);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         if (!isset($this->namespace[0])) {
@@ -91,14 +95,14 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 
         do {
             $keys = $this->client->scan($cursor, $this->namespace . '*', 1000);
-            if (isset($keys[1]) && is_array($keys[1])) {
+            if (isset($keys[1]) && \is_array($keys[1])) {
                 [$cursor, $keys] = $keys;
             }
 
             if ($keys) {
                 $this->client->del($keys);
             }
-        } while ($cursor = (int)$cursor);
+        } while ($cursor = (int) $cursor);
 
         return true;
     }
@@ -106,11 +110,11 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         if ($keys !== []) {
-            return $this->client->del($keys) === count($keys);
+            return $this->client->del($keys) === \count($keys);
         }
 
         return true;
@@ -119,7 +123,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(array $values, int $lifespan)
     {
         $serialized = [];
@@ -174,7 +178,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     {
         if (preg_match('/[^-+_.A-Za-z0-9]/', $namespace, $match)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'The namespace for %s contains "%s" but only chars in [-+_.A-Za-z0-9] are allowed.',
                     static::class,
                     $match[0]

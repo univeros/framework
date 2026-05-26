@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -23,9 +25,7 @@ class ArgumentsBuilder implements BuilderInterface
     /**
      * ArgumentsBuilder constructor.
      */
-    public function __construct(protected Container $container)
-    {
-    }
+    public function __construct(protected Container $container) {}
 
     /**
      * @param array|null $reflectionParameters
@@ -71,7 +71,7 @@ class ArgumentsBuilder implements BuilderInterface
 
     /**
      * @throws InjectionException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      * @return mixed|object|null
      */
     protected function buildArgumentFromTypeHint(
@@ -115,7 +115,7 @@ class ArgumentsBuilder implements BuilderInterface
             $function = $class . $reflectionFunction->name;
 
             throw new InjectionException(
-                sprintf(
+                \sprintf(
                     'No definition available to provision typeless parameter \$%s at position %d in %s()',
                     $reflectionParameter->name,
                     $reflectionParameter->getPosition(),
@@ -136,7 +136,7 @@ class ArgumentsBuilder implements BuilderInterface
     protected function buildArgumentFromDelegate(string $name, $callableOrMethodString)
     {
         if ($this->container->getExecutableBuilder()->isExecutable($callableOrMethodString) === false) {
-            throw new InjectionException(sprintf("Unable to create argument '%s' from delegate.", $name));
+            throw new InjectionException(\sprintf("Unable to create argument '%s' from delegate.", $name));
         }
 
         $executable = $this->container->getExecutableBuilder()->build($callableOrMethodString);
@@ -153,7 +153,7 @@ class ArgumentsBuilder implements BuilderInterface
     {
         [$class, $arguments] = $definition;
 
-        if (is_array($arguments)) {
+        if (\is_array($arguments)) {
             $arguments = new Definition($arguments);
         }
 

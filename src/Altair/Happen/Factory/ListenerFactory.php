@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,12 +11,11 @@
 
 namespace Altair\Happen\Factory;
 
-use Altair\Happen\Listener\CallbackListener;
 use Altair\Happen\Contracts\ListenerInterface;
+use Altair\Happen\Listener\CallbackListener;
 
 class ListenerFactory
 {
-    
     public static function create(callable $callback): ListenerInterface
     {
         return new CallbackListener($callback);

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\MiddlewareInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -35,10 +36,9 @@ class IpAddressMiddleware implements MiddlewareInterface
      */
     public function __construct(
         private readonly array $headers = self::DEFAULT_HEADERS,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $request = $request->withAttribute(
@@ -68,7 +68,7 @@ class IpAddressMiddleware implements MiddlewareInterface
             }
 
             foreach (array_map('trim', explode(',', $header)) as $ip) {
-                if (!in_array($ip, $ips, true) && filter_var($ip, FILTER_VALIDATE_IP)) {
+                if (!\in_array($ip, $ips, true) && filter_var($ip, FILTER_VALIDATE_IP)) {
                     $ips[] = $ip;
                 }
             }

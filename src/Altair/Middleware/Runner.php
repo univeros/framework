@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,10 +16,10 @@ use Altair\Middleware\Contracts\MiddlewareResolverInterface;
 use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\Contracts\PayloadInterface;
 use Altair\Structure\Queue;
+use Override;
 
 class Runner implements MiddlewareRunnerInterface
 {
-
     /**
      *
      * A callable to convert queue entries to callables.
@@ -46,7 +48,7 @@ class Runner implements MiddlewareRunnerInterface
      *
      *
      */
-    #[\Override]
+    #[Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
         $entry = $this->queue->isEmpty() ? null : $this->queue->pop();
@@ -72,6 +74,6 @@ class Runner implements MiddlewareRunnerInterface
             return $entry;
         }
 
-        return call_user_func($this->resolver, $entry);
+        return \call_user_func($this->resolver, $entry);
     }
 }

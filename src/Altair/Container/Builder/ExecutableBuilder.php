@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,6 +16,7 @@ use Altair\Container\Contracts\ExecutableBuilderInterface;
 use Altair\Container\Exception\InjectionException;
 use Altair\Container\Executable;
 use Closure;
+use Override;
 use ReflectionException;
 
 class ExecutableBuilder implements ExecutableBuilderInterface
@@ -21,9 +24,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * ExecutableBuilder constructor.
      */
-    public function __construct(protected Container $container)
-    {
-    }
+    public function __construct(protected Container $container) {}
 
     /**
      * @throws InjectionException
@@ -38,12 +39,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function isExecutable($executable): bool
     {
-        return is_callable($executable)
-            || (is_string($executable) && method_exists($executable, '__invoke'))
-            || (is_array($executable)
+        return \is_callable($executable)
+            || (\is_string($executable) && method_exists($executable, '__invoke'))
+            || (\is_array($executable)
                 && isset($executable[0], $executable[1])
                 && method_exists($executable[0], $executable[1]));
     }
@@ -56,18 +57,18 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     protected function buildExecutableStructure($callableOrMethodString): array
     {
         try {
-            if (is_string($callableOrMethodString)) {
+            if (\is_string($callableOrMethodString)) {
                 $executableStructure = $this->buildExecutableStructureFromString($callableOrMethodString);
             } elseif ($callableOrMethodString instanceof Closure) {
                 $callableReflection = $this->container->getReflector()->getFunction($callableOrMethodString);
                 $executableStructure = [$callableReflection, null];
-            } elseif (is_object($callableOrMethodString) && is_callable($callableOrMethodString)) {
+            } elseif (\is_object($callableOrMethodString) && \is_callable($callableOrMethodString)) {
                 $invocationObject = $callableOrMethodString;
                 $callableReflection = $this->container->getReflector()->getMethod($invocationObject, '__invoke');
                 $executableStructure = [$callableReflection, $invocationObject];
-            } elseif (is_array($callableOrMethodString)
+            } elseif (\is_array($callableOrMethodString)
                 && isset($callableOrMethodString[0], $callableOrMethodString[1])
-                && count($callableOrMethodString) === 2
+                && \count($callableOrMethodString) === 2
             ) {
                 $executableStructure = $this->buildExecutableStructureFromArray($callableOrMethodString);
             } else {
@@ -85,7 +86,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
      */
     protected function buildExecutableStructureFromString(string $executableString): array
     {
-        if (function_exists($executableString)) {
+        if (\function_exists($executableString)) {
             $callableReflection = $this->container->getReflector()->getFunction($executableString);
             $executableStructure = [$callableReflection, null];
         } elseif (method_exists($executableString, '__invoke')) {
@@ -139,10 +140,10 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     protected function buildExecutableStructureFromArray(array $executableArray): array
     {
         [$classOrObject, $method] = $executableArray;
-        if (is_object($classOrObject) && method_exists($classOrObject, $method)) {
+        if (\is_object($classOrObject) && method_exists($classOrObject, $method)) {
             $callableReflection = $this->container->getReflector()->getMethod($classOrObject, $method);
             $executableStructure = [$callableReflection, $classOrObject];
-        } elseif (is_string($classOrObject)) {
+        } elseif (\is_string($classOrObject)) {
             $executableStructure = $this->buildExecutableStructureFromClassMethodCallable($classOrObject, $method);
         } else {
             throw new InjectionException('Invalid callable array');

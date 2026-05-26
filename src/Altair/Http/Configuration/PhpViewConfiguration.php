@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,6 +17,7 @@ use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Http\Formatter\PhpViewFormatter;
 use Altair\Http\Responder\FormattedResponder;
+use Override;
 
 class PhpViewConfiguration implements ConfigurationInterface
 {
@@ -23,12 +26,12 @@ class PhpViewConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $definition = new Definition([
             ':templatePath' => $this->env->get('HTTP_PHP_VIEW_TEMPLATE_PATH'),
-            ':layout' => $this->env->get('HTTP_PHP_VIEW_LAYOUT')
+            ':layout' => $this->env->get('HTTP_PHP_VIEW_LAYOUT'),
         ]);
 
         $container

@@ -13,6 +13,7 @@ namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\FormatNegotiatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -21,10 +22,9 @@ class FormatNegotiatorMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private readonly FormatNegotiatorInterface $negotiator,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $format = ($this->negotiator->getFromServerRequestUriPath($request)

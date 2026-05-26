@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,6 +17,7 @@ use Altair\Happen\Contracts\EventStackInterface;
 use Altair\Happen\Contracts\EventSubscriberInterface;
 use Altair\Happen\Contracts\ListenerProviderInterface;
 use Altair\Happen\Factory\ListenerFactory;
+use Override;
 
 class EventDispatcher implements EventDispatcherInterface
 {
@@ -31,7 +34,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function addListener(
         string $name,
         callable $listener,
@@ -46,7 +49,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function addListenerProvider(ListenerProviderInterface $provider): EventDispatcherInterface
     {
         $provider->provideListeners($this);
@@ -57,13 +60,13 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function addSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
-            if (is_string($params)) {
+            if (\is_string($params)) {
                 $this->addListener($name, [$subscriber, $params]);
-            } elseif (is_string($params[0])) {
+            } elseif (\is_string($params[0])) {
                 [$method, $priority] = $params + [null, 0];
                 $this->addListener($name, [$subscriber, $method], $priority ?? 0);
             } else {
@@ -80,7 +83,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function dispatch(string $name, EventInterface $event = null): EventInterface
     {
         $event ??= new Event($name);
@@ -95,14 +98,14 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function dispatchStack(EventStackInterface $eventStack): array
     {
         $events = [];
         foreach ($eventStack->getStack() as $event) {
             $events[] = $event instanceof EventInterface
                 ? $this->dispatch($event->getName(), $event)
-                : $this->dispatch((string)$event);
+                : $this->dispatch((string) $event);
         }
 
         return $events;
@@ -111,7 +114,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getListeners(string $name): array
     {
         return $this->sortedListeners[$name] ??= $this->getSortedListeners($name);
@@ -120,16 +123,16 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasListeners(string $name): bool
     {
-        return isset($this->listeners[$name]) && count($this->listeners[$name]) !== 0;
+        return isset($this->listeners[$name]) && \count($this->listeners[$name]) !== 0;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function removeListener(string $name, callable $listener): EventDispatcherInterface
     {
         if (!isset($this->listeners[$name])) {
@@ -148,7 +151,7 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function removeAllListeners(string $name): EventDispatcherInterface
     {
         if ($this->hasListeners($name)) {
@@ -161,16 +164,16 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function removeSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
-            if (is_array($params) && is_array($params[0])) {
+            if (\is_array($params) && \is_array($params[0])) {
                 foreach ($params as $listener) {
                     $this->removeListener($name, [$subscriber, $listener[0]]);
                 }
             } else {
-                $this->removeListener($name, [$subscriber, is_string($params) ? $params : $params[0]]);
+                $this->removeListener($name, [$subscriber, \is_string($params) ? $params : $params[0]]);
             }
         }
 

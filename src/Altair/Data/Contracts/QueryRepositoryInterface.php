@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -30,6 +32,5 @@ interface QueryRepositoryInterface
      */
     public function findOneBy(array $criteria): ?EntityInterface;
 
-    
     public function findAllBy(array $condition): ?array;
 }

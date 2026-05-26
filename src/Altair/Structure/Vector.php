@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,12 +11,14 @@
 
 namespace Altair\Structure;
 
-use Altair\Structure\Traits\SequenceTrait;
-use Altair\Structure\Traits\CapacityTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\VectorInterface;
+use Altair\Structure\Traits\CapacityTrait;
+use Altair\Structure\Traits\SequenceTrait;
 use ArrayAccess;
 use IteratorAggregate;
+use Override;
+use Traversable;
 
 /**
  * Vector.
@@ -34,14 +38,14 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|\Traversable|Contracts\CollectionInterface|null $values
+     * @param array|Traversable|Contracts\CollectionInterface|null $values
      */
     public function __construct($values = null)
     {
         $this->capacity = VectorInterface::MIN_VECTOR_CAPACITY;
 
-        if (func_num_args() !== 0) {
-            $this->pushAll($this->normalizeItems(($values??[])));
+        if (\func_num_args() !== 0) {
+            $this->pushAll($this->normalizeItems(($values ?? [])));
         }
     }
 
@@ -50,7 +54,7 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
      */
     protected function adjustCapacity(): void
     {
-        $size = count($this);
+        $size = \count($this);
 
         // Automatically truncate the allocated buffer when the size of the
         // structure drops low enough.
@@ -65,13 +69,13 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
     /**
      * Increase capacity.
      */
-    #[\Override]
+    #[Override]
     protected function increaseCapacity(): static
     {
-        $size = count($this);
+        $size = \count($this);
 
         if ($size > $this->capacity) {
-            $this->capacity = max((int)($this->capacity * 1.5), $size);
+            $this->capacity = max((int) ($this->capacity * 1.5), $size);
         }
 
         return $this;

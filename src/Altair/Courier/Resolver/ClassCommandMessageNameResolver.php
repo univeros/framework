@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,13 +13,14 @@ namespace Altair\Courier\Resolver;
 
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMessageNameResolverInterface;
+use Override;
 
 class ClassCommandMessageNameResolver implements CommandMessageNameResolverInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function resolve(CommandMessageInterface $message): string
     {
         return $message::class;

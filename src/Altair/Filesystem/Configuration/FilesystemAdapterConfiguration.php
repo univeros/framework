@@ -16,10 +16,11 @@ use Altair\Container\Container;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\FilesystemOperator;
+use Override;
 
 class FilesystemAdapterConfiguration implements ConfigurationInterface
 {
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         // The concrete FilesystemAdapter (Local/S3/Ftp/Sftp/Dropbox) is registered by a sibling configuration.
@@ -27,7 +28,7 @@ class FilesystemAdapterConfiguration implements ConfigurationInterface
         // wrap with a caching decorator separately if needed.
         $container->delegate(
             FilesystemOperator::class,
-            static fn (FilesystemAdapter $adapter): FilesystemOperator => new Filesystem($adapter),
+            static fn(FilesystemAdapter $adapter): FilesystemOperator => new Filesystem($adapter),
         );
     }
 }

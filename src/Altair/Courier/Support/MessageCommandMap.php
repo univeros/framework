@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,4 @@ namespace Altair\Courier\Support;
 
 use Altair\Structure\Map;
 
-class MessageCommandMap extends Map
-{
-}
+class MessageCommandMap extends Map {}

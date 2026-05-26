@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,11 @@
  */
 
 namespace Altair\Structure\Contracts;
+
+use OutOfBoundsException;
+use OutOfRangeException;
+use Traversable;
+use UnderflowException;
 
 interface MapInterface extends CollectionInterface
 {
@@ -21,7 +28,7 @@ interface MapInterface extends CollectionInterface
     /**
      * Merge an array of values with the current Map.
      *
-     * @param array|\Traversable $values
+     * @param array|Traversable $values
      */
     public function merge($values): MapInterface;
 
@@ -68,7 +75,7 @@ interface MapInterface extends CollectionInterface
     /**
      * Creates associations for all keys and corresponding values of either an array or iterable object.
      *
-     * @param \Traversable|array $values
+     * @param Traversable|array $values
      */
     public function putAll($values): MapInterface;
 
@@ -134,7 +141,7 @@ interface MapInterface extends CollectionInterface
     /**
      * Return the first Pair from the Map.
      *
-     * @throws \UnderflowException
+     * @throws UnderflowException
      *
      *
      */
@@ -143,7 +150,7 @@ interface MapInterface extends CollectionInterface
     /**
      * Return the last Pair from the Map.
      *
-     * @throws \UnderflowException
+     * @throws UnderflowException
      *
      *
      */
@@ -153,7 +160,7 @@ interface MapInterface extends CollectionInterface
      * Return the pair at a specified position in the Map.
      *
      *
-     * @throws \OutOfRangeException
+     * @throws OutOfRangeException
      *
      */
     public function skip(int $position): PairInterface;
@@ -182,7 +189,7 @@ interface MapInterface extends CollectionInterface
      * key is not associated with a value.
      *
      *
-     * @throws \OutOfBoundsException if no default was provided and the key isnot associated with a value.
+     * @throws OutOfBoundsException if no default was provided and the key isnot associated with a value.
      * @return mixed The associated value or fallback default if provided.
      *
      */
@@ -209,7 +216,7 @@ interface MapInterface extends CollectionInterface
      * Removes a key's association from the map and returns the associated value or a provided default if provided.
      *
      *
-     * @throws \OutOfBoundsException if no default was provided and the key is not associated with a value.
+     * @throws OutOfBoundsException if no default was provided and the key is not associated with a value.
      * @return mixed The associated value or fallback default if provided.
      *
      */

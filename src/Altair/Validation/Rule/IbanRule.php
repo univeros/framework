@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Validation\Rule;
+
+use Override;
 
 class IbanRule extends AbstractRule
 {
@@ -86,10 +90,10 @@ class IbanRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
@@ -138,7 +142,7 @@ class IbanRule extends AbstractRule
                 'W' => '32',
                 'X' => '33',
                 'Y' => '34',
-                'Z' => '35'
+                'Z' => '35',
             ]
         );
 
@@ -148,10 +152,10 @@ class IbanRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid IBAN.', $value);
+        return \sprintf('"%s" is not a valid IBAN.', $value);
     }
 
     /**

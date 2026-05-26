@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Validation\Rule;
 
 use Altair\Validation\Exception\InvalidArgumentException;
+use Override;
 
 class ZipCodeRule extends AbstractRule
 {
@@ -230,16 +233,16 @@ class ZipCodeRule extends AbstractRule
      */
     public function __construct(string $country = null)
     {
-        $this->country = strtoupper(trim($country?? 'US'));
-        if (!array_key_exists($this->country, self::$patterns)) {
-            throw new InvalidArgumentException(sprintf('Invalid country ISO ALPHA-2 code: %s', $this->country));
+        $this->country = strtoupper(trim($country ?? 'US'));
+        if (!\array_key_exists($this->country, self::$patterns)) {
+            throw new InvalidArgumentException(\sprintf('Invalid country ISO ALPHA-2 code: %s', $this->country));
         }
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
         $value = trim((string) $value);
@@ -248,15 +251,15 @@ class ZipCodeRule extends AbstractRule
         }
 
         $patterns = self::$patterns;
-        return (bool)preg_match(sprintf('/^(%s)$/', $patterns[$this->country]), $value);
+        return (bool) preg_match(\sprintf('/^(%s)$/', $patterns[$this->country]), $value);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid %s zip code .', $value, $this->country);
+        return \sprintf('"%s" is not a valid %s zip code .', $value, $this->country);
     }
 }
