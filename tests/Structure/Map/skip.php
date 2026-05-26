@@ -32,7 +32,7 @@ trait skip
      */
     public function testSkip(array $values, int $position, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $pair = $instance->skip($position);
 
         $this->assertEquals($expected, [$pair->key, $pair->value]);
@@ -44,7 +44,7 @@ trait skip
     public function testSkipIndexOutOfRange(array $values, int $position)
     {
         $this->expectIndexOutOfRangeException();
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $instance->skip($position);
     }
 }

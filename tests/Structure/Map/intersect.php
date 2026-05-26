@@ -21,8 +21,8 @@ trait intersect
      */
     public function testIntersect(array $a, array $b, array $expected)
     {
-        $a = $this->getInstance($a);
-        $b = $this->getInstance($b);
+        $a = static::getInstance($a);
+        $b = static::getInstance($b);
 
         $this->assertEquals($expected, $a->intersect($b)->toArray());
     }
@@ -32,7 +32,7 @@ trait intersect
      */
     public function testIntersectWithSelf(array $a, array $b, array $expected)
     {
-        $map = $this->getInstance($a);
+        $map = static::getInstance($a);
 
         $this->assertEquals($a, $map->intersect($map)->toArray());
     }

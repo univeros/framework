@@ -5,7 +5,7 @@ trait contains
 {
     public static function containsDataProvider()
     {
-        list($sample, $duplicates) = $this->getUniqueAndDuplicateData();
+        list($sample, $duplicates) = static::getUniqueAndDuplicateData();
 
         // initial, values, contains
         return [
@@ -32,7 +32,7 @@ trait contains
         array $values,
         bool  $contains
     ) {
-        $set = $this->getInstance($initial);
+        $set = static::getInstance($initial);
         $this->assertEquals($contains, $set->contains(...$values));
     }
 }

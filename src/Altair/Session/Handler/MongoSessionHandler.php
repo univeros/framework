@@ -36,6 +36,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function open($savePath, $sessionName)
     {
         return true;
@@ -44,6 +45,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
@@ -52,6 +54,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function read($sessionId)
     {
         $data = $this->collection->findOne(
@@ -66,6 +69,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function write($sessionId, $data)
     {
         try {
@@ -97,6 +101,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function destroy($sessionId)
     {
         try {
@@ -111,6 +116,7 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         try {

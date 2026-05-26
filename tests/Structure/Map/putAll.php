@@ -11,7 +11,7 @@ trait putAll
             [['a']],
             [['a', 'b']],
             [['a', 'b', 'c']],
-            [$this->sample()],
+            [static::sample()],
             [range(1, self::MANY)],
         ];
     }
@@ -21,7 +21,7 @@ trait putAll
      */
     public function testPutAll(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->putAll($values);
         $this->assertToArray($values, $instance);
     }
@@ -31,7 +31,7 @@ trait putAll
      */
     public function testPutAllUsingIterator(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->putAll(new \ArrayIterator($values));
         $this->assertToArray($values, $instance);
     }
@@ -41,7 +41,7 @@ trait putAll
      */
     public function testPutAllFromSet(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $set = new \Altair\Structure\Set($values);
         $instance->putAll($set);
         $this->assertToArray($values, $instance);
@@ -52,7 +52,7 @@ trait putAll
      */
     public function testPutAllFromMap(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $map = new \Altair\Structure\Map($values);
         $instance->putAll($map);
         $this->assertToArray($values, $instance);
@@ -63,7 +63,7 @@ trait putAll
      */
     public function testPutAllFromVector(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $vector = new \Altair\Structure\Vector($values);
         $instance->putAll($vector);
         $this->assertToArray($values, $instance);
@@ -74,7 +74,7 @@ trait putAll
      */
     public function testPutAllFromDeque(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $deque = new \Altair\Structure\Deque($values);
         $instance->putAll($deque);
         $this->assertToArray($values, $instance);
@@ -85,7 +85,7 @@ trait putAll
      */
     public function testPutAllFromStack(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $stack = new \Altair\Structure\Stack(array_reverse($values));
         $instance->putAll($stack);
         $this->assertToArray($values, $instance);
@@ -97,7 +97,7 @@ trait putAll
      */
     public function testPutAllFromQueue(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $queue = new \Altair\Structure\Queue($values);
         $instance->putAll($queue);
         $this->assertToArray($values, $instance);
@@ -109,7 +109,7 @@ trait putAll
      */
     public function testPutAllFromPriorityQueue(array $values)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $queue = new \Altair\Structure\PriorityQueue();
 
         foreach ($values as $value) {

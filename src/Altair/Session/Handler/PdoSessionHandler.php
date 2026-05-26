@@ -38,6 +38,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function open($savePath, $sessionName)
     {
         if (!$this->adapter->getIsConnected()) {
@@ -47,6 +48,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
         return true;
     }
 
+    #[\ReturnTypeWillChange]
     public function close()
     {
         $gc = $this->gcCalled;
@@ -58,6 +60,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function read($sessionId)
     {
         try {
@@ -71,6 +74,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function write($sessionId, $data)
     {
         try {
@@ -84,6 +88,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function destroy($sessionId)
     {
         try {
@@ -97,6 +102,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.

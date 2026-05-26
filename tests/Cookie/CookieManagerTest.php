@@ -24,9 +24,8 @@ class CookieManagerTest extends TestCase
      */
     public function testGetCookiesFromRequest($cookieString, array $names)
     {
-        $request = $this->prophesize(RequestInterface::class);
-        $request->getHeaderLine(Cookie::HEADER)->willReturn($cookieString);
-        $request = $request->reveal();
+        $request = $this->createStub(RequestInterface::class);
+        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
         $manager = new CookieManager();
 
         foreach ($names as $name) {
@@ -38,10 +37,10 @@ class CookieManagerTest extends TestCase
     public function testDefaultCookies()
     {
         $manager = new CookieManager();
-        $request = $this->prophesize(RequestInterface::class);
-        $request->getHeaderLine(Cookie::HEADER)->willReturn('');
+        $request = $this->createStub(RequestInterface::class);
+        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn('');
 
-        $cookie = $manager->getFromRequest($request->reveal(), 'name', 'value');
+        $cookie = $manager->getFromRequest($request, 'name', 'value');
 
         $this->assertEquals('name', $cookie->getName());
         $this->assertEquals('value', $cookie->getValue());
@@ -113,10 +112,9 @@ class CookieManagerTest extends TestCase
      */
     public function testGetSetCookiesFromResponse(array $setCookieStrings, array $names, array $expectedSetCookies)
     {
-        $response = $this->prophesize(ResponseInterface::class);
-        $response->getHeader(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
+        $response = $this->createStub(ResponseInterface::class);
+        $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
         $manager = new CookieManager();
-        $response = $response->reveal();
 
         foreach ($names as $idx => $name) {
             $setCookie = $manager->getFromResponse($response, $name);

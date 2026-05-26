@@ -17,7 +17,7 @@ trait _serialize
      */
     public function testSerialize(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertSerialized($expected, $instance, true);
     }
 }

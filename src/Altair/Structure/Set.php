@@ -156,9 +156,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    public function join(string $glue = null): string
+    public function join(?string $glue = null): string
     {
-        return implode($glue, $this->toArray());
+        return implode($glue ?? '', $this->toArray());
     }
 
     /**

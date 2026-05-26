@@ -21,7 +21,7 @@ trait _isset
      */
     public function testArrayAccessIsset(array $initial, $key, bool $isset)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($initial as $key => $value) {
             $instance->put($key, $value);
@@ -36,7 +36,7 @@ trait _isset
      */
     public function testArrayAccessIssetByReference(array $initial, $key, bool $isset)
     {
-        $instance = $this->getInstance([$initial]);
+        $instance = static::getInstance([$initial]);
         $this->assertEquals($isset, isset($instance[0][$key]));
     }
 }

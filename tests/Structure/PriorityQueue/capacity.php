@@ -9,7 +9,7 @@ trait capacity
     {
         $min = CapacityInterface::MIN_CAPACITY;
 
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertEquals($min, $instance->capacity());
 
         for ($i = 0; $i < $min; $i++) {
@@ -26,7 +26,7 @@ trait capacity
 
     public function testAutoTruncate()
     {
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
         $expected = $instance->capacity() / 2;
 
         for ($i = 0; $i <= 3 * self::MANY / 4; $i++) {
@@ -38,7 +38,7 @@ trait capacity
 
     public function testClearResetsCapacity()
     {
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
         $instance = $instance->clear();
         $this->assertEquals(CapacityInterface::MIN_CAPACITY, $instance->capacity());
     }

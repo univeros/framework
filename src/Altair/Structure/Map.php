@@ -443,6 +443,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      *
      * @throws OutOfBoundsException
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         $pair = $this->lookupKey($offset);

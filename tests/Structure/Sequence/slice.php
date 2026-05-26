@@ -25,7 +25,7 @@ trait slice
      */
     public function testSlice(array $values, int $index, int $length)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $sliced = $instance->slice($index, $length);
         $expected = array_slice($values, $index, $length);
@@ -39,7 +39,7 @@ trait slice
      */
     public function testSliceWithoutLength(array $values, int $index, int $length)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $sliced = $instance->slice($index);
         $expected = array_slice($values, $index);
@@ -54,7 +54,7 @@ trait slice
         $x = 0;
         $y = $n / 2;
 
-        $instance = $this->getInstance(range(0, $n));
+        $instance = static::getInstance(range(0, $n));
 
         $this->assertToArray(range($x, $y - 1), $instance->slice($x, $y));
         $this->assertToArray(range($y, $n), $instance->slice($y));
@@ -66,7 +66,7 @@ trait slice
         $x = $n / 4;
         $y = $n / 4 + $n / 2;
 
-        $instance = $this->getInstance(range(0, $n));
+        $instance = static::getInstance(range(0, $n));
 
         $this->assertToArray(range($x, $y - 1), $instance->slice($x, $y - $x));
     }

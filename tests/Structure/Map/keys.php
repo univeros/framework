@@ -19,7 +19,7 @@ trait keys
      */
     public function testKeys(array $initial, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $keys = $instance->keys();
 
         $this->assertInstanceOf(Set::class, $keys);

@@ -43,9 +43,9 @@ class SetTest extends AbstractCollectionTest
     use Set\union;
     use Set\xor_;
 
-    public function getUniqueAndDuplicateData()
+    public static function getUniqueAndDuplicateData()
     {
-        $sample = $this->sample();
+        $sample = static::sample();
         $duplicates = [];
 
         foreach ($sample as $value) {
@@ -68,7 +68,7 @@ class SetTest extends AbstractCollectionTest
         $set['a'] = 1;
     }
 
-    protected function getInstance(array $values = [])
+    protected static function getInstance(array $values = [])
     {
         return new SetObject($values);
     }

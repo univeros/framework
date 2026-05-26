@@ -19,7 +19,7 @@ trait peek
      */
     public function testPeek($initial, $returned)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $value = $instance->peek();
 
@@ -29,7 +29,7 @@ trait peek
 
     public function testPeekNotAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->peek();
     }

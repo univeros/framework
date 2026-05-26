@@ -29,7 +29,7 @@ trait map
      */
     public function testMap(array $values, callable $callback)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $mapped = $instance->map($callback);
         $expected = array_map($callback, array_keys($values), $values);
@@ -40,7 +40,7 @@ trait map
 
     public function testMapCallbackThrowsException()
     {
-        $instance = $this->getInstance([1, 2, 3]);
+        $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
 
         try {
@@ -61,7 +61,7 @@ trait map
 
     public function testMapCallbackThrowsExceptionLaterOn()
     {
-        $instance = $this->getInstance([1, 2, 3]);
+        $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
 
         try {
@@ -84,7 +84,7 @@ trait map
 
     public function testMapDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance([
+        $instance = static::getInstance([
             "a" => new \stdClass(),
             "b" => new \stdClass(),
             "c" => new \stdClass(),

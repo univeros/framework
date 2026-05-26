@@ -39,7 +39,7 @@ trait _isset
      */
     public function testArrayAccessIsset($initial, $index, bool $isset)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($isset, isset($instance[$index]));
     }
 
@@ -50,7 +50,7 @@ trait _isset
      */
     public function testArrayAccessIssetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
     }
 
@@ -61,7 +61,7 @@ trait _isset
      */
     public function testArrayAccessIssetIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
     }
 
@@ -72,7 +72,7 @@ trait _isset
      */
     public function testArrayAccessIssetByReference($initial, $index, bool $isset)
     {
-        $instance = $this->getInstance([$initial]);
+        $instance = static::getInstance([$initial]);
         $this->assertEquals($isset, isset($instance[0][$index]));
     }
 }

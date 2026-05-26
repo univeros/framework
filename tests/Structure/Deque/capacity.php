@@ -8,7 +8,7 @@ trait capacity
     {
         $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
 
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertEquals($min, $instance->capacity());
 
         for ($i = 0; $i < $min; $i++) {
@@ -24,7 +24,7 @@ trait capacity
         $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
         $num = $min * 16;
 
-        $instance = $this->getInstance(range(1, $num - 1));
+        $instance = static::getInstance(range(1, $num - 1));
         $expected = $num / 2;
 
         for ($i = 0; $i <= 3 * $num / 4; $i++) {
@@ -38,7 +38,7 @@ trait capacity
     {
         $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
 
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
         $instance = $instance->clear();
         $this->assertEquals($min, $instance->capacity());
     }

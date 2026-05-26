@@ -24,9 +24,9 @@ class CsrfTokenTest extends TestCase
 
     public function testCsrfToken()
     {
-        $request = $this->prophesize(ServerRequestInterface::class);
-        $request->getCookieParams()->willReturn([]);
-        $manager = new SessionManager($request->reveal(), new FileSessionHandler(new Filesystem(), $this->tmpDir, 1));
+        $request = $this->createStub(ServerRequestInterface::class);
+        $request->method('getCookieParams')->willReturn([]);
+        $manager = new SessionManager($request, new FileSessionHandler(new Filesystem(), $this->tmpDir, 1));
 
         $prev = error_reporting(0);
         $token = $manager->getCsrfToken();

@@ -9,7 +9,7 @@ trait _clone
      */
     public function testClone($values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $clone = clone $instance;
 

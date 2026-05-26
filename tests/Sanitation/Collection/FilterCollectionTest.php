@@ -28,20 +28,18 @@ class FilterCollectionTest extends TestCase
         $this->assertTrue($ruleCollection->hasKey('alphaNum'));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testExceptionsWithClassNotImplementingRuleInterface()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $ruleCollection = new FilterCollection([]);
         $ruleCollection->put('fail', SanitizableEntity::class);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testExceptionsWithWrongConfigurationNoClassKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $ruleCollection = new FilterCollection();
         $ruleCollection->put('fail', [[FilterA::class]]);
     }

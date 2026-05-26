@@ -28,7 +28,7 @@ trait ksort
      */
     public function testSortedByKey(array $values)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $expected = $values;
         ksort($expected);
@@ -43,7 +43,7 @@ trait ksort
      */
     public function testSortedByKeyUsingComparator(array $values)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $sorted = $instance->ksort(function ($a, $b) {
             return $b <=> $a;

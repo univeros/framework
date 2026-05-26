@@ -19,13 +19,13 @@ trait hasKey
      */
     public function testHasKey(array $initial, $key, bool $has)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($has, $instance->hasKey($key));
     }
 
     public function testHasKeyAfterRemoveAndPut()
     {
-        $instance = $this->getInstance(['a' => 1]);
+        $instance = static::getInstance(['a' => 1]);
         $this->assertTrue($instance->hasKey('a'));
 
         $instance->remove('a');

@@ -8,13 +8,13 @@ trait count
      */
     public function testCount(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertCount(count($expected), $instance);
     }
 
     public function testCountEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertCount(0, $instance);
     }
 }

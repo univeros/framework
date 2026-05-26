@@ -19,7 +19,7 @@ trait pop
      */
     public function testPop($initial, $returned, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $value = $instance->pop();
 
@@ -30,14 +30,14 @@ trait pop
 
     public function testPopNotAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->pop();
     }
 
     public function testPopAll()
     {
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
 
         while (!$instance->isEmpty()) {
             $instance->pop();

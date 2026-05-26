@@ -21,7 +21,7 @@ trait _empty
      */
     public function testArrayAccessEmpty(array $initial, $key, bool $empty)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($initial as $key => $value) {
             $instance->put($key, $value);
@@ -36,7 +36,7 @@ trait _empty
      */
     public function testArrayAccessEmptyByReference(array $initial, $key, bool $empty)
     {
-        $instance = $this->getInstance([$initial]);
+        $instance = static::getInstance([$initial]);
         $this->assertEquals($empty, empty($instance[0][$key]));
     }
 }

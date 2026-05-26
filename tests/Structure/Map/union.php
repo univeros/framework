@@ -21,8 +21,8 @@ trait union
      */
     public function testUnion(array $initial, array $values, array $expected)
     {
-        $instance = $this->getInstance($initial);
-        $other = $this->getInstance($values);
+        $instance = static::getInstance($initial);
+        $other = static::getInstance($values);
 
         $this->assertToArray($expected, $instance->union($other));
         $this->assertToArray($initial, $instance);
@@ -33,7 +33,7 @@ trait union
      */
     public function testUnionWithSelf(array $initial, array $values, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $this->assertToArray($initial, $instance->union($instance));
         $this->assertToArray($initial, $instance);

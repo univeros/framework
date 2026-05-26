@@ -28,20 +28,18 @@ class RuleCollectionTest extends TestCase
         $this->assertTrue($ruleCollection->hasKey('testAttribute'));
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testExceptionsWithClassNotImplementingRuleInterface()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $ruleCollection = new RuleCollection([]);
         $ruleCollection->put('fail', ValidEntity::class);
     }
 
-    /**
-     * @expectedException InvalidArgumentException
-     */
     public function testExceptionsWithWrongConfigurationNoClassKey()
     {
+        $this->expectException(\InvalidArgumentException::class);
+
         $ruleCollection = new RuleCollection();
         $ruleCollection->put('fail', [[RuleA::class]]);
     }

@@ -20,7 +20,7 @@ trait last
      */
     public function testLast($initial, $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $last = $instance->last();
 
         $this->assertEquals($expected, [$last->key, $last->value]);
@@ -28,7 +28,7 @@ trait last
 
     public function testLastNotAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->last();
     }

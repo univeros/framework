@@ -31,7 +31,7 @@ trait find
      */
     public function testFind($initial, $value, $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->find($value));
     }
 }

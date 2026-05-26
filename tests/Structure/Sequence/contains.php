@@ -5,7 +5,7 @@ trait contains
 {
     public static function containsDataProvider()
     {
-        $sample = $this->sample();
+        $sample = static::sample();
 
         // initial, values, expected
         return [
@@ -33,7 +33,7 @@ trait contains
      */
     public function testContains($initial, array $values, bool $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->contains(...$values));
     }
 }

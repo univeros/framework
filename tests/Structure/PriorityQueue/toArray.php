@@ -8,7 +8,7 @@ trait toArray
      */
     public function testToArray(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         // Also check that toArray is not destructive
         $this->assertToArray($expected, $instance);

@@ -55,7 +55,7 @@ trait put
      */
     public function testPut(array $pairs, array $expected)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($pairs as $pair) {
             $instance->put($pair[0], $pair[1]);
@@ -70,7 +70,7 @@ trait put
 
     public function testPutMany()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         for ($i = 0; $i < self::MANY; $i++) {
             $instance->put(rand(), rand());
@@ -90,14 +90,14 @@ trait put
 
     public function testArrayAccessPut()
     {
-        $instance = $this->getInstance(['a' => 1]);
+        $instance = static::getInstance(['a' => 1]);
         $instance['a'] = 2;
         $this->assertToArray(['a' => 2], $instance);
     }
 
     public function testArrayAccessPutByReference()
     {
-        $instance = $this->getInstance(['a' => [1]]);
+        $instance = static::getInstance(['a' => [1]]);
         $instance['a'][0] = 2;
 
         $this->assertToArray(['a' => [2]], $instance);
@@ -105,8 +105,8 @@ trait put
 
     public function testMapPutCircularReference()
     {
-        $a = $this->getInstance();
-        $b = $this->getInstance();
+        $a = static::getInstance();
+        $b = static::getInstance();
 
         $a->put('B', $b);
         $a->put('A', $a);

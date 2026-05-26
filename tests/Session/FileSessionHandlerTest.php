@@ -58,7 +58,7 @@ class FileSessionHandlerTest extends TestCase
 
         $handler->gc(0); /* emulate gc */
 
-        $this->assertFileNotExists($tmpDir . '/' . $this->getSessionId());
+        $this->assertFileDoesNotExist($tmpDir . '/' . $this->getSessionId());
     }
 
     protected function getSessionId()

@@ -5,7 +5,7 @@ trait unshift
 {
     public static function unshiftDataProvider()
     {
-        return $this->basicDataProvider();
+        return static::basicDataProvider();
     }
 
     /**
@@ -13,7 +13,7 @@ trait unshift
      */
     public function testUnshiftVariadic(array $initial, array $values)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $instance->unshift(...$values);
         $expected = array_merge($values, $initial);
@@ -27,7 +27,7 @@ trait unshift
      */
     public function testUnshift(array $initial, array $values)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
             $instance->unshift($value);

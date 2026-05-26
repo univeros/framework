@@ -26,7 +26,7 @@ trait set
      */
     public function testSet($initial, $index, $value, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $instance->set($index, $value);
 
@@ -43,7 +43,7 @@ trait set
      */
     public function testSetOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance->set($index, 1);
     }
@@ -55,7 +55,7 @@ trait set
      */
     public function testSetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectWrongIndexTypeException();
         $instance->set($index, 1);
     }
@@ -68,7 +68,7 @@ trait set
      */
     public function testArrayAccessSet($initial, $index, $value, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $instance[$index] = $value;
         $this->assertToArray($expected, $instance);
         $this->assertEquals(count($expected), count($instance));
@@ -81,7 +81,7 @@ trait set
      */
     public function testArrayAccessSetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();
         $instance[$index] = 1;
     }
@@ -93,14 +93,14 @@ trait set
      */
     public function testArrayAccessSetIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance[$index] = 1;
     }
 
     public function testArrayAccessSetByReference()
     {
-        $instance = $this->getInstance([[1]]);
+        $instance = static::getInstance([[1]]);
         $instance[0][0] = 2;
 
         $this->assertToArray([[2]], $instance);

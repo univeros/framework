@@ -8,7 +8,7 @@ trait copy
      */
     public function testCopy(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $copy = $instance->copy();
 
         $this->assertEquals($instance->toArray(), $copy->toArray());

@@ -5,7 +5,7 @@ trait _list
 {
     public function testList()
     {
-        $instance = $this->getInstance(['a', 'b', 'c']);
+        $instance = static::getInstance(['a', 'b', 'c']);
         list($a, $b, $c) = $instance;
 
         $this->assertEquals('a', $a);

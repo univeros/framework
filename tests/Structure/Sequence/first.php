@@ -19,13 +19,13 @@ trait first
      */
     public function testFirst(array $initial, $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->first());
     }
 
     public function testFirstNowAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->first();
     }

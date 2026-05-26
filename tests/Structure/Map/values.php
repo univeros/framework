@@ -21,7 +21,7 @@ trait values
      */
     public function testValues(array $initial, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $values = $instance->values();
 
         $this->assertInstanceOf(Vector::class, $values);

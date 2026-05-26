@@ -62,10 +62,10 @@ class CookieFactoryTest extends TestCase
      */
     public function testCreateCollectionFromRequest($cookieString, array $expectedCookies)
     {
-        $request = $this->prophesize(RequestInterface::class);
-        $request->getHeaderLine(Cookie::HEADER)->willReturn($cookieString);
+        $request = $this->createStub(RequestInterface::class);
+        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
 
-        $cookieCollection = CookieFactory::createCollectionFromRequest($request->reveal());
+        $cookieCollection = CookieFactory::createCollectionFromRequest($request);
 
         foreach ($expectedCookies as $expectedCookie) {
             $cookie = $cookieCollection->get($expectedCookie->getName());

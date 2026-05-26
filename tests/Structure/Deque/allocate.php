@@ -26,7 +26,7 @@ trait allocate
      */
     public function testAllocate(int $initial, int $allocate, int $expected)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->allocate($initial);
         $instance->allocate($allocate);

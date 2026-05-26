@@ -19,7 +19,7 @@ trait first
      */
     public function testFirst(array $initial, $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $first = $instance->first();
 
         $this->assertEquals($expected, [$first->key, $first->value]);
@@ -27,7 +27,7 @@ trait first
 
     public function testFirstNowAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->first();
     }

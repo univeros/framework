@@ -5,7 +5,7 @@ trait isEmpty
 {
     public function testIsEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertTrue($instance->isEmpty());
 
         $instance->push('a', 1);

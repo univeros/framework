@@ -111,7 +111,7 @@ class FilesystemTest extends TestCase
 
         $this->fs->move($this->tmpDir . '/file.txt', $this->tmpDir . '/foo.txt');
         $this->assertFileExists($this->tmpDir . '/foo.txt');
-        $this->assertFileNotExists($this->tmpDir . '/file.txt');
+        $this->assertFileDoesNotExist($this->tmpDir . '/file.txt');
     }
 
     public function testPutContents()
@@ -222,7 +222,7 @@ class FilesystemTest extends TestCase
 
         $this->fs->deleteDirectory($this->tmpDir . '/foo');
         $this->assertFalse(is_dir($this->tmpDir . '/foo'));
-        $this->assertFileNotExists($this->tmpDir . '/foo/file.txt');
+        $this->assertFileDoesNotExist($this->tmpDir . '/foo/file.txt');
     }
 
     public function testClearDirectory()
@@ -232,7 +232,7 @@ class FilesystemTest extends TestCase
 
         $this->fs->clearDirectory($this->tmpDir . '/foo');
         $this->assertTrue(is_dir($this->tmpDir . '/foo'));
-        $this->assertFileNotExists($this->tmpDir . '/foo/file.txt');
+        $this->assertFileDoesNotExist($this->tmpDir . '/foo/file.txt');
     }
 
     public function testGetFileNameHashSizeAndFileExtension()

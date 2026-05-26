@@ -22,8 +22,8 @@ trait xor_
      */
     public function testXor(array $a, array $b, array $expected)
     {
-        $a = $this->getInstance($a);
-        $b = $this->getInstance($b);
+        $a = static::getInstance($a);
+        $b = static::getInstance($b);
 
         $this->assertEquals($expected, $a->xor($b)->toArray());
     }
@@ -33,7 +33,7 @@ trait xor_
      */
     public function testXorWithSelf(array $a, array $b, array $expected)
     {
-        $map = $this->getInstance($a);
+        $map = static::getInstance($a);
 
         $this->assertEquals([], $map->xor($map)->toArray());
     }

@@ -9,7 +9,7 @@ trait capacity
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertEquals($min, $instance->capacity());
 
         for ($i = 0; $i < $min; $i++) {
@@ -28,7 +28,7 @@ trait capacity
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
         $expected = $instance->capacity() / 2;
 
         for ($i = 0; $i <= 3 * self::MANY / 4; $i++) {
@@ -42,7 +42,7 @@ trait capacity
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 
-        $instance = $this->getInstance(range(1, self::MANY));
+        $instance = static::getInstance(range(1, self::MANY));
         $instance = $instance->clear();
         $this->assertEquals($min, $instance->capacity());
     }

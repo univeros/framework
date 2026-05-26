@@ -42,7 +42,7 @@ trait _empty
      */
     public function testArrayAccessEmpty($initial, $index, bool $empty)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($empty, empty($instance[$index]));
     }
 
@@ -53,7 +53,7 @@ trait _empty
      */
     public function testArrayAccessEmptyIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
     }
 
@@ -64,7 +64,7 @@ trait _empty
      */
     public function testArrayAccessEmptyIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
     }
 
@@ -75,7 +75,7 @@ trait _empty
      */
     public function testArrayAccessEmptyByReference($initial, $index, bool $empty)
     {
-        $instance = $this->getInstance([$initial]);
+        $instance = static::getInstance([$initial]);
         $this->assertEquals($empty, empty($instance[0][$index]));
     }
 }

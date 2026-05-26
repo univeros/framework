@@ -5,7 +5,7 @@ trait toArray
 {
     public static function toArrayDataProvider()
     {
-        return $this->basicDataProvider();
+        return static::basicDataProvider();
     }
 
     /**
@@ -13,7 +13,7 @@ trait toArray
      */
     public function testToArray(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertToArray($expected, $instance);
     }
 }

@@ -123,17 +123,11 @@ class IpRuleTest extends TestCase
         $this->assertFalse($this->assertValue($value, $options, $range));
     }
 
-    /**
-     * @dataProvider invalidNetworkRangeProvider
-     * @expectedException InvalidArgumentException
-
-     * @param $value
-     * @param null $options
-     * @param null $range
-     */
-    public function testInvalidRange($value, $options = null, $range = null)
+    public function testInvalidRange(): void
     {
-        $this->assertValue($value, $options, $range);
+        $this->expectException(\InvalidArgumentException::class);
+
+        $this->assertValue('192.168.1.1', FILTER_FLAG_IPV4, 'not-a-valid-range');
     }
 
     protected function assertPayload($value, $options = null, $range = null)

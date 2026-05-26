@@ -120,9 +120,9 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function join(string $glue = null): string
+    public function join(?string $glue = null): string
     {
-        return implode($glue, $this->internal);
+        return implode($glue ?? '', $this->internal);
     }
 
     /**
@@ -327,6 +327,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
+    #[\ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         $this->checkRange($offset);

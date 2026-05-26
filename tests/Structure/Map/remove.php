@@ -46,7 +46,7 @@ trait remove
 
     public function testRemoveAllFromFront()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         for ($i = 0; $i < self::MANY; $i++) {
             $instance->put($i, $i);
@@ -63,7 +63,7 @@ trait remove
 
     public function testRemoveHalfFromMidway()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         for ($i = 0; $i < self::MANY; $i++) {
             $instance->put($i, $i);
@@ -78,7 +78,7 @@ trait remove
 
     public function testRandomRemove()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $reference = [];
 
         for ($i = 0; $i < 10; $i++) {
@@ -107,7 +107,7 @@ trait remove
      */
     public function testRemove(array $initial, $key, $expected, array $result)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($initial as $pair) {
             $instance->put($pair[0], $pair[1]);
@@ -119,13 +119,13 @@ trait remove
 
     public function testRemoveDefault()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertEquals('a', $instance->remove('?', 'a'));
     }
 
     public function testRemoveKeyNotFoundIsEqualNull()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertEquals(null, $instance->remove('?'));
     }
 }

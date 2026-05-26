@@ -7,7 +7,12 @@ use Redis;
 
 class RedisCacheItemStorageTest extends AbstractStorageTestCase
 {
-    protected function setUp(): void    {
+    protected function setUp(): void
+    {
+        if (!extension_loaded('redis')) {
+            $this->markTestSkipped('ext-redis is not loaded.');
+        }
+
         $redis = new Redis();
         $redis->connect('localhost', 6379);
 

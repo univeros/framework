@@ -46,7 +46,7 @@ trait rotate
      */
     public function testRotate(array $values, int $rotation, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $instance->rotate($rotation);
         $this->assertToArray($expected, $instance);
     }
