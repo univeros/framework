@@ -1,6 +1,6 @@
 # Altair Framework documentation
 
-Per-package guides for the 16 sub-packages bundled in `univeros/framework`. Each page stands alone — a developer who lands on it via search should be productive with the package after reading it, without opening the source.
+Per-package guides for the sub-packages bundled in `univeros/framework`. Each page stands alone — a developer who lands on it via search should be productive with the package after reading it, without opening the source.
 
 The framework targets PHP 8.3+, follows PSR-7/15/14/6/16 where applicable, and is composed of independently usable packages. You can install the meta-package (`composer require univeros/framework`) or pick the pieces you need (`composer require univeros/cookie`, etc.).
 
@@ -41,6 +41,12 @@ Talking to external systems and managing cryptographic primitives.
 - [Cache](./packages/cache.md) — PSR-6 cache item pool and PSR-16 simple cache, backed by Filesystem, Memcached, Redis, or Predis storage.
 - [Filesystem](./packages/filesystem.md) — Flysystem v3 wrapper with Local, S3, FTP, SFTP, and Dropbox adapters, plus a convenience decorator.
 - [Security](./packages/security.md) — cryptographic primitives — HKDF / PBKDF2 key derivation, an encryption envelope with double-HMAC MAC, and salt generation.
+
+### Tooling
+
+Developer experience and AI-agent ergonomics.
+
+- [AgentSpec](./packages/agent-spec.md) — turns every framework package into a deterministic Markdown manifest under `.agent/` so AI agents can be productive without reading source. Ships `manifest:generate` and `manifest:show` CLI commands with a `--check` drift gate for CI.
 
 ## How these docs are structured
 
