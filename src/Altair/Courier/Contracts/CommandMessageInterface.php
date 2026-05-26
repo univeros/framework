@@ -24,10 +24,10 @@ interface CommandMessageInterface
     public function getLogMessage(): ?LogMessageInterface;
 
     /**
-     * Returns a copy of the of the instance with a LogMessageInterface $message so user can extract its log information
-     * to use it on its logger system.
-     *
-     *
+     * Stores a LogMessageInterface on the command message so middleware downstream
+     * of the command's execution (notably CommandLoggerMiddleware) can surface it
+     * via getLogMessage(). Mutating-by-design: the command bus assumes a single
+     * message instance flows through the middleware chain.
      */
-    public function withLogMessage(LogMessageInterface $message): CommandMessageInterface;
+    public function setLogMessage(LogMessageInterface $message): void;
 }
