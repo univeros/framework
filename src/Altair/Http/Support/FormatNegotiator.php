@@ -130,7 +130,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     #[Override]
     public function getContentTypeByFormat(string $format): string
     {
-        if (isset($this->formats[$format])) {
+        if (!isset($this->formats[$format])) {
             throw new InvalidArgumentException(\sprintf('Unknown format "%s"', $format));
         }
 
