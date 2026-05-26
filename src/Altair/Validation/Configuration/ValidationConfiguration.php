@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,10 +18,11 @@ use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RulesRunnerInterface;
 use Altair\Validation\Resolver\RuleResolver;
 use Altair\Validation\RulesRunner;
+use Override;
 
 class ValidationConfiguration implements ConfigurationInterface
 {
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Sanitation\Filter;
+
+use Override;
 
 class CallbackFilter extends AbstractFilter
 {
@@ -27,9 +31,9 @@ class CallbackFilter extends AbstractFilter
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): mixed
     {
-        return call_user_func($this->callable, $value);
+        return \call_user_func($this->callable, $value);
     }
 }

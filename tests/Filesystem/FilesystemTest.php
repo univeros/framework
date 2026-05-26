@@ -298,12 +298,7 @@ class FilesystemTest extends TestCase
     {
         file_put_contents($this->tmpDir . '/foo.txt', 'foo');
         file_put_contents($this->tmpDir . '/bar.txt', 'bar');
-
-        $allFiles = [];
-
-        foreach ($this->fs->listFiles($this->tmpDir) as $file) {
-            $allFiles[] = $file;
-        }
+        $allFiles = $this->fs->listFiles($this->tmpDir);
 
         $this->assertContains($this->tmpDir . '/foo.txt', $allFiles);
         $this->assertContains($this->tmpDir . '/bar.txt', $allFiles);

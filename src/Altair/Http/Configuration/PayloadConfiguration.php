@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,13 +15,14 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
 use Altair\Http\Base\Payload;
 use Altair\Http\Contracts\PayloadInterface;
+use Override;
 
 class PayloadConfiguration implements ConfigurationInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container->alias(

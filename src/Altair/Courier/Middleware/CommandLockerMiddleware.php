@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Courier\Middleware;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
 use Exception;
+use Override;
 
 class CommandLockerMiddleware implements CommandMiddlewareInterface
 {
@@ -28,7 +31,7 @@ class CommandLockerMiddleware implements CommandMiddlewareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         // ensure we always execute one and only one command at a time

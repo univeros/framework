@@ -18,6 +18,7 @@ use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
 use Altair\Http\Traits\ResolverAwareTrait;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -39,7 +40,7 @@ class ActionMiddleware implements MiddlewareInterface
         $this->resolver = $resolver;
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $action = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_ACTION);

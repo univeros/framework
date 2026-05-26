@@ -15,6 +15,7 @@ use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Neomerx\Cors\Contracts\AnalysisResultInterface;
 use Neomerx\Cors\Contracts\AnalyzerInterface;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -25,10 +26,9 @@ class CorsMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly AnalyzerInterface $analyzer,
         private readonly ResponseFactoryInterface $responseFactory,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $cors = $this->analyzer->analyze($request);

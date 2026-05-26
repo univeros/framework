@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,6 +15,8 @@ use MongoDB\BSON\Binary;
 use MongoDB\BSON\UTCDateTime;
 use MongoDB\Collection;
 use MongoDB\Driver\Exception\Exception as MongoDBException;
+use Override;
+use ReturnTypeWillChange;
 use SessionHandlerInterface;
 
 class MongoSessionHandler implements SessionHandlerInterface
@@ -25,15 +29,13 @@ class MongoSessionHandler implements SessionHandlerInterface
          * Session collection
          */
         protected Collection $collection
-    )
-    {
-    }
+    ) {}
 
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function open($savePath, $sessionName)
     {
         return true;
@@ -42,8 +44,8 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function close()
     {
         return true;
@@ -52,8 +54,8 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function read($sessionId)
     {
         $data = $this->collection->findOne(
@@ -68,23 +70,23 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function write($sessionId, $data)
     {
         try {
-            $expires = $this->createUTCDateTime(time() + (int) ini_get('session.gc_maxlifetime'));
+            $expires = $this->createUTCDateTime(time() + (int) \ini_get('session.gc_maxlifetime'));
 
             $this->collection->updateOne(
                 [
-                    '_id' => $sessionId
+                    '_id' => $sessionId,
                 ],
                 [
                     '$set' => [
                         'content' => new Binary($data, Binary::TYPE_OLD_BINARY),
                         'session_lifetime' => $expires,
-                        'session_time' => $this->createUTCDateTime()
-                    ]
+                        'session_time' => $this->createUTCDateTime(),
+                    ],
                 ],
                 [
                     'upsert' => true,
@@ -100,8 +102,8 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function destroy($sessionId)
     {
         try {
@@ -116,14 +118,14 @@ class MongoSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function gc($maxlifetime)
     {
         try {
             $this->collection->deleteMany(
                 [
-                    'session_lifetime' => ['$lt' => $this->createUTCDateTime()]
+                    'session_lifetime' => ['$lt' => $this->createUTCDateTime()],
                 ]
             );
         } catch (MongoDBException) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,19 +15,20 @@ use Altair\Structure\Contracts\HashableInterface;
 use Altair\Structure\Contracts\PairInterface;
 use JsonSerializable;
 use OutOfBoundsException;
+use Override;
+use ReturnTypeWillChange;
+use Stringable;
 
 /**
  * A pair which represents a key, and an associated value.
  *
  */
-class Pair implements PairInterface, JsonSerializable, \Stringable
+class Pair implements PairInterface, JsonSerializable, Stringable
 {
     /**
      * Constructor.
      */
-    public function __construct(public mixed $key = null, public mixed $value = null)
-    {
-    }
+    public function __construct(public mixed $key = null, public mixed $value = null) {}
 
     /**
      * This allows unset($pair->key) to not completely remove the property,
@@ -58,7 +61,7 @@ class Pair implements PairInterface, JsonSerializable, \Stringable
     /**
      * To String.
      */
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return 'object(' . static::class . ')';
@@ -67,7 +70,7 @@ class Pair implements PairInterface, JsonSerializable, \Stringable
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function equalsKey($key): bool
     {
         if ($this->key instanceof HashableInterface) {
@@ -80,7 +83,7 @@ class Pair implements PairInterface, JsonSerializable, \Stringable
     /**
      * Returns a copy of the Pair.
      */
-    #[\Override]
+    #[Override]
     public function copy(): PairInterface
     {
         return new static($this->key, $this->value);
@@ -89,7 +92,7 @@ class Pair implements PairInterface, JsonSerializable, \Stringable
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function toArray(): array
     {
         return ['key' => $this->key, 'value' => $this->value];
@@ -98,8 +101,8 @@ class Pair implements PairInterface, JsonSerializable, \Stringable
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function jsonSerialize()
     {
         return $this->toArray();

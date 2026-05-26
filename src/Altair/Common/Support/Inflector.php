@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,15 +13,12 @@ namespace Altair\Common\Support;
 
 class Inflector
 {
-
     /**
      * Inflector constructor.
      *
      * @param Transliterator $transliterator
      */
-    public function __construct(protected Transliterator $transliterator, protected Pluralizer $pluralizer)
-    {
-    }
+    public function __construct(protected Transliterator $transliterator, protected Pluralizer $pluralizer) {}
 
     /**
      * Returns a string with all spaces converted to given replacement,
@@ -141,9 +140,10 @@ class Inflector
      */
     public function ordinal(int $number): string
     {
-        if (in_array($number % 100, range(11, 13), false)) {
+        if (\in_array($number % 100, range(11, 13), false)) {
             return $number . 'th';
         }
+
         return match ($number % 10) {
             1 => $number . 'st',
             2 => $number . 'nd',

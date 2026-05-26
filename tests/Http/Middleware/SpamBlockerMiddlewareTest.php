@@ -19,6 +19,7 @@ class SpamBlockerMiddlewareTest extends AbstractMiddlewareTest
 {
     private string $spammersFile;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +27,7 @@ class SpamBlockerMiddlewareTest extends AbstractMiddlewareTest
         file_put_contents($this->spammersFile, "spammer.example\nbad-actor.net\n");
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         @unlink($this->spammersFile);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,10 +15,11 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
 use Altair\Http\Contracts\CacheLimiterInterface;
 use Altair\Http\Support\NoCacheLimiter;
+use Override;
 
 class SessionHeadersMiddlewareConfiguration implements ConfigurationInterface
 {
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         // forced or fire errors if not set like this?

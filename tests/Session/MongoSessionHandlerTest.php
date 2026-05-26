@@ -10,10 +10,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 class MongoSessionHandlerTest extends TestCase
 {
-    /**
-     * @var Collection
-     */
-    private $collection;
+    private Collection $collection;
 
     private MongoSessionHandler $handler;
 

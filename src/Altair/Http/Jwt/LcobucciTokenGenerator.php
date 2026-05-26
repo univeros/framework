@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,26 +16,23 @@ use Altair\Http\Contracts\TokenGeneratorInterface;
 use DateTimeImmutable;
 use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Signer\Key;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class LcobucciTokenGenerator implements TokenGeneratorInterface
 {
-
-
     /**
      * LcobucciTokenGenerator constructor.
      */
-    public function __construct(protected ServerRequestInterface $request, protected Builder $builder, protected TokenConfigurationInterface $config)
-    {
-    }
+    public function __construct(protected ServerRequestInterface $request, protected Builder $builder, protected TokenConfigurationInterface $config) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function generate(array $claims = []): string
     {
-        $issuer = (string)$this->request->getUri();
+        $issuer = (string) $this->request->getUri();
         $issued_at = (new DateTimeImmutable())->setTimestamp($this->config->getTimestamp());
         $expiration = (new DateTimeImmutable())->setTimestamp($this->config->getExpirationTimestamp());
         // Assumed RSA or ECDSA signatures (highly recommended)
@@ -44,7 +43,7 @@ class LcobucciTokenGenerator implements TokenGeneratorInterface
             $this->builder->withClaim($name, $value);
         }
 
-        return (string)$this
+        return (string) $this
             ->builder
             ->issuedBy($issuer)
             ->issuedAt($issued_at)

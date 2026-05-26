@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,6 +11,8 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class InRule extends AbstractRule
 {
     /**
@@ -16,25 +20,23 @@ class InRule extends AbstractRule
      *
      * @param $haystack
      */
-    public function __construct(protected mixed $haystack, protected bool $strict = false)
-    {
-    }
+    public function __construct(protected mixed $haystack, protected bool $strict = false) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (is_array($this->haystack)) {
-            return in_array($value, $this->haystack, $this->strict);
+        if (\is_array($this->haystack)) {
+            return \in_array($value, $this->haystack, $this->strict);
         }
 
         if ($value === null || $value === '') {
             return $this->strict ? $value === $this->haystack : $value == $this->haystack;
         }
 
-        $value = (string)$value;
+        $value = (string) $value;
         return $this->strict
             ? false !== mb_strpos((string) $this->haystack, $value, 0, mb_detect_encoding($value))
             : false !== mb_stripos((string) $this->haystack, $value, 0, mb_detect_encoding($value));
@@ -43,13 +45,13 @@ class InRule extends AbstractRule
     /**
      * @param $value
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf(
+        return \sprintf(
             '"%s" not found in "%s".',
             $value,
-            is_array($this->haystack) ? implode(', ', $this->haystack) : $this->haystack
+            \is_array($this->haystack) ? implode(', ', $this->haystack) : $this->haystack
         );
     }
 }

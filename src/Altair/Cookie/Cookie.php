@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Cookie;
 
 use Altair\Cookie\Contracts\CookieInterface;
+use Override;
 use Stringable;
 
 final readonly class Cookie extends AbstractCookie implements CookieInterface, Stringable
@@ -21,7 +22,7 @@ final readonly class Cookie extends AbstractCookie implements CookieInterface, S
         parent::__construct($name, $value);
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return urlencode($this->name) . '=' . urlencode($this->value ?? '');

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,20 +14,19 @@ namespace Altair\Courier;
 use Altair\Courier\Contracts\CommandBusInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
+use Override;
 
 class CommandBus implements CommandBusInterface
 {
     /**
      * CommandBus constructor.
      */
-    public function __construct(protected CommandRunnerStrategyInterface $strategy)
-    {
-    }
+    public function __construct(protected CommandRunnerStrategyInterface $strategy) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function handle(CommandMessageInterface $message): void
     {
         $this->strategy->run($message);

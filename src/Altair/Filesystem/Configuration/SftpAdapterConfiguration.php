@@ -18,16 +18,17 @@ use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\PhpseclibV3\SftpConnectionProvider;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
+use Override;
 
 class SftpAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container
-            ->delegate(SftpAdapter::class, fn (): SftpAdapter => new SftpAdapter(
+            ->delegate(SftpAdapter::class, fn(): SftpAdapter => new SftpAdapter(
                 new SftpConnectionProvider(
                     $this->env->get('FS_SFTP_HOST'),
                     $this->env->get('FS_SFTP_USERNAME'),

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,4 @@ namespace Altair\Container\Exception;
 use Exception;
 use Psr\Container\ContainerExceptionInterface;
 
-class InjectionException extends Exception implements ContainerExceptionInterface
-{
-}
+class InjectionException extends Exception implements ContainerExceptionInterface {}

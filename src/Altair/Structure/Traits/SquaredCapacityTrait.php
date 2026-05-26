@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -39,7 +41,7 @@ trait SquaredCapacityTrait
      */
     protected function increaseCapacity(): self
     {
-        $this->capacity = $this->square((int)max(count($this), $this->capacity + 1));
+        $this->capacity = $this->square((int) max(\count($this), $this->capacity + 1));
 
         return $this;
     }
@@ -51,6 +53,6 @@ trait SquaredCapacityTrait
      */
     private function square(int $capacity): int
     {
-        return (int)(2 ** ceil(log($capacity, 2)));
+        return (int) (2 ** ceil(log($capacity, 2)));
     }
 }

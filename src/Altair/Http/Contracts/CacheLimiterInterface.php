@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,7 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 
 interface CacheLimiterInterface
 {
-    const EXPIRED = 'Thu, 19 Nov 1981 08:52:00 GMT';
+    public const EXPIRED = 'Thu, 19 Nov 1981 08:52:00 GMT';
 
     /**
      * Implements cache limiter to the response message

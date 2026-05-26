@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Validation\Rule;
+
+use Override;
 
 class MinRule extends AbstractRule
 {
@@ -21,17 +25,15 @@ class MinRule extends AbstractRule
          * @var mixed the minimum valid value
          */
         protected mixed $min
-    )
-    {
-    }
+    ) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
@@ -41,9 +43,9 @@ class MinRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not valid.', $value);
+        return \sprintf('"%s" is not valid.', $value);
     }
 }

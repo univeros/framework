@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,4 @@ namespace Altair\Courier\Exception;
 
 use Exception;
 
-class InvalidCommandMiddlewareException extends Exception
-{
-}
+class InvalidCommandMiddlewareException extends Exception {}

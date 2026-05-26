@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,10 +17,10 @@ use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\PayloadInterface;
 use Altair\Sanitation\Contracts\SanitizableInterface;
 use Altair\Sanitation\Contracts\SanitizerInterface;
+use Override;
 
 class Sanitizer implements SanitizerInterface
 {
-
     /**
      * @var Payload
      */
@@ -27,14 +29,12 @@ class Sanitizer implements SanitizerInterface
     /**
      * Validator constructor.
      */
-    public function __construct(protected FiltersRunnerInterface $runner)
-    {
-    }
+    public function __construct(protected FiltersRunnerInterface $runner) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function sanitize(SanitizableInterface $sanitizable): SanitizableInterface
     {
         $this->payload = $this->buildPayload($sanitizable);
@@ -42,7 +42,7 @@ class Sanitizer implements SanitizerInterface
         foreach ($sanitizable->getFilters() as $key => $value) {
             $keys = explode(',', (string) preg_replace('/\s+/', '', (string) $key));
             foreach ($keys as $attribute) {
-                $filters = is_array($value) ? $value : [$value];
+                $filters = \is_array($value) ? $value : [$value];
                 $runner = $this->runner->withFilters($filters);
                 $payload = $this->payload->withAttribute(PayloadInterface::ATTRIBUTE_KEY, $attribute);
 
@@ -53,7 +53,7 @@ class Sanitizer implements SanitizerInterface
         return $this->payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
     }
 
-    #[\Override]
+    #[Override]
     public function getPayload(): ?MiddlewarePayloadInterface
     {
         return $this->payload;
@@ -69,7 +69,7 @@ class Sanitizer implements SanitizerInterface
     protected function buildPayload(SanitizableInterface $sanitizable): MiddlewarePayloadInterface
     {
         $attributes = [
-            PayloadInterface::ATTRIBUTE_SUBJECT => clone $sanitizable // immutability
+            PayloadInterface::ATTRIBUTE_SUBJECT => clone $sanitizable, // immutability
         ];
 
         foreach ($sanitizable->getFilters()->keys() as $key) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -34,7 +36,7 @@ trait AttributesAwareTrait
     public function get(string $key)
     {
         if (!$this->has($key)) {
-            throw new InvalidArgumentException(sprintf('"%s" attribute not found.', $key));
+            throw new InvalidArgumentException(\sprintf('"%s" attribute not found.', $key));
         }
 
         return $this->{$key};

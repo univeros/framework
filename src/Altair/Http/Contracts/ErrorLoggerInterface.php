@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,6 +11,8 @@
 
 namespace Altair\Http\Contracts;
 
+use Error;
+use Exception;
 use Psr\Log\LoggerInterface;
 
 interface ErrorLoggerInterface
@@ -18,7 +22,7 @@ interface ErrorLoggerInterface
     /**
      * Log an error or exception
      *
-     * @param \Exception|\Error $error
+     * @param Exception|Error $error
      */
     public function log($error);
 }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -41,8 +43,8 @@ class Action
         $responder = null,
         $input = null
     ) {
-        $this->responder = $responder?? CompoundResponder::class;
-        $this->input = $input?? InputParser::class;
+        $this->responder = $responder ?? CompoundResponder::class;
+        $this->input = $input ?? InputParser::class;
     }
 
     /**

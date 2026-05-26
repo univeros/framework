@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,15 +11,17 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class UrlRule extends AbstractRule
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
@@ -29,8 +33,8 @@ class UrlRule extends AbstractRule
         // now make sure it parses as a URL with scheme and host
         $result = @parse_url($value);
 
-        $scheme = trim($result['scheme']?? '');
-        $host = trim($result['host']?? '');
+        $scheme = trim($result['scheme'] ?? '');
+        $host = trim($result['host'] ?? '');
 
         return $scheme !== '' && $scheme !== '0' && ($host !== '' && $host !== '0');
     }
@@ -38,9 +42,9 @@ class UrlRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid URL.', $value);
+        return \sprintf('"%s" is not a valid URL.', $value);
     }
 }

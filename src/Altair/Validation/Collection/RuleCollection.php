@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,13 +15,14 @@ use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Exception\InvalidArgumentException;
+use Override;
 
 class RuleCollection extends Map
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function put($key, $value): MapInterface
     {
         $this->filterRules($value);
@@ -30,7 +33,7 @@ class RuleCollection extends Map
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $rules) {
@@ -46,11 +49,11 @@ class RuleCollection extends Map
      */
     protected function filterKey(mixed $key): void
     {
-        if (!is_string($key)) {
+        if (!\is_string($key)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Keys of rules must be of type string to match a name of the subject. Type "%s" given.',
-                    gettype($key)
+                    \gettype($key)
                 )
             );
         }
@@ -61,10 +64,10 @@ class RuleCollection extends Map
      */
     protected function filterRules(mixed $rules): void
     {
-        if (is_string($rules)) {
-            if (!in_array(RuleInterface::class, class_implements($rules), false)) {
+        if (\is_string($rules)) {
+            if (!\in_array(RuleInterface::class, class_implements($rules), false)) {
                 throw new InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         '"%s" does not implement %s.',
                         $rules,
                         RuleInterface::class
@@ -73,14 +76,14 @@ class RuleCollection extends Map
             }
         } else {
             foreach ($rules as $rule) {
-                if (is_string($rule)) {
+                if (\is_string($rule)) {
                     $rule = ['class' => $rule];
                 }
 
                 $class = $rule['class'] ?? null;
-                if ($class === null || !in_array(RuleInterface::class, class_implements($class), false)) {
+                if ($class === null || !\in_array(RuleInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(
-                        sprintf(
+                        \sprintf(
                             'A definition of a rule as array must have a "class" key and must implement %s.',
                             RuleInterface::class
                         )

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,7 +15,9 @@ use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
 use Altair\Cache\Support\CacheItemUnserializer;
 use Altair\Cache\Traits\RedisNamespaceValidationAwareTrait;
+use ErrorException;
 use Exception;
+use Override;
 use Predis\Client;
 use Predis\Collection\Iterator\Keyspace;
 use Predis\Connection\Aggregate\PredisCluster;
@@ -35,7 +39,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
         $info = $redis->info('Server');
         $info = $info['Server'] ?? $info;
         if (!version_compare($info['redis_version'], '2.8', '>=')) {
-            throw new InvalidArgumentException(sprintf('%s requires Redis 2.8 or above.', static::class));
+            throw new InvalidArgumentException(\sprintf('%s requires Redis 2.8 or above.', static::class));
         }
 
         $this->client = $redis;
@@ -45,7 +49,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -53,9 +57,9 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
-     * @throws \ErrorException
+     * @throws ErrorException
      */
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
@@ -74,16 +78,16 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasItem(string $key): bool
     {
-        return (bool)$this->client->exists($key);
+        return (bool) $this->client->exists($key);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         $success = true;
@@ -116,11 +120,11 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         if ($keys !== []) {
-            return $this->client->del($keys) === count($keys);
+            return $this->client->del($keys) === \count($keys);
         }
 
         return true;
@@ -129,7 +133,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(array $values, int $lifespan)
     {
         $serialized = [];
@@ -167,7 +171,6 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 
         return $failed === [] ? true : $failed;
     }
-
 
     protected function getHosts(Client $client): ?array
     {

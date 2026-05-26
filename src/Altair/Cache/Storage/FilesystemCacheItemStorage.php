@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,6 +15,7 @@ use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
 use Altair\Filesystem\Exception\FileNotFoundException;
 use Altair\Filesystem\Filesystem;
+use Override;
 use stdClass;
 
 class FilesystemCacheItemStorage implements CacheItemStorageInterface
@@ -38,7 +41,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -49,7 +52,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      *
      * @throws FileNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
@@ -59,14 +62,16 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
             if (!$this->filesystem->exists($file)) {
                 continue;
             }
+
             if (!$this->filesystem->isFile($file)) {
                 continue;
             }
+
             if (!($item = $this->filesystem->getRequiredFileValue($file))) {
                 continue;
             }
 
-            if ($now >= (int)$item->expiresAt) {
+            if ($now >= (int) $item->expiresAt) {
                 $this->filesystem->delete($file);
                 continue;
             }
@@ -82,19 +87,19 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      *
      * @throws FileNotFoundException
      */
-    #[\Override]
+    #[Override]
     public function hasItem(string $key): bool
     {
         $file = $this->getFilePath($key);
 
         return $this->filesystem->exists($file) && ($this->filesystem->getLastModified($file) > time()
-                                                    || (bool)$this->getItems([$key]));
+                                                    || (bool) $this->getItems([$key]));
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         return $this->filesystem->clearDirectory($this->directory);
@@ -103,7 +108,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         $success = true;
@@ -119,7 +124,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(array $values, int $lifespan)
     {
         $success = true;
@@ -178,7 +183,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         $directory = $this->directory . strtoupper($hash[0] . '/' . $hash[1] . '/');
 
         if ($force && !$this->filesystem->exists($directory)) {
-            $this->filesystem->makeDirectory($directory, 0777, true, true);
+            $this->filesystem->makeDirectory($directory, 0o777, true, true);
         }
 
         return $directory . substr($hash, 2, 20);
@@ -192,7 +197,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         $directory ??= sys_get_temp_dir() . '/univeros-cache/';
 
         if (!$filesystem->exists($directory)) {
-            $filesystem->makeDirectory($directory, 0777, true, true);
+            $filesystem->makeDirectory($directory, 0o777, true, true);
         }
 
         $path = realpath($directory);
@@ -200,16 +205,16 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         $path = false !== $path && $filesystem->exists($directory) ? $directory : false;
 
         if (false === $path) {
-            throw new InvalidArgumentException(sprintf('Cache directory does not exist "%s"', $directory));
+            throw new InvalidArgumentException(\sprintf('Cache directory does not exist "%s"', $directory));
         }
 
         if (!$filesystem->isWritable($path)) {
-            throw new InvalidArgumentException(sprintf('Cache directory is not writable "%s".', $path));
+            throw new InvalidArgumentException(\sprintf('Cache directory is not writable "%s".', $path));
         }
 
         $path .= '/';
-        if ('\\' === '/' && strlen($path) > 234) { // windows allows max of 258
-            throw new InvalidArgumentException(sprintf('Cache directory path is too long "%s"', $path));
+        if ('\\' === '/' && \strlen($path) > 234) { // windows allows max of 258
+            throw new InvalidArgumentException(\sprintf('Cache directory path is too long "%s"', $path));
         }
 
         $this->directory = $path;

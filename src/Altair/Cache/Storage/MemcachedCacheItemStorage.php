@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,10 +14,11 @@ namespace Altair\Cache\Storage;
 use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\CacheException;
 use Memcached;
+use Override;
 
 class MemcachedCacheItemStorage implements CacheItemStorageInterface
 {
-    protected \Memcached $client;
+    protected Memcached $client;
 
     protected $maxIdLength = 250;
 
@@ -24,7 +27,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
      */
     public function __construct(Memcached $memcached)
     {
-        if (!(extension_loaded('memcached') && version_compare(phpversion('memcached'), '2.2.0', '>='))) {
+        if (!(\extension_loaded('memcached') && version_compare(phpversion('memcached'), '2.2.0', '>='))) {
             throw new CacheException('Memcached >= 2.2.0 is required.');
         }
 
@@ -33,7 +36,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
             throw new CacheException('MemcachedStorage: "serializer" option must be "php" or "igbinary".');
         }
 
-        $this->maxIdLength -= strlen((string) $memcached->getOption(Memcached::OPT_PREFIX_KEY));
+        $this->maxIdLength -= \strlen((string) $memcached->getOption(Memcached::OPT_PREFIX_KEY));
 
         $this->client = $memcached;
     }
@@ -41,7 +44,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMaxIdLength(): ?int
     {
         return $this->maxIdLength;
@@ -50,7 +53,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): array
     {
         return $this->checkResponse($this->client->getMulti($keys));
@@ -59,19 +62,20 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function hasItem(string $key) : bool
+    #[Override]
+    public function hasItem(string $key): bool
     {
         if (false !== $this->client->get($key)) {
             return true;
         }
+
         return Memcached::RES_SUCCESS === $this->client->getResultCode();
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         return $this->checkResponse($this->client->flush());
@@ -80,12 +84,12 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         $success = true;
 
-        foreach ($this->checkResponse((array)$this->client->deleteMulti($keys)) as $result) {
+        foreach ($this->checkResponse($this->client->deleteMulti($keys)) as $result) {
             if (Memcached::RES_SUCCESS !== $result && Memcached::RES_NOTFOUND !== $result) {
                 $success = false;
             }
@@ -97,7 +101,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(array $values, int $lifespan): bool
     {
         return Memcached::RES_SUCCESS === $this->checkResponse($this->client->setMulti($values, $lifespan));
@@ -121,9 +125,9 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
         }
 
         throw new CacheException(
-            sprintf(
+            \sprintf(
                 'MemcachedStorage client error: %s.',
-                strtolower((string) $this->client->getResultMessage())
+                strtolower($this->client->getResultMessage())
             )
         );
     }

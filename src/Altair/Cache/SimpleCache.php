@@ -13,6 +13,7 @@ namespace Altair\Cache;
 
 use Altair\Cache\Exception\InvalidArgumentException;
 use DateInterval;
+use Override;
 use Psr\Cache\CacheException as Psr6CacheException;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\SimpleCache\CacheException as SimpleCacheException;
@@ -23,10 +24,9 @@ class SimpleCache implements CacheInterface
 {
     public function __construct(
         private readonly CacheItemPoolInterface $pool,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function get(string $key, mixed $default = null): mixed
     {
         try {
@@ -40,7 +40,7 @@ class SimpleCache implements CacheInterface
         return $item->isHit() ? $item->get() : $default;
     }
 
-    #[\Override]
+    #[Override]
     public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
     {
         try {
@@ -58,7 +58,7 @@ class SimpleCache implements CacheInterface
         return $this->pool->save($item);
     }
 
-    #[\Override]
+    #[Override]
     public function delete(string $key): bool
     {
         try {
@@ -70,13 +70,13 @@ class SimpleCache implements CacheInterface
         }
     }
 
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         return $this->pool->clear();
     }
 
-    #[\Override]
+    #[Override]
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $keys = $this->iterableToArray($keys);
@@ -97,12 +97,12 @@ class SimpleCache implements CacheInterface
         return $values;
     }
 
-    #[\Override]
+    #[Override]
     public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
     {
-        $valuesIsArray = is_array($values);
+        $valuesIsArray = \is_array($values);
         if (!$valuesIsArray && !$values instanceof Traversable) {
-            throw new InvalidArgumentException(sprintf(
+            throw new InvalidArgumentException(\sprintf(
                 'Cache values must be array or Traversable, "%s" given',
                 get_debug_type($values),
             ));
@@ -119,7 +119,7 @@ class SimpleCache implements CacheInterface
                 $items = $this->pool->getItems($keys);
             } else {
                 foreach ($values as $key => $value) {
-                    $key = is_int($key) ? (string) $key : $key;
+                    $key = \is_int($key) ? (string) $key : $key;
                     $items[$key] = $this->pool->getItem($key)->set($value);
                 }
             }
@@ -145,7 +145,7 @@ class SimpleCache implements CacheInterface
         return $this->pool->commit() && $success;
     }
 
-    #[\Override]
+    #[Override]
     public function deleteMultiple(iterable $keys): bool
     {
         $keys = $this->iterableToArray($keys);
@@ -159,7 +159,7 @@ class SimpleCache implements CacheInterface
         }
     }
 
-    #[\Override]
+    #[Override]
     public function has(string $key): bool
     {
         try {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,10 +13,10 @@ namespace Altair\Session;
 
 use Altair\Session\Contracts\SessionBlockInterface;
 use Altair\Session\Contracts\SessionManagerInterface;
+use Override;
 
 class SessionBlock implements SessionBlockInterface
 {
-
     /**
      * SessionBlock constructor.
      */
@@ -27,7 +29,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function get(string $key, $default = null)
     {
         return $_SESSION[$this->name][$key] ?? $default;
@@ -36,7 +38,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function set(string $key, $value): SessionBlockInterface
     {
         $_SESSION[$this->name][$key] = $value;
@@ -47,7 +49,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function remove(string $key): SessionBlockInterface
     {
         if ($this->has($key)) {
@@ -60,7 +62,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function has(string $key): bool
     {
         return isset($_SESSION[$this->name][$key]);
@@ -69,7 +71,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): SessionBlockInterface
     {
         $_SESSION[$this->name] = [];
@@ -80,7 +82,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getFlash(string $key, $default = null, bool $delete = false)
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -103,7 +105,7 @@ class SessionBlock implements SessionBlockInterface
      * @inheritDoc
      * @return mixed[]
      */
-    #[\Override]
+    #[Override]
     public function getAllFlashes($delete = false): array
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -130,7 +132,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function setFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -144,7 +146,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function appendFlash(string $key, $value = true, bool $immediateRemoval = true): SessionBlockInterface
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -154,7 +156,7 @@ class SessionBlock implements SessionBlockInterface
 
         if (empty($original)) {
             $original = [$value];
-        } elseif (is_array($original)) {
+        } elseif (\is_array($original)) {
             $original[] = $value;
         } else {
             $original = [$original, $value];
@@ -166,7 +168,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function removeFlash($key)
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -182,7 +184,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function removeAllFlashes(): void
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
@@ -196,7 +198,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasFlash($key): bool
     {
         return $this->getFlash($key) !== null;
@@ -220,7 +222,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * Sets the segment properties to $_SESSION references.
      */
-    protected function load()
+    protected function load(): void
     {
         $_SESSION[$this->name] ??= [];
         $_SESSION[SessionBlockInterface::FLASH_KEY] ??= [];
@@ -229,7 +231,7 @@ class SessionBlock implements SessionBlockInterface
     /**
      * Resumes a previous session, or starts a new one, and loads the segment.
      */
-    protected function resumeOrStartSession()
+    protected function resumeOrStartSession(): void
     {
         if (!$this->resumeSession()) {
             $this->manager->start();
@@ -241,10 +243,10 @@ class SessionBlock implements SessionBlockInterface
      * Updates the counters for flash messages and removes outdated flash messages.
      * This method should only be called once when the session block class is created.
      */
-    protected function updateFlashCounters()
+    protected function updateFlashCounters(): void
     {
         $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
-        if (is_array($counters)) {
+        if (\is_array($counters)) {
             foreach ($counters as $key => $count) {
                 if ($count > 0) {
                     unset($counters[$key]);

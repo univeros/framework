@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,14 +11,17 @@
 
 namespace Altair\Structure;
 
-use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Contracts\SetInterface;
+use Altair\Structure\Traits\CollectionTrait;
 use ArrayAccess;
 use Error;
 use IteratorAggregate;
 use OutOfBoundsException;
+use Override;
+use ReturnTypeWillChange;
+use Traversable;
 
 /**
  * Set.
@@ -39,13 +44,13 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      * Creates a new set using the values of an array or Traversable object.
      * The keys of either will not be preserved.
      *
-     * @param array|\Traversable|null $values
+     * @param array|Traversable|null $values
      */
     public function __construct($values = null)
     {
         $this->internal = new Map();
 
-        if (func_num_args() !== 0) {
+        if (\func_num_args() !== 0) {
             $this->add(...$values);
         }
     }
@@ -53,7 +58,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function add(...$values): SetInterface
     {
         foreach ($values as $value) {
@@ -66,7 +71,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function allocate(int $capacity): SetInterface
     {
         $this->internal->allocate($capacity);
@@ -77,7 +82,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function diff(SetInterface $set): SetInterface
     {
         return $this->internal->diff($set->getMap())->keys();
@@ -86,7 +91,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function xor(SetInterface $set): SetInterface
     {
         return $this->internal->xor($set->getMap())->keys();
@@ -95,7 +100,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function capacity(): int
     {
         return $this->internal->capacity();
@@ -104,7 +109,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function contains(...$values): bool
     {
         foreach ($values as $value) {
@@ -119,7 +124,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function filter(callable $callback = null): SetInterface
     {
         return new static(array_filter($this->toArray(), $callback ?: 'boolval'));
@@ -130,7 +135,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @return mixed the first value in the set.
      */
-    #[\Override]
+    #[Override]
     public function first()
     {
         return $this->internal->first()->key;
@@ -141,7 +146,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @return mixed the last value in the set.
      */
-    #[\Override]
+    #[Override]
     public function last()
     {
         return $this->internal->last()->key;
@@ -150,7 +155,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function get(int $position)
     {
         return $this->internal->skip($position)->key;
@@ -159,7 +164,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function intersect(SetInterface $set): SetInterface
     {
         return $this->internal->intersect($set->getMap())->keys();
@@ -168,7 +173,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function join(?string $glue = null): string
     {
         return implode($glue ?? '', $this->toArray());
@@ -177,7 +182,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function reduce(callable $callback, $initial = null)
     {
         $carry = $initial;
@@ -192,7 +197,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function remove(...$values): void
     {
         foreach ($values as $value) {
@@ -203,7 +208,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Returns a reversed copy of the set.
      */
-    #[\Override]
+    #[Override]
     public function reverse(): SetInterface
     {
         $values = array_reverse($this->internal->keys()->toArray());
@@ -214,7 +219,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function slice(int $offset, int $length = null): SetInterface
     {
         return new static($this->internal->slice($offset, $length)->keys());
@@ -223,7 +228,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function sort(callable $comparator = null): SetInterface
     {
         return new static($this->getMap()->ksort($comparator)->keys());
@@ -232,9 +237,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Returns the result of adding all given values to the set.
      *
-     * @param array|\Traversable $values
+     * @param array|Traversable $values
      */
-    #[\Override]
+    #[Override]
     public function merge($values): SetInterface
     {
         $merged = $this->copy();
@@ -251,7 +256,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @return int|float The sum of all the values in the set.
      */
-    #[\Override]
+    #[Override]
     public function sum(): float|int
     {
         return array_sum($this->toArray());
@@ -265,7 +270,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      *
      */
-    #[\Override]
+    #[Override]
     public function union(SetInterface $set): SetInterface
     {
         $union = new static();
@@ -284,7 +289,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function getMap(): MapInterface
     {
         return $this->internal;
@@ -293,7 +298,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function isEmpty(): bool
     {
         return $this->internal->isEmpty();
@@ -302,7 +307,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function toArray(): array
     {
         return iterator_to_array($this);
@@ -311,8 +316,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Get iterator.
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function getIterator()
     {
         foreach ($this->internal as $key => $value) {
@@ -325,8 +330,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws OutOfBoundsException
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
@@ -341,8 +346,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function offsetGet($offset)
     {
         return $this->internal->skip($offset)->key;
@@ -353,9 +358,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetExists($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetExists($offset): bool
     {
         throw new Error('Not supported');
     }
@@ -365,9 +370,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetUnset($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetUnset($offset): void
     {
         throw new Error('Not supported');
     }

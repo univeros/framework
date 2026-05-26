@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -24,8 +26,10 @@ use Altair\Container\Exception\NotFoundException;
 use Altair\Container\Reflection\CachedReflection;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
+use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
+use ReflectionMethod;
 
 class Container implements ContainerInterface
 {
@@ -97,17 +101,17 @@ class Container implements ContainerInterface
         $this->making = [];
     }
 
-    #[\Override]
+    #[Override]
     public function get(string $id): mixed
     {
         if (!$this->isset($id)) {
-            throw new NotFoundException(sprintf('Class or alias %s not found.', $id));
+            throw new NotFoundException(\sprintf('Class or alias %s not found.', $id));
         }
 
         return $this->make($id);
     }
 
-    #[\Override]
+    #[Override]
     public function has(string $id): bool
     {
         return $this->isset($id);
@@ -169,16 +173,16 @@ class Container implements ContainerInterface
      */
     public function share(mixed $nameOrInstance): Container
     {
-        if (is_string($nameOrInstance)) {
+        if (\is_string($nameOrInstance)) {
             $this->shares->shareClass($nameOrInstance, $this->aliases);
-        } elseif (is_object($nameOrInstance)) {
+        } elseif (\is_object($nameOrInstance)) {
             $this->shares->shareInstance($nameOrInstance, $this->aliases);
         } else {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     '%s::share() requires a string class name or object instance at Argument 1; %s specified',
                     self::class,
-                    gettype($nameOrInstance)
+                    \gettype($nameOrInstance)
                 )
             );
         }
@@ -219,20 +223,20 @@ class Container implements ContainerInterface
     {
         if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
             $errorDetail = '';
-            if (is_string($callableOrMethodStr)) {
-                $errorDetail = sprintf(" but received '%s'", $callableOrMethodStr);
-            } elseif (is_array($callableOrMethodStr) && 2 === count($callableOrMethodStr)
+            if (\is_string($callableOrMethodStr)) {
+                $errorDetail = \sprintf(" but received '%s'", $callableOrMethodStr);
+            } elseif (\is_array($callableOrMethodStr) && 2 === \count($callableOrMethodStr)
                       &&
-                      array_key_exists(0, $callableOrMethodStr) &&
-                array_key_exists(1, $callableOrMethodStr)
+                      \array_key_exists(0, $callableOrMethodStr) &&
+                \array_key_exists(1, $callableOrMethodStr)
             ) {
-                if (is_string($callableOrMethodStr[0]) && is_string($callableOrMethodStr[1])) {
+                if (\is_string($callableOrMethodStr[0]) && \is_string($callableOrMethodStr[1])) {
                     $errorDetail = " but received ['" . $callableOrMethodStr[0] . "', '" . $callableOrMethodStr[1] . "']";
                 }
             }
 
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     '%s::delegate expects a valid callable or executable class::method string at Argument 2%s',
                     self::class,
                     $errorDetail
@@ -259,7 +263,7 @@ class Container implements ContainerInterface
 
         if (isset($this->making[$normalizedClass])) {
             throw new InjectionException(
-                sprintf(
+                \sprintf(
                     "Cyclic dependency detected while provisioning '%s'",
                     $className
                 )
@@ -268,7 +272,7 @@ class Container implements ContainerInterface
 
         $definition ??= new Definition([]);
 
-        $this->making[$normalizedClass] = count($this->making);
+        $this->making[$normalizedClass] = \count($this->making);
 
         if (isset($this->shares[$normalizedClass])) {
             unset($this->making[$normalizedClass]);
@@ -387,10 +391,10 @@ class Container implements ContainerInterface
         $interfaces = @class_implements($object);
         if ($interfaces === false) {
             throw new InjectionException(
-                sprintf(
+                \sprintf(
                     "Making %s did not result in an object, instead result is of type '%s'",
                     $normalizedClass,
-                    gettype($object)
+                    \gettype($object)
                 )
             );
         }
@@ -425,10 +429,10 @@ class Container implements ContainerInterface
         try {
             $constructor = $this->reflector->getConstructor($className);
 
-            if (!$constructor) {
+            if (!$constructor instanceof ReflectionMethod) {
                 $object = $this->instantiateWithoutConstructorParameters($className);
             } elseif (!$constructor->isPublic()) {
-                throw new InjectionException(sprintf("'%s' does not have public constructor.", $className));
+                throw new InjectionException(\sprintf("'%s' does not have public constructor.", $className));
             } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
                 $reflectionClass = $this->reflector->getClass($className);
                 $definition = isset($this->classDefinitions[$normalizedClass])
@@ -459,6 +463,6 @@ class Container implements ContainerInterface
             throw new InjectionException($className . ' is not instantiable');
         }
 
-        return new $className;
+        return new $className();
     }
 }

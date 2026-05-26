@@ -17,16 +17,17 @@ use Altair\Container\Container;
 use League\Flysystem\FilesystemAdapter;
 use League\Flysystem\Local\LocalFilesystemAdapter;
 use League\Flysystem\UnixVisibility\PortableVisibilityConverter;
+use Override;
 
 class LocalAdapterConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container
-            ->delegate(LocalFilesystemAdapter::class, fn (): LocalFilesystemAdapter => new LocalFilesystemAdapter(
+            ->delegate(LocalFilesystemAdapter::class, fn(): LocalFilesystemAdapter => new LocalFilesystemAdapter(
                 $this->env->get('FS_LOCAL_PATH'),
                 PortableVisibilityConverter::fromArray([]),
                 $this->env->get('FS_LOCAL_LOCK', LOCK_EX),

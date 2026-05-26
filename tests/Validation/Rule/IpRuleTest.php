@@ -139,7 +139,7 @@ class IpRuleTest extends TestCase
         return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
-    protected function assertValue($value, $options = null, $range = null)
+    protected function assertValue($value, $options = null, $range = null): bool
     {
         $rule = $this->buildRule($options, $range);
 

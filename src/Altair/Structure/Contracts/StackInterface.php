@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,12 +11,14 @@
 
 namespace Altair\Structure\Contracts;
 
+use UnderflowException;
+
 interface StackInterface extends CollectionInterface
 {
     /**
      * Returns the value at the top of the stack without removing it.
      *
-     * @throws \UnderflowException if the stack is empty.
+     * @throws UnderflowException if the stack is empty.
      *
      * @return mixed
      *
@@ -24,7 +28,7 @@ interface StackInterface extends CollectionInterface
     /**
      * Returns and removes the value at the top of the stack.
      *
-     * @throws \UnderflowException if the stack is empty.
+     * @throws UnderflowException if the stack is empty.
      *
      * @return mixed
      *

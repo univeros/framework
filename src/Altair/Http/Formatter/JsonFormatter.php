@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Http\Formatter;
 
 use Altair\Http\Contracts\OutputFormatterInterface;
 use Altair\Http\Contracts\PayloadInterface;
+use Override;
 
 class JsonFormatter implements OutputFormatterInterface
 {
@@ -27,7 +30,7 @@ class JsonFormatter implements OutputFormatterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public static function accepts(): array
     {
         return ['application/json'];
@@ -36,7 +39,7 @@ class JsonFormatter implements OutputFormatterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function type(): string
     {
         return 'application/json';
@@ -45,7 +48,7 @@ class JsonFormatter implements OutputFormatterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function body(PayloadInterface $payload): string
     {
         return json_encode($payload->getOutput(), $this->options, $this->depth);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,15 +12,16 @@
 namespace Altair\Http\Exception;
 
 use Altair\Http\Contracts\HttpStatusCodeInterface;
+use Exception;
 
 class HttpNotFoundException extends HttpBadRequestException
 {
     /**
      * Constructor.
      * @param string $message error message
-     * @param \Exception $previous The previous exception used for the exception chaining.
+     * @param Exception $previous The previous exception used for the exception chaining.
      */
-    public function __construct($message = null, \Exception $previous = null)
+    public function __construct($message = null, Exception $previous = null)
     {
         parent::__construct($message, HttpStatusCodeInterface::HTTP_NOT_FOUND, $previous);
     }

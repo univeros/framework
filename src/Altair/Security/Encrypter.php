@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,12 +18,11 @@ use Altair\Security\Exception\EncryptException;
 use Altair\Security\Exception\InvalidConfigException;
 use Altair\Security\Validator\PayloadValidator;
 use Exception;
+use Override;
 
 class Encrypter implements EncrypterInterface
 {
-
     protected string $derivedKey;
-
 
     /**
      * Encrypter constructor.
@@ -31,9 +32,10 @@ class Encrypter implements EncrypterInterface
      */
     public function __construct(protected KeyInterface $key, protected string $cipher)
     {
-        if (!extension_loaded('openssl')) {
+        if (!\extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension.');
         }
+
         $this->derivedKey = $this->key->derive();
 
         if (!$this->supports($this->derivedKey, $this->cipher)) {
@@ -62,7 +64,7 @@ class Encrypter implements EncrypterInterface
      * @inheritDoc
      * @throws Exception
      */
-    #[\Override]
+    #[Override]
     public function encrypt($value): string
     {
         $iv = random_bytes(EncrypterInterface::BLOCK_SIZE);
@@ -78,7 +80,7 @@ class Encrypter implements EncrypterInterface
 
         $json = json_encode(['iv' => $iv, 'value' => $value, 'mac' => $mac]);
 
-        if (!is_string($json)) {
+        if (!\is_string($json)) {
             throw new EncryptException('Unable to encrypt the data.');
         }
 
@@ -89,7 +91,7 @@ class Encrypter implements EncrypterInterface
      * @inheritDoc
      * @throws DecryptException
      */
-    #[\Override]
+    #[Override]
     public function decrypt(string $payload): mixed
     {
         $data = $this->getPayload($payload);
@@ -106,7 +108,7 @@ class Encrypter implements EncrypterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hash(string $iv, string $data, bool $raw = false): string
     {
         return hash_hmac(EncrypterInterface::HASH_SHA256_ALGORITHM, $iv . $data, $this->derivedKey, $raw);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Courier\Service;
 use Altair\Courier\Contracts\CommandInterface;
 use Altair\Courier\Contracts\CommandLocatorServiceInterface;
 use Altair\Courier\Exception\UnknownCommandMessageNameException;
+use Override;
 
 class CallableCommandLocatorService implements CommandLocatorServiceInterface
 {
@@ -31,22 +34,22 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function has(string $name): bool
     {
-        return call_user_func($this->callable, $name) !== null;
+        return \call_user_func($this->callable, $name) !== null;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function get(string $name): CommandInterface
     {
         if (!$this->has($name)) {
-            throw new UnknownCommandMessageNameException(sprintf('Unknown message name: %s', $name));
+            throw new UnknownCommandMessageNameException(\sprintf('Unknown message name: %s', $name));
         }
 
-        return call_user_func($this->callable, $name);
+        return \call_user_func($this->callable, $name);
     }
 }

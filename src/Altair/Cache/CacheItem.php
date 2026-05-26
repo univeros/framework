@@ -15,6 +15,7 @@ use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
+use Override;
 use Psr\Cache\CacheItemInterface;
 
 final class CacheItem implements CacheItemInterface
@@ -23,32 +24,38 @@ final class CacheItem implements CacheItemInterface
     // CacheItemPool (see createCacheItemFactoryClosure / createDeferredMergerClosure).
     // Static analysers cannot see those references — do not "clean up" as unused.
     protected $key;
+
     protected $value;
+
     protected $isHit;
+
     protected $expirationTime;
+
     protected $defaultLifespan;
+
     protected array $tags = [];
+
     protected ?CacheItemTagValidatorInterface $tagValidator = null;
 
-    #[\Override]
+    #[Override]
     public function getKey(): string
     {
         return $this->key;
     }
 
-    #[\Override]
+    #[Override]
     public function get(): mixed
     {
         return $this->value;
     }
 
-    #[\Override]
+    #[Override]
     public function isHit(): bool
     {
         return $this->isHit;
     }
 
-    #[\Override]
+    #[Override]
     public function set(mixed $value): static
     {
         $this->value = $value;
@@ -56,17 +63,17 @@ final class CacheItem implements CacheItemInterface
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function expiresAt(?DateTimeInterface $expiration): static
     {
-        $this->expirationTime = $expiration === null
-            ? ($this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null)
-            : $expiration->getTimestamp();
+        $this->expirationTime = $expiration instanceof DateTimeInterface
+            ? ($expiration->getTimestamp())
+            : ($this->defaultLifespan > 0 ? time() + $this->defaultLifespan : null);
 
         return $this;
     }
 
-    #[\Override]
+    #[Override]
     public function expiresAfter(int|DateInterval|null $time): static
     {
         if ($time === null) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,6 +11,6 @@
 
 namespace Altair\Cookie\Exception;
 
-class InvalidCallException extends \BadMethodCallException
-{
-}
+use BadMethodCallException;
+
+class InvalidCallException extends BadMethodCallException {}

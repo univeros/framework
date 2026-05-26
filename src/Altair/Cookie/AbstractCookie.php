@@ -16,8 +16,7 @@ abstract readonly class AbstractCookie
     protected function __construct(
         protected string $name,
         protected ?string $value = null,
-    ) {
-    }
+    ) {}
 
     public function getName(): string
     {

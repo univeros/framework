@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Sanitation\Filter;
 
 use DateTime;
+use Override;
 
 class DateTimeFilter extends AbstractFilter
 {
@@ -20,18 +23,18 @@ class DateTimeFilter extends AbstractFilter
      */
     public function __construct(string $format = null)
     {
-        $this->format = $format?? 'Y-m-d H:i:s';
+        $this->format = $format ?? 'Y-m-d H:i:s';
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value)
     {
         $value = $this->buildDateTime($value);
 
-        return ($value instanceof \DateTime)
+        return ($value instanceof DateTime)
             ? $value->format($this->format)
             : $value;
     }
@@ -47,7 +50,7 @@ class DateTimeFilter extends AbstractFilter
             return $value;
         }
 
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 
@@ -57,9 +60,13 @@ class DateTimeFilter extends AbstractFilter
 
         $datetime = date_create($value);
 
+        if ($datetime === false) {
+            return null;
+        }
+
         $errors = DateTime::getLastErrors();
 
-        if ($datetime === false || $errors['warnings']) {
+        if ($errors !== false && !empty($errors['warnings'])) {
             return null;
         }
 

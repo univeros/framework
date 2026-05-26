@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,10 +18,11 @@ use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Sanitation\FiltersRunner;
 use Altair\Sanitation\Resolver\FilterResolver;
+use Override;
 
 class SanitationConfiguration implements ConfigurationInterface
 {
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container

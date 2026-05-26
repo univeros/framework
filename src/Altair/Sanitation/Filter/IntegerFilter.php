@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,6 +11,8 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class IntegerFilter extends AbstractFilter
 {
     /**
@@ -16,25 +20,25 @@ class IntegerFilter extends AbstractFilter
      *
      * @return int|mixed|null
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?int
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 
-        if (is_int($value)) {
+        if (\is_int($value)) {
             return $value;
         }
 
-        if (is_bool($value)) {
-            return (int)$value;
+        if (\is_bool($value)) {
+            return (int) $value;
         }
 
         if (is_numeric($value)) {
             // double case to honor scientific notation
             // (int) 1E5 == 15, but (int) (float) 1E5 == 100000
-            return (int)((float)$value);
+            return (int) ((float) $value);
         }
 
         return null;

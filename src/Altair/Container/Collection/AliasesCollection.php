@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -29,7 +31,7 @@ class AliasesCollection extends Map
      */
     public function define(string $original, string $alias, SharesCollection $sharesCollection): self
     {
-        if (($original === '' || $original === '0' || !is_string($original)) || ($alias === '' || $alias === '0' || !is_string($alias))) {
+        if (($original === '' || $original === '0' || !\is_string($original)) || ($alias === '' || $alias === '0' || !\is_string($alias))) {
             throw new InvalidArgumentException('"$original" and/or "$alias" cannot be empty.');
         }
 
@@ -38,7 +40,7 @@ class AliasesCollection extends Map
 
         if (isset($sharesCollection[$original])) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Cannot alias class %s to %s because it is currently shared',
                     $this->normalizeName($sharesCollection->get($original)::class),
                     $alias
@@ -54,13 +56,12 @@ class AliasesCollection extends Map
         return $this->put($original, $alias);
     }
 
-    
     public function resolve(string $name): array
     {
         $normalizedName = $this->normalizeName($name);
 
         if (isset($this[$normalizedName])) {
-            $name = (string)$this->get($normalizedName);
+            $name = (string) $this->get($normalizedName);
             $normalizedName = $this->normalizeName($name);
         }
 
@@ -72,6 +73,6 @@ class AliasesCollection extends Map
      */
     public function getNormalized(string $name): string
     {
-        return $this->normalizeName((string)$this->get($name));
+        return $this->normalizeName((string) $this->get($name));
     }
 }

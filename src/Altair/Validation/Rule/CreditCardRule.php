@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Validation\Rule;
 
 use Altair\Validation\Exception\InvalidArgumentException;
+use Override;
 
 class CreditCardRule extends AbstractRule
 {
@@ -23,7 +26,7 @@ class CreditCardRule extends AbstractRule
         ],
         'carteblanche' => [
             'pattern' => '/^3(0[0-5]\d{11}|[68]\d{12})/',
-            'length' => [14]
+            'length' => [14],
         ],
         'maestro' => [
             'pattern' => '/^(5(018|0[23]|[68])|6(30|7))/',
@@ -47,11 +50,11 @@ class CreditCardRule extends AbstractRule
         ],
         'amex' => [
             'pattern' => '/^3[47]/',
-            'length' => [15]
+            'length' => [15],
         ],
         'dinersclub' => [
             'pattern' => '/^3[0689]/',
-            'length' => [14]
+            'length' => [14],
         ],
         'discover' => [
             'pattern' => '/^6([045]|22)/',
@@ -67,13 +70,13 @@ class CreditCardRule extends AbstractRule
         ],
         'solo' => [
             'pattern' => '/^(6334|6767)|(6334|6767)|(6334|6767)/',
-            'length' => [16, 18, 19]
+            'length' => [16, 18, 19],
         ],
         'switch' => [
             'pattern' => '/^(4903|4905|4911|4936|6333|6759)|(4903|4905|4911|4936|6333|6759)|' .
                 '(4903|4905|4911|4936|6333|6759)|564182|564182|564182|633110|633110|633110/',
-            'length' => [16, 18, 19]
-        ]
+            'length' => [16, 18, 19],
+        ],
     ];
 
     /**
@@ -88,8 +91,8 @@ class CreditCardRule extends AbstractRule
      */
     public function __construct(string $type)
     {
-        if (!array_key_exists($type, $this->cards)) {
-            throw new InvalidArgumentException(sprintf('Unknown credit card type: "%s".', $type));
+        if (!\array_key_exists($type, $this->cards)) {
+            throw new InvalidArgumentException(\sprintf('Unknown credit card type: "%s".', $type));
         }
 
         $this->type = $type;
@@ -98,7 +101,7 @@ class CreditCardRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
         $value = $this->sanitize($value);
@@ -110,10 +113,10 @@ class CreditCardRule extends AbstractRule
     /**
      * @param $value
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid "%s" credit card number.', $value, $this->type);
+        return \sprintf('"%s" is not a valid "%s" credit card number.', $value, $this->type);
     }
 
     /**
@@ -123,7 +126,7 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertNumeric(string $value): bool
     {
-        return (bool)preg_match('/^\d+$/', $value);
+        return (bool) preg_match('/^\d+$/', $value);
     }
 
     /**
@@ -134,7 +137,7 @@ class CreditCardRule extends AbstractRule
     protected function assertLength(string $value): bool
     {
         foreach ($this->cards[$this->type]['length'] as $length) {
-            if (strlen($value) === $length) {
+            if (\strlen($value) === $length) {
                 return true;
             }
         }
@@ -149,7 +152,7 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertPattern(string $value): bool
     {
-        return (bool)preg_match($this->cards[$this->type]['pattern'], $value);
+        return (bool) preg_match($this->cards[$this->type]['pattern'], $value);
     }
 
     /**
@@ -159,13 +162,13 @@ class CreditCardRule extends AbstractRule
      */
     protected function assertLuhn($value): bool
     {
-        if (in_array($this->type, $this->noLuhn, false)) {
+        if (\in_array($this->type, $this->noLuhn, false)) {
             return true;
         }
 
         $cardNumber = strrev($value);
         $checksum = 0;
-        $length = strlen($cardNumber);
+        $length = \strlen($cardNumber);
         for ($i = 0; $i < $length; $i++) {
             $currentNum = $cardNumber[$i];
             if ($i % 2 === 1) {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,15 +11,17 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class TitleCaseFilter extends AbstractFilter
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?string
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return null;
         }
 

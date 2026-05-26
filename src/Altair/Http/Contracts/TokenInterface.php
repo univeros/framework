@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,7 +13,7 @@ namespace Altair\Http\Contracts;
 
 interface TokenInterface
 {
-    const TOKEN_KEY = 'altair:http:token';
+    public const TOKEN_KEY = 'altair:http:token';
 
     public function getToken(): string;
 

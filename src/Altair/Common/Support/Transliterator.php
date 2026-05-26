@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -22,7 +24,7 @@ class Transliterator
      * @see http://unicode.org/reports/tr15/#Normalization_Forms_Table
      * @see transliterate()
      */
-    const TRANSLITERATE_STRICT = 'Any-Latin; NFKD';
+    public const TRANSLITERATE_STRICT = 'Any-Latin; NFKD';
 
     /**
      * Shortcut for `Any-Latin; Latin-ASCII` transliteration rule. The rule is medium, letters will be
@@ -35,7 +37,7 @@ class Transliterator
      * @see http://unicode.org/reports/tr15/#Normalization_Forms_Table
      * @see transliterate()
      */
-    const TRANSLITERATE_MEDIUM = 'Any-Latin; Latin-ASCII';
+    public const TRANSLITERATE_MEDIUM = 'Any-Latin; Latin-ASCII';
 
     /**
      * Shortcut for `Any-Latin; Latin-ASCII; [\u0080-\uffff] remove` transliteration rule. The rule is loose,
@@ -49,7 +51,7 @@ class Transliterator
      * @see http://unicode.org/reports/tr15/#Normalization_Forms_Table
      * @see transliterate()
      */
-    const TRANSLITERATE_LOOSE = 'Any-Latin; Latin-ASCII; [\u0080-\uffff] remove';
+    public const TRANSLITERATE_LOOSE = 'Any-Latin; Latin-ASCII; [\u0080-\uffff] remove';
 
     /**
      * @var mixed Either a [[\Transliterator]], or a string from which a [[\Transliterator]] can be built
@@ -110,7 +112,7 @@ class Transliterator
     public function transliterate(string $value, $transliterator = null): string|false
     {
         $transliterator ??= $this->transliterator;
-        return extension_loaded('intl')
+        return \extension_loaded('intl')
             ? transliterator_transliterate($transliterator, $value)
             : strtr($value, $this->transliteration);
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,20 +11,22 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class BooleanFilter extends AbstractFilter
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 
         $filtered = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 
-        return is_bool($filtered) ? $filtered : (bool)$value;
+        return \is_bool($filtered) ? $filtered : (bool) $value;
     }
 }

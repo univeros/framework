@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,13 +11,17 @@
 
 namespace Altair\Structure;
 
-use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\StackInterface;
+use Altair\Structure\Traits\CollectionTrait;
 use ArrayAccess;
 use Error;
+use Generator;
 use IteratorAggregate;
 use OutOfBoundsException;
+use Override;
+use ReturnTypeWillChange;
+use Traversable;
 
 /**
  * Stack.
@@ -33,7 +39,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|\Traversable $values
+     * @param array|Traversable $values
      */
     public function __construct($values = null)
     {
@@ -43,7 +49,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function peek()
     {
         return $this->internal->last();
@@ -52,7 +58,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function pop()
     {
         return $this->internal->pop();
@@ -61,7 +67,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function push(...$values): StackInterface
     {
         $this->internal->push(...$values);
@@ -72,7 +78,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function copy(): static
     {
         return new static($this->internal);
@@ -81,17 +87,17 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function count(): int
     {
-        return count($this->internal);
+        return \count($this->internal);
     }
 
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function allocate(int $capacity): static
     {
         $this->internal->allocate($capacity);
@@ -102,7 +108,7 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * Returns the current capacity of the stack.
      */
-    #[\Override]
+    #[Override]
     public function capacity(): int
     {
         return $this->internal->capacity();
@@ -111,17 +117,17 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function toArray(): array
     {
         return array_reverse($this->internal->toArray());
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -134,8 +140,8 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws OutOfBoundsException
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
@@ -150,9 +156,9 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetGet($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetGet($offset): void
     {
         throw new Error('Not supported');
     }
@@ -162,9 +168,9 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetUnset($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetUnset($offset): void
     {
         throw new Error('Not supported');
     }
@@ -174,9 +180,9 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetExists($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetExists($offset): bool
     {
         throw new Error('Not supported');
     }
