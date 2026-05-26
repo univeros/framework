@@ -114,6 +114,11 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # Don't write the default GITHUB_TOKEN into git's extraheader config —
+          # that bot token only has write access to univeros/framework, and its
+          # Authorization header would shadow the SPLIT_TOKEN we embed in the
+          # push URL, causing pushes to sub-repos to be rejected with 403.
+          persist-credentials: false
 
       - name: Install splitsh/lite
         run: |
