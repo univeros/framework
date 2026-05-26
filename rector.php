@@ -54,6 +54,13 @@ return RectorConfig::configure()
         \Rector\TypeDeclaration\Rector\ClassMethod\ReturnTypeFromReturnDirectArrayRector::class => [
             __DIR__ . '/tests/Container/fixtures.php',
         ],
+        // CLI discovery fixtures intentionally declare #[Argument]/#[Option]
+        // attributes on __invoke parameters. The body returns 0 without using
+        // them, but the parameters are the test surface — they're what the
+        // AttributeCommandDiscoverer reflects on. Rector sees them as unused.
+        \Rector\DeadCode\Rector\ClassMethod\RemoveUnusedPublicMethodParameterRector::class => [
+            __DIR__ . '/tests/Cli/Discovery/fixtures',
+        ],
     ])
     ->withPhpSets(php83: true)
     ->withSets([

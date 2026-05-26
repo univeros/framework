@@ -26,9 +26,13 @@
         "psr/log": "^3.0",
         "psr/simple-cache": "^3.0",
         "relay/relay": "^2.1",
+        "symfony/console": "^7.0",
         "vlucas/phpdotenv": "^5.6",
         "willdurand/negotiation": "^3.1"
     },
+    "bin": [
+        "bin/altair"
+    ],
     "require-dev": {
         "ext-intl": "*",
         "ext-memcached": "*",
@@ -57,7 +61,9 @@
         }
     },
     "replace": {
+        "univeros/agent-spec": "self.version",
         "univeros/cache": "self.version",
+        "univeros/cli": "self.version",
         "univeros/common": "self.version",
         "univeros/configuration": "self.version",
         "univeros/container": "self.version",
