@@ -1,0 +1,129 @@
+name: Split monorepo
+
+# Manual trigger only for now. Once the framework is production-ready and
+# the deferred test coverage + PHPStan baseline cleanup land, change the
+# trigger to:
+#   on:
+#     push:
+#       branches: [master]
+#       tags: ['v*']
+# and the workflow will run automatically on every push and tag.
+#
+# See issue #14 for the full plan.
+
+on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: 'Single package to split (leave blank to split all 16)'
+        required: false
+        type: choice
+        default: ''
+        options:
+          - ''
+          - cache
+          - common
+          - configuration
+          - container
+          - cookie
+          - courier
+          - data
+          - filesystem
+          - happen
+          - http
+          - middleware
+          - sanitation
+          - security
+          - session
+          - structure
+          - validation
+      dry_run:
+        description: 'Compute splits but skip pushing to sub-repos'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  SPLITSH_VERSION: v1.0.1
+
+jobs:
+  split:
+    name: Split ${{ matrix.package.name }}
+    runs-on: ubuntu-latest
+
+    # When `package` input is provided, restrict the matrix to that one entry
+    # via the per-job `if:` guard below.
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - { name: cache,         path: src/Altair/Cache }
+          - { name: common,        path: src/Altair/Common }
+          - { name: configuration, path: src/Altair/Configuration }
+          - { name: container,     path: src/Altair/Container }
+          - { name: cookie,        path: src/Altair/Cookie }
+          - { name: courier,       path: src/Altair/Courier }
+          - { name: data,          path: src/Altair/Data }
+          - { name: filesystem,    path: src/Altair/Filesystem }
+          - { name: happen,        path: src/Altair/Happen }
+          - { name: http,          path: src/Altair/Http }
+          - { name: middleware,    path: src/Altair/Middleware }
+          - { name: sanitation,    path: src/Altair/Sanitation }
+          - { name: security,      path: src/Altair/Security }
+          - { name: session,       path: src/Altair/Session }
+          - { name: structure,     path: src/Altair/Structure }
+          - { name: validation,    path: src/Altair/Validation }
+
+    if: github.event.inputs.package == '' || github.event.inputs.package == matrix.package.name
+
+    steps:
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install splitsh/lite
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/splitsh && cd /tmp/splitsh
+          curl -sSL -o splitsh.tar.gz \
+            "https://github.com/splitsh/lite/releases/download/${SPLITSH_VERSION}/lite_linux_amd64.tar.gz"
+          tar xzf splitsh.tar.gz
+          sudo mv splitsh-lite /usr/local/bin/
+          splitsh-lite --version
+
+      - name: Compute split for ${{ matrix.package.path }}
+        id: split
+        run: |
+          set -euo pipefail
+          sha=$(splitsh-lite --prefix="${{ matrix.package.path }}")
+          if [[ -z "$sha" ]]; then
+            echo "::error::splitsh-lite produced an empty SHA for ${{ matrix.package.path }}"
+            exit 1
+          fi
+          echo "Split SHA for ${{ matrix.package.name }}: $sha"
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+
+      - name: Push split to univeros/${{ matrix.package.name }}
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          SPLIT_TOKEN: ${{ secrets.SPLIT_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [[ -z "${SPLIT_TOKEN:-}" ]]; then
+            echo "::error::SPLIT_TOKEN secret is not configured on this repository"
+            exit 1
+          fi
+
+          remote="https://x-access-token:${SPLIT_TOKEN}@github.com/univeros/${{ matrix.package.name }}.git"
+          sha="${{ steps.split.outputs.sha }}"
+
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            # Tag push: propagate the tag at the split SHA
+            echo "Pushing tag $GITHUB_REF to univeros/${{ matrix.package.name }}"
+            git push "$remote" "${sha}:${GITHUB_REF}"
+          else
+            # Branch push: force-update master on the sub-repo
+            echo "Pushing $sha to univeros/${{ matrix.package.name }} master"
+            git push "$remote" "${sha}:refs/heads/master" --force
+          fi
