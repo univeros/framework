@@ -10,7 +10,6 @@ use Altair\Tests\Cli\Fixture\Role;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;
-use Symfony\Component\Console\Input\InputOption;
 
 class OptionBinderTest extends TestCase
 {

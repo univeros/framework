@@ -18,6 +18,7 @@ class ValueCoercerTest extends TestCase
 {
     private ValueCoercer $coercer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->coercer = new ValueCoercer();

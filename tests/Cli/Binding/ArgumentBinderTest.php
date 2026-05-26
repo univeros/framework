@@ -9,7 +9,6 @@ use Altair\Cli\Binding\ArgumentBinder;
 use PHPUnit\Framework\TestCase;
 use ReflectionFunction;
 use ReflectionParameter;
-use Symfony\Component\Console\Input\InputArgument;
 
 class ArgumentBinderTest extends TestCase
 {

@@ -42,6 +42,7 @@ class OptionBinder
             if ($isArray) {
                 $mode |= InputOption::VALUE_IS_ARRAY;
             }
+
             $default = $parameter->isDefaultValueAvailable()
                 ? $this->inspector->defaultForConsole($parameter)
                 : null;

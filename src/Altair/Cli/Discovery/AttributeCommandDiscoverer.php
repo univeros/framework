@@ -41,6 +41,7 @@ class AttributeCommandDiscoverer implements CommandLocatorInterface
                 if (isset($found[$class])) {
                     continue;
                 }
+
                 $found[$class] = true;
 
                 yield $class;
@@ -64,7 +65,11 @@ class AttributeCommandDiscoverer implements CommandLocatorInterface
         );
 
         foreach ($iterator as $file) {
-            if (!$file->isFile() || $file->getExtension() !== 'php') {
+            if (!$file->isFile()) {
+                continue;
+            }
+
+            if ($file->getExtension() !== 'php') {
                 continue;
             }
 

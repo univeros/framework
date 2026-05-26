@@ -100,8 +100,8 @@ class AltairCommand extends SymfonyCommand
     {
         try {
             $arguments = $this->resolveArguments($input);
-        } catch (ValueCoercionException $e) {
-            throw new SymfonyInvalidArgumentException($e->getMessage(), 0, $e);
+        } catch (ValueCoercionException $valueCoercionException) {
+            throw new SymfonyInvalidArgumentException($valueCoercionException->getMessage(), 0, $valueCoercionException);
         }
 
         $instance = $this->container->make($this->commandClass);
