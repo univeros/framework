@@ -140,4 +140,47 @@ class EncrypterTest extends TestCase
         $this->assertNotEquals('foo', $encrypted);
         $this->assertEquals('foo', $e->decrypt($encrypted));
     }
+
+    public function testDecryptDefaultsToScalarsAndArraysOnly(): void
+    {
+        $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
+        $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER);
+
+        $object = new \stdClass();
+        $object->name = 'altair';
+
+        $encrypted = $e->encrypt($object);
+        $decoded = $e->decrypt($encrypted);
+
+        $this->assertInstanceOf(\__PHP_Incomplete_Class::class, $decoded);
+    }
+
+    public function testDecryptHonoursExplicitAllowList(): void
+    {
+        $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
+        $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER, [\stdClass::class]);
+
+        $object = new \stdClass();
+        $object->name = 'altair';
+
+        $encrypted = $e->encrypt($object);
+        $decoded = $e->decrypt($encrypted);
+
+        $this->assertInstanceOf(\stdClass::class, $decoded);
+        $this->assertSame('altair', $decoded->name);
+    }
+
+    public function testDecryptAcceptsTrueForFullBackwardsCompatibility(): void
+    {
+        $key = new HkdfKey('test-key', null, null, EncrypterInterface::AES_128_CBC_CIPHER_KEY_LENGTH);
+        $e = new Encrypter($key, EncrypterInterface::AES_128_CBC_CIPHER, true);
+
+        $object = new \stdClass();
+        $object->name = 'altair';
+
+        $decoded = $e->decrypt($e->encrypt($object));
+
+        $this->assertInstanceOf(\stdClass::class, $decoded);
+        $this->assertSame('altair', $decoded->name);
+    }
 }

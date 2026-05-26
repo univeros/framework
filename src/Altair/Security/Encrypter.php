@@ -27,11 +27,18 @@ class Encrypter implements EncrypterInterface
     /**
      * Encrypter constructor.
      *
+     * @param bool|list<class-string> $allowedClasses controls object reconstruction during
+     *        decrypt(); see unserialize() docs. Default `false` rejects all classes (objects
+     *        decode to __PHP_Incomplete_Class). Pass an explicit allow-list to permit named
+     *        classes, or `true` to permit any class (not recommended).
      *
      * @throws InvalidConfigException
      */
-    public function __construct(protected KeyInterface $key, protected string $cipher)
-    {
+    public function __construct(
+        protected KeyInterface $key,
+        protected string $cipher,
+        protected bool|array $allowedClasses = false,
+    ) {
         if (!\extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension.');
         }
@@ -102,7 +109,7 @@ class Encrypter implements EncrypterInterface
             throw new DecryptException('Unable to decrypt the data.');
         }
 
-        return unserialize($value, ['allowed_classes' => true]);
+        return unserialize($value, ['allowed_classes' => $this->allowedClasses]);
     }
 
     /**
