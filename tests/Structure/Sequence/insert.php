@@ -75,4 +75,14 @@ trait insert
         $this->expectWrongIndexTypeException();
         $instance->insert($index);
     }
+
+    public function testInsertReturnsReceiverForChaining(): void
+    {
+        $instance = static::getInstance(['a', 'b', 'c']);
+
+        $returned = $instance->insert(1, 'X', 'Y');
+
+        $this->assertSame($instance, $returned, 'insert() must return the receiver so calls chain on the mutated sequence');
+        $this->assertToArray(['a', 'X', 'Y', 'b', 'c'], $returned);
+    }
 }
