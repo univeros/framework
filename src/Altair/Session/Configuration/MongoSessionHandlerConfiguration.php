@@ -16,6 +16,7 @@ use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Session\Handler\MongoSessionHandler;
 use MongoDB\Client;
+use MongoDB\Collection;
 use Override;
 use SessionHandlerInterface;
 
@@ -26,7 +27,7 @@ class MongoSessionHandlerConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $factory = fn() => (new Client(
+        $factory = fn(): Collection => (new Client(
             $this->env->get('SESSION_MONGO_URI', 'mongodb://12.0.0.1/')
         ))->selectCollection(
             $this->env->get('SESSION_MONGO_DB', 'session_db'),
