@@ -28,7 +28,7 @@ class MongoSessionHandlerConfiguration implements ConfigurationInterface
     public function apply(Container $container): void
     {
         $factory = fn(): Collection => (new Client(
-            $this->env->get('SESSION_MONGO_URI', 'mongodb://12.0.0.1/')
+            $this->env->get('SESSION_MONGO_URI', 'mongodb://127.0.0.1/')
         ))->selectCollection(
             $this->env->get('SESSION_MONGO_DB', 'session_db'),
             $this->env->get('SESSION_MONGO_COLLECTION', 'session_collection')
