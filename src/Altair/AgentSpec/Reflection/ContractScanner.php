@@ -74,6 +74,7 @@ class ContractScanner
         foreach ($reflection->getInterfaceNames() as $parent) {
             $extends[] = $this->types->shortName($parent);
         }
+
         sort($extends, SORT_STRING);
 
         $constants = [];
@@ -81,8 +82,10 @@ class ContractScanner
             if ($constant->getDeclaringClass()->getName() !== $reflection->getName()) {
                 continue;
             }
+
             $constants[] = $constant->getName();
         }
+
         sort($constants, SORT_STRING);
 
         return new ContractEntry(

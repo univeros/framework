@@ -8,6 +8,7 @@ use Altair\Tests\AgentSpec\Fixtures\SamplePackage\Contracts\GreeterInterface;
 
 final class SampleGreeter implements GreeterInterface
 {
+    #[\Override]
     public function greet(string $name): string
     {
         return self::DEFAULT_GREETING . ', ' . $name;

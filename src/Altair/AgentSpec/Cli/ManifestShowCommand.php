@@ -30,13 +30,13 @@ use Altair\Cli\Attribute\Option;
     name: 'manifest:show',
     description: 'Print one package manifest to stdout.',
 )]
-final class ManifestShowCommand
+final readonly class ManifestShowCommand
 {
     public function __construct(
-        private readonly PackageScannerInterface $scanner = new PackageScanner(),
-        private readonly PackageManifestGenerator $generator = new PackageManifestGenerator(),
-        private readonly ManifestRendererInterface $renderer = new MarkdownPackageRenderer(),
-        private readonly PathResolver $paths = new PathResolver(),
+        private PackageScannerInterface $scanner = new PackageScanner(),
+        private PackageManifestGenerator $generator = new PackageManifestGenerator(),
+        private ManifestRendererInterface $renderer = new MarkdownPackageRenderer(),
+        private PathResolver $paths = new PathResolver(),
     ) {}
 
     public function __invoke(

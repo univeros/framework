@@ -51,6 +51,7 @@ class ManifestPipeline
                 if (!$this->writer->check($path, $contents)) {
                     $touched[] = $this->relative($path, $options->outputRoot);
                 }
+
                 continue;
             }
 

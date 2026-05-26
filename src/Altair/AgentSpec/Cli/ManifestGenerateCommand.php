@@ -27,12 +27,12 @@ use Altair\Cli\Attribute\Option;
     name: 'manifest:generate',
     description: 'Generate AI-readable manifests for every framework sub-package.',
 )]
-final class ManifestGenerateCommand
+final readonly class ManifestGenerateCommand
 {
     public function __construct(
-        private readonly ManifestPipeline $pipeline = new ManifestPipeline(),
-        private readonly PathResolver $paths = new PathResolver(),
-        private readonly ConsoleReporter $reporter = new ConsoleReporter(),
+        private ManifestPipeline $pipeline = new ManifestPipeline(),
+        private PathResolver $paths = new PathResolver(),
+        private ConsoleReporter $reporter = new ConsoleReporter(),
     ) {}
 
     public function __invoke(
