@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,15 +11,12 @@
 
 namespace Altair\Cookie;
 
-abstract class AbstractCookie
+abstract readonly class AbstractCookie
 {
-    /**
-     * AbstractCookie constructor.
-     *
-     * @param string|null $value
-     */
-    protected function __construct(protected string $name, protected ?string $value = null)
-    {
+    protected function __construct(
+        protected string $name,
+        protected ?string $value = null,
+    ) {
     }
 
     public function getName(): string

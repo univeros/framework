@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,45 +15,20 @@ use Altair\Cookie\Contracts\SetCookieInterface;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use Stringable;
 
-class SetCookie extends AbstractCookie implements SetCookieInterface, \Stringable
+final readonly class SetCookie extends AbstractCookie implements SetCookieInterface, Stringable
 {
-    /**
-     * @var int
-     */
-    protected $expires = 0;
-
-    /**
-     * @var int
-     */
-    protected $maxAge = 0;
-
-    /**
-     * @var
-     */
-    protected $path;
-
-    /**
-     * @var
-     */
-    protected $domain;
-
-    /**
-     * @var bool
-     */
-    protected $secure = false;
-
-    /**
-     * @var bool
-     */
-    protected $httpOnly = false;
-
-    /**
-     * Cookie constructor.
-     * @param string|null $value
-     */
-    public function __construct(string $name, string $value = null)
-    {
+    public function __construct(
+        string $name,
+        ?string $value = null,
+        protected int $expires = 0,
+        protected int $maxAge = 0,
+        protected ?string $path = null,
+        protected ?string $domain = null,
+        protected bool $secure = false,
+        protected bool $httpOnly = false,
+    ) {
         parent::__construct($name, $value);
     }
 
@@ -59,13 +36,13 @@ class SetCookie extends AbstractCookie implements SetCookieInterface, \Stringabl
     public function __toString(): string
     {
         $parts = [
-            urlencode($this->name) . '=' . ($this->value ? urlencode($this->value) : ''),
+            urlencode($this->name) . '=' . ($this->value !== null && $this->value !== '' ? urlencode($this->value) : ''),
         ];
 
-        $parts[] = $this->domain ? sprintf('Domain=%s', $this->domain) : null;
-        $parts[] = $this->path ? sprintf('Path=%s', $this->path) : null;
-        $parts[] = $this->expires ? sprintf('Expires=%s', gmdate('D, d M Y H:i:s T', $this->expires)) : null;
-        $parts[] = $this->maxAge ? sprintf('Max-Age=%s', $this->maxAge) : null;
+        $parts[] = $this->domain !== null && $this->domain !== '' ? sprintf('Domain=%s', $this->domain) : null;
+        $parts[] = $this->path !== null && $this->path !== '' ? sprintf('Path=%s', $this->path) : null;
+        $parts[] = $this->expires !== 0 ? sprintf('Expires=%s', gmdate('D, d M Y H:i:s T', $this->expires)) : null;
+        $parts[] = $this->maxAge !== 0 ? sprintf('Max-Age=%s', $this->maxAge) : null;
         $parts[] = $this->secure ? 'Secure' : null;
         $parts[] = $this->httpOnly ? 'HttpOnly' : null;
 
@@ -108,96 +85,94 @@ class SetCookie extends AbstractCookie implements SetCookieInterface, \Stringabl
         return $this->httpOnly;
     }
 
-
-    public function withValue($value = null): SetCookie
+    public function withValue(?string $value = null): self
     {
-        $clone = clone $this;
-        $clone->value = $value;
-
-        return $clone;
+        return $this->with(value: $value);
     }
 
     /**
      * @param int|DateTime|DateTimeInterface|string|null $expires
      */
-    public function withExpires($expires = null): SetCookie
+    public function withExpires($expires = null): self
     {
-        $expires = $this->resolveExpires($expires);
-
-        $clone = clone $this;
-        $clone->expires = $expires;
-
-        return $clone;
+        return $this->with(expires: $this->resolveExpires($expires) ?? 0);
     }
 
-
-    public function withMaxAge(int $maxAge = null): SetCookie
+    public function withMaxAge(?int $maxAge = null): self
     {
-        $clone = clone $this;
-        $clone->maxAge = $maxAge;
-
-        return $clone;
+        return $this->with(maxAge: $maxAge ?? 0);
     }
 
-
-    public function withPath(string $path = null): SetCookie
+    public function withPath(?string $path = null): self
     {
-        $clone = clone $this;
-        $clone->path = $path;
-
-        return $clone;
+        return $this->with(path: $path);
     }
 
-
-    public function withDomain($domain = null): SetCookie
+    public function withDomain(?string $domain = null): self
     {
-        $clone = clone $this;
-        $clone->domain = $domain;
-
-        return $clone;
+        return $this->with(domain: $domain);
     }
 
-
-    public function withSecure(bool $secure = null): SetCookie
+    public function withSecure(?bool $secure = null): self
     {
-        $clone = clone $this;
-        $clone->secure = $secure;
-
-        return $clone;
+        return $this->with(secure: (bool) $secure);
     }
 
-
-    public function withHttpOnly(bool $httpOnly): SetCookie
+    public function withHttpOnly(bool $httpOnly): self
     {
-        $clone = clone $this;
-        $clone->httpOnly = $httpOnly;
-
-        return $clone;
+        return $this->with(httpOnly: $httpOnly);
     }
 
     /**
-     *@throws Exception
+     * @throws Exception
      */
-    public function remember(): SetCookie
+    public function remember(): self
     {
         return $this->withExpires(new DateTime('+5 years'));
     }
 
     /**
-     *@throws Exception
+     * @throws Exception
      */
-    public function expire(): SetCookie
+    public function expire(): self
     {
         return $this->withExpires(new DateTime('-5 years'));
     }
 
     /**
+     * Internal copy-with-overrides. Each parameter, if non-null, replaces the
+     * corresponding property; nulls mean "keep current value". To explicitly
+     * set a property to null, the caller's public with* method should map that
+     * to a defined sentinel (typically 0 or '').
+     */
+    private function with(
+        ?string $value = null,
+        ?int $expires = null,
+        ?int $maxAge = null,
+        ?string $path = null,
+        ?string $domain = null,
+        ?bool $secure = null,
+        ?bool $httpOnly = null,
+    ): self {
+        return new self(
+            name: $this->name,
+            value: $value ?? $this->value,
+            expires: $expires ?? $this->expires,
+            maxAge: $maxAge ?? $this->maxAge,
+            path: $path ?? $this->path,
+            domain: $domain ?? $this->domain,
+            secure: $secure ?? $this->secure,
+            httpOnly: $httpOnly ?? $this->httpOnly,
+        );
+    }
+
+    /**
      * @param int|DateTime|DateTimeInterface|string|null $expires
      */
-    protected function resolveExpires($expires = null): ?int
+    private function resolveExpires($expires = null): ?int
     {
         if ($expires === null) {
-            return $expires;
+            return null;
         }
 
         if ($expires instanceof DateTimeInterface) {
@@ -205,13 +180,15 @@ class SetCookie extends AbstractCookie implements SetCookieInterface, \Stringabl
         }
 
         if (is_numeric($expires)) {
-            return $expires;
+            return (int) $expires;
         }
 
         if (is_string($expires)) {
             $expiresTime = strtotime($expires);
 
-            return false !== $expiresTime ? $expiresTime : null;
+            return $expiresTime !== false ? $expiresTime : null;
         }
+
+        return null;
     }
 }

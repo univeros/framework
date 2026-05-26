@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,14 +12,11 @@
 namespace Altair\Cookie;
 
 use Altair\Cookie\Contracts\CookieInterface;
+use Stringable;
 
-class Cookie extends AbstractCookie implements CookieInterface, \Stringable
+final readonly class Cookie extends AbstractCookie implements CookieInterface, Stringable
 {
-    /**
-     * Cookie constructor.
-     * @param string|null $value
-     */
-    public function __construct(string $name, string $value = null)
+    public function __construct(string $name, ?string $value = null)
     {
         parent::__construct($name, $value);
     }
@@ -25,17 +24,11 @@ class Cookie extends AbstractCookie implements CookieInterface, \Stringable
     #[\Override]
     public function __toString(): string
     {
-        return urlencode($this->name) . '=' . urlencode($this->value);
+        return urlencode($this->name) . '=' . urlencode($this->value ?? '');
     }
 
-    /**
-     * @param string|null $value
-     */
-    public function withValue(string $value = null): Cookie
+    public function withValue(?string $value): self
     {
-        $cloned = clone $this;
-        $cloned->value = $value;
-
-        return $cloned;
+        return new self($this->name, $value);
     }
 }
