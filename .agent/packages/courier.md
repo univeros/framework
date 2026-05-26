@@ -7,7 +7,7 @@
 | Interface | Method | Returns | Notes |
 |---|---|---|---|
 | `CommandBusInterface` | `handle(CommandMessageInterface)` | `mixed` |  |
-| `CommandInterface` | `exec(CommandMessageInterface)` | `mixed` |  |
+| `CommandInterface` | `exec(CommandMessageInterface)` | `void` |  |
 | `CommandLocatorServiceInterface` | `get(string)` | `CommandInterface` |  |
 |  | `has(string)` | `bool` |  |
 | `CommandMessageInterface` | `getLogMessage()` | `LogMessageInterface\|null` |  |

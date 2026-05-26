@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\User;
+
+use Altair\Http\Contracts\PayloadInterface;
+use App\Http\Inputs\CreateUserInput;
+use LogicException;
+
+/**
+ * Generated domain stub.
+ *
+ * TODO: implement POST /users business logic.
+ */
+final class CreateUser
+{
+    public function __invoke(CreateUserInput $input, PayloadInterface $payload): PayloadInterface
+    {
+        throw new LogicException('TODO: implement ' . self::class . '::__invoke().');
+    }
+}
