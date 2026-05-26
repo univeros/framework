@@ -8,19 +8,39 @@ The framework targets PHP 8.3+, follows PSR-7/15/14/6/16 where applicable, and i
 
 ### HTTP stack
 
+The request/response lifecycle and everything that runs inside it.
+
+- [Http](./packages/http.md) — PSR-15 middleware pipeline with the framework's signature Action / Domain / Input / Responder request lifecycle, FastRoute integration, and JWT / basic / digest auth middleware.
 - [Cookie](./packages/cookie.md) — readonly value objects for `Cookie` / `Set-Cookie`, plus a manager that round-trips them through PSR-7 messages.
+- [Session](./packages/session.md) — server-side session storage with File / Mongo / PDO / Predis handlers, paired with the cookie envelope and HTTP cache limiters.
+- [Sanitation](./packages/sanitation.md) — sixteen input filters (Alpha, Boolean, Integer, Regex, …) that normalise raw values into safe canonical forms before validation runs.
+- [Validation](./packages/validation.md) — eighteen rule-based input validators (Email, IBAN, ZipCode, …) composable into rule collections and runnable through a `Validator`.
 
 ### Application core
 
-_Coming soon: container, configuration, happen, courier, middleware._
+Cross-cutting building blocks the rest of the framework — and your app — wire into.
 
-### Data & domain
+- [Container](./packages/container.md) — auto-wiring DI container with reflection caching, `define` / `share` / `alias` / `prepare` / `delegate` bindings, and DI-aware executable invocation.
+- [Configuration](./packages/configuration.md) — composable configuration objects with phpdotenv 5 environment loading and lazy container-bound resolution.
+- [Happen](./packages/happen.md) — PSR-14 event dispatcher with priorities, subscribers, named and wildcard listeners, and stoppable events.
+- [Courier](./packages/courier.md) — command bus with a middleware pipeline, container-backed handler resolution, and re-entrant dispatch handling.
+- [Middleware](./packages/middleware.md) — the framework's generic (non-HTTP) middleware contract — `Payload` + `Runner` + `MiddlewareManager` — used internally by Sanitation, Validation, and Courier.
 
-_Coming soon: data, validation, structure, common, sanitation._
+### Data & types
+
+Typed values, attribute traits, and the collection primitives many of the other packages build on.
+
+- [Data](./packages/data.md) — entity attribute traits, `JsonSerializable` and arrayable bridges, and date attribute mutators.
+- [Structure](./packages/structure.md) — typed data structures in pure PHP — `Map`, `Set`, `Vector`, `Queue`, `Stack`, `Deque`, `PriorityQueue`, `Pair`.
+- [Common](./packages/common.md) — small grab-bag of pure utilities — `Str`, `Arr`, `Inflector`, `Pluralizer`, `Transliterator`, and a stateful `ArrayRegistry`.
 
 ### Infrastructure
 
-_Coming soon: cache, filesystem, security, session, http._
+Talking to external systems and managing cryptographic primitives.
+
+- [Cache](./packages/cache.md) — PSR-6 cache item pool and PSR-16 simple cache, backed by Filesystem, Memcached, Redis, or Predis storage.
+- [Filesystem](./packages/filesystem.md) — Flysystem v3 wrapper with Local, S3, FTP, SFTP, and Dropbox adapters, plus a convenience decorator.
+- [Security](./packages/security.md) — cryptographic primitives — HKDF / PBKDF2 key derivation, an encryption envelope with double-HMAC MAC, and salt generation.
 
 ## How these docs are structured
 
