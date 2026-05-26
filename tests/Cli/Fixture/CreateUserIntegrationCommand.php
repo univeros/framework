@@ -14,10 +14,10 @@ use Altair\Cli\Attribute\Option;
     aliases: ['users:add'],
     help: 'Detailed help block.',
 )]
-final class CreateUserIntegrationCommand
+final readonly class CreateUserIntegrationCommand
 {
     public function __construct(
-        private readonly SpyUserRepository $repository,
+        private SpyUserRepository $repository,
     ) {
     }
 

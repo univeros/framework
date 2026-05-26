@@ -36,7 +36,7 @@ class ValueCoercer
      */
     public function coerce(mixed $value, ?ReflectionNamedType $type, string $parameterName): mixed
     {
-        if ($type === null) {
+        if (!$type instanceof ReflectionNamedType) {
             return $value;
         }
 
@@ -126,6 +126,7 @@ class ValueCoercer
             if (\in_array($normalized, self::BOOL_TRUE, true)) {
                 return true;
             }
+
             if (\in_array($normalized, self::BOOL_FALSE, true)) {
                 return false;
             }
@@ -172,10 +173,10 @@ class ValueCoercer
 
         try {
             return new DateTimeImmutable($value);
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             throw new ValueCoercionException(
                 \sprintf("Value '%s' is not a valid ISO-8601 datetime for parameter '%s'.", $value, $name),
-                previous: $e,
+                previous: $exception,
             );
         }
     }
