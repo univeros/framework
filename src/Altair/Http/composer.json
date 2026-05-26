@@ -18,10 +18,10 @@
         "psr/http-server-handler": "^1.0",
         "psr/http-server-middleware": "^1.0",
         "relay/relay": "^2.1",
-        "univeros/cache": "*",
-        "univeros/configuration": "*",
-        "univeros/session": "*",
-        "univeros/structure": "*",
+        "univeros/cache": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/session": "^2.0",
+        "univeros/structure": "^2.0",
         "willdurand/negotiation": "^3.1"
     },
     "autoload": {

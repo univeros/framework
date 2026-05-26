@@ -12,8 +12,8 @@
         "psr/cache": "^3.0",
         "psr/log": "^3.0",
         "psr/simple-cache": "^3.0",
-        "univeros/configuration": "*",
-        "univeros/filesystem": "*"
+        "univeros/configuration": "^2.0",
+        "univeros/filesystem": "^2.0"
     },
     "autoload": {
         "psr-4": {
