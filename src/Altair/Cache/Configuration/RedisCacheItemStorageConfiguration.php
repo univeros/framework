@@ -12,13 +12,17 @@ declare(strict_types=1);
 namespace Altair\Cache\Configuration;
 
 use Altair\Cache\Contracts\CacheItemStorageInterface;
-use Altair\Cache\Storage\PredisCacheItemStorage;
+use Altair\Cache\Storage\RedisCacheItemStorage;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Override;
-use Predis\Client;
+use Redis;
 
+/**
+ * Wires the ext-redis backed CacheItemStorageInterface implementation. For the userland
+ * Predis library, use {@see PredisCacheItemStorageConfiguration}.
+ */
 class RedisCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
@@ -26,19 +30,31 @@ class RedisCacheItemStorageConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $factory = function (): PredisCacheItemStorage {
-            $client = new Client(
-                [
-                    'host' => $this->env->get('CACHE_REDIS_HOST', 'localhost'),
-                    'port' => $this->env->get('CACHE_REDIS_PORT', 6379),
-                ]
+        $factory = function (): RedisCacheItemStorage {
+            $client = new Redis();
+            $client->connect(
+                (string) $this->env->get('CACHE_REDIS_HOST', 'localhost'),
+                (int) $this->env->get('CACHE_REDIS_PORT', 6379),
             );
 
-            return new PredisCacheItemStorage($client);
+            $password = $this->env->get('CACHE_REDIS_PASSWORD');
+            if (\is_string($password) && $password !== '') {
+                $client->auth($password);
+            }
+
+            $database = $this->env->get('CACHE_REDIS_DATABASE');
+            if ($database !== null && $database !== '') {
+                $client->select((int) $database);
+            }
+
+            return new RedisCacheItemStorage(
+                $client,
+                (string) $this->env->get('CACHE_REDIS_NAMESPACE', ''),
+            );
         };
 
         $container
-            ->delegate(PredisCacheItemStorage::class, $factory)
-            ->alias(CacheItemStorageInterface::class, PredisCacheItemStorage::class);
+            ->delegate(RedisCacheItemStorage::class, $factory)
+            ->alias(CacheItemStorageInterface::class, RedisCacheItemStorage::class);
     }
 }
