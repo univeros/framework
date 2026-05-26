@@ -1,0 +1,44 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Http\Responders;
+
+use Altair\Http\Contracts\PayloadInterface;
+use Altair\Http\Contracts\ResponderInterface;
+use Laminas\Diactoros\Response\JsonResponse;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
+/**
+ * Generated responder for POST /users.
+ */
+final class CreateUserResponder implements ResponderInterface
+{
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        PayloadInterface $payload,
+    ): ResponseInterface {
+        $status = $payload->getStatus() ?? 200;
+
+        return new JsonResponse($payload->getOutput(), $status);
+    }
+
+    /**
+     * Statuses this responder is expected to produce, derived from the spec.
+     *
+     * @return list<int>
+     */
+    public static function statuses(): array
+    {
+        return [201, 409, 422];
+    }
+}

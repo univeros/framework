@@ -9,7 +9,7 @@ Claude Code entry point for the **Univeros / Altair Framework** (`univeros/frame
 
 ## 1. Quick orientation
 
-- **What it is:** A monorepo PHP framework with 16 sub-packages under `src/Altair/*`, bundled via composer `replace`.
+- **What it is:** A monorepo PHP framework with 17 sub-packages under `src/Altair/*`, bundled via composer `replace`.
 - **Where conventions live:** [AGENT.md](AGENT.md) §5 (coding style), §6 (testing).
 - **Where the modernization roadmap lives:** [AGENT.md](AGENT.md) §7. Phase 1 done; Phases 2-4 pending.
 
@@ -60,6 +60,20 @@ CI mirrors these: `.github/workflows/ci.yml`.
 - `/verify` to run the full QA pipeline (cs + stan + test)
 - `/refactor-clean` for dead-code passes (esp. after Phase 2 Rector run)
 - `/tdd` for new features — tests first, implementation second
+
+### Generating HTTP endpoints
+
+The `univeros/scaffold` sub-package emits Action / Input / Responder / domain stub / PHPUnit test / OpenAPI fragment / route entry from a single YAML spec.
+
+```bash
+bin/altair spec:scaffold api/users/create.yaml          # write files
+bin/altair spec:scaffold api/users/create.yaml --dry-run
+bin/altair spec:scaffold api/ --force                   # batch + overwrite
+bin/altair spec:emit-openapi --out docs/openapi.yaml    # merge fragments
+bin/altair spec:lint                                    # drift check
+```
+
+When you add a new HTTP endpoint, write the YAML spec first and scaffold it — don't hand-write the Action/Input/Responder triple. After hand-editing generated files, run `bin/altair spec:lint` so drift surfaces in CI.
 
 ### Plan/Skill choices for the open work
 
