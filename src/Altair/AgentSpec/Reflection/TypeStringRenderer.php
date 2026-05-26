@@ -24,7 +24,7 @@ class TypeStringRenderer
 {
     public function render(?ReflectionType $type): string
     {
-        if ($type === null) {
+        if (!$type instanceof ReflectionType) {
             return 'mixed';
         }
 

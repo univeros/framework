@@ -107,6 +107,7 @@ class AttributeScanner
             if (isset($seen[$key])) {
                 continue;
             }
+
             $seen[$key] = true;
             $unique[] = $convention;
         }

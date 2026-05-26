@@ -46,6 +46,7 @@ class ConsoleReporter
         foreach ($drifted as $path) {
             echo "  - ", $path, "\n";
         }
+
         echo "Run `bin/altair manifest:generate` to regenerate.\n";
 
         return 1;

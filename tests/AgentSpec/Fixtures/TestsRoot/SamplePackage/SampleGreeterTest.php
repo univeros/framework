@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use PHPUnit\Framework\TestCase;
+
 /*
  * Runtime path-enumeration fixture for AgentSpec's TestFixtureScanner.
  *
@@ -9,7 +11,7 @@ declare(strict_types=1);
  * PHPUnit's discovery accepts it without runner warnings. It is NOT a
  * real test — only its file path is consumed by the scanner.
  */
-final class SampleGreeterTest extends \PHPUnit\Framework\TestCase
+final class SampleGreeterTest extends TestCase
 {
     public function testFixturePlaceholder(): void
     {

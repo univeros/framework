@@ -15,7 +15,6 @@ use Altair\AgentSpec\Contracts\ManifestRendererInterface;
 use Altair\AgentSpec\Model\AttributeConvention;
 use Altair\AgentSpec\Model\ClassEntry;
 use Altair\AgentSpec\Model\ContractEntry;
-use Altair\AgentSpec\Model\MethodSignature;
 use Altair\AgentSpec\Model\PackageManifest;
 use Altair\AgentSpec\Model\TestReference;
 use Override;
@@ -95,6 +94,7 @@ class MarkdownPackageRenderer implements ManifestRendererInterface
         if ($contract->extends !== []) {
             $notes[] = 'extends `' . implode('`, `', $contract->extends) . '`';
         }
+
         if ($contract->constants !== []) {
             $notes[] = 'constants: `' . implode('`, `', $contract->constants) . '`';
         }
@@ -117,9 +117,11 @@ class MarkdownPackageRenderer implements ManifestRendererInterface
             if ($class->isAbstract) {
                 $tags[] = 'abstract';
             }
+
             if ($class->isFinal) {
                 $tags[] = 'final';
             }
+
             $suffix = $tags === [] ? '' : ' _(' . implode(', ', $tags) . ')_';
             $implements = $class->implements === []
                 ? ''
@@ -173,6 +175,7 @@ class MarkdownPackageRenderer implements ManifestRendererInterface
             if ($i > 0) {
                 $body[] = '';
             }
+
             $body[] = $pattern;
         }
 

@@ -74,6 +74,7 @@ class ApplicationManifestGenerator
             foreach ($classes as $class) {
                 $body[] = \sprintf('- `%s`', $class);
             }
+
             $body[] = '';
         }
 

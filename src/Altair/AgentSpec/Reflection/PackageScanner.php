@@ -162,7 +162,12 @@ class PackageScanner implements PackageScannerInterface
             if (!\is_string($name)) {
                 continue;
             }
-            if ($name === 'php' || str_starts_with($name, 'ext-')) {
+
+            if ($name === 'php') {
+                continue;
+            }
+
+            if (str_starts_with($name, 'ext-')) {
                 continue;
             }
 

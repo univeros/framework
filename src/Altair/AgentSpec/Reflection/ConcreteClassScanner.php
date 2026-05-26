@@ -75,6 +75,7 @@ class ConcreteClassScanner
         foreach ($reflection->getInterfaceNames() as $iface) {
             $implements[$this->types->shortName($iface)] = true;
         }
+
         $implements = array_keys($implements);
         sort($implements, SORT_STRING);
 
