@@ -156,7 +156,7 @@ class SessionManager implements SessionManagerInterface
     #[Override]
     public function getCookieParams(): array
     {
-        return $this->getCookieParams();
+        return $this->cookieParams;
     }
 
     /**
