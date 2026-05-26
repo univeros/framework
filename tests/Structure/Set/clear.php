@@ -5,7 +5,7 @@ trait clear
 {
     public function testClear()
     {
-        $instance = $this->getInstance($this->sample());
+        $instance = static::getInstance(static::sample());
         $instance = $instance->clear();
 
         $this->assertToArray([], $instance);

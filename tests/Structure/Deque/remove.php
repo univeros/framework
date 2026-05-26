@@ -9,7 +9,7 @@ trait remove
      */
     public function testRemoveExtended()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         /* HEAD WRAPPED AROUND, TAIL = 0 */
         // The head of the deque will wrap around if all items are unshifted.
@@ -25,7 +25,7 @@ trait remove
         $this->assertTrue($instance->isEmpty());
 
         /* HEAD WRAPPED AROUND, TAIL > 0 */
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->unshift('b'); // [_, _, ..., _, b] tail = 0, head = 3
         $instance->unshift('a'); // [_, _, ..., a, b] tail = 0, head = 2
@@ -38,7 +38,7 @@ trait remove
         $this->assertTrue($instance->isEmpty());
 
         /* HEAD NOT WRAPPED, TAIL > 0 */
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->push('a'); // [a, _, _, ..., _] tail = 1, head = 0
         $instance->push('b'); // [a, b, _, ..., _] tail = 2, head = 0

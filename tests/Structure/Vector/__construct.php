@@ -14,7 +14,7 @@ trait __construct
             ['a'],
             ['a', 'b'],
             ['a', 'b', 'c'],
-            $this->sample(),
+            static::sample(),
             range(1, self::MANY),
         ]);
     }

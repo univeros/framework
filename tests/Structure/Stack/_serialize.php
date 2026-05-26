@@ -12,7 +12,7 @@ trait _serialize
         // pushed when being unserialized.
         $expected = array_reverse($expected);
 
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertSerialized($expected, $instance, false);
     }
 }

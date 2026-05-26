@@ -5,7 +5,7 @@ trait _isset
 {
     public function testArrayAccessIsset()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectArrayAccessUnsupportedException();
         isset($instance['?']);
     }

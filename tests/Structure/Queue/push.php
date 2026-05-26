@@ -5,7 +5,7 @@ trait push
 {
     public static function pushDataProvider()
     {
-        return $this->basicDataProvider();
+        return static::basicDataProvider();
     }
 
     /**
@@ -13,7 +13,7 @@ trait push
      */
     public function testPushVariadic(array $values, array $expected)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->push(...$values);
 
@@ -26,7 +26,7 @@ trait push
      */
     public function testPush(array $values, array $expected)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($values as $value) {
             $instance->push($value);
@@ -41,7 +41,7 @@ trait push
      */
     public function testArrayAccessPush(array $values, array $expected)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         foreach ($values as $value) {
             $instance[] = $value;
@@ -53,7 +53,7 @@ trait push
 
     public function testPushCircularReference()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->push($instance);
         $this->assertToArray([$instance], $instance);
     }

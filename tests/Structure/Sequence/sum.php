@@ -35,7 +35,7 @@ trait sum
      */
     public function testSum($values)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertEquals(array_sum($values), $instance->sum());
     }
 }

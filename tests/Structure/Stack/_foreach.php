@@ -5,7 +5,7 @@ trait _foreach
 {
     public function testForEach()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->push('a');
         $instance->push('b');

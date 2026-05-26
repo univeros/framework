@@ -37,7 +37,7 @@ class QueueTest extends AbstractCollectionTest
         $set['a'] = 1;
     }
 
-    protected function getInstance(array $values = [])
+    protected static function getInstance(array $values = [])
     {
         return new QueueObject($values);
     }

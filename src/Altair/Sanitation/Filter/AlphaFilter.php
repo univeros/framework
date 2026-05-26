@@ -13,6 +13,6 @@ class AlphaFilter extends AbstractFilter
 {
     public function parse($value)
     {
-        return preg_replace('/[^\p{L}]/u', '', $value);
+        return preg_replace('/[^\p{L}]/u', '', (string) $value);
     }
 }

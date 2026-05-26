@@ -7,7 +7,7 @@ trait __construct
 {
     public static function constructDataProvider()
     {
-        list($unique, $duplicated) = $this->getUniqueAndDuplicateData();
+        list($unique, $duplicated) = static::getUniqueAndDuplicateData();
 
         return [
             [[],            []],

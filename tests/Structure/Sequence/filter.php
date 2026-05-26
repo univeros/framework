@@ -26,7 +26,7 @@ trait filter
      */
     public function testFilter(array $values, callable $callback)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $filtered = $instance->filter($callback);
         $expected = array_values(array_filter($values, $callback));
@@ -40,7 +40,7 @@ trait filter
      */
     public function testFilterWithoutCallback(array $values, callable $callback)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $filtered = $instance->filter();
         $expected = array_values(array_filter($values));
@@ -51,7 +51,7 @@ trait filter
 
     public function testFilterCallbackThrowsException()
     {
-        $instance = $this->getInstance(['a', 'b', 'c']);
+        $instance = static::getInstance(['a', 'b', 'c']);
         $filtered = null;
 
         try {
@@ -70,7 +70,7 @@ trait filter
 
     public function testFilterCallbackThrowsExceptionLaterOn()
     {
-        $instance = $this->getInstance(['a', 'b', 'c']);
+        $instance = static::getInstance(['a', 'b', 'c']);
         $filtered = null;
 
         try {
@@ -93,7 +93,7 @@ trait filter
 
     public function testFilterDoesNotLeakWhenCallbackFails()
     {
-        $instance = $this->getInstance(['a', 'b', 'c']);
+        $instance = static::getInstance(['a', 'b', 'c']);
         $filtered = null;
 
         try {

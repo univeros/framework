@@ -21,8 +21,8 @@ trait union
      */
     public function testUnion(array $initial, array $values, array $expected)
     {
-        $a = $this->getInstance($initial);
-        $b = $this->getInstance($values);
+        $a = static::getInstance($initial);
+        $b = static::getInstance($values);
 
         $this->assertEquals($expected, $a->union($b)->toArray());
     }
@@ -32,7 +32,7 @@ trait union
      */
     public function testUnionWithSelf(array $initial, array $values, array $expected)
     {
-        $a = $this->getInstance($initial);
+        $a = static::getInstance($initial);
         $this->assertEquals($initial, $a->union($a)->toArray());
     }
 
@@ -41,8 +41,8 @@ trait union
         $a = new \Altair\Tests\Structure\HashableObject('a', rand());
         $b = new \Altair\Tests\Structure\HashableObject('b', rand());
 
-        $setA = $this->getInstance([$a]);
-        $setB = $this->getInstance([$b]);
+        $setA = static::getInstance([$a]);
+        $setB = static::getInstance([$b]);
 
         $this->assertToArray([$a, $b], $setA->union($setB));
     }
@@ -52,8 +52,8 @@ trait union
         $a = new \Altair\Tests\Structure\HashableObject('a', 0);
         $b = new \Altair\Tests\Structure\HashableObject('b', 0);
 
-        $setA = $this->getInstance([$a]);
-        $setB = $this->getInstance([$b]);
+        $setA = static::getInstance([$a]);
+        $setB = static::getInstance([$b]);
 
         $this->assertToArray([$a, $b], $setA->union($setB));
     }
@@ -63,8 +63,8 @@ trait union
     //  */
     // public function testUnionOperator(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
-    //     $b = $this->getInstance($values);
+    //     $a = static::getInstance($initial);
+    //     $b = static::getInstance($values);
 
     //     $this->assertEquals($expected, ($a | $b)->toArray());
     // }
@@ -74,8 +74,8 @@ trait union
     //  */
     // public function testUnionOperatorAssign(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
-    //     $b = $this->getInstance($values);
+    //     $a = static::getInstance($initial);
+    //     $b = static::getInstance($values);
 
     //     $a |= $b;
     //     $this->assertEquals($expected, $a->toArray());
@@ -86,7 +86,7 @@ trait union
     //  */
     // public function testUnionOperatorWithSelf(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
+    //     $a = static::getInstance($initial);
     //     $this->assertEquals($initial, ($a | $a)->toArray());
     // }
 
@@ -95,7 +95,7 @@ trait union
     //  */
     // public function testUnionOperatorAssignWithSelf(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
+    //     $a = static::getInstance($initial);
 
     //     $a |= $a;
     //     $this->assertEquals($initial, $a->toArray());

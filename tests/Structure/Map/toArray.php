@@ -5,7 +5,7 @@ trait toArray
 {
     public function testToArrayWithBadKey()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->put(new \stdClass(), 1);
 
         $this->expectInternalIllegalOffset();

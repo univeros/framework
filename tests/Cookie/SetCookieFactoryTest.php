@@ -62,10 +62,10 @@ class SetCookieFactoryTest extends TestCase
      */
     public function testCreatesFromResponse(array $setCookieStrings, array $expectedSetCookies)
     {
-        $response = $this->prophesize(ResponseInterface::class);
-        $response->getHeader(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
+        $response = $this->createStub(ResponseInterface::class);
+        $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
 
-        $setCookies = SetCookieFactory::createCollectionFromResponse($response->reveal());
+        $setCookies = SetCookieFactory::createCollectionFromResponse($response);
 
         $this->assertCount(count($expectedSetCookies), $setCookies);
 

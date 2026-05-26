@@ -22,8 +22,8 @@ trait diff
      */
     public function testDiff(array $a, array $b, array $expected)
     {
-        $a = $this->getInstance($a);
-        $b = $this->getInstance($b);
+        $a = static::getInstance($a);
+        $b = static::getInstance($b);
 
         $this->assertEquals($expected, $a->diff($b)->toArray());
     }
@@ -33,7 +33,7 @@ trait diff
      */
     public function testDiffWithSelf(array $a, array $b, array $expected)
     {
-        $map = $this->getInstance($a);
+        $map = static::getInstance($a);
 
         $this->assertEquals([], $map->diff($map)->toArray());
     }

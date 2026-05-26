@@ -20,7 +20,7 @@ trait merge
      */
     public function testMerge(array $initial, array $values, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $this->assertToArray($expected, $instance->merge($values));
         $this->assertToArray($initial, $instance);
@@ -31,7 +31,7 @@ trait merge
      */
     public function testMergeWithSelf(array $initial, array $values, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $this->assertToArray($initial, $instance->merge($instance));
         $this->assertToArray($initial, $instance);

@@ -45,6 +45,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function open($save_path, $name)
     {
         return true;
@@ -53,6 +54,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function close()
     {
         return true;
@@ -61,6 +63,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function destroy($session_id)
     {
         return $this->filesystem->delete($this->path . DIRECTORY_SEPARATOR . $session_id);
@@ -69,6 +72,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function gc($maxlifetime)
     {
         $files = $this->filesystem->listAllFiles($this->path);
@@ -83,6 +87,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function read($session_id)
     {
         $path = $this->path . DIRECTORY_SEPARATOR . $session_id;
@@ -96,6 +101,7 @@ class FileSessionHandler implements SessionHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function write($session_id, $session_data)
     {
         return (bool)$this->filesystem->put($this->path . DIRECTORY_SEPARATOR . $session_id, $session_data, true);

@@ -26,7 +26,7 @@ trait remove
      */
     public function testRemove($initial, $index, $return, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $returned = $instance->remove($index);
 
         $this->assertEquals(count($initial) - 1, count($instance));
@@ -41,7 +41,7 @@ trait remove
      */
     public function testRemoveIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance->remove($index);
     }
@@ -53,7 +53,7 @@ trait remove
      */
     public function testRemoveIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();
         $instance->remove($index);
     }

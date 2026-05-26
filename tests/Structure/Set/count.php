@@ -5,18 +5,18 @@ trait count
 {
     public function testCount()
     {
-        list($unique, $duplicates) = $this->getUniqueAndDuplicateData();
+        list($unique, $duplicates) = static::getUniqueAndDuplicateData();
 
-        $instance = $this->getInstance($unique);
+        $instance = static::getInstance($unique);
         $this->assertCount(count($unique), $instance);
 
-        $instance = $this->getInstance($duplicates);
+        $instance = static::getInstance($duplicates);
         $this->assertCount(count($unique), $instance);
     }
 
     public function testCountEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertCount(0, $instance);
     }
 }

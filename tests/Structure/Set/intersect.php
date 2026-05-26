@@ -22,8 +22,8 @@ trait intersect
      */
     public function testIntersect(array $initial, array $values, array $expected)
     {
-        $a = $this->getInstance($initial);
-        $b = $this->getInstance($values);
+        $a = static::getInstance($initial);
+        $b = static::getInstance($values);
 
         $this->assertEquals($expected, $a->intersect($b)->toArray());
     }
@@ -33,7 +33,7 @@ trait intersect
      */
     public function testIntersectWithSelf(array $initial, array $values, array $expected)
     {
-        $a = $this->getInstance($initial);
+        $a = static::getInstance($initial);
         $this->assertEquals($initial, $a->intersect($a)->toArray());
     }
 
@@ -42,8 +42,8 @@ trait intersect
      */
     public function testIntersectContains()
     {
-        $ab = $this->getInstance(['a', 'b']);
-        $bc = $this->getInstance(['b', 'c']);
+        $ab = static::getInstance(['a', 'b']);
+        $bc = static::getInstance(['b', 'c']);
 
         $b = $ab->intersect($bc);
 
@@ -59,8 +59,8 @@ trait intersect
      */
     public function testIntersectAdd()
     {
-        $ab = $this->getInstance(['a', 'b']);
-        $bc = $this->getInstance(['b', 'c']);
+        $ab = static::getInstance(['a', 'b']);
+        $bc = static::getInstance(['b', 'c']);
 
         $b = $ab->intersect($bc);
         $b->add('b');
@@ -73,8 +73,8 @@ trait intersect
     //  */
     // public function testIntersectOperator(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
-    //     $b = $this->getInstance($values);
+    //     $a = static::getInstance($initial);
+    //     $b = static::getInstance($values);
 
     //     $this->assertEquals($expected, ($a & $b)->toArray());
     // }
@@ -84,8 +84,8 @@ trait intersect
     //  */
     // public function testIntersectOperatorAssign(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
-    //     $b = $this->getInstance($values);
+    //     $a = static::getInstance($initial);
+    //     $b = static::getInstance($values);
 
     //     $a &= $b;
     //     $this->assertEquals($expected, $a->toArray());
@@ -96,7 +96,7 @@ trait intersect
     //  */
     // public function testIntersectOperatorWithSelf(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
+    //     $a = static::getInstance($initial);
     //     $this->assertEquals($initial, ($a & $a)->toArray());
     // }
 
@@ -105,7 +105,7 @@ trait intersect
     //  */
     // public function testIntersectOperatorAssignWithSelf(array $initial, array $values, array $expected)
     // {
-    //     $a = $this->getInstance($initial);
+    //     $a = static::getInstance($initial);
 
     //     $a &= $a;
     //     $this->assertEquals($initial, $a->toArray());

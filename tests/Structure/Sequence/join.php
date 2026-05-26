@@ -10,7 +10,7 @@ trait join
 
         $glues = ['', '~', 0, 1, false];
         $lengths = [0, 1, 2, 3, 10];
-        $obj = $this->getInstance();
+        $obj = static::getInstance();
 
         foreach ($lengths as $length) {
             foreach ($glues as $glue) {
@@ -29,7 +29,7 @@ trait join
      */
     public function testJoin(array $values, $glue)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $expected = implode($glue, $values);
         $this->assertEquals($expected, $instance->join($glue));
     }
@@ -40,7 +40,7 @@ trait join
      */
     public function testJoinWithoutGlue(array $values, $glue)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $expected = implode($values);
         $this->assertEquals($expected, $instance->join());
     }

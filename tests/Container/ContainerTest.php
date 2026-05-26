@@ -31,20 +31,18 @@ class ContainerTest extends TestCase
         $this->assertEquals(new DepImplementation, $container->make('custom'));
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias()
     {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container();
         $container->make('Altair\Tests\DepInterface');
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation()
     {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container;
         $container->make('Altair\Tests\RequiresInterface');
     }
@@ -76,11 +74,10 @@ class ContainerTest extends TestCase
         $this->assertEquals('something else', $injected2->testDep->testProp);
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnClassLoadFailure()
     {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container;
         $container->make('ClassThatDoesntExist');
     }
@@ -129,21 +126,19 @@ class ContainerTest extends TestCase
         $this->assertEquals(null, $object->testParam);
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault()
     {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container();
         $obj = $container->make(InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $this->assertNull($obj->val);
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
     ) {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container();
         $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
@@ -189,20 +184,19 @@ class ContainerTest extends TestCase
             )
         );
         $obj = $container->make(InjectorTestRawCtorParams::class);
-        $this->assertInternalType('string', $obj->string);
+        $this->assertIsString($obj->string);
         $this->assertInstanceOf('StdClass', $obj->obj);
-        $this->assertInternalType('int', $obj->int);
-        $this->assertInternalType('array', $obj->array);
-        $this->assertInternalType('float', $obj->float);
-        $this->assertInternalType('bool', $obj->bool);
+        $this->assertIsInt($obj->int);
+        $this->assertIsArray($obj->array);
+        $this->assertIsFloat($obj->float);
+        $this->assertIsBool($obj->bool);
         $this->assertNull($obj->null);
     }
 
-    /**
-     * @expectedException \Exception
-     */
     public function testMakeInstanceThrowsExceptionWhenDelegateDoes()
     {
+        $this->expectException(\Exception::class);
+
         $container = new Container();
         $callable = $this->createMock(
             '\Altair\Tests\Container\CallableMock'
@@ -246,20 +240,18 @@ class ContainerTest extends TestCase
         $this->assertEquals(42, $obj->test);
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InvalidArgumentException
-     */
     public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails()
     {
+        $this->expectException(\Altair\Container\Exception\InvalidArgumentException::class);
+
         $container = new Container();
         $container->delegate('StdClass', 'SomeClassThatDefinitelyDoesNotExistForReal');
     }
 
-    /**
-     * @expectedException \Altair\Container\Exception\InjectionException
-     */
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition()
     {
+        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+
         $container = new Container();
         $obj = $container->make(RequiresInterface::class);
     }

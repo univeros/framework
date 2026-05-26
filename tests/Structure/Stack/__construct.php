@@ -12,7 +12,7 @@ trait __construct
             [['a']],
             [['a', 'a']],
             [['a', 'b']],
-            [$this->sample()],
+            [static::sample()],
         ];
     }
 

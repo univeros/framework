@@ -28,7 +28,7 @@ trait sort
      */
     public function testSorted(array $values)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $expected = array_slice($values, 0, count($values), true);
         asort($expected);
@@ -43,7 +43,7 @@ trait sort
      */
     public function testSortedUsingComparator(array $values)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $sorted = $instance->sort(function ($a, $b) {
             return $b <=> $a;

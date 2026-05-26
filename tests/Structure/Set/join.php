@@ -26,7 +26,7 @@ trait join
      */
     public function testJoin(array $values, $glue)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $expected = implode($glue, $values);
         $this->assertEquals($expected, $instance->join($glue));
     }
@@ -37,7 +37,7 @@ trait join
      */
     public function testJoinWithoutGlue(array $values, $glue)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $expected = implode($values);
         $this->assertEquals($expected, $instance->join());
     }

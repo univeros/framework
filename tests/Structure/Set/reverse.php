@@ -9,7 +9,7 @@ trait reverse
             function ($a) {
                 return [$a[0], array_reverse($a[1])];
             },
-            $this->basicDataProvider()
+            static::basicDataProvider()
         );
     }
 
@@ -18,7 +18,7 @@ trait reverse
      */
     public function testReversed(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $reversed = $instance->reverse();
 
         $this->assertToArray($expected, $reversed);

@@ -18,14 +18,20 @@ class MongoSessionHandlerTest extends TestCase
      */
     private $handler;
 
-    protected function setUp(): void    {
+    protected function setUp(): void
+    {
+        if (!extension_loaded('mongodb')) {
+            $this->markTestSkipped('ext-mongodb is not loaded.');
+        }
+
         $client = new Client();
         $this->collection = $client->selectCollection('sessionhandlertest', 'sessions');
         $this->handler = new MongoSessionHandler($this->collection);
     }
 
-    protected function tearDown(): void    {
-        $this->collection->drop();
+    protected function tearDown(): void
+    {
+        $this->collection?->drop();
     }
 
     public function testOpenReturnsTrue()

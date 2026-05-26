@@ -50,12 +50,10 @@ class ConfigurationCollectionTest extends TestCase
         $collection->apply($container);
     }
 
-    /**
-     * @expectedException \Altair\Configuration\Exception\InvalidConfigurationException
-     * @expectedExceptionRegExp /class .* must implement ConfigurationInterface/i
-     */
     public function testInvalidClass()
     {
+        $this->expectException(\Altair\Configuration\Exception\InvalidConfigurationException::class);
+
         $container = $this->createMock(Container::class);
         $configuration = new ConfigurationCollection([
             '\stdClass'

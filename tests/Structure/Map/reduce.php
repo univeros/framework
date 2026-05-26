@@ -77,7 +77,7 @@ trait reduce
      */
     public function testReduce(array $values, $initial, callable $callback, $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $reduced = $instance->reduce($callback, $initial);
 
@@ -91,7 +91,7 @@ trait reduce
      */
     public function testReduceWithoutInitial(array $values, callable $callback, $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
 
         $reduced = $instance->reduce($callback);
 
@@ -101,7 +101,7 @@ trait reduce
 
     public function testReduceCallbackThrowsException()
     {
-        $instance = $this->getInstance([1, 2, 3]);
+        $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {
@@ -120,7 +120,7 @@ trait reduce
 
     public function testReduceCallbackThrowsExceptionLaterOn()
     {
-        $instance = $this->getInstance([1, 2, 3]);
+        $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {

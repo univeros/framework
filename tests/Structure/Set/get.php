@@ -27,7 +27,7 @@ trait get
      */
     public function testGet(array $initial, $index, $return)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         $returned = $instance->get($index);
 
@@ -42,7 +42,7 @@ trait get
      */
     public function testGetIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance->get($index);
     }
@@ -54,7 +54,7 @@ trait get
      */
     public function testGetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectWrongIndexTypeException();
         $instance->get($index);
     }
@@ -66,7 +66,7 @@ trait get
      */
     public function testArrayAccessGet(array $initial, $index, $return)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($return, $instance[$index]);
     }
 
@@ -77,7 +77,7 @@ trait get
      */
     public function testArrayAccessGetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();
         $instance[$index];
     }
@@ -89,14 +89,14 @@ trait get
      */
     public function testArrayAccessGetIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance[$index];
     }
 
     public function testArrayAccessGetByReference()
     {
-        $instance = $this->getInstance([[1]]);
+        $instance = static::getInstance([[1]]);
         $this->expectAccessByReferenceHasNoEffect();
         $instance[0][0] = null;
         $this->assertEquals([1], $instance[0]);
@@ -104,7 +104,7 @@ trait get
 
     public function testGetFirstAfterRemove()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->add('a', 'b', 'c');
         $this->assertEquals('a', $instance->get(0));
@@ -118,7 +118,7 @@ trait get
 
     public function testGetLastAfterRemove()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->add('a', 'b', 'c');
         $this->assertEquals('c', $instance->get(2));

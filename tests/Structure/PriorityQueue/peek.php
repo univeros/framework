@@ -19,14 +19,14 @@ trait peek
      */
     public function testPeek(array $initial, $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->peek());
         $this->assertCount(count($initial), $instance);
     }
 
     public function testPeekNotAllowedWhenEmpty()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();
         $instance->peek();
     }

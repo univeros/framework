@@ -18,7 +18,7 @@ trait pairs
      */
     public function testPairs(array $initial, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $pairs = $instance->pairs();
 
         $this->assertInstanceOf(Vector::class, $pairs);
@@ -35,7 +35,7 @@ trait pairs
         $key = new \stdClass();
         $key->state = true;
 
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->put($key, 1);
 
         $instance->pairs()->first()->key->state = false;
@@ -46,7 +46,7 @@ trait pairs
 
     public function testKeysAreNotMutableThroughAccess()
     {
-        $instance = $this->getInstance(['a' => 1, 'b' => 2]);
+        $instance = static::getInstance(['a' => 1, 'b' => 2]);
         $instance->pairs()->first()->key = 'c';
 
         $this->assertEquals('a', $instance->pairs()->first()->key);

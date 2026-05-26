@@ -5,7 +5,7 @@ trait _jsonEncode
 {
     public static function jsonEncodeDataProvider()
     {
-        return $this->basicDataProvider();
+        return static::basicDataProvider();
     }
 
     /**
@@ -13,7 +13,7 @@ trait _jsonEncode
      */
     public function testJsonEncode(array $initial, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertEquals(json_encode($expected), json_encode($instance));
     }
 }

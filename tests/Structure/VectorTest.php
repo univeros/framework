@@ -50,7 +50,7 @@ class VectorTest extends AbstractCollectionTest
     use Sequence\toArray;
     use Sequence\unshift;
 
-    protected function getInstance(array $values = [])
+    protected static function getInstance(array $values = [])
     {
         return new VectorObject($values);
     }

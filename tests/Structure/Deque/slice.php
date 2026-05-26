@@ -9,7 +9,7 @@ trait slice
      */
     public function testSliceExtended()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->unshift('c'); // [_, _, _, _, _, _, _, c] tail = 0, head = 7
         $instance->unshift('b'); // [_, _, _, _, _, _, b, c] tail = 0, head = 6
@@ -30,7 +30,7 @@ trait slice
         /* If only some values have wrapped around, slice would have to copy
            from both the wrapped and not-wrapped values */
 
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         $instance->push('b');    // [b, _, _, _, _, _, _, _] tail = 1, head = 0
         $instance->push('c');    // [b, c, _, _, _, _, _, _] tail = 2, head = 1

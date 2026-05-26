@@ -5,7 +5,7 @@ trait _unset
 {
     public function testArrayAccessUnset()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectArrayAccessUnsupportedException();
         unset($instance['?']);
     }

@@ -11,7 +11,7 @@ trait _unset
      */
     public function testArrayAccessUnset($initial, $index, $return, array $expected)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         unset($instance[$index]);
         $this->assertToArray($expected, $instance);
         $this->assertEquals(count($expected), count($instance));
@@ -24,7 +24,7 @@ trait _unset
      */
     public function testArrayAccessUnsetIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
         unset($instance[$index]);
     }
@@ -36,14 +36,14 @@ trait _unset
      */
     public function testArrayAccessUnsetIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->assertFalse(isset($instance[$index]));
         unset($instance[$index]);
     }
 
     public function testArrayAccessUnsetByReference()
     {
-        $instance = $this->getInstance([[1]]);
+        $instance = static::getInstance([[1]]);
         unset($instance[0][0]);
 
         $this->assertToArray([[]], $instance);

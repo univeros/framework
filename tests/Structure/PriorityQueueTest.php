@@ -29,7 +29,7 @@ class PriorityQueueTest extends AbstractCollectionTest
     use PriorityQueue\push;
     use PriorityQueue\toArray;
 
-    public function getInstance(array $values = [])
+    public static function getInstance(array $values = [])
     {
         $queue = new PriorityQueueObject();
 
@@ -40,7 +40,7 @@ class PriorityQueueTest extends AbstractCollectionTest
         return $queue;
     }
 
-    public function basicDataProvider()
+    public static function basicDataProvider(): array
     {
         return [
             [[], []],

@@ -5,7 +5,7 @@ trait insert
 {
     public static function insertDataProvider()
     {
-        $s = $this->sample();
+        $s = static::sample();
 
         $h = count($s) / 2;
 
@@ -38,7 +38,7 @@ trait insert
         $expected = $initial;
         array_splice($expected, $index, 0, $values);
 
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $instance->insert($index, ...$values);
 
         $this->assertEquals(count($expected), count($instance));
@@ -54,7 +54,7 @@ trait insert
         $expected = $initial;
         array_splice($expected, $index, 0, array_reverse($values));
 
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
             $instance->insert($index, $value);
@@ -71,7 +71,7 @@ trait insert
      */
     public function testInsertIndexOutOfRange($initial, $index)
     {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance->insert($index);
     }
@@ -83,7 +83,7 @@ trait insert
      */
     public function testInsertIndexBadIndex($initial, $index)
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->expectWrongIndexTypeException();
         $instance->insert($index);
     }

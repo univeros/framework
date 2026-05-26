@@ -5,7 +5,7 @@ trait remove
 {
     public static function removeDataProvider()
     {
-        list($unique, $duplicates) = $this->getUniqueAndDuplicateData();
+        list($unique, $duplicates) = static::getUniqueAndDuplicateData();
 
         // initial, values to remove, expected.
         return [
@@ -42,7 +42,7 @@ trait remove
         array $values,
         array $expected
     ) {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
             $instance->remove($value);
@@ -67,7 +67,7 @@ trait remove
         array $values,
         array $expected
     ) {
-        $instance = $this->getInstance($initial);
+        $instance = static::getInstance($initial);
         $instance->remove(...$values);
 
         $this->assertEquals(count($expected), count($instance));

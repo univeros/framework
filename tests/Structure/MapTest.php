@@ -160,7 +160,7 @@ class MapTest extends AbstractCollectionTest
         }
     }
 
-    protected function getInstance(array $values = [])
+    protected static function getInstance(array $values = [])
     {
         return new \Altair\Structure\Map($values);
     }

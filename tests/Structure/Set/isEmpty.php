@@ -17,13 +17,13 @@ trait isEmpty
      */
     public function testIsEmpty(array $values, bool $isEmpty)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertEquals($isEmpty, $instance->isEmpty());
     }
 
     public function testIsNotEmptyAfterRemove()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $this->assertTrue($instance->isEmpty());
 
         $instance->add('a');

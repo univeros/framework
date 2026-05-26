@@ -41,6 +41,6 @@ class RegexFilter extends AbstractFilter
             return null;
         }
 
-        return preg_replace($this->pattern, $this->replace, $value);
+        return preg_replace($this->pattern, $this->replace, (string) $value);
     }
 }

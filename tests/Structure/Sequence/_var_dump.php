@@ -8,7 +8,7 @@ trait _var_dump
      */
     public function testVarDump(array $values, array $expected)
     {
-        $instance = $this->getInstance($values);
+        $instance = static::getInstance($values);
         $this->assertInstanceDump($expected, $instance);
     }
 }

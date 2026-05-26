@@ -9,7 +9,7 @@ trait insert
      */
     public function testInsertExtended()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         // The head of the deque will wrap around if all items are unshifted.
 
@@ -32,7 +32,7 @@ trait insert
 
     public function testInsertingIntoAnIsland()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
 
         // It's possible that the head of the deque comes before the tail, but
         // is not at zero. This could overflow the buffer.
@@ -59,7 +59,7 @@ trait insert
 
     public function testInsertAtBoundaryWithMoreOnTheLeft()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->push(3, 4, 5, 6);
         $instance->unshift(1, 2);
 
@@ -74,7 +74,7 @@ trait insert
 
     public function testInsertAtBoundaryWithMoreOnTheRight()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->push(5, 6);
         $instance->unshift(1, 2, 3, 4);
 
@@ -89,7 +89,7 @@ trait insert
 
     public function testInsertAtBoundaryWithEqualOnBothSides()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->push(4, 5, 6);
         $instance->unshift(1, 2, 3);
 
@@ -103,7 +103,7 @@ trait insert
 
     public function testAlmostFullInsertAtZero()
     {
-        $instance = $this->getInstance();
+        $instance = static::getInstance();
         $instance->push(...range(1, 6));
         $instance->insert(0, 0);
 

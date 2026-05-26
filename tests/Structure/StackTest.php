@@ -30,7 +30,7 @@ class StackTest extends AbstractCollectionTest
     use Stack\push;
     use Stack\toArray;
 
-    public function basicDataProvider()
+    public static function basicDataProvider(): array
     {
         // Stack should produce values in reverse order.
         return array_map(function ($data) {
@@ -52,7 +52,7 @@ class StackTest extends AbstractCollectionTest
         $set['a'] = 1;
     }
 
-    protected function getInstance(array $values = [])
+    protected static function getInstance(array $values = [])
     {
         return new StackObject($values);
     }
