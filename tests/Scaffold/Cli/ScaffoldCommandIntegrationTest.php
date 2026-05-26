@@ -14,6 +14,7 @@ final class ScaffoldCommandIntegrationTest extends TestCase
 
     private string $specPath;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tempRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'scaffold-cli-' . bin2hex(random_bytes(4));
@@ -23,6 +24,7 @@ final class ScaffoldCommandIntegrationTest extends TestCase
         file_put_contents($this->specPath, $this->sampleSpec());
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         if (is_dir($this->tempRoot)) {

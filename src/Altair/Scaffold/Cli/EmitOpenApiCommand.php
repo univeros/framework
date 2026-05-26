@@ -53,7 +53,8 @@ final readonly class EmitOpenApiCommand
             if (file_put_contents($outFile, $yaml) === false) {
                 throw new ScaffoldException(\sprintf("Failed to write '%s'.", $outFile));
             }
-            echo "Wrote {$outFile}\n";
+
+            echo \sprintf('Wrote %s%s', $outFile, PHP_EOL);
         } else {
             echo $yaml;
         }
@@ -77,7 +78,15 @@ final readonly class EmitOpenApiCommand
 
         foreach ($files as $file) {
             $data = Yaml::parseFile($file);
-            if (!\is_array($data) || !isset($data['paths']) || !\is_array($data['paths'])) {
+            if (!\is_array($data)) {
+                continue;
+            }
+
+            if (!isset($data['paths'])) {
+                continue;
+            }
+
+            if (!\is_array($data['paths'])) {
                 continue;
             }
 

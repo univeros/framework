@@ -14,7 +14,7 @@ use PHPUnit\Framework\TestCase;
  */
 final class Snapshots
 {
-    private const DIRECTORY = __DIR__ . '/../Snapshots';
+    private const string DIRECTORY = __DIR__ . '/../Snapshots';
 
     public static function assertMatches(TestCase $test, string $name, string $actual): void
     {
@@ -26,6 +26,7 @@ final class Snapshots
                 if (!is_dir($dir)) {
                     mkdir($dir, 0o755, true);
                 }
+
                 file_put_contents($path, $actual);
                 $test::markTestIncomplete(\sprintf("Wrote snapshot '%s'. Re-run the test.", $name));
                 return;

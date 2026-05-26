@@ -13,10 +13,14 @@ namespace Altair\Scaffold\Linter;
 
 use Altair\Scaffold\Emitter\Naming;
 use Altair\Scaffold\Spec\Ast\Spec;
-use PhpParser\Node;
+use PhpParser\Node\Expr\Array_;
+use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
 use PhpParser\Node\Scalar\Int_;
+use PhpParser\Node\Scalar\String_;
+use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\ClassMethod;
+use PhpParser\Node\Stmt\Return_;
 use PhpParser\NodeFinder;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitor\NameResolver;
@@ -35,16 +39,13 @@ class DriftDetector
 {
     private readonly Parser $phpParser;
 
-    private readonly NodeFinder $nodeFinder;
-
     public function __construct(
         private readonly string $projectRoot,
         private readonly Naming $naming = new Naming(),
         ?Parser $phpParser = null,
-        ?NodeFinder $nodeFinder = null,
+        private readonly NodeFinder $nodeFinder = new NodeFinder(),
     ) {
         $this->phpParser = $phpParser ?? (new ParserFactory())->createForHostVersion();
-        $this->nodeFinder = $nodeFinder ?? new NodeFinder();
     }
 
     public function detect(Spec $spec): DriftReport
@@ -61,15 +62,15 @@ class DriftDetector
     {
         $path = $this->projectRoot . DIRECTORY_SEPARATOR . $this->naming->inputPath($spec);
         $class = $this->parseClass($path);
-        if ($class === null) {
+        if (!$class instanceof Class_) {
             return $report;
         }
 
         $found = [];
         $constructor = $this->findConstructor($class);
-        if ($constructor !== null) {
+        if ($constructor instanceof ClassMethod) {
             foreach ($constructor->params as $param) {
-                if ($param instanceof Param && $param->var instanceof Node\Expr\Variable && \is_string($param->var->name)) {
+                if ($param instanceof Param && $param->var instanceof Variable && \is_string($param->var->name)) {
                     $found[] = $param->var->name;
                 }
             }
@@ -104,12 +105,12 @@ class DriftDetector
     {
         $path = $this->projectRoot . DIRECTORY_SEPARATOR . $this->naming->inputPath($spec);
         $class = $this->parseClass($path);
-        if ($class === null) {
+        if (!$class instanceof Class_) {
             return $report;
         }
 
         $rulesMethod = $this->findStaticMethod($class, 'rules');
-        $rulesByField = $rulesMethod === null ? [] : $this->extractRulesArray($rulesMethod);
+        $rulesByField = $rulesMethod instanceof ClassMethod ? $this->extractRulesArray($rulesMethod) : [];
 
         foreach ($spec->inputs as $field) {
             $codeRules = $rulesByField[$field->name] ?? [];
@@ -131,12 +132,12 @@ class DriftDetector
     {
         $path = $this->projectRoot . DIRECTORY_SEPARATOR . $this->naming->responderPath($spec);
         $class = $this->parseClass($path);
-        if ($class === null) {
+        if (!$class instanceof Class_) {
             return $report;
         }
 
         $statusesMethod = $this->findStaticMethod($class, 'statuses');
-        $declared = $statusesMethod === null ? [] : $this->extractIntList($statusesMethod);
+        $declared = $statusesMethod instanceof ClassMethod ? $this->extractIntList($statusesMethod) : [];
 
         foreach ($spec->outputs as $output) {
             if (!\in_array($output->status, $declared, true)) {
@@ -166,7 +167,7 @@ class DriftDetector
         $actionFqcn = $this->naming->actionFqcn($spec);
 
         if (!str_contains($contents, $actionFqcn)) {
-            $report = $report->with(new DriftFinding(
+            return $report->with(new DriftFinding(
                 DriftKind::UnregisteredRoute,
                 \sprintf('Spec endpoint %s %s is not registered (no reference to %s in routes file).', $spec->endpoint->method, $spec->endpoint->path, $actionFqcn),
                 $path,
@@ -176,7 +177,7 @@ class DriftDetector
         return $report;
     }
 
-    private function parseClass(string $path): ?Node\Stmt\Class_
+    private function parseClass(string $path): ?Class_
     {
         if (!is_file($path)) {
             return null;
@@ -190,15 +191,16 @@ class DriftDetector
 
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new NameResolver());
+
         $resolved = $traverser->traverse($ast);
 
-        $node = $this->nodeFinder->findFirstInstanceOf($resolved, Node\Stmt\Class_::class);
-        \assert($node === null || $node instanceof Node\Stmt\Class_);
+        $node = $this->nodeFinder->findFirstInstanceOf($resolved, Class_::class);
+        \assert($node === null || $node instanceof Class_);
 
         return $node;
     }
 
-    private function findConstructor(Node\Stmt\Class_ $class): ?ClassMethod
+    private function findConstructor(Class_ $class): ?ClassMethod
     {
         foreach ($class->getMethods() as $method) {
             if ($method->name->toString() === '__construct') {
@@ -209,7 +211,7 @@ class DriftDetector
         return null;
     }
 
-    private function findStaticMethod(Node\Stmt\Class_ $class, string $name): ?ClassMethod
+    private function findStaticMethod(Class_ $class, string $name): ?ClassMethod
     {
         foreach ($class->getMethods() as $method) {
             if ($method->isStatic() && $method->name->toString() === $name) {
@@ -227,23 +229,28 @@ class DriftDetector
     {
         $rules = [];
 
-        $return = $this->nodeFinder->findFirstInstanceOf($method->stmts ?? [], Node\Stmt\Return_::class);
-        if (!$return instanceof Node\Stmt\Return_ || !$return->expr instanceof Node\Expr\Array_) {
+        $return = $this->nodeFinder->findFirstInstanceOf($method->stmts ?? [], Return_::class);
+        if (!$return instanceof Return_ || !$return->expr instanceof Array_) {
             return $rules;
         }
 
         foreach ($return->expr->items as $item) {
-            if (!$item->key instanceof Node\Scalar\String_ || !$item->value instanceof Node\Expr\Array_) {
+            if (!$item->key instanceof String_) {
+                continue;
+            }
+
+            if (!$item->value instanceof Array_) {
                 continue;
             }
 
             $field = $item->key->value;
             $list = [];
             foreach ($item->value->items as $inner) {
-                if ($inner->value instanceof Node\Scalar\String_) {
+                if ($inner->value instanceof String_) {
                     $list[] = $inner->value->value;
                 }
             }
+
             $rules[$field] = $list;
         }
 
@@ -255,8 +262,8 @@ class DriftDetector
      */
     private function extractIntList(ClassMethod $method): array
     {
-        $return = $this->nodeFinder->findFirstInstanceOf($method->stmts ?? [], Node\Stmt\Return_::class);
-        if (!$return instanceof Node\Stmt\Return_ || !$return->expr instanceof Node\Expr\Array_) {
+        $return = $this->nodeFinder->findFirstInstanceOf($method->stmts ?? [], Return_::class);
+        if (!$return instanceof Return_ || !$return->expr instanceof Array_) {
             return [];
         }
 
