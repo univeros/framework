@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait sort
 {
-    public function testSorted()
+    public function testSorted(): void
     {
         $instance = static::getInstance([4, 1, 2, 5, 3]);
         $sorted = $instance->sort();
@@ -12,13 +12,11 @@ trait sort
         $this->assertToArray([4, 1, 2, 5, 3], $instance);
     }
 
-    public function testSortedUsingComparator()
+    public function testSortedUsingComparator(): void
     {
         $instance = static::getInstance([4, 1, 2, 5, 3]);
 
-        $sorted = $instance->sort(function ($a, $b) {
-            return $b <=> $a;
-        });
+        $sorted = $instance->sort(fn($a, $b): int => $b <=> $a);
 
         $this->assertToArray([5, 4, 3, 2, 1], $sorted);
         $this->assertToArray([4, 1, 2, 5, 3], $instance);

@@ -11,18 +11,20 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class CsrfTokenTest extends TestCase
 {
-    private $tmpDir;
+    private string $tmpDir;
 
+    #[\Override]
     protected function setUp(): void    {
         $this->tmpDir = __DIR__ . '/tmp';
         @mkdir($this->tmpDir);
     }
 
+    #[\Override]
     protected function tearDown(): void    {
         rmdir($this->tmpDir);
     }
 
-    public function testCsrfToken()
+    public function testCsrfToken(): void
     {
         $request = $this->createStub(ServerRequestInterface::class);
         $request->method('getCookieParams')->willReturn([]);

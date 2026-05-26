@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _jsonEncode
 {
-    public function testJsonEncode()
+    public function testJsonEncode(): void
     {
         $instance = $this->getPair('a', 1);
         $expected = json_encode([

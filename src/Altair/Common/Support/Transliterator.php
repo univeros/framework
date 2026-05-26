@@ -23,6 +23,7 @@ class Transliterator
      * @see transliterate()
      */
     const TRANSLITERATE_STRICT = 'Any-Latin; NFKD';
+
     /**
      * Shortcut for `Any-Latin; Latin-ASCII` transliteration rule. The rule is medium, letters will be
      * transliterated to characters of Latin-1 (ISO 8859-1) ASCII table. For example:
@@ -35,6 +36,7 @@ class Transliterator
      * @see transliterate()
      */
     const TRANSLITERATE_MEDIUM = 'Any-Latin; Latin-ASCII';
+
     /**
      * Shortcut for `Any-Latin; Latin-ASCII; [\u0080-\uffff] remove` transliteration rule. The rule is loose,
      * letters will be transliterated with the characters of Basic Latin Unicode Block.
@@ -48,12 +50,14 @@ class Transliterator
      * @see transliterate()
      */
     const TRANSLITERATE_LOOSE = 'Any-Latin; Latin-ASCII; [\u0080-\uffff] remove';
+
     /**
      * @var mixed Either a [[\Transliterator]], or a string from which a [[\Transliterator]] can be built
      * for transliteration. Used by [[transliterate()]] when intl is available. Defaults to [[TRANSLITERATE_LOOSE]]
      * @see http://php.net/manual/en/transliterator.transliterate.php
      */
     protected $transliterator = self::TRANSLITERATE_LOOSE;
+
     /**
      * @var array fallback map for transliteration used by [[transliterate()]] when intl isn't available.
      */
@@ -73,7 +77,6 @@ class Transliterator
     /**
      * Sets the transliterator when intl extension is available.
      *
-     * @param string $transliterator
      * @return Transliterator
      */
     public function setTransliterator(string $transliterator): Transliterator
@@ -86,7 +89,6 @@ class Transliterator
      * Merges a transliteration map into the default one. The map is used when there is no
      * intl extension available.
      *
-     * @param array $transliteration
      * @return Transliterator
      */
     public function merge(array $transliteration): Transliterator
@@ -105,9 +107,9 @@ class Transliterator
      * \Transliterator can be built.
      * @return string
      */
-    public function transliterate(string $value, $transliterator = null)
+    public function transliterate(string $value, $transliterator = null): string|false
     {
-        $transliterator = $transliterator?? $this->transliterator;
+        $transliterator ??= $this->transliterator;
         return extension_loaded('intl')
             ? transliterator_transliterate($transliterator, $value)
             : strtr($value, $this->transliteration);

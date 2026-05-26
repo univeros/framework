@@ -19,6 +19,7 @@ class CacheItemTagValidator implements CacheItemTagValidatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function validate(string $tag): bool
     {
         if (!isset($tag[0])) {
@@ -26,6 +27,7 @@ class CacheItemTagValidator implements CacheItemTagValidatorInterface
 
             return false;
         }
+
         if (false !== strpbrk($tag, '{}()/\@:')) {
             $this->reason = sprintf('Cache tag "%s" contains reserved characters {}()/\@:', $tag);
 

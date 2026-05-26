@@ -11,25 +11,14 @@ namespace Altair\Common\Support;
 
 class Inflector
 {
-    /**
-     * @var Transliterator
-     */
-    protected $transliterator;
-    /**
-     * @var Pluralizer
-     */
-    protected $pluralizer;
 
     /**
      * Inflector constructor.
      *
      * @param Transliterator $transliterator
-     * @param Pluralizer $pluralizer
      */
-    public function __construct(Transliterator $transliterator, Pluralizer $pluralizer)
+    public function __construct(protected Transliterator $transliterator, protected Pluralizer $pluralizer)
     {
-        $this->transliterator = $transliterator;
-        $this->pluralizer = $pluralizer;
     }
 
     /**
@@ -43,16 +32,14 @@ class Inflector
      * @param string $value the string to convert
      * @param string $replacement the replacement to use for spaces
      * @param bool $lowercase whether to return the string in lowercase or not. Defaults to true.
-     *
-     * @return string
      */
     public function slug(string $value, string $replacement = null, $lowercase = true): string
     {
-        $replacement = $replacement ?? '-';
+        $replacement ??= '-';
         $value = $this->transliterator->transliterate($value);
         $value = preg_replace('/[^a-zA-Z0-9=\s—–-]+/u', '', $value);
-        $value = preg_replace('/[=\s—–-]+/u', $replacement, $value);
-        $value = trim($value, $replacement);
+        $value = preg_replace('/[=\s—–-]+/u', $replacement, (string) $value);
+        $value = trim((string) $value, $replacement);
 
         return $lowercase ? strtolower($value) : $value;
     }
@@ -64,7 +51,6 @@ class Inflector
      *
      * @param string $id the id to be converted
      * @param string $separator the character used to separate the words in the id
-     * @return string
      */
     public function idToCamel(string $id, string $separator = '-'): string
     {
@@ -79,14 +65,13 @@ class Inflector
      * @param string $name the string to be converted
      * @param string $separator the character used to concatenate the words in the id
      * @param bool $strict whether to insert a separator between two consecutive uppercase chars, defaults to false
-     * @return string
      */
     public function camelToId(string $name, string $separator = '-', bool $strict = false): string
     {
         $regex = $strict ? '/[A-Z]/' : '/(?<![A-Z])[A-Z]/';
 
         return '_' === $separator
-            ? strtolower(trim(preg_replace($regex, '_\0', $name), '_'))
+            ? strtolower(trim((string) preg_replace($regex, '_\0', $name), '_'))
             : trim(
                 strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
                 $separator
@@ -95,8 +80,6 @@ class Inflector
 
     /**
      * @param $name
-     * @param bool $uppercase
-     * @return string
      */
     public function camelToWords(string $name, bool $uppercase = true): string
     {
@@ -113,7 +96,6 @@ class Inflector
      *
      * @param string $value the string to humanize
      * @param bool $upper whether to set all words to uppercase or not
-     * @return string
      */
     public function humanize(string $value, bool $upper = false): string
     {
@@ -123,13 +105,10 @@ class Inflector
 
     /**
      * Converts any "CamelCased" into an "underscored_word".
-     *
-     * @param string $value
-     * @return string
      */
     public function underscore(string $value): string
     {
-        return strtolower(preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $value));
+        return strtolower((string) preg_replace('/(?<=\\w)([A-Z])/', '_\\1', $value));
     }
 
     /**
@@ -137,11 +116,10 @@ class Inflector
      * alphanumeric character from the word, so "who's online" will be converted to "WhoSOnline"
      *
      * @param string $value the word to CamelCase
-     * @return string
      */
     public function camel(string $value): string
     {
-        return str_replace(' ', '', ucwords(preg_replace('/[^A-Za-z0-9]+/', ' ', $value)));
+        return str_replace(' ', '', ucwords((string) preg_replace('/[^A-Za-z0-9]+/', ' ', $value)));
     }
 
     /**
@@ -149,7 +127,6 @@ class Inflector
      *
      * @param string $value the words to convert into an English sentence
      * @param bool $uppercase whether to convert all words to uppercase
-     * @return string
      */
     public function title(string $value, bool $uppercase = false): string
     {
@@ -161,30 +138,24 @@ class Inflector
      * Converts number to its ordinal English form. For example, converts 13 to 13th, 2 to 2nd ...
      *
      * @param int $number the number to get its ordinal value
-     * @return string
      */
     public function ordinal(int $number): string
     {
         if (in_array($number % 100, range(11, 13), false)) {
             return $number . 'th';
         }
-        switch ($number % 10) {
-            case 1:
-                return $number . 'st';
-            case 2:
-                return $number . 'nd';
-            case 3:
-                return $number . 'rd';
-            default:
-                return $number . 'th';
-        }
+        return match ($number % 10) {
+            1 => $number . 'st',
+            2 => $number . 'nd',
+            3 => $number . 'rd',
+            default => $number . 'th',
+        };
     }
 
     /**
      * Converts a table name to its class name. For example, converts "people" to "Person"
      *
      * @param string $value the table name
-     * @return string
      */
     public function classify(string $value): string
     {
@@ -196,7 +167,6 @@ class Inflector
      * For example, converts "Person" to "people"
      *
      * @param string $value the class name for getting related table name
-     * @return string
      */
     public function table(string $value): string
     {
@@ -208,7 +178,6 @@ class Inflector
      * remove non alphanumeric character from the word, so "who's online" will be converted to "whoSOnline"
      *
      * @param string $value to lowerCamelCase
-     * @return string
      */
     public function variable(string $value): string
     {

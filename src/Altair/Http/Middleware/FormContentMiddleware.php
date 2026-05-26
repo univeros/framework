@@ -13,11 +13,13 @@ namespace Altair\Http\Middleware;
 
 class FormContentMiddleware extends AbstractContentHandlerMiddleware
 {
+    #[\Override]
     protected function contentTypes(): array
     {
         return ['application/x-www-form-urlencoded'];
     }
 
+    #[\Override]
     protected function parse(string $body): array
     {
         parse_str($body, $parsed);

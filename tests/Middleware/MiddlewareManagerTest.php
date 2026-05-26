@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class MiddlewareManagerTest extends TestCase
 {
-    public function test()
+    public function test(): void
     {
         FakeMiddleware::$count = 0;
 

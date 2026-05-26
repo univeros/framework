@@ -2,13 +2,14 @@
 
 namespace Altair\Tests\Session;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Altair\Session\SessionBlock;
 use Altair\Session\SessionManager;
 use PHPUnit\Framework\TestCase;
 
 class SessionBlockTest extends TestCase
 {
-    public function testGetSetHasAndRemoveMethods()
+    public function testGetSetHasAndRemoveMethods(): void
     {
         $sessionBlock = $this->getSessionBlock();
 
@@ -27,7 +28,7 @@ class SessionBlockTest extends TestCase
         $this->assertFalse($sessionBlock->has('test'));
     }
 
-    public function testAssertThatClearAndSetReturnSessionBlockInstances()
+    public function testAssertThatClearAndSetReturnSessionBlockInstances(): void
     {
         $sessionBlock = $this->getSessionBlock();
 
@@ -38,7 +39,7 @@ class SessionBlockTest extends TestCase
         $this->assertEquals($sessionBlock, $instance);
     }
 
-    public function testCanSetAndGetFlash()
+    public function testCanSetAndGetFlash(): void
     {
         $sessionBlock = $this->getSessionBlock();
 
@@ -54,7 +55,7 @@ class SessionBlockTest extends TestCase
         $this->assertFalse($sessionBlock->hasFlash('name'));
     }
 
-    public function testFlashesGetRemovedAfterNewRequest()
+    public function testFlashesGetRemovedAfterNewRequest(): void
     {
         $sessionBlock = $this->getSessionBlock();
         $sessionBlock->setFlash('name', 'value');
@@ -67,7 +68,7 @@ class SessionBlockTest extends TestCase
         $this->assertFalse($sessionBlock->has('name'));
     }
 
-    public function testAppendFlashMessagesCreatesArray()
+    public function testAppendFlashMessagesCreatesArray(): void
     {
         $sessionBlock = $this->getSessionBlock();
         $sessionBlock->appendFlash('name', 'value');
@@ -80,7 +81,7 @@ class SessionBlockTest extends TestCase
         $this->assertContains('another value', $data);
     }
 
-    public function testFlashRemoval()
+    public function testFlashRemoval(): void
     {
         $sessionBlock = $this->getSessionBlock();
         $sessionBlock->appendFlash('name', 'value');
@@ -99,10 +100,7 @@ class SessionBlockTest extends TestCase
         $this->assertCount(0, $sessionBlock->getAllFlashes());
     }
 
-    /**
-     * @return SessionBlock
-     */
-    protected function getSessionBlock()
+    protected function getSessionBlock(): SessionBlock
     {
         $manager = $this->mockSessionManager();
         $manager->method('start')->willReturn(true);
@@ -110,7 +108,7 @@ class SessionBlockTest extends TestCase
         return new SessionBlock('name', $manager);
     }
 
-    protected function mockSessionManager()
+    protected function mockSessionManager(): MockObject
     {
         return $this->getMockBuilder(SessionManager::class)
             ->disableOriginalConstructor()

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait _list
 {
-    public function testList()
+    public function testList(): void
     {
         // PriorityQueue does not return array with index access
         $instance = static::getInstance(['a' => 1, 'b' => 2]);

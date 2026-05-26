@@ -20,22 +20,23 @@ class Payload implements PayloadInterface
      * @var int
      */
     protected $status;
-    /**
-     * @var InputCollection
-     */
-    protected $inputCollection;
+
+    protected InputCollection $inputCollection;
+
     /**
      * @var array
      */
     protected $output = [];
+
     /**
      * @var array
      */
     protected $messages = [];
+
     /**
      * @var Map|null
      */
-    protected $settingsCollection;
+    protected SettingsCollection $settingsCollection;
 
     /**
      * Payload constructor.
@@ -52,6 +53,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withStatus(int $status): PayloadInterface
     {
         $cloned = clone $this;
@@ -63,6 +65,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getStatus(): ?int
     {
         return $this->status;
@@ -71,6 +74,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withInputCollection(InputCollection $inputCollection): PayloadInterface
     {
         $cloned = clone $this;
@@ -82,6 +86,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getInputCollection(): InputCollection
     {
         return $this->inputCollection;
@@ -90,6 +95,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withOutput(array $output): PayloadInterface
     {
         $cloned = clone $this;
@@ -101,6 +107,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getOutput(): array
     {
         return $this->output;
@@ -109,6 +116,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withMessages(array $messages): PayloadInterface
     {
         $cloned = clone $this;
@@ -120,6 +128,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMessages(): array
     {
         return $this->messages;
@@ -128,6 +137,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withSetting(string $name, $value): PayloadInterface
     {
         $cloned = clone $this;
@@ -139,6 +149,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withoutSetting(string $name): PayloadInterface
     {
         $cloned = clone $this;
@@ -150,6 +161,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withSettingsCollection(SettingsCollection $settingsCollection): PayloadInterface
     {
         $cloned = clone $this;
@@ -161,6 +173,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSetting(string $name, $default = null)
     {
         return $this->settingsCollection->get($name);
@@ -169,6 +182,7 @@ class Payload implements PayloadInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSettingsCollection(): SettingsCollection
     {
         return $this->settingsCollection;

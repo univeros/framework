@@ -5,7 +5,7 @@ use Altair\Tests\Structure\HashableObject;
 
 trait put
 {
-    public static function putDataProvider()
+    public static function putDataProvider(): array
     {
         $o = new \stdClass();
 
@@ -34,7 +34,7 @@ trait put
         ];
     }
 
-    public static function putHashableDataProvider()
+    public static function putHashableDataProvider(): array
     {
         // Two objects with the same hash code and equals.
         $h1 = new HashableObject(1);
@@ -53,7 +53,7 @@ trait put
     /**
      * @dataProvider putDataProvider
      */
-    public function testPut(array $pairs, array $expected)
+    public function testPut(array $pairs, array $expected): void
     {
         $instance = static::getInstance();
 
@@ -68,12 +68,12 @@ trait put
         $this->assertCount(count($expected), $instance);
     }
 
-    public function testPutMany()
+    public function testPutMany(): void
     {
         $instance = static::getInstance();
 
         for ($i = 0; $i < self::MANY; $i++) {
-            $instance->put(rand(), rand());
+            $instance->put(random_int(0, mt_getrandmax()), random_int(0, mt_getrandmax()));
         }
 
         $this->assertEquals(self::MANY, count($instance));
@@ -83,19 +83,19 @@ trait put
     /**
      * @dataProvider putHashableDataProvider
      */
-    public function testPutHashable(array $pairs, array $expected)
+    public function testPutHashable(array $pairs, array $expected): void
     {
         $this->testPut($pairs, $expected);
     }
 
-    public function testArrayAccessPut()
+    public function testArrayAccessPut(): void
     {
         $instance = static::getInstance(['a' => 1]);
         $instance['a'] = 2;
         $this->assertToArray(['a' => 2], $instance);
     }
 
-    public function testArrayAccessPutByReference()
+    public function testArrayAccessPutByReference(): void
     {
         $instance = static::getInstance(['a' => [1]]);
         $instance['a'][0] = 2;
@@ -103,13 +103,14 @@ trait put
         $this->assertToArray(['a' => [2]], $instance);
     }
 
-    public function testMapPutCircularReference()
+    public function testMapPutCircularReference(): void
     {
         $a = static::getInstance();
         $b = static::getInstance();
 
         $a->put('B', $b);
         $a->put('A', $a);
+
         $b->put('B', $b);
         $b->put('A', $a);
 

@@ -9,6 +9,7 @@
 
 namespace Altair\Courier\Middleware;
 
+use Altair\Courier\Contracts\LogMessageInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
 use Psr\Log\LoggerInterface;
@@ -16,30 +17,18 @@ use Psr\Log\LogLevel;
 
 class CommandLoggerMiddleware implements CommandMiddlewareInterface
 {
-    /**
-     * @var LoggerInterface
-     */
-    protected $logger;
-    /**
-     * @var string
-     */
-    protected $level;
 
     /**
      * LoggerMiddleware constructor.
-     *
-     * @param LoggerInterface $logger
-     * @param string $level
      */
-    public function __construct(LoggerInterface $logger, string $level = LogLevel::INFO)
+    public function __construct(protected LoggerInterface $logger, protected string $level = LogLevel::INFO)
     {
-        $this->logger = $logger;
-        $this->level = $level;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         $level = $this->level;
@@ -50,7 +39,7 @@ class CommandLoggerMiddleware implements CommandMiddlewareInterface
 
         $log = $message->getLogMessage();
 
-        if (null !== $log && $log->getLevel() !== $this->level) {
+        if ($log instanceof LogMessageInterface && $log->getLevel() !== $this->level) {
             $level = $log->getLevel();
         }
 

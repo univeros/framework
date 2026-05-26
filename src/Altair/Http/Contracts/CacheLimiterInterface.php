@@ -18,9 +18,7 @@ interface CacheLimiterInterface
     /**
      * Implements cache limiter to the response message
      *
-     * @param ResponseInterface $response
      *
-     * @return ResponseInterface
      */
     public function apply(ResponseInterface $response): ResponseInterface;
 }

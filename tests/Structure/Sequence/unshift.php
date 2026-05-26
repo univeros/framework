@@ -11,11 +11,12 @@ trait unshift
     /**
      * @dataProvider unshiftDataProvider
      */
-    public function testUnshiftVariadic(array $initial, array $values)
+    public function testUnshiftVariadic(array $initial, array $values): void
     {
         $instance = static::getInstance($initial);
 
         $instance->unshift(...$values);
+
         $expected = array_merge($values, $initial);
 
         $this->assertToArray($expected, $instance);
@@ -25,7 +26,7 @@ trait unshift
     /**
      * @dataProvider unshiftDataProvider
      */
-    public function testUnshift(array $initial, array $values)
+    public function testUnshift(array $initial, array $values): void
     {
         $instance = static::getInstance($initial);
 

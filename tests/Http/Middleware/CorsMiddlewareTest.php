@@ -13,6 +13,7 @@ class CorsMiddlewareTest extends AbstractMiddlewareTest
 {
     private Analyzer $analyzer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $settings = (new Settings())

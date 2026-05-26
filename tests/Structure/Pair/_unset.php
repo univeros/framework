@@ -3,14 +3,14 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _unset
 {
-    public function testPropertyUnsetKey()
+    public function testPropertyUnsetKey(): void
     {
         $pair = $this->getPair('a', 1);
         unset($pair->key);
         $this->assertNull($pair->key);
     }
 
-    public function testPropertyUnsetValue()
+    public function testPropertyUnsetValue(): void
     {
         $pair = $this->getPair('a', 1);
         unset($pair->value);

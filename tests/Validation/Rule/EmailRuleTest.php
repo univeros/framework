@@ -5,7 +5,8 @@ use Altair\Validation\Rule\EmailRule;
 
 class EmailRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['test@test.com'],
@@ -15,7 +16,8 @@ class EmailRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [''],
@@ -33,7 +35,8 @@ class EmailRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): EmailRule
     {
         return new EmailRule();
     }

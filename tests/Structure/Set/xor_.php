@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait xor_
 {
-    public static function xorDataProvider()
+    public static function xorDataProvider(): array
     {
         // Values in either A or B, but not both.
         // A, B, expected result
@@ -18,7 +18,7 @@ trait xor_
     /**
      * @dataProvider xorDataProvider
      */
-    public function testXor(array $a, array $b, array $expected)
+    public function testXor(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
         $b = static::getInstance($b);
@@ -29,7 +29,7 @@ trait xor_
     /**
      * @dataProvider xorDataProvider
      */
-    public function testXorWithSelf(array $a, array $b, array $expected)
+    public function testXorWithSelf(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
         $this->assertEquals([], $a->xor($a)->toArray());
@@ -38,7 +38,7 @@ trait xor_
     /**
      * @see https://github.com/php-ds/extension/issues/53
      */
-    public function testXorAfterDiff()
+    public function testXorAfterDiff(): void
     {
         $a = static::getInstance(['guest', 'member']);
         $b = static::getInstance(['member', 'nothing']);

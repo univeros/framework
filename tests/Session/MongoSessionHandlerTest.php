@@ -13,11 +13,10 @@ class MongoSessionHandlerTest extends TestCase
      * @var Collection
      */
     private $collection;
-    /**
-     * @var MongoSessionHandler
-     */
-    private $handler;
 
+    private MongoSessionHandler $handler;
+
+    #[\Override]
     protected function setUp(): void
     {
         if (!extension_loaded('mongodb')) {
@@ -29,25 +28,27 @@ class MongoSessionHandlerTest extends TestCase
         $this->handler = new MongoSessionHandler($this->collection);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->collection?->drop();
     }
 
-    public function testOpenReturnsTrue()
+    public function testOpenReturnsTrue(): void
     {
         $this->assertTrue($this->handler->open('', 'sid'));
     }
 
-    public function testCloseReturnsTrue()
+    public function testCloseReturnsTrue(): void
     {
         $this->assertTrue($this->handler->close());
     }
 
-    public function testReadWriteData()
+    public function testReadWriteData(): void
     {
         $handler = $this->handler;
         $handler->open('', 'sid');
+
         $data = $handler->read('id');
         $this->assertEmpty($data);
 
@@ -64,7 +65,7 @@ class MongoSessionHandlerTest extends TestCase
     /**
      * @runInSeparateProcess
      */
-    public function testSessionGc()
+    public function testSessionGc(): void
     {
         $previousLifeTime = ini_set('session.gc_maxlifetime', 1000);
 
@@ -92,11 +93,12 @@ class MongoSessionHandlerTest extends TestCase
         $this->assertEquals(1, $this->collection->count(), 'Expired sessions are pruned');
     }
 
-    public function testSessionDestroy()
+    public function testSessionDestroy(): void
     {
         $handler = $this->handler;
 
         $handler->open('', 'sid');
+
         $data = $handler->read('id');
         $this->assertEmpty($data);
 

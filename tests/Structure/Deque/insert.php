@@ -7,7 +7,7 @@ trait insert
      * Deque has a few edge cases that don't exist for other sequences. These
      * occur when the head of the deque wraps around, ie. h > t.
      */
-    public function testInsertExtended()
+    public function testInsertExtended(): void
     {
         $instance = static::getInstance();
 
@@ -30,7 +30,7 @@ trait insert
         $this->assertToArray(['y', 'a', 'x', 'b', 'z', 'c', '#'], $instance);
     }
 
-    public function testInsertingIntoAnIsland()
+    public function testInsertingIntoAnIsland(): void
     {
         $instance = static::getInstance();
 
@@ -57,7 +57,7 @@ trait insert
         $this->assertToArray(['c', 'd', 'g', 'h', 'i', 'e', 'f'], $instance);
     }
 
-    public function testInsertAtBoundaryWithMoreOnTheLeft()
+    public function testInsertAtBoundaryWithMoreOnTheLeft(): void
     {
         $instance = static::getInstance();
         $instance->push(3, 4, 5, 6);
@@ -72,7 +72,7 @@ trait insert
         $this->assertToArray([1, 2, 'x', 3, 4, 5, 6], $instance);
     }
 
-    public function testInsertAtBoundaryWithMoreOnTheRight()
+    public function testInsertAtBoundaryWithMoreOnTheRight(): void
     {
         $instance = static::getInstance();
         $instance->push(5, 6);
@@ -87,7 +87,7 @@ trait insert
         $this->assertToArray([1, 2, 3, 4, 'x', 5, 6], $instance);
     }
 
-    public function testInsertAtBoundaryWithEqualOnBothSides()
+    public function testInsertAtBoundaryWithEqualOnBothSides(): void
     {
         $instance = static::getInstance();
         $instance->push(4, 5, 6);
@@ -101,7 +101,7 @@ trait insert
         $this->assertToArray([1, 2, 3, 'x', 4, 5, 6], $instance);
     }
 
-    public function testAlmostFullInsertAtZero()
+    public function testAlmostFullInsertAtZero(): void
     {
         $instance = static::getInstance();
         $instance->push(...range(1, 6));

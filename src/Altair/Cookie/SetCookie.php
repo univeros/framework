@@ -10,33 +10,37 @@
 namespace Altair\Cookie;
 
 use Altair\Cookie\Contracts\SetCookieInterface;
-use Altair\Cookie\Traits\NameAndValueAwareTrait;
 use DateTime;
 use DateTimeInterface;
 use Exception;
 
-class SetCookie extends AbstractCookie implements SetCookieInterface
+class SetCookie extends AbstractCookie implements SetCookieInterface, \Stringable
 {
     /**
      * @var int
      */
     protected $expires = 0;
+
     /**
      * @var int
      */
     protected $maxAge = 0;
+
     /**
      * @var
      */
     protected $path;
+
     /**
      * @var
      */
     protected $domain;
+
     /**
      * @var bool
      */
     protected $secure = false;
+
     /**
      * @var bool
      */
@@ -44,7 +48,6 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
 
     /**
      * Cookie constructor.
-     * @param string $name
      * @param string|null $value
      */
     public function __construct(string $name, string $value = null)
@@ -52,10 +55,8 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         parent::__construct($name, $value);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         $parts = [
             urlencode($this->name) . '=' . ($this->value ? urlencode($this->value) : ''),
@@ -71,59 +72,43 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return implode('; ', array_filter($parts));
     }
 
-    /**
-     * @return int
-     */
+    #[\Override]
     public function getExpires(): int
     {
         return $this->expires;
     }
 
-    /**
-     * @return int
-     */
+    #[\Override]
     public function getMaxAge(): int
     {
         return $this->maxAge;
     }
 
-    /**
-     * @return null|string
-     */
+    #[\Override]
     public function getPath(): ?string
     {
         return $this->path;
     }
 
-    /**
-     * @return null|string
-     */
+    #[\Override]
     public function getDomain(): ?string
     {
         return $this->domain;
     }
 
-    /**
-     * @return bool
-     */
+    #[\Override]
     public function getSecure(): bool
     {
         return $this->secure;
     }
 
-    /**
-     * @return bool
-     */
+    #[\Override]
     public function getHttpOnly(): bool
     {
         return $this->httpOnly;
     }
 
-    /**
-     * @param null $value
-     *
-     * @return SetCookie
-     */
+
     public function withValue($value = null): SetCookie
     {
         $clone = clone $this;
@@ -134,8 +119,6 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
 
     /**
      * @param int|DateTime|DateTimeInterface|string|null $expires
-     *
-     * @return SetCookie
      */
     public function withExpires($expires = null): SetCookie
     {
@@ -147,11 +130,7 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return $clone;
     }
 
-    /**
-     * @param int $maxAge
-     *
-     * @return SetCookie
-     */
+
     public function withMaxAge(int $maxAge = null): SetCookie
     {
         $clone = clone $this;
@@ -160,11 +139,7 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return $clone;
     }
 
-    /**
-     * @param string $path
-     *
-     * @return SetCookie
-     */
+
     public function withPath(string $path = null): SetCookie
     {
         $clone = clone $this;
@@ -173,11 +148,7 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return $clone;
     }
 
-    /**
-     * @param null $domain
-     *
-     * @return SetCookie
-     */
+
     public function withDomain($domain = null): SetCookie
     {
         $clone = clone $this;
@@ -186,11 +157,7 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return $clone;
     }
 
-    /**
-     * @param bool $secure
-     *
-     * @return SetCookie
-     */
+
     public function withSecure(bool $secure = null): SetCookie
     {
         $clone = clone $this;
@@ -199,11 +166,7 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
         return $clone;
     }
 
-    /**
-     * @param bool $httpOnly
-     *
-     * @return SetCookie
-     */
+
     public function withHttpOnly(bool $httpOnly): SetCookie
     {
         $clone = clone $this;
@@ -214,7 +177,6 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
 
     /**
      *@throws Exception
-     * @return SetCookie
      */
     public function remember(): SetCookie
     {
@@ -223,7 +185,6 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
 
     /**
      *@throws Exception
-     * @return SetCookie
      */
     public function expire(): SetCookie
     {
@@ -232,20 +193,21 @@ class SetCookie extends AbstractCookie implements SetCookieInterface
 
     /**
      * @param int|DateTime|DateTimeInterface|string|null $expires
-     *
-     * @return int|null
      */
     protected function resolveExpires($expires = null): ?int
     {
         if ($expires === null) {
             return $expires;
         }
+
         if ($expires instanceof DateTimeInterface) {
             return $expires->getTimestamp();
         }
+
         if (is_numeric($expires)) {
             return $expires;
         }
+
         if (is_string($expires)) {
             $expiresTime = strtotime($expires);
 

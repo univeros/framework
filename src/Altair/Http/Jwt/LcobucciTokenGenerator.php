@@ -18,30 +18,19 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class LcobucciTokenGenerator implements TokenGeneratorInterface
 {
-    protected $request;
-    protected $builder;
-    protected $config;
+
 
     /**
      * LcobucciTokenGenerator constructor.
-     *
-     * @param ServerRequestInterface $request
-     * @param Builder $builder
-     * @param TokenConfigurationInterface $config
      */
-    public function __construct(
-        ServerRequestInterface $request,
-        Builder $builder,
-        TokenConfigurationInterface $config
-    ) {
-        $this->request = $request;
-        $this->builder = $builder;
-        $this->config = $config;
+    public function __construct(protected ServerRequestInterface $request, protected Builder $builder, protected TokenConfigurationInterface $config)
+    {
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function generate(array $claims = []): string
     {
         $issuer = (string)$this->request->getUri();

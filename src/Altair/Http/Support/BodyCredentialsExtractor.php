@@ -15,29 +15,19 @@ use Psr\Http\Message\ServerRequestInterface;
 class BodyCredentialsExtractor implements CredentialsExtractorInterface
 {
     /**
-     * @var string
-     */
-    private $identifier;
-    /**
-     * @var string
-     */
-    private $password;
-
-    /**
      * BodyCredentialsBuilder constructor.
      *
      * @param string $identifier
      * @param string $password
      */
-    public function __construct($identifier = 'username', $password = 'password')
+    public function __construct(private $identifier = 'username', private $password = 'password')
     {
-        $this->identifier = $identifier;
-        $this->password = $password;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function extract(ServerRequestInterface $request): ?array
     {
         $body = $request->getParsedBody();

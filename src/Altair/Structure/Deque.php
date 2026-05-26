@@ -9,6 +9,8 @@
 
 namespace Altair\Structure;
 
+use Altair\Structure\Traits\SequenceTrait;
+use Altair\Structure\Traits\SquaredCapacityTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\SequenceInterface;
 use ArrayAccess;
@@ -30,8 +32,8 @@ use IteratorAggregate;
  */
 class Deque implements IteratorAggregate, ArrayAccess, SequenceInterface, CapacityInterface
 {
-    use Traits\SequenceTrait;
-    use Traits\SquaredCapacityTrait;
+    use SequenceTrait;
+    use SquaredCapacityTrait;
 
     /**
      * @inheritDoc

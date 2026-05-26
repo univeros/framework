@@ -24,11 +24,11 @@ class FormatNegotiatorMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $format = $this->negotiator->getFromServerRequestUriPath($request)
-            ?: $this->negotiator->getFromServerRequestHeaderLine($request)
-            ?: FormatNegotiatorInterface::DEFAULT_FORMAT;
+        $format = ($this->negotiator->getFromServerRequestUriPath($request)
+            ?: $this->negotiator->getFromServerRequestHeaderLine($request)) ?: FormatNegotiatorInterface::DEFAULT_FORMAT;
         $contentType = $this->negotiator->getContentTypeByFormat($format);
 
         $response = $handler->handle(

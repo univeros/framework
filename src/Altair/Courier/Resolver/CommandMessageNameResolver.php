@@ -17,6 +17,7 @@ class CommandMessageNameResolver implements CommandMessageNameResolverInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function resolve(CommandMessageInterface $message): string
     {
         return $message->getName();

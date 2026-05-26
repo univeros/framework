@@ -9,19 +9,17 @@
 
 namespace Altair\Session\Contracts;
 
+use Altair\Session\Exception\InvalidArgumentException;
+
 interface SessionManagerInterface
 {
     /**
      * Returns current session id.
-     *
-     * @return string
      */
     public function getId(): string;
 
     /**
      * Sets current session id.
-     *
-     * @param string $id
      */
     public function setId(string $id);
 
@@ -35,23 +33,17 @@ interface SessionManagerInterface
     /**
      * Creates a session block.
      *
-     * @param string $name
      *
-     * @return SessionBlockInterface
      */
     public function getSessionBlock(string $name): SessionBlockInterface;
 
     /**
      * Returns current session name.
-     *
-     * @return string
      */
     public function getName(): string;
 
     /**
      * Sets session name.
-     *
-     * @param string $name
      */
     public function setName(string $name);
 
@@ -68,14 +60,12 @@ interface SessionManagerInterface
      *
      * @param string $path the current session save path.
      *
-     * @throws \Altair\Session\Exception\InvalidArgumentException if the path is not a valid directory
+     * @throws InvalidArgumentException if the path is not a valid directory
      */
     public function setSavePath(string $path);
 
     /**
      * Returns the session cookie params.
-     *
-     * @return array
      */
     public function getCookieParams(): array;
 
@@ -105,22 +95,16 @@ interface SessionManagerInterface
 
     /**
      * Returns whether the session has started or not.
-     *
-     * @return bool
      */
     public function getIsActive(): bool;
 
     /**
      * Checks whether a session is available or exists on request cookies.
-     *
-     * @return bool
      */
     public function exists(): bool;
 
     /**
      * Starts new or existing session.
-     *
-     * @return bool
      */
     public function start(): bool;
 
@@ -131,8 +115,6 @@ interface SessionManagerInterface
 
     /**
      * Resumes a session but not starts a new one if not exists.
-     *
-     * @return bool
      */
     public function resume(): bool;
 
@@ -143,24 +125,18 @@ interface SessionManagerInterface
 
     /**
      * Destroys the session entirely.
-     *
-     * @return bool
      */
     public function destroy(): bool;
 
     /**
      * Regenerates and replaces current session id. If we have a CSRF token, it also regenerates it.
      *
-     * @param bool $deletePrevious
      *
-     * @return bool
      */
     public function regenerateId(bool $deletePrevious = true): bool;
 
     /**
      * Returns the output CSRF token. If not set, will create one automatically.
-     *
-     * @return CsrfTokenInterface
      */
     public function getCsrfToken(): CsrfTokenInterface;
 }

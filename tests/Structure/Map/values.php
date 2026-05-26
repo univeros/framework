@@ -5,7 +5,7 @@ use Altair\Structure\Vector;
 
 trait values
 {
-    public static function valuesDataProvider()
+    public static function valuesDataProvider(): array
     {
         return [
             [[], []],
@@ -19,7 +19,7 @@ trait values
     /**
      * @dataProvider valuesDataProvider
      */
-    public function testValues(array $initial, array $expected)
+    public function testValues(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);
         $values = $instance->values();

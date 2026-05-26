@@ -6,7 +6,7 @@ trait _serialize
     /**
      * @dataProvider basicDataProvider
      */
-    public function testSerialize(array $values, array $expected)
+    public function testSerialize(array $values, array $expected): void
     {
         // Stack has to be serialized in push order, so that values can be
         // pushed when being unserialized.

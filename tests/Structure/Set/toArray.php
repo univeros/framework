@@ -6,7 +6,7 @@ trait toArray
     /**
      * @dataProvider basicDataProvider
      */
-    public function testToArray(array $values, array $expected)
+    public function testToArray(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $this->assertToArray($expected, $instance);

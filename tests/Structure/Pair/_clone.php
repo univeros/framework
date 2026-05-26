@@ -3,13 +3,13 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _clone
 {
-    public function testClone()
+    public function testClone(): void
     {
         $instance = $this->getPair('a', 1);
 
         $clone = clone $instance;
 
-        $this->assertEquals(get_class($instance), get_class($clone));
+        $this->assertEquals($instance::class, $clone::class);
         $this->assertEquals($instance->toArray(), $clone->toArray());
         $this->assertFalse($clone === $instance);
     }

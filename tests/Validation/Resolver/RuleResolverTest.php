@@ -13,7 +13,7 @@ class RuleResolverTest extends TestCase
      * @dataProvider rulesProvider
      * @param mixed $entry
      */
-    public function testResolver($entry)
+    public function testResolver(string|array $entry): void
     {
         $resolver = $this->getResolver();
         $rule = call_user_func($resolver, $entry);
@@ -21,7 +21,7 @@ class RuleResolverTest extends TestCase
         $this->assertTrue($rule instanceof RuleInterface);
     }
 
-    public static function rulesProvider()
+    public static function rulesProvider(): array
     {
         return [
             [AlphaRule::class],
@@ -29,7 +29,8 @@ class RuleResolverTest extends TestCase
             // todo: add rule option with multiple arguments
         ];
     }
-    protected function getResolver()
+
+    protected function getResolver(): RuleResolver
     {
         return new RuleResolver(new Container());
     }

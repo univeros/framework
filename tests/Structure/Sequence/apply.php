@@ -3,12 +3,12 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait apply
 {
-    public static function applyDataProvider()
+    public static function applyDataProvider(): array
     {
         // values, callback
         return [
             //
-            [[], function () {
+            [[], function (): void {
             }],
 
             //
@@ -18,34 +18,33 @@ trait apply
             [[new \stdClass()], 'spl_object_hash'],
 
             //
-            [[1, 2, 3], function ($v) {
-                return $v * 2;
-            }],
+            [[1, 2, 3], fn($v): int|float => $v * 2],
         ];
     }
 
     /**
      * @dataProvider applyDataProvider
      */
-    public function testApply(array $values, callable $callback)
+    public function testApply(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);
 
         $instance->apply($callback);
+
         $expected = array_map($callback, $values);
 
         $this->assertToArray($expected, $instance);
     }
 
-    public function testApplyCallbackThrowsException()
+    public function testApplyCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
 
         try {
-            $instance->apply(function ($value) {
+            $instance->apply(function ($value): void {
                 throw new \Exception();
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
 
             return;
@@ -54,18 +53,19 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-    public function testApplyCallbackThrowsExceptionLaterOn()
+    public function testApplyCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
 
         try {
-            $instance->apply(function ($value) {
+            $instance->apply(function ($value): int|float {
                 if ($value === 3) {
                     throw new \Exception();
                 }
+
                 return $value * 2;
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([2, 4, 3], $instance);
 
             return;
@@ -74,7 +74,7 @@ trait apply
         $this->fail('Exception should have been caught');
     }
 
-    public function testApplyDoesNotCallByReference()
+    public function testApplyDoesNotCallByReference(): void
     {
         $instance = static::getInstance([1, 2, 3]);
 

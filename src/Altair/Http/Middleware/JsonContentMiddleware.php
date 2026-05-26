@@ -23,17 +23,19 @@ class JsonContentMiddleware extends AbstractContentHandlerMiddleware
     ) {
     }
 
+    #[\Override]
     protected function contentTypes(): array
     {
         return ['application/json', 'text/json', 'application/x-json'];
     }
 
+    #[\Override]
     protected function parse(string $body): array|object|null
     {
         try {
             return json_decode($body, $this->associative, $this->maxDepth, $this->flags | JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new HttpBadRequestException($e->getMessage(), previous: $e);
+        } catch (JsonException $jsonException) {
+            throw new HttpBadRequestException($jsonException->getMessage(), previous: $jsonException);
         }
     }
 }

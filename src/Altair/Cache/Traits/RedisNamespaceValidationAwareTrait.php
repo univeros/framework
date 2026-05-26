@@ -15,7 +15,6 @@ trait RedisNamespaceValidationAwareTrait
 {
     /**
      *
-     * @param string $namespace
      * @throws InvalidArgumentException if the namespace contains invalid characters
      */
     public function useNamespace(string $namespace): void
@@ -29,6 +28,7 @@ trait RedisNamespaceValidationAwareTrait
                 )
             );
         }
+
         $this->namespace = $namespace;
     }
 }

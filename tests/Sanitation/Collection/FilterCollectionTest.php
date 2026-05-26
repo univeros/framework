@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class FilterCollectionTest extends TestCase
 {
-    public function testValidFilters()
+    public function testValidFilters(): void
     {
         $entity = new SanitizableEntity();
 
@@ -28,7 +28,7 @@ class FilterCollectionTest extends TestCase
         $this->assertTrue($ruleCollection->hasKey('alphaNum'));
     }
 
-    public function testExceptionsWithClassNotImplementingRuleInterface()
+    public function testExceptionsWithClassNotImplementingRuleInterface(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 
@@ -36,7 +36,7 @@ class FilterCollectionTest extends TestCase
         $ruleCollection->put('fail', SanitizableEntity::class);
     }
 
-    public function testExceptionsWithWrongConfigurationNoClassKey()
+    public function testExceptionsWithWrongConfigurationNoClassKey(): void
     {
         $this->expectException(\InvalidArgumentException::class);
 

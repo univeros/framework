@@ -28,8 +28,6 @@ interface ValidatableInterface
      *      ],
      *      'keyC' => RuleD::class
      * ]);
-     *
-     * @return RuleCollection
      */
     public function getRules(): RuleCollection;
 }

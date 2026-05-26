@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\MinFilter;
 
 class MinFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             [4, 4],
@@ -19,6 +20,7 @@ class MinFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
         return new MinFilter(4);

@@ -22,14 +22,12 @@ class HttpMethodNotAllowedException extends HttpBadRequestException
     }
 
     /**
-     * @param ResponseInterface $response
-     *
      * @return ResponseInterface
      */
     public function withResponse(ResponseInterface $response)
     {
         if (!empty($this->allowed)) {
-            $response = $response->withHeader('Allow', implode(',', $this->allowed));
+            return $response->withHeader('Allow', implode(',', $this->allowed));
         }
 
         return $response;

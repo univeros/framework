@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait toArray
 {
-    public function testToArray()
+    public function testToArray(): void
     {
         $instance = $this->getPair('a', 1);
         $expected = [

@@ -2,11 +2,13 @@
 
 namespace Altair\Tests\Structure\Deque;
 
+use Altair\Structure\Contracts\CapacityInterface;
+
 trait capacity
 {
-    public function testCapacity()
+    public function testCapacity(): void
     {
-        $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
+        $min = CapacityInterface::MIN_CAPACITY;
 
         $instance = static::getInstance();
         $this->assertEquals($min, $instance->capacity());
@@ -19,9 +21,9 @@ trait capacity
         $this->assertEquals($min * 2, $instance->capacity());
     }
 
-    public function testAutoTruncate()
+    public function testAutoTruncate(): void
     {
-        $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
+        $min = CapacityInterface::MIN_CAPACITY;
         $num = $min * 16;
 
         $instance = static::getInstance(range(1, $num - 1));
@@ -34,9 +36,9 @@ trait capacity
         $this->assertEquals($expected, $instance->capacity());
     }
 
-    public function testClearResetsCapacity()
+    public function testClearResetsCapacity(): void
     {
-        $min = \Altair\Structure\Contracts\CapacityInterface::MIN_CAPACITY;
+        $min = CapacityInterface::MIN_CAPACITY;
 
         $instance = static::getInstance(range(1, self::MANY));
         $instance = $instance->clear();

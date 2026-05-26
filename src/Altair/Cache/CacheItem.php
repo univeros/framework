@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,7 +12,6 @@
 namespace Altair\Cache;
 
 use Altair\Cache\Contracts\CacheItemTagValidatorInterface;
-use Altair\Cache\Exception\InvalidArgumentException;
 use DateInterval;
 use DateTime;
 use DateTimeInterface;
@@ -18,36 +19,36 @@ use Psr\Cache\CacheItemInterface;
 
 final class CacheItem implements CacheItemInterface
 {
+    // The following properties are accessed via Closure::bind reflection from
+    // CacheItemPool (see createCacheItemFactoryClosure / createDeferredMergerClosure).
+    // Static analysers cannot see those references — do not "clean up" as unused.
     protected $key;
     protected $value;
     protected $isHit;
     protected $expirationTime;
     protected $defaultLifespan;
-    protected $tags = [];
+    protected array $tags = [];
+    protected ?CacheItemTagValidatorInterface $tagValidator = null;
 
-    /**
-     * @var CacheItemTagValidatorInterface
-     */
-    protected $tagValidator;
-
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getKey(): string
     {
         return $this->key;
     }
 
+    #[\Override]
     public function get(): mixed
     {
         return $this->value;
     }
 
+    #[\Override]
     public function isHit(): bool
     {
         return $this->isHit;
     }
 
+    #[\Override]
     public function set(mixed $value): static
     {
         $this->value = $value;
@@ -55,6 +56,7 @@ final class CacheItem implements CacheItemInterface
         return $this;
     }
 
+    #[\Override]
     public function expiresAt(?DateTimeInterface $expiration): static
     {
         $this->expirationTime = $expiration === null
@@ -64,6 +66,7 @@ final class CacheItem implements CacheItemInterface
         return $this;
     }
 
+    #[\Override]
     public function expiresAfter(int|DateInterval|null $time): static
     {
         if ($time === null) {

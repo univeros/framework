@@ -18,14 +18,10 @@ class Event implements EventInterface
      * @var bool Whether no further event listeners should be triggered
      */
     protected $propagationStopped = false;
-    /**
-     * @var string
-     */
-    protected $name;
-    /**
-     * @var array
-     */
-    protected $arguments;
+
+
+    protected array $arguments;
+
     /**
      * @var int
      */
@@ -34,12 +30,10 @@ class Event implements EventInterface
     /**
      * Event constructor.
      *
-     * @param string $name
      * @param array|null $arguments
      */
-    public function __construct(string $name, array $arguments = null)
+    public function __construct(protected string $name, array $arguments = null)
     {
-        $this->name = $name;
         $this->arguments = $arguments ?? [];
         $this->occurredOn = Carbon::today('UTC')->getTimestamp();
     }
@@ -47,6 +41,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getOccurredOn(): int
     {
         return $this->occurredOn;
@@ -55,6 +50,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function stopPropagation(): EventInterface
     {
         $this->propagationStopped = true;
@@ -65,6 +61,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isPropagationStopped(): bool
     {
         return $this->propagationStopped;
@@ -73,6 +70,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
@@ -81,6 +79,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getArguments(): array
     {
         return $this->arguments;
@@ -89,6 +88,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasArgument(string $key): bool
     {
         return array_key_exists(strtolower($key), $this->arguments);
@@ -97,6 +97,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getArgument(string $key)
     {
         if (!$this->hasArgument($key)) {
@@ -109,6 +110,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withName(string $name): EventInterface
     {
         $cloned = clone $this;
@@ -120,6 +122,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withArgument(string $key, $content): EventInterface
     {
         $cloned = clone $this;
@@ -131,6 +134,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withArguments(array $arguments): EventInterface
     {
         $cloned = clone $this;

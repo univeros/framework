@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 trait _foreach
 {
-    public function testForEach()
+    public function testForEach(): void
     {
         $instance = static::getInstance();
 
@@ -24,10 +24,5 @@ trait _foreach
         $this->assertCount(0, $instance);
         $this->assertToArray([], $instance);
 
-        // Just to make sure that an iteration attempt can still be made.
-        foreach ($instance as $value) {
-        }
-        foreach ($instance as $value) {
-        }
     }
 }

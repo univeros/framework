@@ -16,6 +16,8 @@ class Entity implements EntityInterface
     use SerializeAwareTrait;
 
     private $id;
+
     private $name;
+
     private $created_at;
 }

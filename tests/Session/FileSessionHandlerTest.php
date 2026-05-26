@@ -8,21 +8,20 @@ use PHPUnit\Framework\TestCase;
 
 class FileSessionHandlerTest extends TestCase
 {
-    /**
-     * @var Filesystem
-     */
-    private $fs;
+    private Filesystem $fs;
 
+    #[\Override]
     protected function setUp(): void    {
         $this->fs = new Filesystem();
         $this->fs->makeDirectory(__DIR__ . '/tmp');
     }
 
+    #[\Override]
     protected function tearDown(): void    {
         $this->fs->deleteDirectory(__DIR__ . '/tmp');
     }
 
-    public function testHandlerWithValidSessionTime()
+    public function testHandlerWithValidSessionTime(): void
     {
         $tmpDir = __DIR__ . '/tmp';
 
@@ -43,7 +42,7 @@ class FileSessionHandlerTest extends TestCase
         $this->assertEmpty($content);
     }
 
-    public function testHandlerWithExpiredSessionTime()
+    public function testHandlerWithExpiredSessionTime(): void
     {
         $tmpDir = __DIR__ . '/tmp';
 
@@ -61,7 +60,7 @@ class FileSessionHandlerTest extends TestCase
         $this->assertFileDoesNotExist($tmpDir . '/' . $this->getSessionId());
     }
 
-    protected function getSessionId()
+    protected function getSessionId(): string
     {
         return 'aaaaaaaaaaaaaaaaaaaaaa';
     }

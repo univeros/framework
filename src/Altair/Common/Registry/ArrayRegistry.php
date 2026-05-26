@@ -14,7 +14,7 @@ use Altair\Common\Support\Arr;
 
 class ArrayRegistry implements RegistryInterface
 {
-    protected $data;
+    protected array $data;
 
     /**
      * ArrayRegistry constructor.
@@ -29,6 +29,7 @@ class ArrayRegistry implements RegistryInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function get(string $key, $default = null)
     {
         return Arr::getValue($this->data, $key, $default);
@@ -37,7 +38,8 @@ class ArrayRegistry implements RegistryInterface
     /**
      * @inheritDoc
      */
-    public function set(string $key, $value)
+    #[\Override]
+    public function set(string $key, $value): static
     {
         $this->data[$key] = $value;
 

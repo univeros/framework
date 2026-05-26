@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class RulesRunnerTest extends TestCase
 {
-    public function testRunner()
+    public function testRunner(): void
     {
         $runner = $this->getRulesRunner();
         $payload = call_user_func($runner, $this->getPayload());
@@ -27,7 +27,7 @@ class RulesRunnerTest extends TestCase
         $this->assertEquals('B passed', $payload->getAttribute(RuleB::class));
     }
 
-    protected function getRulesRunner()
+    protected function getRulesRunner(): RulesRunner
     {
         $queue = new Queue(
             [
@@ -42,7 +42,7 @@ class RulesRunnerTest extends TestCase
         return new RulesRunner($resolver, $queue);
     }
 
-    protected function getPayload()
+    protected function getPayload(): \Altair\Middleware\Contracts\PayloadInterface
     {
         return (new Payload())
             ->withAttribute(PayloadInterface::ATTRIBUTE_SUBJECT, ['test' => 'alphaOnly'])

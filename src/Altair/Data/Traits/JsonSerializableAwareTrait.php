@@ -9,14 +9,10 @@
 
 namespace Altair\Data\Traits;
 
-use Altair\Data\Contracts\ArrayableInterface;
-
 trait JsonSerializableAwareTrait
 {
     /**
      * @see ArrayableInterface::toArray()
-     *
-     * @return array
      */
     abstract public function toArray(): array;
 

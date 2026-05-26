@@ -2,26 +2,40 @@
 
 namespace Altair\Tests\Structure;
 
+use Altair\Tests\Structure\Pair\__construct;
+use Altair\Tests\Structure\Pair\__get;
+use Altair\Tests\Structure\Pair\__set;
+use Altair\Tests\Structure\Pair\_clone;
+use Altair\Tests\Structure\Pair\_echo;
+use Altair\Tests\Structure\Pair\_empty;
+use Altair\Tests\Structure\Pair\_isset;
+use Altair\Tests\Structure\Pair\_jsonEncode;
+use Altair\Tests\Structure\Pair\_list;
+use Altair\Tests\Structure\Pair\_serialize;
+use Altair\Tests\Structure\Pair\_unset;
+use Altair\Tests\Structure\Pair\_var_dump;
+use Altair\Tests\Structure\Pair\copy;
+use Altair\Tests\Structure\Pair\toArray;
 use Altair\Structure\Pair as PairObject;
 
 class PairTest extends AbstractCollectionTest
 {
-    use Pair\__construct;
-    use Pair\__get;
-    use Pair\__set;
-    use Pair\_clone;
-    use Pair\_echo;
-    use Pair\_empty;
-    use Pair\_isset;
-    use Pair\_jsonEncode;
-    use Pair\_list;
-    use Pair\_serialize;
-    use Pair\_unset;
-    use Pair\_var_dump;
-    use Pair\copy;
-    use Pair\toArray;
+    use __construct;
+    use __get;
+    use __set;
+    use _clone;
+    use _echo;
+    use _empty;
+    use _isset;
+    use _jsonEncode;
+    use _list;
+    use _serialize;
+    use _unset;
+    use _var_dump;
+    use copy;
+    use toArray;
 
-    private function getPair($key, $value)
+    private function getPair($key, $value): PairObject
     {
         return new PairObject($key, $value);
     }

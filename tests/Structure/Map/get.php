@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait get
 {
-    public static function getDataProvider()
+    public static function getDataProvider(): array
     {
         // initial, key, expected
         return [
@@ -13,40 +13,38 @@ trait get
 
     /**
      * @dataProvider getDataProvider
-     * @param mixed $key
-     * @param mixed $expected
      */
-    public function testGet(array $initial, $key, $expected)
+    public function testGet(array $initial, mixed $key, mixed $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->get($key));
     }
 
-    public function testGetDefault()
+    public function testGetDefault(): void
     {
         $instance = static::getInstance();
         $this->assertEquals('a', $instance->get('?', 'a'));
     }
 
-    public function testGetKeyNotFoundIsNull()
+    public function testGetKeyNotFoundIsNull(): void
     {
         $instance = static::getInstance();
         $this->assertEquals(null, $instance->get('?'));
     }
 
-    public function testArrayAccessGet()
+    public function testArrayAccessGet(): void
     {
         $instance = static::getInstance(['a' => 1]);
         $this->assertEquals(1, $instance['a']);
     }
 
-    public function testArrayAccessGetByReference()
+    public function testArrayAccessGetByReference(): void
     {
         $instance = static::getInstance(['a' => [1]]);
         $this->assertEquals(1, $instance['a'][0]);
     }
 
-    public function testArrayAccessGetKeyNotFound()
+    public function testArrayAccessGetKeyNotFound(): void
     {
         $instance = static::getInstance(['a' => 1]);
         $this->expectKeyNotFoundException();

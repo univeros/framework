@@ -12,29 +12,18 @@ namespace Altair\Validation\Rule;
 class InRule extends AbstractRule
 {
     /**
-     * @var mixed
-     */
-    protected $haystack;
-    /**
-     * @var bool
-     */
-    protected $strict;
-
-    /**
      * InRule constructor.
      *
      * @param $haystack
-     * @param bool $strict
      */
-    public function __construct($haystack, bool $strict = false)
+    public function __construct(protected mixed $haystack, protected bool $strict = false)
     {
-        $this->haystack = $haystack;
-        $this->strict = $strict;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (is_array($this->haystack)) {
@@ -44,17 +33,17 @@ class InRule extends AbstractRule
         if ($value === null || $value === '') {
             return $this->strict ? $value === $this->haystack : $value == $this->haystack;
         }
+
         $value = (string)$value;
         return $this->strict
-            ? false !== mb_strpos($this->haystack, $value, 0, mb_detect_encoding($value))
-            : false !== mb_stripos($this->haystack, $value, 0, mb_detect_encoding($value));
+            ? false !== mb_strpos((string) $this->haystack, $value, 0, mb_detect_encoding($value))
+            : false !== mb_stripos((string) $this->haystack, $value, 0, mb_detect_encoding($value));
     }
 
     /**
      * @param $value
-     *
-     * @return string
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf(

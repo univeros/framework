@@ -17,12 +17,10 @@ trait ImmutableAttributesAwareTrait
 
     /**
      * AttributesAwareTrait constructor. Allow usage of array to configure an object.
-     *
-     * @param array $data
      */
     public function __construct(array $data = [])
     {
-        if (!empty($data)) {
+        if ($data !== []) {
             $data = array_intersect_key($data, get_object_vars($this));
             foreach ($data as $key => $value) {
                 $this->{$key} = $value;
@@ -61,18 +59,17 @@ trait ImmutableAttributesAwareTrait
      * Protects against the object being modified
      *
      * @param string $key
-     * @param mixed $value
      *
      * @throws RuntimeException
      * @return void
      *
      */
-    public function __set($key, $value)
+    public function __set($key, mixed $value)
     {
         throw new RuntimeException(
             sprintf(
                 'Modification of immutable object `%s` is not allowed',
-                get_class($this)
+                $this::class
             )
         );
     }
@@ -91,7 +88,7 @@ trait ImmutableAttributesAwareTrait
         throw new RuntimeException(
             sprintf(
                 'Modification of immutable object `%s` is not allowed',
-                get_class($this)
+                $this::class
             )
         );
     }

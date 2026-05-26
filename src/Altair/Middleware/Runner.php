@@ -17,12 +17,7 @@ use Altair\Structure\Queue;
 
 class Runner implements MiddlewareRunnerInterface
 {
-    /**
-     * The middleware queue.
-     *
-     * @var Queue
-     */
-    protected $queue;
+
     /**
      *
      * A callable to convert queue entries to callables.
@@ -41,22 +36,20 @@ class Runner implements MiddlewareRunnerInterface
      * @param callable|MiddlewareResolverInterface $resolver Converts queue entries to callables.
      *
      */
-    public function __construct(Queue $queue, callable $resolver = null)
+    public function __construct(protected Queue $queue, callable $resolver = null)
     {
-        $this->queue = $queue;
         $this->resolver = $resolver;
     }
 
     /**
      * Calls the next entry in the queue.
      *
-     * @param PayloadInterface $payload
      *
-     * @return PayloadInterface
      */
+    #[\Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = !$this->queue->isEmpty() ? $this->queue->pop() : null;
+        $entry = $this->queue->isEmpty() ? null : $this->queue->pop();
         $middleware = $this->resolve($entry);
 
         return $middleware($payload, $this);
@@ -72,10 +65,9 @@ class Runner implements MiddlewareRunnerInterface
     protected function resolve($entry)
     {
         if (!$entry) {
-            return static function (PayloadInterface $payload, callable $next) {
-                return $payload;
-            };
+            return static fn(PayloadInterface $payload, callable $next): PayloadInterface => $payload;
         }
+
         if (!$this->resolver) {
             return $entry;
         }

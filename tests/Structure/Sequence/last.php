@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait last
 {
-    public static function lastDataProvider()
+    public static function lastDataProvider(): array
     {
         // initial, returned
         return [
@@ -15,16 +15,14 @@ trait last
 
     /**
      * @dataProvider lastDataProvider
-     * @param mixed $initial
-     * @param mixed $expected
      */
-    public function testLast($initial, $expected)
+    public function testLast(mixed $initial, mixed $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->last());
     }
 
-    public function testLastNotAllowedWhenEmpty()
+    public function testLastNotAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

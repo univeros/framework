@@ -5,7 +5,8 @@ use Altair\Validation\Rule\MinRule;
 
 class MinRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             [4],
@@ -14,7 +15,8 @@ class MinRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [[]],
@@ -24,7 +26,8 @@ class MinRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): MinRule
     {
         return new MinRule(4);
     }

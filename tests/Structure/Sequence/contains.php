@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait contains
 {
-    public static function containsDataProvider()
+    public static function containsDataProvider(): array
     {
         $sample = static::sample();
 
@@ -29,9 +29,8 @@ trait contains
 
     /**
      * @dataProvider containsDataProvider
-     * @param mixed $initial
      */
-    public function testContains($initial, array $values, bool $expected)
+    public function testContains(mixed $initial, array $values, bool $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->contains(...$values));

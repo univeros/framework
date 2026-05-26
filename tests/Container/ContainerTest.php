@@ -1,26 +1,28 @@
 <?php
 namespace Altair\Tests\Container;
 
+use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Container;
 use Altair\Container\Definition;
 use PHPUnit\Framework\TestCase;
 
 class ContainerTest extends TestCase
 {
-    public function testMakeInstanceInjectsSimpleConcreteDependency()
+    public function testMakeInstanceInjectsSimpleConcreteDependency(): void
     {
         $container = new Container();
 
         $this->assertEquals(new TestNeedsDep(new TestDependency()), $container->make(TestNeedsDep::class));
     }
 
-    public function testMakeInstanceReturnsNewInstanceIfClassHasNoConstructor()
+    public function testMakeInstanceReturnsNewInstanceIfClassHasNoConstructor(): void
     {
         $container = new Container();
         $this->assertEquals(new TestNoConstructor, $container->make(TestNoConstructor::class));
     }
 
-    public function testMakeInstanceReturnsAliasInstanceOnNonConcreteTypehint()
+    public function testMakeInstanceReturnsAliasInstanceOnNonConcreteTypehint(): void
     {
         $container = new Container();
         $container->alias(DepInterface::class, DepImplementation::class);
@@ -31,30 +33,30 @@ class ContainerTest extends TestCase
         $this->assertEquals(new DepImplementation, $container->make('custom'));
     }
 
-    public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias()
+    public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias(): void
     {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+        $this->expectException(InjectionException::class);
 
         $container = new Container();
         $container->make('Altair\Tests\DepInterface');
     }
 
-    public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation()
+    public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation(): void
     {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+        $this->expectException(InjectionException::class);
 
         $container = new Container;
         $container->make('Altair\Tests\RequiresInterface');
     }
 
-    public function testMakeInstanceBuildsNonConcreteCtorParamWithAlias()
+    public function testMakeInstanceBuildsNonConcreteCtorParamWithAlias(): void
     {
         $container = new Container;
         $container->alias(DepInterface::class, DepImplementation::class);
         $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
     }
 
-    public function testMakeInstancePassesNullCtorParameterIfNoTypehintOrDefaultCanBeDetermined()
+    public function testMakeInstancePassesNullCtorParameterIfNoTypehintOrDefaultCanBeDetermined(): void
     {
         $container = new Container;
         $nullCtorParamObj = $container->make(ProvTestNoDefinitionNullDefaultClass::class);
@@ -62,11 +64,12 @@ class ContainerTest extends TestCase
         $this->assertEquals(null, $nullCtorParamObj->arg);
     }
 
-    public function testMakeInstanceReturnsSharedInstanceIfAvailable()
+    public function testMakeInstanceReturnsSharedInstanceIfAvailable(): void
     {
         $container = new Container;
         $container->define(RequiresInterface::class, new Definition(['dep' => DepImplementation::class]));
         $container->share(RequiresInterface::class);
+
         $injected = $container->make(RequiresInterface::class);
         $this->assertEquals('something', $injected->testDep->testProp);
         $injected->testDep->testProp = 'something else';
@@ -74,23 +77,24 @@ class ContainerTest extends TestCase
         $this->assertEquals('something else', $injected2->testDep->testProp);
     }
 
-    public function testMakeInstanceThrowsExceptionOnClassLoadFailure()
+    public function testMakeInstanceThrowsExceptionOnClassLoadFailure(): void
     {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+        $this->expectException(InjectionException::class);
 
         $container = new Container;
         $container->make('ClassThatDoesntExist');
     }
 
-    public function testMakeInstanceUsesCustomDefinitionIfSpecified()
+    public function testMakeInstanceUsesCustomDefinitionIfSpecified(): void
     {
         $container = new Container;
         $container->define(TestNeedsDep::class, new Definition(['testDep' => TestDependency::class]));
+
         $injected = $container->make(TestNeedsDep::class, new Definition(['testDep' => TestDependency2::class]));
         $this->assertEquals('testVal2', $injected->testDep->testProp);
     }
 
-    public function testMakeInstanceCustomDefinitionOverridesExistingDefinitions()
+    public function testMakeInstanceCustomDefinitionOverridesExistingDefinitions(): void
     {
         $container = new Container;
         $definition = (new Definition([]))
@@ -103,17 +107,18 @@ class ContainerTest extends TestCase
         $this->assertEquals('Second argument', $injected->arg2);
     }
 
-    public function testMakeInstanceStoresShareIfMarkedWithNullInstance()
+    public function testMakeInstanceStoresShareIfMarkedWithNullInstance(): void
     {
         $container = new Container();
         $container->share(TestDependency::class);
+
         $instance = $container->make(TestDependency::class);
         $anotherInstance = $container->make(TestDependency::class);
         $this->assertTrue($instance instanceof TestDependency);
         $this->assertTrue($instance === $anotherInstance);
     }
 
-    public function testMakeInstanceUsesReflectionForUnknownParamsInMultiBuildWithDeps()
+    public function testMakeInstanceUsesReflectionForUnknownParamsInMultiBuildWithDeps(): void
     {
         $container = new Container();
         $object = $container->make(TestMultiDepsWithCtor::class, new Definition(['val1' => TestDependency::class]));
@@ -126,9 +131,9 @@ class ContainerTest extends TestCase
         $this->assertEquals(null, $object->testParam);
     }
 
-    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault()
+    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault(): void
     {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+        $this->expectException(InjectionException::class);
 
         $container = new Container();
         $obj = $container->make(InjectorTestCtorParamWithNoTypehintOrDefault::class);
@@ -136,19 +141,20 @@ class ContainerTest extends TestCase
     }
 
     public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
-    ) {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+    ): void {
+        $this->expectException(InjectionException::class);
 
         $container = new Container();
         $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
         $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
     }
 
-    public function testTypelessDefineForDependency()
+    public function testTypelessDefineForDependency(): void
     {
         $thumbnailSize = 128;
         $container = new Container();
         $container->defineParameter('thumbnailSize', $thumbnailSize);
+
         $testClass = $container->make(RequiresDependencyWithTypelessParameters::class);
         $this->assertEquals(
             $thumbnailSize,
@@ -157,16 +163,17 @@ class ContainerTest extends TestCase
         );
     }
 
-    public function testTypelessDefineForAliasedDependency()
+    public function testTypelessDefineForAliasedDependency(): void
     {
         $container = new Container();
         $container->defineParameter('val', 42);
         $container->alias(TestNoExplicitDefine::class, ProviderTestCtorParamWithNoTypehintOrDefault::class);
+
         $instance = $container->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
         $this->assertTrue(($instance instanceof ProviderTestCtorParamWithNoTypehintOrDefaultDependent));
     }
 
-    public function testMakeInstanceInjectsRawParametersDirectly()
+    public function testMakeInstanceInjectsRawParametersDirectly(): void
     {
         $container = new Container();
         $container->define(
@@ -193,13 +200,13 @@ class ContainerTest extends TestCase
         $this->assertNull($obj->null);
     }
 
-    public function testMakeInstanceThrowsExceptionWhenDelegateDoes()
+    public function testMakeInstanceThrowsExceptionWhenDelegateDoes(): void
     {
         $this->expectException(\Exception::class);
 
         $container = new Container();
         $callable = $this->createMock(
-            '\Altair\Tests\Container\CallableMock'
+            CallableMock::class
         );
         $container->delegate('TestDependency', $callable);
         $callable->expects($this->once())
@@ -208,18 +215,18 @@ class ContainerTest extends TestCase
         $container->make('TestDependency');
     }
 
-    public function testMakeInstanceHandlesNamespacedClasses()
+    public function testMakeInstanceHandlesNamespacedClasses(): void
     {
         $container = new Container();
         $instance = $container->make(SomeClassName::class);
         $this->assertTrue($instance instanceof SomeClassName);
     }
 
-    public function testMakeInstanceDelegate()
+    public function testMakeInstanceDelegate(): void
     {
         $container = new Container();
         $callable = $this->createMock(
-            '\Altair\Tests\Container\CallableMock'
+            CallableMock::class
         );
 
         $callable
@@ -232,31 +239,32 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(TestDependency::class, $obj);
     }
 
-    public function testMakeInstanceWithStringDelegate()
+    public function testMakeInstanceWithStringDelegate(): void
     {
         $container = new Container;
         $container->delegate('StdClass', StringStdClassDelegateMock::class);
+
         $obj = $container->make('StdClass');
         $this->assertEquals(42, $obj->test);
     }
 
-    public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails()
+    public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails(): void
     {
-        $this->expectException(\Altair\Container\Exception\InvalidArgumentException::class);
+        $this->expectException(InvalidArgumentException::class);
 
         $container = new Container();
         $container->delegate('StdClass', 'SomeClassThatDefinitelyDoesNotExistForReal');
     }
 
-    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition()
+    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition(): void
     {
-        $this->expectException(\Altair\Container\Exception\InjectionException::class);
+        $this->expectException(InjectionException::class);
 
         $container = new Container();
         $obj = $container->make(RequiresInterface::class);
     }
 
-    public function testDefineAssignsPassedDefinition()
+    public function testDefineAssignsPassedDefinition(): void
     {
         $container = new Container();
         $definition = new Definition(['dep' => DepImplementation::class]);
@@ -266,22 +274,18 @@ class ContainerTest extends TestCase
 
     /**
      * @dataProvider provideExecutionExpectations
-     *
-     * @param mixed $toInvoke
-     * @param mixed $definition
-     * @param mixed $expectedResult
      */
-    public function testProvisionedInvokables($toInvoke, $definition, $expectedResult)
+    public function testProvisionedInvokables(mixed $toInvoke, mixed $definition, mixed $expectedResult): void
     {
         $container = new Container();
         $this->assertEquals($expectedResult, $container->execute($toInvoke, new Definition($definition)));
     }
 
-    public static function provideExecutionExpectations()
+    public static function provideExecutionExpectations(): array
     {
         $return = [];
         // 0 -------------------------------------------------------------------------------------->
-        $toInvoke = ['Altair\Tests\Container\ExecuteClassNoDeps', 'execute'];
+        $toInvoke = [ExecuteClassNoDeps::class, 'execute'];
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -291,7 +295,7 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 2 -------------------------------------------------------------------------------------->
-        $toInvoke = ['Altair\Tests\Container\ExecuteClassDeps', 'execute'];
+        $toInvoke = [ExecuteClassDeps::class, 'execute'];
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -301,12 +305,12 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 4 -------------------------------------------------------------------------------------->
-        $toInvoke = ['Altair\Tests\Container\ExecuteClassDepsWithMethodDeps', 'execute'];
+        $toInvoke = [ExecuteClassDepsWithMethodDeps::class, 'execute'];
         $args = [':arg' => 9382];
         $expectedResult = 9382;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 5 -------------------------------------------------------------------------------------->
-        $toInvoke = ['Altair\Tests\Container\ExecuteClassStaticMethod', 'execute'];
+        $toInvoke = ExecuteClassStaticMethod::execute(...);
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -316,12 +320,12 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 7 -------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassStaticMethod::execute';
+        $toInvoke = ExecuteClassStaticMethod::class . '::execute';
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 8 -------------------------------------------------------------------------------------->
-        $toInvoke = ['Altair\Tests\Container\ExecuteClassRelativeStaticMethod', 'parent::execute'];
+        $toInvoke = [ExecuteClassRelativeStaticMethod::class, 'parent::execute'];
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -331,9 +335,7 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 10 ------------------------------------------------------------------------------------->
-        $toInvoke = function () {
-            return 42;
-        };
+        $toInvoke = fn(): int => 42;
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -343,27 +345,27 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 12 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassInvokable';
+        $toInvoke = ExecuteClassInvokable::class;
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 13 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassNoDeps::execute';
+        $toInvoke = ExecuteClassNoDeps::class . '::execute';
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 14 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassDeps::execute';
+        $toInvoke = ExecuteClassDeps::class . '::execute';
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 15 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassStaticMethod::execute';
+        $toInvoke = ExecuteClassStaticMethod::class . '::execute';
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 16 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\ExecuteClassRelativeStaticMethod::parent::execute';
+        $toInvoke = ExecuteClassRelativeStaticMethod::class . '::parent::execute';
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -373,9 +375,7 @@ class ContainerTest extends TestCase
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
         // 18 ------------------------------------------------------------------------------------->
-        $toInvoke = function () {
-            return 42;
-        };
+        $toInvoke = fn(): int => 42;
         $args = [];
         $expectedResult = 42;
         $return[] = [$toInvoke, $args, $expectedResult];
@@ -391,12 +391,12 @@ class ContainerTest extends TestCase
         return $return;
     }
 
-    public function testInstanceMutate()
+    public function testInstanceMutate(): void
     {
         $container = new Container();
         $container->prepare(
             '\StdClass',
-            function ($obj, $container) {
+            function ($obj, $container): void {
                 $obj->testval = 42;
             }
         );
@@ -404,12 +404,12 @@ class ContainerTest extends TestCase
         $this->assertSame(42, $obj->testval);
     }
 
-    public function testInterfaceMutate()
+    public function testInterfaceMutate(): void
     {
         $container = new Container();
         $container->prepare(
             SomeInterface::class,
-            function ($obj, $container) {
+            function ($obj, $container): void {
                 $obj->testProp = 42;
             }
         );

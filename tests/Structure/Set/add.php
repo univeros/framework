@@ -3,9 +3,9 @@ namespace Altair\Tests\Structure\Set;
 
 trait add
 {
-    public static function addDataProvider()
+    public static function addDataProvider(): array
     {
-        list($unique, $duplicates) = static::getUniqueAndDuplicateData();
+        [$unique, $duplicates] = static::getUniqueAndDuplicateData();
 
         // initial, input, expected
         return [
@@ -44,7 +44,7 @@ trait add
         array $initial,
         array $values,
         array $expected
-    ) {
+    ): void {
         $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
@@ -62,7 +62,7 @@ trait add
         array $initial,
         array $values,
         array $expected
-    ) {
+    ): void {
         $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
@@ -80,7 +80,7 @@ trait add
         array $initial,
         array $values,
         array $expected
-    ) {
+    ): void {
         $instance = static::getInstance($initial);
         $instance->add(...$values);
 
@@ -88,14 +88,14 @@ trait add
         $this->assertToArray($expected, $instance);
     }
 
-    public function testAddCircularReference()
+    public function testAddCircularReference(): void
     {
         $instance = static::getInstance();
         $instance->add($instance);
         $this->assertToArray([$instance], $instance);
     }
 
-    public function testAddIndirectCircularReference()
+    public function testAddIndirectCircularReference(): void
     {
         $a = static::getInstance();
         $b = static::getInstance();

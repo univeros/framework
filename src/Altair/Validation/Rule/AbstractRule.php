@@ -18,13 +18,14 @@ abstract class AbstractRule implements RuleInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(MiddlewarePayloadInterface $payload, callable $next): MiddlewarePayloadInterface
     {
         $subject = (object)$payload->getAttribute(PayloadInterface::ATTRIBUTE_SUBJECT);
         $attribute = $payload->getAttribute(PayloadInterface::ATTRIBUTE_KEY);
 
         if ($this->assert($subject->$attribute)) {
-            $result = $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT, true) && true;
+            $result = $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT, true);
 
             return $next($payload->withAttribute(PayloadInterface::ATTRIBUTE_RESULT, $result));
         }

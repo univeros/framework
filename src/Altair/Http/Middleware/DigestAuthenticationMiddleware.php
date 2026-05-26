@@ -43,6 +43,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
         $this->nonce = $options['nonce'] ?? null;
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {

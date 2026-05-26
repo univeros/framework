@@ -5,7 +5,8 @@ use Altair\Validation\Rule\BooleanRule;
 
 class BooleanRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             [true],
@@ -35,7 +36,8 @@ class BooleanRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             ['nothing'],
@@ -44,7 +46,8 @@ class BooleanRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): BooleanRule
     {
         return new BooleanRule();
     }

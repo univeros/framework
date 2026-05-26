@@ -46,6 +46,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $error = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_EXCEPTION);
@@ -53,15 +54,16 @@ class DefaultErrorHandler implements ErrorHandlerInterface
         $message = $error !== null ? $error->getMessage() : '';
         $response = (new Response('php://memory', $response->getStatusCode()));
 
-        foreach ($this->handlers as $method => $types) {
+        foreach ($this->handlers as $types) {
             foreach ($types as $type) {
-                if (stripos($accept, $type) !== false) {
+                if (stripos($accept, (string) $type) !== false) {
                     call_user_func([$this, $type], $response->getStatusCode(), $message);
 
                     return $response->withHeader('Content-Type', $type);
                 }
             }
         }
+
         $this->html($response->getStatusCode(), $message);
 
         return $response->withHeader('Content-Type', 'text/html');
@@ -121,6 +123,7 @@ EOT;
         if (!empty($message)) {
             $output['message'] = $message;
         }
+
         echo json_encode($output);
     }
 
@@ -185,12 +188,12 @@ EOT;
      *
      * @return resource
      */
-    protected function createImage($statusCode, $message)
+    protected function createImage($statusCode, $message): \GdImage|false
     {
         $size = 200;
         $image = imagecreatetruecolor($size, $size);
         $textColor = imagecolorallocate($image, 255, 255, 255);
-        imagestring($image, 5, 10, 10, "Error {$statusCode}", $textColor);
+        imagestring($image, 5, 10, 10, 'Error ' . $statusCode, $textColor);
         foreach (str_split($message, intval($size / 10)) as $line => $text) {
             imagestring($image, 5, 10, ($line * 18) + 28, $text, $textColor);
         }

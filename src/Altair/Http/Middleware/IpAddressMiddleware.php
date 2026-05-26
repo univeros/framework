@@ -38,6 +38,7 @@ class IpAddressMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $request = $request->withAttribute(
@@ -65,6 +66,7 @@ class IpAddressMiddleware implements MiddlewareInterface
             if ($header === '') {
                 continue;
             }
+
             foreach (array_map('trim', explode(',', $header)) as $ip) {
                 if (!in_array($ip, $ips, true) && filter_var($ip, FILTER_VALIDATE_IP)) {
                     $ips[] = $ip;

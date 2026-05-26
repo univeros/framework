@@ -17,12 +17,7 @@ use Altair\Structure\Queue;
 
 class FiltersRunner implements FiltersRunnerInterface
 {
-    /**
-     * The middleware queue.
-     *
-     * @var Queue
-     */
-    protected $queue;
+
     /**
      *
      * A callable to convert queue entries to callables.
@@ -39,31 +34,26 @@ class FiltersRunner implements FiltersRunnerInterface
      * @param callable|ResolverInterface $resolver Converts queue entries to callables.
      * @param Queue $queue The middleware queue.
      */
-    public function __construct(ResolverInterface $resolver = null, Queue $queue = null)
+    public function __construct(ResolverInterface $resolver = null, protected ?Queue $queue = null)
     {
         $this->resolver = $resolver;
-        $this->queue = $queue;
     }
 
     /**
      * Calls the next entry in the queue.
      *
-     * @param PayloadInterface $payload
      *
-     * @return PayloadInterface
      */
+    #[\Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = !$this->queue->isEmpty() ? $this->queue->pop() : null;
+        $entry = $this->queue->isEmpty() ? null : $this->queue->pop();
         $middleware = $this->resolve($entry);
         return $middleware($payload, $this);
     }
 
-    /**
-     * @param array $filters
-     *
-     * @return FiltersRunnerInterface
-     */
+
+    #[\Override]
     public function withFilters(array $filters): FiltersRunnerInterface
     {
         $this->queue = new Queue($filters);
@@ -81,10 +71,9 @@ class FiltersRunner implements FiltersRunnerInterface
     protected function resolve($entry)
     {
         if (!$entry) {
-            return static function (PayloadInterface $payload) {
-                return $payload;
-            };
+            return static fn(PayloadInterface $payload): PayloadInterface => $payload;
         }
+
         if (!$this->resolver) {
             return $entry;
         }

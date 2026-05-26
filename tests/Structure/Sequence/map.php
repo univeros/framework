@@ -3,12 +3,12 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait map
 {
-    public static function mapDataProvider()
+    public static function mapDataProvider(): array
     {
         // values, callback
         return [
             // Test mapping an empty sequence produces an empty sequence.
-            [[], function () {
+            [[], function (): void {
             }],
 
             // Test mapping string values using a string callable.
@@ -18,16 +18,14 @@ trait map
             [[new \stdClass()], 'spl_object_hash'],
 
             // Test basic mapping where integers are doubled.
-            [[1, 2, 3], function ($v) {
-                return $v * 2;
-            }],
+            [[1, 2, 3], fn($v): int|float => $v * 2],
         ];
     }
 
     /**
      * @dataProvider mapDataProvider
      */
-    public function testMap(array $values, callable $callback)
+    public function testMap(array $values, callable $callback): void
     {
         $instance = static::getInstance($values);
 
@@ -38,16 +36,16 @@ trait map
         $this->assertEquals($expected, $mapped->toArray());
     }
 
-    public function testMapCallbackThrowsException()
+    public function testMapCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
 
         try {
-            $mapped = $instance->map(function ($value) {
+            $mapped = $instance->map(function ($value): void {
                 throw new \Exception();
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
 
@@ -57,7 +55,7 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
-    public function testMapCallbackThrowsExceptionLaterOn()
+    public function testMapCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $mapped = null;
@@ -70,7 +68,7 @@ trait map
 
                 return $value;
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($mapped);
 
@@ -80,7 +78,7 @@ trait map
         $this->fail('Exception should have been caught');
     }
 
-    public function testMapDoesNotLeakWhenCallbackFails()
+    public function testMapDoesNotLeakWhenCallbackFails(): void
     {
         $instance = static::getInstance(['a', 'b', 'c']);
 
@@ -92,8 +90,8 @@ trait map
 
                 return $value;
             });
-        } catch (\Exception $e) {
-            $this->assertEquals('bang!', $e->getMessage());
+        } catch (\Exception $exception) {
+            $this->assertEquals('bang!', $exception->getMessage());
             return;
         }
 

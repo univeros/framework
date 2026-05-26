@@ -16,24 +16,17 @@ use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
 class CommandBus implements CommandBusInterface
 {
     /**
-     * @var CommandRunnerStrategyInterface
-     */
-    protected $strategy;
-
-    /**
      * CommandBus constructor.
-     *
-     * @param CommandRunnerStrategyInterface $strategy
      */
-    public function __construct(CommandRunnerStrategyInterface $strategy)
+    public function __construct(protected CommandRunnerStrategyInterface $strategy)
     {
-        $this->strategy = $strategy;
     }
 
     /**
      * @inheritDoc
      */
-    public function handle(CommandMessageInterface $message)
+    #[\Override]
+    public function handle(CommandMessageInterface $message): void
     {
         $this->strategy->run($message);
     }

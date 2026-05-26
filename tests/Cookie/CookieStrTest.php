@@ -13,14 +13,14 @@ class CookieStrTest extends TestCase
      *
      * @dataProvider  setCookieStringDataProvider
      */
-    public function testSplit($string, $count)
+    public function testSplit(string $string, int $count): void
     {
         $attributes = (new CookieStr())->split($string);
 
         $this->assertCount($count, $attributes);
     }
 
-    public function testSplitPair()
+    public function testSplitPair(): void
     {
         $cookieStr = new CookieStr();
 
@@ -33,7 +33,7 @@ class CookieStrTest extends TestCase
         $this->assertEquals('value', $pair[1]);
     }
 
-    public static function setCookieStringDataProvider()
+    public static function setCookieStringDataProvider(): array
     {
         return [
             [

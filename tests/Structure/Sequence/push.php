@@ -11,7 +11,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testPushVariadic(array $values, array $expected)
+    public function testPushVariadic(array $values, array $expected): void
     {
         $instance = static::getInstance();
         $instance->push(...$values);
@@ -23,7 +23,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testPush(array $values, array $expected)
+    public function testPush(array $values, array $expected): void
     {
         $instance = static::getInstance();
 
@@ -38,7 +38,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testArrayAccessPush(array $values, array $expected)
+    public function testArrayAccessPush(array $values, array $expected): void
     {
         $instance = static::getInstance();
 
@@ -50,14 +50,14 @@ trait push
         $this->assertEquals(count($expected), count($instance));
     }
 
-    public function testPushCircularReference()
+    public function testPushCircularReference(): void
     {
         $instance = static::getInstance(['a', 'b', 'c']);
         $instance->push($instance);
         $this->assertToArray(['a', 'b', 'c', $instance], $instance);
     }
 
-    public function testPushIndirectCircularReference()
+    public function testPushIndirectCircularReference(): void
     {
         $a = static::getInstance();
         $b = static::getInstance();
@@ -69,7 +69,7 @@ trait push
         $this->assertToArray([$a], $b);
     }
 
-    public function testPushDeeperIndirectCircularReference()
+    public function testPushDeeperIndirectCircularReference(): void
     {
         $a = static::getInstance();
         $b = static::getInstance();
@@ -87,7 +87,7 @@ trait push
         $this->assertToArray([$a, $b, $a], $b);
     }
 
-    public function testPushIndirectCircularReferenceAfterUnshifts()
+    public function testPushIndirectCircularReferenceAfterUnshifts(): void
     {
         $a = static::getInstance();
         $b = static::getInstance();

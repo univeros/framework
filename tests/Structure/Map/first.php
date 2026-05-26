@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait first
 {
-    public static function firstDataProvider()
+    public static function firstDataProvider(): array
     {
         // initial, returned
         return [
@@ -15,9 +15,8 @@ trait first
 
     /**
      * @dataProvider firstDataProvider
-     * @param mixed $expected
      */
-    public function testFirst(array $initial, $expected)
+    public function testFirst(array $initial, mixed $expected): void
     {
         $instance = static::getInstance($initial);
         $first = $instance->first();
@@ -25,7 +24,7 @@ trait first
         $this->assertEquals($expected, [$first->key, $first->value]);
     }
 
-    public function testFirstNowAllowedWhenEmpty()
+    public function testFirstNowAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

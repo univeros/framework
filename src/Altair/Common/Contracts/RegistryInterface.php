@@ -14,9 +14,7 @@ interface RegistryInterface
     /**
      * Returns a configuration key from the settings or $default if key is not found.
      *
-     * @param string $key
      * @param mixed|null $default
-     *
      * @return mixed
      */
     public function get(string $key, $default = null);
@@ -24,10 +22,8 @@ interface RegistryInterface
     /**
      * Sets a value into the registry
      *
-     * @param string $key
-     * @param mixed $value
      *
      * @return static
      */
-    public function set(string $key, $value);
+    public function set(string $key, mixed $value);
 }

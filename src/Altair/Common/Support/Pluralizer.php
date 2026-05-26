@@ -215,8 +215,6 @@ class Pluralizer
      * Returns the singular of an english word.
      *
      * @param string $value the english word to convert into singular
-     *
-     * @return string
      */
     public function singular(string $value): string
     {
@@ -224,30 +222,31 @@ class Pluralizer
         if ($result !== false) {
             return $result;
         }
+
         foreach ($this->singulars as $rule => $replacement) {
             if (preg_match($rule, $value)) {
-                return preg_replace($rule, $replacement, $value);
+                return preg_replace($rule, (string) $replacement, $value);
             }
         }
+
         return $value;
     }
 
     /**
      * Returns the plural form of an english form.
-     *
-     * @param string $value
-     * @return string
      */
     public function pluralize(string $value): string
     {
         if (isset($this->specials[$value])) {
             return $this->specials[$value];
         }
+
         foreach ($this->plurals as $rule => $replacement) {
             if (preg_match($rule, $value)) {
-                return preg_replace($rule, $replacement, $value);
+                return preg_replace($rule, (string) $replacement, $value);
             }
         }
+
         return $value;
     }
 }

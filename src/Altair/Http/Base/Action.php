@@ -14,17 +14,12 @@ use Altair\Http\Responder\CompoundResponder;
 class Action
 {
     /**
-     * The domain specification.
-     *
-     * @var string class name of \Altair\Http\Contracts\DomainInterface
-     */
-    protected $domain;
-    /**
      * The responder specification.
      *
      * @var string class name of \Altair\Http\Contracts\ResponderInterface
      */
     protected $responder;
+
     /**
      * The input specification.
      *
@@ -34,13 +29,18 @@ class Action
 
     /**
      * @inheritDoc
+     * @param string $domain
      */
     public function __construct(
-        $domain,
+        /**
+         * The domain specification.
+         *
+         * @var string class name of \Altair\Http\Contracts\DomainInterface
+         */
+        protected $domain,
         $responder = null,
         $input = null
     ) {
-        $this->domain = $domain;
         $this->responder = $responder?? CompoundResponder::class;
         $this->input = $input?? InputParser::class;
     }

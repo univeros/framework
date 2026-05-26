@@ -20,16 +20,15 @@ class MongoSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
-        $factory = function () {
-            return (new Client(
-                $this->env->get('SESSION_MONGO_URI', 'mongodb://12.0.0.1/')
-            ))->selectCollection(
-                $this->env->get('SESSION_MONGO_DB', 'session_db'),
-                $this->env->get('SESSION_MONGO_COLLECTION', 'session_collection')
-            );
-        };
+        $factory = fn() => (new Client(
+            $this->env->get('SESSION_MONGO_URI', 'mongodb://12.0.0.1/')
+        ))->selectCollection(
+            $this->env->get('SESSION_MONGO_DB', 'session_db'),
+            $this->env->get('SESSION_MONGO_COLLECTION', 'session_collection')
+        );
 
         $container
             ->delegate(MongoSessionHandler::class, $factory)

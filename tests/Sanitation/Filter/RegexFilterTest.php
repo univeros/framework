@@ -6,7 +6,8 @@ use Altair\Sanitation\Filter\RegexFilter;
 
 class RegexFilterTest extends AbstractFilterTest
 {
-    public static function dataProvider()
+    #[\Override]
+    public static function dataProvider(): array
     {
         return [
             ['+1234567890', ''],
@@ -24,8 +25,9 @@ class RegexFilterTest extends AbstractFilterTest
         ];
     }
 
+    #[\Override]
     protected function buildFilter(): FilterInterface
     {
-        return new RegexFilter('/^[\+\-]?[0-9]+$/', '');
+        return new RegexFilter('/^[\+\-]?\d+$/', '');
     }
 }

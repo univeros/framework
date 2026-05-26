@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait _empty
 {
-    public static function emptyDataProvider()
+    public static function emptyDataProvider(): array
     {
         // initial, key, empty
         return [
@@ -17,9 +17,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
-     * @param mixed $key
      */
-    public function testArrayAccessEmpty(array $initial, $key, bool $empty)
+    public function testArrayAccessEmpty(array $initial, mixed $key, bool $empty): void
     {
         $instance = static::getInstance();
 
@@ -32,9 +31,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
-     * @param mixed $key
      */
-    public function testArrayAccessEmptyByReference(array $initial, $key, bool $empty)
+    public function testArrayAccessEmptyByReference(array $initial, mixed $key, bool $empty): void
     {
         $instance = static::getInstance([$initial]);
         $this->assertEquals($empty, empty($instance[0][$key]));

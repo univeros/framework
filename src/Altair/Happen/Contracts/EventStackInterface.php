@@ -15,8 +15,6 @@ interface EventStackInterface
      * Adds an event.
      *
      * @param EventInterface|string $event
-     *
-     * @return self
      */
     public function addEvent($event): self;
 

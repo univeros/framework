@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Queue;
 
 trait isEmpty
 {
-    public static function isEmptyDataProvider()
+    public static function isEmptyDataProvider(): array
     {
         // values, is empty
         return [
@@ -15,13 +15,13 @@ trait isEmpty
     /**
      * @dataProvider isEmptyDataProvider
      */
-    public function testIsEmpty(array $values, bool $isEmpty)
+    public function testIsEmpty(array $values, bool $isEmpty): void
     {
         $instance = static::getInstance($values);
         $this->assertEquals($isEmpty, $instance->isEmpty());
     }
 
-    public function testIsNotEmptyAfterPop()
+    public function testIsNotEmptyAfterPop(): void
     {
         $instance = static::getInstance();
         $this->assertTrue($instance->isEmpty());

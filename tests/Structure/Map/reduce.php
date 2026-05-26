@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait reduce
 {
-    public static function reduceDataProvider()
+    public static function reduceDataProvider(): array
     {
         // values, initial, callback, expected
         return [
@@ -11,7 +11,7 @@ trait reduce
             [
                 [],
                 1,
-                function () {
+                function (): void {
                 },
                 1,
             ],
@@ -20,9 +20,7 @@ trait reduce
             [
                 ['a', 'b', 'c'],
                 '/',
-                function ($c, $k, $v) {
-                    return implode('-', func_get_args());
-                },
+                fn($c, $k, $v): string => implode('-', func_get_args()),
                 '/-0-a-1-b-2-c',
             ],
 
@@ -30,22 +28,20 @@ trait reduce
             [
                 [1, 2.5, '3'],
                 2,
-                function ($c, $k, $v) {
-                    return $c * $v;
-                },
+                fn($c, $k, $v): int|float => $c * $v,
                 15,
             ],
         ];
     }
 
-    public static function reduceWithoutInitialDataProvider()
+    public static function reduceWithoutInitialDataProvider(): array
     {
         // values, callback, expected
         return [
             // Test reducing an empty map returns the initial
             [
                 [],
-                function () {
+                function (): void {
                 },
                 null,
             ],
@@ -53,18 +49,14 @@ trait reduce
             // Test reducing strings by concatenating them.
             [
                 ['a', 'b', 'c'],
-                function ($c, $k, $v) {
-                    return implode('-', func_get_args());
-                },
+                fn($c, $k, $v): string => implode('-', func_get_args()),
                 '-0-a-1-b-2-c',
             ],
 
             // Test reducing mixed numeric values by multiplying them.
             [
                 [1, 2.5, '3'],
-                function ($c, $k, $v) {
-                    return $c * $v;
-                },
+                fn($c, $k, $v): int|float => $c * $v,
                 0,
             ],
         ];
@@ -72,10 +64,8 @@ trait reduce
 
     /**
      * @dataProvider reduceDataProvider
-     * @param mixed $initial
-     * @param mixed $expected
      */
-    public function testReduce(array $values, $initial, callable $callback, $expected)
+    public function testReduce(array $values, mixed $initial, callable $callback, mixed $expected): void
     {
         $instance = static::getInstance($values);
 
@@ -87,9 +77,8 @@ trait reduce
 
     /**
      * @dataProvider reduceWithoutInitialDataProvider
-     * @param mixed $expected
      */
-    public function testReduceWithoutInitial(array $values, callable $callback, $expected)
+    public function testReduceWithoutInitial(array $values, callable $callback, mixed $expected): void
     {
         $instance = static::getInstance($values);
 
@@ -99,16 +88,16 @@ trait reduce
         $this->assertEquals($expected, $reduced);
     }
 
-    public function testReduceCallbackThrowsException()
+    public function testReduceCallbackThrowsException(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {
-            $result = $instance->reduce(function ($carry, $key, $value) {
+            $result = $instance->reduce(function ($carry, $key, $value): void {
                 throw new \Exception();
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($result);
 
@@ -118,18 +107,18 @@ trait reduce
         $this->fail('Exception should have been caught');
     }
 
-    public function testReduceCallbackThrowsExceptionLaterOn()
+    public function testReduceCallbackThrowsExceptionLaterOn(): void
     {
         $instance = static::getInstance([1, 2, 3]);
         $result = null;
 
         try {
-            $result = $instance->reduce(function ($carry, $key, $value) {
+            $result = $instance->reduce(function ($carry, $key, $value): void {
                 if ($value === 3) {
                     throw new \Exception();
                 }
             });
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->assertToArray([1, 2, 3], $instance);
             $this->assertNull($result);
 

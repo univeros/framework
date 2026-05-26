@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 trait _empty
 {
-    public function testArrayAccessEmpty()
+    public function testArrayAccessEmpty(): void
     {
         $set = static::getInstance();
         $this->expectArrayAccessUnsupportedException();

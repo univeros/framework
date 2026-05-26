@@ -11,31 +11,25 @@ namespace Altair\Sanitation\Filter;
 
 class RegexFilter extends AbstractFilter
 {
-    /**
-     * @var string the regular expression to be matched with.
-     */
-    protected $pattern;
-    /**
-     * @var string
-     */
-    protected $replace;
 
     /**
      * RegexRule constructor.
-     *
-     * @param string $pattern
-     * @param string $replace
      */
-    public function __construct(string $pattern, string $replace)
+    public function __construct(
+        /**
+         * @var string the regular expression to be matched with.
+         */
+        protected string $pattern,
+        protected string $replace
+    )
     {
-        $this->pattern = $pattern;
-        $this->replace = $replace;
     }
 
     /**
      * @inheritDoc
      */
-    public function parse($value)
+    #[\Override]
+    public function parse($value): null|string|array
     {
         if (!is_scalar($value)) {
             return null;

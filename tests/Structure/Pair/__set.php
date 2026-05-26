@@ -3,21 +3,21 @@ namespace Altair\Tests\Structure\Pair;
 
 trait __set
 {
-    public function testPropertySetKey()
+    public function testPropertySetKey(): void
     {
         $pair = $this->getPair('a', 1);
         $pair->key = 'b';
         $this->assertEquals('b', $pair->key);
     }
 
-    public function testPropertySetValue()
+    public function testPropertySetValue(): void
     {
         $pair = $this->getPair('a', 1);
         $pair->value = 2;
         $this->assertEquals(2, $pair->value);
     }
 
-    public function testSetSelf()
+    public function testSetSelf(): void
     {
         $pair = $this->getPair('a', 1);
         $pair->value = $pair;

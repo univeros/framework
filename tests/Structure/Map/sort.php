@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait sort
 {
-    public static function sortedDataProvider()
+    public static function sortedDataProvider(): array
     {
         return [
             [[
@@ -26,7 +26,7 @@ trait sort
     /**
      * @dataProvider sortedDataProvider
      */
-    public function testSorted(array $values)
+    public function testSorted(array $values): void
     {
         $instance = static::getInstance($values);
 
@@ -41,13 +41,11 @@ trait sort
     /**
      * @dataProvider sortedDataProvider
      */
-    public function testSortedUsingComparator(array $values)
+    public function testSortedUsingComparator(array $values): void
     {
         $instance = static::getInstance($values);
 
-        $sorted = $instance->sort(function ($a, $b) {
-            return $b <=> $a;
-        });
+        $sorted = $instance->sort(fn($a, $b): int => $b <=> $a);
 
         $expected = array_slice($values, 0, count($values), true);
         arsort($expected);

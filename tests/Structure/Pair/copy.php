@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait copy
 {
-    public function testCopy()
+    public function testCopy(): void
     {
         $pair = $this->getPair('a', 1);
         $copy = $pair->copy();

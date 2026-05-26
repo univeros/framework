@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait join
 {
-    public static function joinDataProvider()
+    public static function joinDataProvider(): array
     {
         // values, glue
         $data = [];
@@ -25,9 +25,8 @@ trait join
 
     /**
      * @dataProvider joinDataProvider
-     * @param mixed $glue
      */
-    public function testJoin(array $values, $glue)
+    public function testJoin(array $values, mixed $glue): void
     {
         $instance = static::getInstance($values);
         $expected = implode($glue, $values);
@@ -36,12 +35,11 @@ trait join
 
     /**
      * @dataProvider joinDataProvider
-     * @param mixed $glue
      */
-    public function testJoinWithoutGlue(array $values, $glue)
+    public function testJoinWithoutGlue(array $values, mixed $glue): void
     {
         $instance = static::getInstance($values);
-        $expected = implode($values);
+        $expected = implode('', $values);
         $this->assertEquals($expected, $instance->join());
     }
 }

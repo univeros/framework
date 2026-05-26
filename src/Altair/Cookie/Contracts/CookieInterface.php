@@ -18,15 +18,11 @@ interface CookieInterface
 
     /**
      * Returns the name of the cookie
-     *
-     * @return string
      */
     public function getName(): string;
 
     /**
      * Returns the value of the cookie
-     *
-     * @return null|string
      */
     public function getValue(): ?string;
 }

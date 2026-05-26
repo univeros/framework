@@ -239,20 +239,22 @@ class ZipCodeRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
-        $value = trim($value);
-        if (!is_scalar($value) || empty($value)) {
+        $value = trim((string) $value);
+        if ($value === '' || $value === '0') {
             return false;
         }
 
         $patterns = self::$patterns;
-        return (bool)preg_match("/^({$patterns[$this->country]})$/", $value);
+        return (bool)preg_match(sprintf('/^(%s)$/', $patterns[$this->country]), $value);
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not a valid %s zip code .', $value, $this->country);

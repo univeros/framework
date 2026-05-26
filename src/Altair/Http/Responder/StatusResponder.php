@@ -20,30 +20,23 @@ use Psr\Http\Message\ServerRequestInterface;
 class StatusResponder implements ResponderInterface
 {
     /**
-     * @var HttpStatusCollection
-     */
-    protected $httpStatusCollection;
-
-    /**
      * StatusResponder constructor.
-     *
-     * @param HttpStatusCollection $httpStatusCollection
      */
-    public function __construct(HttpStatusCollection $httpStatusCollection)
+    public function __construct(protected HttpStatusCollection $httpStatusCollection)
     {
-        $this->httpStatusCollection = $httpStatusCollection;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
         PayloadInterface $payload
     ): ResponseInterface {
         if ($this->hasStatus($payload)) {
-            $response = $this->status($response, $payload);
+            return $this->status($response, $payload);
         }
 
         return $response;
@@ -52,9 +45,7 @@ class StatusResponder implements ResponderInterface
     /**
      * Determine if the payload has a status.
      *
-     * @param PayloadInterface $payload
      *
-     * @return boolean
      */
     private function hasStatus(PayloadInterface $payload): bool
     {
@@ -64,12 +55,9 @@ class StatusResponder implements ResponderInterface
     /**
      * Get the response with the status code from the payload.
      *
-     * @param ResponseInterface $response
-     * @param PayloadInterface $payload
      *
      * @throws InvalidArgumentException If the requested $statusText is not valid
      * @throws OutOfBoundsException     If not status code is found
-     * @return ResponseInterface
      *
      */
     private function status(ResponseInterface $response, PayloadInterface $payload): ResponseInterface
@@ -79,8 +67,8 @@ class StatusResponder implements ResponderInterface
 
         try {
             return $response->withStatus($code);
-        } catch (\InvalidArgumentException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e->getPrevious());
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            throw new InvalidArgumentException($invalidArgumentException->getMessage(), $invalidArgumentException->getCode(), $invalidArgumentException->getPrevious());
         }
     }
 }

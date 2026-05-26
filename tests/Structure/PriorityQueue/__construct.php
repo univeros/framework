@@ -5,7 +5,7 @@ use Altair\Structure\PriorityQueue;
 
 trait __construct
 {
-    public function testConstruct()
+    public function testConstruct(): void
     {
         $this->assertToArray([], new PriorityQueue());
     }

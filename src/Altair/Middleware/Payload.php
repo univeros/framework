@@ -10,15 +10,11 @@
 namespace Altair\Middleware;
 
 use Altair\Middleware\Contracts\PayloadInterface;
-use Altair\Queue\Contracts\JobInterface;
 use JsonSerializable;
 
 class Payload implements PayloadInterface, JsonSerializable
 {
-    /**
-     * @var array|null
-     */
-    protected $attributes;
+    protected array $attributes;
 
     /**
      * Payload constructor.
@@ -33,6 +29,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getAttribute($name, $default = null)
     {
         return $this->attributes[$name]?? $default;
@@ -41,6 +38,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -49,6 +47,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withAttribute($name, $value): PayloadInterface
     {
         $cloned = clone $this;
@@ -60,6 +59,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withAttributes(array $attributes): PayloadInterface
     {
         $cloned = clone $this;
@@ -71,6 +71,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withoutAttribute($name): PayloadInterface
     {
         $cloned = clone $this;
@@ -82,6 +83,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function jsonSerialize()
     {
         return $this->attributes;

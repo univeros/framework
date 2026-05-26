@@ -5,7 +5,7 @@ use Altair\Structure\Queue;
 
 trait __construct
 {
-    public static function constructDataProvider()
+    public static function constructDataProvider(): array
     {
         return [
             [[]],
@@ -19,7 +19,7 @@ trait __construct
     /**
      * @dataProvider constructDataProvider
      */
-    public function testConstruct(array $values)
+    public function testConstruct(array $values): void
     {
         $this->assertToArray($values, new Queue($values));
     }
@@ -27,12 +27,12 @@ trait __construct
     /**
      * @dataProvider constructDataProvider
      */
-    public function testConstructUsingIterable(array $values)
+    public function testConstructUsingIterable(array $values): void
     {
         $this->assertToArray($values, new Queue(new \ArrayIterator($values)));
     }
 
-    public function testConstructNoParams()
+    public function testConstructNoParams(): void
     {
         $this->assertToArray([], new Queue());
     }

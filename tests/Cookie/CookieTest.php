@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 
 class CookieTest extends TestCase
 {
-    public function testCookieCreation()
+    public function testCookieCreation(): void
     {
         $cookie = new Cookie('name');
         $this->assertEquals('name', $cookie->getName());
@@ -16,7 +16,7 @@ class CookieTest extends TestCase
         $this->assertEquals('value', $cookie->withValue('value')->getValue());
     }
 
-    public function testImmutability()
+    public function testImmutability(): void
     {
         $cookie = new Cookie('name', 'value');
         $newCookie = $cookie->withValue('another-value');
@@ -24,7 +24,7 @@ class CookieTest extends TestCase
         $this->assertNotEquals($cookie, $newCookie);
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $cookie = new Cookie('name', 'value');
 

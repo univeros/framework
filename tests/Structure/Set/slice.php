@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait slice
 {
-    public static function sliceDataProvider()
+    public static function sliceDataProvider(): array
     {
         $a = ['a', 'b', 'c'];
         $n = count($a);
@@ -23,7 +23,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSlice(array $values, int $index, int $length)
+    public function testSlice(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -37,7 +37,7 @@ trait slice
     /**
      * @dataProvider sliceDataProvider
      */
-    public function testSliceWithoutLength(array $values, int $index, int $length)
+    public function testSliceWithoutLength(array $values, int $index, int $length): void
     {
         $instance = static::getInstance($values);
 
@@ -48,7 +48,7 @@ trait slice
         $this->assertToArray($expected, $sliced);
     }
 
-    public function testSliceAfterRemoveOutsideOfSlice()
+    public function testSliceAfterRemoveOutsideOfSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove('d');
@@ -56,7 +56,7 @@ trait slice
         $this->assertToArray(['a', 'b', 'c'], $instance->slice(0, 3));
     }
 
-    public function testSliceAfterRemoveAtStartOfSlice()
+    public function testSliceAfterRemoveAtStartOfSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove('b');
@@ -64,7 +64,7 @@ trait slice
         $this->assertToArray(['c', 'd', 'e'], $instance->slice(1));
     }
 
-    public function testSliceAfterRemoveWithinSlice()
+    public function testSliceAfterRemoveWithinSlice(): void
     {
         $instance = static::getInstance(['a', 'b', 'c', 'd', 'e']);
         $instance->remove('c');
@@ -72,7 +72,7 @@ trait slice
         $this->assertToArray(['b', 'd', 'e'], $instance->slice(1));
     }
 
-    public function testLargeSliceHalf()
+    public function testLargeSliceHalf(): void
     {
         $n = self::MANY;
         $x = 0;
@@ -84,7 +84,7 @@ trait slice
         $this->assertToArray(range($y, $n), $instance->slice($y));
     }
 
-    public function testLargeSliceOffset()
+    public function testLargeSliceOffset(): void
     {
         $n = self::MANY;
         $x = $n / 4;

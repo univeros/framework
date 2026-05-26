@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _var_dump
 {
-    public function testVarDump()
+    public function testVarDump(): void
     {
         $instance = $this->getPair('a', 1);
         $expected = [

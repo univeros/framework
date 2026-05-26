@@ -40,6 +40,7 @@ class BasicAuthenticationMiddleware implements MiddlewareInterface
         $this->initAuthentication($identityValidator, $rules, $options);
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {

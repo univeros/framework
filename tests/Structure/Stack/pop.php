@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Stack;
 
 trait pop
 {
-    public static function popDataProvider()
+    public static function popDataProvider(): array
     {
         // initial, returned, expected result
         return [
@@ -14,10 +14,8 @@ trait pop
 
     /**
      * @dataProvider popDataProvider
-     * @param mixed $initial
-     * @param mixed $returned
      */
-    public function testPop($initial, $returned, array $expected)
+    public function testPop(mixed $initial, mixed $returned, array $expected): void
     {
         $instance = static::getInstance($initial);
 
@@ -28,7 +26,7 @@ trait pop
         $this->assertEquals(count($initial) - 1, count($instance));
     }
 
-    public function testPopAll()
+    public function testPopAll(): void
     {
         $instance = static::getInstance(range(1, self::MANY));
 
@@ -39,7 +37,7 @@ trait pop
         $this->assertEquals(count($instance), 0);
     }
 
-    public function testPopNowAllowedWhenEmpty()
+    public function testPopNowAllowedWhenEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectEmptyNotAllowedException();

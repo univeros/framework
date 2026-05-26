@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait remove
 {
-    public static function removeDataProvider()
+    public static function removeDataProvider(): array
     {
         // initial, index, return, expected
         return [
@@ -20,11 +20,8 @@ trait remove
 
     /**
      * @dataProvider removeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
-     * @param mixed $return
      */
-    public function testRemove($initial, $index, $return, array $expected)
+    public function testRemove(mixed $initial, mixed $index, mixed $return, array $expected): void
     {
         $instance = static::getInstance($initial);
         $returned = $instance->remove($index);
@@ -36,10 +33,8 @@ trait remove
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testRemoveIndexOutOfRange($initial, $index)
+    public function testRemoveIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
@@ -48,10 +43,8 @@ trait remove
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testRemoveIndexBadIndex($initial, $index)
+    public function testRemoveIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();

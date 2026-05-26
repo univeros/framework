@@ -2,34 +2,55 @@
 
 namespace Altair\Tests\Structure;
 
+use Altair\Tests\Structure\PriorityQueue\__construct;
+use Altair\Tests\Structure\PriorityQueue\_clone;
+use Altair\Tests\Structure\PriorityQueue\_echo;
+use Altair\Tests\Structure\PriorityQueue\_empty;
+use Altair\Tests\Structure\PriorityQueue\_foreach;
+use Altair\Tests\Structure\PriorityQueue\_isset;
+use Altair\Tests\Structure\PriorityQueue\_jsonEncode;
+use Altair\Tests\Structure\PriorityQueue\_list;
+use Altair\Tests\Structure\PriorityQueue\_serialize;
+use Altair\Tests\Structure\PriorityQueue\_unset;
+use Altair\Tests\Structure\PriorityQueue\_var_dump;
+use Altair\Tests\Structure\PriorityQueue\allocate;
+use Altair\Tests\Structure\PriorityQueue\capacity;
+use Altair\Tests\Structure\PriorityQueue\clear;
+use Altair\Tests\Structure\PriorityQueue\copy;
+use Altair\Tests\Structure\PriorityQueue\count;
+use Altair\Tests\Structure\PriorityQueue\isEmpty;
+use Altair\Tests\Structure\PriorityQueue\peek;
+use Altair\Tests\Structure\PriorityQueue\pop;
+use Altair\Tests\Structure\PriorityQueue\push;
+use Altair\Tests\Structure\PriorityQueue\toArray;
 use Altair\Structure\PriorityQueue as PriorityQueueObject;
 
 class PriorityQueueTest extends AbstractCollectionTest
 {
-    use PriorityQueue\__construct;
-    use PriorityQueue\_clone;
-    use PriorityQueue\_echo;
-    use PriorityQueue\_empty;
-    use PriorityQueue\_foreach;
-    use PriorityQueue\_isset;
-    use PriorityQueue\_jsonEncode;
-    use PriorityQueue\_list;
-    use PriorityQueue\_serialize;
-    use PriorityQueue\_unset;
-    use PriorityQueue\_var_dump;
+    use __construct;
+    use _clone;
+    use _echo;
+    use _empty;
+    use _foreach;
+    use _isset;
+    use _jsonEncode;
+    use _list;
+    use _serialize;
+    use _unset;
+    use _var_dump;
 
-    use PriorityQueue\allocate;
-    use PriorityQueue\capacity;
-    use PriorityQueue\clear;
-    use PriorityQueue\copy;
-    use PriorityQueue\count;
-    use PriorityQueue\isEmpty;
-    use PriorityQueue\peek;
-    use PriorityQueue\pop;
-    use PriorityQueue\push;
-    use PriorityQueue\toArray;
+    use allocate;
+    use capacity;
+    use clear;
+    use copy;
+    use count;
+    use isEmpty;
+    use peek;
+    use pop;
+    use push;
+    use toArray;
 
-    public static function getInstance(array $values = [])
+    public static function getInstance(array $values = []): PriorityQueueObject
     {
         $queue = new PriorityQueueObject();
 
@@ -40,6 +61,7 @@ class PriorityQueueTest extends AbstractCollectionTest
         return $queue;
     }
 
+    #[\Override]
     public static function basicDataProvider(): array
     {
         return [

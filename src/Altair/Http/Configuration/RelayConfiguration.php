@@ -20,6 +20,7 @@ use Relay\Relay;
 
 class RelayConfiguration implements ConfigurationInterface
 {
+    #[\Override]
     public function apply(Container $container): void
     {
         $container

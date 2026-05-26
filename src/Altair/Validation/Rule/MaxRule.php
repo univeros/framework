@@ -12,23 +12,23 @@ namespace Altair\Validation\Rule;
 class MaxRule extends AbstractRule
 {
     /**
-     * @var mixed the maximum valid value
-     */
-    protected $max;
-
-    /**
      * MaxRule constructor.
      *
      * @param $max
      */
-    public function __construct($max)
+    public function __construct(
+        /**
+         * @var mixed the maximum valid value
+         */
+        protected mixed $max
+    )
     {
-        $this->max = $max;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -41,6 +41,7 @@ class MaxRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not valid.', $value);

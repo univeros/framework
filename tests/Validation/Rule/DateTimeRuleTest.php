@@ -5,7 +5,8 @@ use Altair\Validation\Rule\DateTimeRule;
 
 class DateTimeRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['Nov 7, 1979, 12:34pm'],
@@ -21,7 +22,8 @@ class DateTimeRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             ['  '],
@@ -35,7 +37,8 @@ class DateTimeRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): DateTimeRule
     {
         return new DateTimeRule();
     }

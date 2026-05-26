@@ -9,6 +9,8 @@
 
 namespace Altair\Structure;
 
+use Altair\Structure\Traits\CollectionTrait;
+use Altair\Structure\Traits\SquaredCapacityTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Contracts\PairInterface;
@@ -31,8 +33,8 @@ use UnderflowException;
  */
 class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInterface
 {
-    use Traits\CollectionTrait;
-    use Traits\SquaredCapacityTrait;
+    use CollectionTrait;
+    use SquaredCapacityTrait;
 
     /**
      * Creates an instance using the values of an array or Traversable object.
@@ -41,7 +43,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      */
     public function __construct($values = [])
     {
-        if (func_num_args()) {
+        if (func_num_args() !== 0) {
             $this->putAll($this->normalizeItems($values));
         }
     }
@@ -57,6 +59,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function apply(callable $callback): MapInterface
     {
         foreach ($this->internal as &$pair) {
@@ -69,6 +72,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function merge($values): MapInterface
     {
         $merged = new static($this);
@@ -80,30 +84,29 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function intersect(MapInterface $map): MapInterface
     {
         return $this->filter(
-            static function ($key) use ($map) {
-                return $map->hasKey($key);
-            }
+            static fn($key): bool => $map->hasKey($key)
         );
     }
 
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function diff(MapInterface $map): MapInterface
     {
         return $this->filter(
-            static function ($key) use ($map) {
-                return !$map->hasKey($key);
-            }
+            static fn($key): bool => !$map->hasKey($key)
         );
     }
 
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function filter(callable $callback = null): MapInterface
     {
         $filtered = new static();
@@ -120,6 +123,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function map(callable $callback): MapInterface
     {
         $mapped = new static();
@@ -134,11 +138,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function put($key, $value): MapInterface
     {
         $pair = $this->lookupKey($key);
 
-        if ($pair) {
+        if ($pair instanceof PairInterface) {
             $pair->value = $value;
         } else {
             $this->adjustCapacity();
@@ -151,6 +156,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $value) {
@@ -163,6 +169,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function reverse(): MapInterface
     {
         $pairs = array_reverse($this->internal);
@@ -173,13 +180,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function slice(int $offset, int $length = null): MapInterface
     {
-        if (func_num_args() === 1) {
-            $slice = array_slice($this->internal, $offset);
-        } else {
-            $slice = array_slice($this->internal, $offset, $length);
-        }
+        $slice = func_num_args() === 1 ? array_slice($this->internal, $offset) : array_slice($this->internal, $offset, $length);
 
         return new static($this->pairsToArray($slice));
     }
@@ -187,23 +191,20 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function sort(callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 
-        if ($comparator) {
+        if ($comparator !== null) {
             usort(
                 $pairs,
-                static function ($a, $b) use ($comparator) {
-                    return $comparator($a->value, $b->value);
-                }
+                static fn($a, $b) => $comparator($a->value, $b->value)
             );
         } else {
             usort(
                 $pairs,
-                static function ($a, $b) {
-                    return $a->value <=> $b->value;
-                }
+                static fn($a, $b): int => $a->value <=> $b->value
             );
         }
 
@@ -213,23 +214,20 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function ksort(callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 
-        if ($comparator) {
+        if ($comparator !== null) {
             usort(
                 $pairs,
-                static function ($a, $b) use ($comparator) {
-                    return $comparator($a->key, $b->key);
-                }
+                static fn($a, $b) => $comparator($a->key, $b->key)
             );
         } else {
             usort(
                 $pairs,
-                static function ($a, $b) {
-                    return $a->key <=> $b->key;
-                }
+                static fn($a, $b): int => $a->key <=> $b->key
             );
         }
 
@@ -239,6 +237,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function union(MapInterface $map): MapInterface
     {
         return $this->merge($map);
@@ -247,18 +246,18 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function xor(MapInterface $map): MapInterface
     {
         return $this->merge($map)->filter(
-            function ($key) use ($map) {
-                return $this->hasKey($key) ^ $map->hasKey($key);
-            }
+            fn($key): int => $this->hasKey($key) ^ $map->hasKey($key)
         );
     }
 
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function pairs(): VectorInterface
     {
         $sequence = new Vector();
@@ -274,6 +273,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function values(): VectorInterface
     {
         $sequence = new Vector();
@@ -290,9 +290,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      *
      * @throws UnderflowException
      *
-     * @return PairInterface
      *
      */
+    #[\Override]
     public function first(): PairInterface
     {
         if ($this->isEmpty()) {
@@ -305,6 +305,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function last(): PairInterface
     {
         if ($this->isEmpty()) {
@@ -317,11 +318,13 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function skip(int $position): PairInterface
     {
         if ($position < 0 || $position >= count($this->internal)) {
             throw new OutOfRangeException('Out of range');
         }
+
         /** @var PairInterface $pair */
         $pair = $this->internal[$position];
 
@@ -331,6 +334,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function keys(): SetInterface
     {
         $set = new Set();
@@ -345,25 +349,28 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function hasKey($key): bool
     {
-        return $this->lookupKey($key) !== null;
+        return $this->lookupKey($key) instanceof PairInterface;
     }
 
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function hasValue($value): bool
     {
-        return $this->lookupValue($value) !== null;
+        return $this->lookupValue($value) instanceof PairInterface;
     }
 
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function get($key, $default = null)
     {
-        if ($pair = $this->lookupKey($key)) {
+        if (($pair = $this->lookupKey($key)) instanceof PairInterface) {
             return $pair->value;
         }
 
@@ -373,6 +380,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function reduce(callable $callback, $initial = null)
     {
         $carry = $initial;
@@ -387,6 +395,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function sum()
     {
         return $this->values()->sum();
@@ -395,12 +404,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function remove($key, $default = null)
     {
-        /**
-         * @var int
-         * @var PairInterface $pair
-         */
         foreach ($this->internal as $position => $pair) {
             if ($pair->equalsKey($key)) {
                 return $this->delete($position);
@@ -413,6 +419,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function toArray(): array
     {
         return $this->pairsToArray($this->internal);
@@ -422,6 +429,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * Get iterator.
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function getIterator()
     {
         foreach ($this->internal as $pair) {
@@ -433,7 +441,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
-    public function offsetSet($offset, $value)
+    #[\Override]
+    public function offsetSet($offset, $value): void
     {
         $this->put($offset, $value);
     }
@@ -444,11 +453,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * @throws OutOfBoundsException
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function &offsetGet($offset)
     {
         $pair = $this->lookupKey($offset);
 
-        if ($pair) {
+        if ($pair instanceof PairInterface) {
             return $pair->value;
         }
 
@@ -459,7 +469,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
+    #[\Override]
+    public function offsetUnset($offset): void
     {
         $this->remove($offset);
     }
@@ -468,6 +479,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function offsetExists($offset)
     {
         return $this->get($offset) !== null;
@@ -476,11 +488,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Returns item if a key is found.
      *
-     * @param mixed $key
      *
-     * @return PairInterface|null
      */
-    protected function lookupKey($key): ?PairInterface
+    protected function lookupKey(mixed $key): ?PairInterface
     {
         /** @var PairInterface $pair */
         foreach ($this->internal as $pair) {
@@ -495,11 +505,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Returns item if a value is found.
      *
-     * @param mixed $value
      *
-     * @return PairInterface|null
      */
-    protected function lookupValue($value): ?PairInterface
+    protected function lookupValue(mixed $value): ?PairInterface
     {
         foreach ($this->internal as $pair) {
             if ($pair->value === $value) {
@@ -513,7 +521,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Removes an Map item at specified position.
      *
-     * @param int $position
      *
      * @return mixed
      */
@@ -534,8 +541,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * Converts pairs to array.
      *
      * @param $pairs
-     *
-     * @return array
      */
     protected function pairsToArray($pairs): array
     {

@@ -16,9 +16,7 @@ interface DomainInterface
     /**
      * Handle domain logic for an action.
      *
-     * @param InputCollection $input
      *
-     * @return PayloadInterface
      */
     public function __invoke(InputCollection $input): PayloadInterface;
 }

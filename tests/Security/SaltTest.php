@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class SaltTest extends TestCase
 {
-    public function testLength()
+    public function testLength(): void
     {
         $salt = new Salt();
 

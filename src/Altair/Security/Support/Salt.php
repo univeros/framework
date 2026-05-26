@@ -14,9 +14,7 @@ use Exception;
 class Salt
 {
     /**
-     * @param int $length
      * @throws Exception
-     * @return string
      */
     public function generate(int $length = 32): string
     {

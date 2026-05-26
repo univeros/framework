@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class IsbnRuleTest extends TestCase
 {
-    public static function trueProvider()
+    public static function trueProvider(): array
     {
         return [
             // from -ronanguilloux/IsoCodes package
@@ -38,7 +38,7 @@ class IsbnRuleTest extends TestCase
         ];
     }
 
-    public static function falseProvider()
+    public static function falseProvider(): array
     {
         return [
             // from -ronanguilloux/IsoCodes package
@@ -71,7 +71,7 @@ class IsbnRuleTest extends TestCase
      * @param mixed $value
      * @param null|mixed $type
      */
-    public function testPayloadTrue($value, $type = null)
+    public function testPayloadTrue(string $value, int $type = null): void
     {
         $this->assertTrue($this->assertPayload($value, $type));
     }
@@ -81,7 +81,7 @@ class IsbnRuleTest extends TestCase
      * @param mixed $value
      * @param null|mixed $type
      */
-    public function testPayloadFalse($value, $type = null)
+    public function testPayloadFalse(string|int $value, int $type = null): void
     {
         $this->assertFalse($this->assertPayload($value, $type));
     }
@@ -91,7 +91,7 @@ class IsbnRuleTest extends TestCase
      * @param mixed $value
      * @param null|mixed $type
      */
-    public function testValueTrue($value, $type = null)
+    public function testValueTrue(string $value, int $type = null): void
     {
         $this->assertTrue($this->assertValue($value, $type));
     }
@@ -101,18 +101,16 @@ class IsbnRuleTest extends TestCase
      * @param mixed $value
      * @param null|mixed $type
      */
-    public function testValueFalse($value, $type = null)
+    public function testValueFalse(string|int $value, int $type = null): void
     {
         $this->assertFalse($this->assertValue($value, $type));
     }
 
-    protected function assertPayload($value, $type = null)
+    protected function assertPayload($value, $type = null): bool
     {
         $rule = $this->buildRule($type);
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
@@ -126,7 +124,7 @@ class IsbnRuleTest extends TestCase
         return $rule->assert($value);
     }
 
-    protected function buildPayload($value)
+    protected function buildPayload($value): \Altair\Middleware\Contracts\PayloadInterface
     {
         $subject = [
             'test' => $value
@@ -137,7 +135,7 @@ class IsbnRuleTest extends TestCase
             ->withAttribute(PayloadInterface::ATTRIBUTE_KEY, 'test');
     }
 
-    protected function buildRule($type = null)
+    protected function buildRule($type = null): IsbnRule
     {
         return new IsbnRule($type);
     }

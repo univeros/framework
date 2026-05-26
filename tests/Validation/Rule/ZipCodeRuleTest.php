@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 class ZipCodeRuleTest extends TestCase
 {
-    public static function trueProvider()
+    public static function trueProvider(): array
     {
         return [
             // source ronanguilloux/IsoCodes
@@ -58,7 +58,7 @@ class ZipCodeRuleTest extends TestCase
         ];
     }
 
-    public static function falseProvider()
+    public static function falseProvider(): array
     {
         return [
             // source ronanguilloux/IsoCodes
@@ -172,7 +172,7 @@ class ZipCodeRuleTest extends TestCase
      * @param mixed $value
      * @param mixed $country
      */
-    public function testPayloadTrue($value, $country)
+    public function testPayloadTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertPayload($value, $country));
     }
@@ -182,7 +182,7 @@ class ZipCodeRuleTest extends TestCase
      * @param mixed $value
      * @param mixed $country
      */
-    public function testPayloadFalse($value, $country)
+    public function testPayloadFalse(string $value, string $country): void
     {
         $this->assertFalse($this->assertPayload($value, $country));
     }
@@ -192,7 +192,7 @@ class ZipCodeRuleTest extends TestCase
      * @param mixed $value
      * @param mixed $country
      */
-    public function testValueTrue($value, $country)
+    public function testValueTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertValue($value, $country));
     }
@@ -202,18 +202,16 @@ class ZipCodeRuleTest extends TestCase
      * @param mixed $value
      * @param mixed $country
      */
-    public function testValueFalse($value, $country)
+    public function testValueFalse(string $value, string $country): void
     {
         $this->assertFalse($this->assertValue($value, $country));
     }
 
-    protected function assertPayload($value, $country)
+    protected function assertPayload($value, $country): bool
     {
         $rule = $this->buildRule($country);
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
@@ -227,7 +225,7 @@ class ZipCodeRuleTest extends TestCase
         return $rule->assert($value);
     }
 
-    protected function buildPayload($value)
+    protected function buildPayload($value): \Altair\Middleware\Contracts\PayloadInterface
     {
         $subject = [
             'test' => $value
@@ -238,7 +236,7 @@ class ZipCodeRuleTest extends TestCase
             ->withAttribute(PayloadInterface::ATTRIBUTE_KEY, 'test');
     }
 
-    protected function buildRule($country)
+    protected function buildRule($country): ZipCodeRule
     {
         return new ZipCodeRule($country);
     }

@@ -18,16 +18,13 @@ interface EntityInterface extends ArrayableInterface, JsonSerializable, Serializ
     /**
      * Checks whether a property exists in the instance.
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function has(string $key): bool;
 
     /**
      * Returns a property value.
      *
-     * @param string $key
      *
      * @throws InvalidArgumentException if the property is not found
      * @return mixed
@@ -37,7 +34,6 @@ interface EntityInterface extends ArrayableInterface, JsonSerializable, Serializ
     /**
      * Returns a copy of the instance with the new data.
      *
-     * @param array $data
      *
      * @return mixed
      */

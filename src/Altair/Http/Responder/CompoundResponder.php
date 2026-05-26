@@ -20,14 +20,10 @@ class CompoundResponder implements ResponderInterface
 {
     use ResolverAwareTrait;
 
-    /**
-     * @var array
-     */
-    protected $responders;
+    protected array $responders;
 
     /**
      * @param callable(string): object $resolver
-     * @param array $responders
      *
      * @throws InvalidResponderException
      */
@@ -43,13 +39,8 @@ class CompoundResponder implements ResponderInterface
         $this->responders = $this->filterResponders($responders);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param PayloadInterface $payload
-     *
-     * @return ResponseInterface
-     */
+    
+    #[\Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
@@ -65,10 +56,8 @@ class CompoundResponder implements ResponderInterface
     }
 
     /**
-     * @param array $responders
      *
      * @throws InvalidResponderException
-     * @return array
      *
      */
     protected function filterResponders(array $responders): array
@@ -76,8 +65,9 @@ class CompoundResponder implements ResponderInterface
         $filtered = [];
         foreach ($responders as $responder) {
             if (!is_subclass_of($responder, ResponderInterface::class)) {
-                throw new InvalidResponderException("Invalid responder '{$responder}'");
+                throw new InvalidResponderException(sprintf("Invalid responder '%s'", $responder));
             }
+
             $filtered[] = $responder;
         }
 

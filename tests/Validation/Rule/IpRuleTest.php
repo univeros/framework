@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class IpRuleTest extends TestCase
 {
-    public static function trueProvider()
+    public static function trueProvider(): array
     {
         return [
             ['127.0.0.1', null, '127.*'],
@@ -32,7 +32,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public static function falseProvider()
+    public static function falseProvider(): array
     {
         return [
             [''],
@@ -44,7 +44,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public static function invalidIpsForNetworkRangeProvider()
+    public static function invalidIpsForNetworkRangeProvider(): array
     {
         return [
             ['127.0.0.1', null, '127.0.1.*'],
@@ -59,7 +59,7 @@ class IpRuleTest extends TestCase
         ];
     }
 
-    public static function invalidNetworkRangeProvider()
+    public static function invalidNetworkRangeProvider(): array
     {
         return [
             ['127.0.0.1', null, '127.0.1./*'],
@@ -73,7 +73,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $options
      * @param null|mixed $range
      */
-    public function testPayloadTrue($value, $options = null, $range = null)
+    public function testPayloadTrue(string $value, $options = null, string $range = null): void
     {
         $this->assertTrue($this->assertPayload($value, $options, $range));
     }
@@ -84,7 +84,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $options
      * @param null|mixed $range
      */
-    public function testPayloadFalse($value, $options = null, $range = null)
+    public function testPayloadFalse(string $value, int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertPayload($value, $options, $range));
     }
@@ -95,7 +95,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $options
      * @param null|mixed $range
      */
-    public function testValueTrue($value, $options = null, $range = null)
+    public function testValueTrue(string $value, $options = null, string $range = null): void
     {
         $this->assertTrue($this->assertValue($value, $options, $range));
     }
@@ -106,19 +106,16 @@ class IpRuleTest extends TestCase
      * @param null|mixed $options
      * @param null|mixed $range
      */
-    public function testValueFalse($value, $options = null, $range = null)
+    public function testValueFalse(string $value, int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));
     }
 
     /**
      * @dataProvider invalidIpsForNetworkRangeProvider
-
      * @param $value
-     * @param null $options
-     * @param null $range
      */
-    public function testInvalidIpsForRange($value, $options = null, $range = null)
+    public function testInvalidIpsForRange(string $value, $options = null, string $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));
     }
@@ -130,13 +127,11 @@ class IpRuleTest extends TestCase
         $this->assertValue('192.168.1.1', FILTER_FLAG_IPV4, 'not-a-valid-range');
     }
 
-    protected function assertPayload($value, $options = null, $range = null)
+    protected function assertPayload($value, $options = null, $range = null): bool
     {
         $rule = $this->buildRule($options, $range);
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
@@ -150,7 +145,7 @@ class IpRuleTest extends TestCase
         return $rule->assert($value);
     }
 
-    protected function buildPayload($value)
+    protected function buildPayload($value): \Altair\Middleware\Contracts\PayloadInterface
     {
         $subject = [
             'test' => $value
@@ -161,7 +156,7 @@ class IpRuleTest extends TestCase
             ->withAttribute(PayloadInterface::ATTRIBUTE_KEY, 'test');
     }
 
-    protected function buildRule($options = null, $range = null)
+    protected function buildRule($options = null, $range = null): IpRule
     {
         return new IpRule($options, $range);
     }

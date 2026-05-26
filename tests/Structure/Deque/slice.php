@@ -7,7 +7,7 @@ trait slice
      * Deque has a few edge cases that don't exist for other sequences. These
      * occur when the head of the deque wraps around, ie. h > t.
      */
-    public function testSliceExtended()
+    public function testSliceExtended(): void
     {
         $instance = static::getInstance();
 

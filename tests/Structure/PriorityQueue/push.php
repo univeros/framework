@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait push
 {
-    public static function pushDataProvider()
+    public static function pushDataProvider(): array
     {
         // initial, values, expected
         return [
@@ -18,7 +18,7 @@ trait push
     /**
      * @dataProvider pushDataProvider
      */
-    public function testPush(array $initial, array $values, array $expected)
+    public function testPush(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
 
@@ -29,7 +29,7 @@ trait push
         $this->assertToArray($expected, $instance);
     }
 
-    public function testPushIdenticalValues()
+    public function testPushIdenticalValues(): void
     {
         $instance = static::getInstance();
 
@@ -40,7 +40,7 @@ trait push
         $this->assertToArray(['a', 'a', 'a'], $instance);
     }
 
-    public function testPushManyRandom()
+    public function testPushManyRandom(): void
     {
         $instance = static::getInstance();
 
@@ -55,7 +55,7 @@ trait push
         $this->assertEmpty(array_diff_key($reference, $instance->toArray()));
     }
 
-    public function testInsertionOrder()
+    public function testInsertionOrder(): void
     {
         $instance = static::getInstance();
 
@@ -68,7 +68,7 @@ trait push
         }
     }
 
-    public function testPushCircularReference()
+    public function testPushCircularReference(): void
     {
         $instance = static::getInstance();
         $instance->push($instance, 1);

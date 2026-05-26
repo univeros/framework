@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait merge
 {
-    public static function mergeDataProvider()
+    public static function mergeDataProvider(): array
     {
         // A, B, expected
         return [
@@ -19,7 +19,7 @@ trait merge
     /**
      * @dataProvider mergeDataProvider
      */
-    public function testMerge(array $initial, array $values, array $expected)
+    public function testMerge(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
 
@@ -30,7 +30,7 @@ trait merge
     /**
      * @dataProvider mergeDataProvider
      */
-    public function testMergeWithSelf(array $initial, array $values, array $expected)
+    public function testMergeWithSelf(array $initial, array $values, array $expected): void
     {
         $instance = static::getInstance($initial);
 

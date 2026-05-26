@@ -19,13 +19,9 @@ interface ResponderInterface
     /**
      * Handle marshalling a payload into an HTTP response.
      *
-     * @param  ServerRequestInterface $request
-     * @param  ResponseInterface $response
-     * @param  PayloadInterface $payload
      *
      * @throws InvalidArgumentException If the requested $statusText is not valid
      * @throws OutOfBoundsException     If not status code is found
-     * @return ResponseInterface
      *
      */
     public function __invoke(

@@ -13,9 +13,6 @@ use Psr\Log\LoggerInterface;
 
 interface ErrorLoggerInterface
 {
-    /**
-     * @return LoggerInterface
-     */
     public function getLogger(): LoggerInterface;
 
     /**

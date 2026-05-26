@@ -16,32 +16,18 @@ use Altair\Courier\Contracts\CommandMiddlewareInterface;
 
 class CommandHandlerMiddleware implements CommandMiddlewareInterface
 {
-    /**
-     * @var CommandLocatorServiceInterface
-     */
-    protected $commandLocator;
-    /**
-     * @var CommandMessageNameResolverInterface
-     */
-    protected $nameResolver;
 
     /**
      * HandlerMiddleware constructor.
-     *
-     * @param CommandLocatorServiceInterface $commandLocator
-     * @param CommandMessageNameResolverInterface $nameResolver
      */
-    public function __construct(
-        CommandLocatorServiceInterface $commandLocator,
-        CommandMessageNameResolverInterface $nameResolver
-    ) {
-        $this->commandLocator = $commandLocator;
-        $this->nameResolver = $nameResolver;
+    public function __construct(protected CommandLocatorServiceInterface $commandLocator, protected CommandMessageNameResolverInterface $nameResolver)
+    {
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         $name = $this->nameResolver->resolve($message);

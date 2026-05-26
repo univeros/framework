@@ -9,7 +9,7 @@ use Psr\Http\Message\RequestInterface;
 
 class CookieFactoryTest extends TestCase
 {
-    public function testCreate()
+    public function testCreate(): void
     {
         $cookie = CookieFactory::create('name', 'value');
 
@@ -19,13 +19,10 @@ class CookieFactoryTest extends TestCase
     }
 
     /**
-     * @param string $cookieString
-     * @param string $expectedName
-     * @param string $expectedValue
      *
      * @dataProvider  parsingFromCookieStringDataProvider
      */
-    public function testParsingFromCookieString($cookieString, $expectedName, $expectedValue)
+    public function testParsingFromCookieString(string $cookieString, string $expectedName, string $expectedValue): void
     {
         $cookie = CookieFactory::createFromPairString($cookieString);
 
@@ -34,12 +31,10 @@ class CookieFactoryTest extends TestCase
     }
 
     /**
-     * @param string $cookieString
-     * @param array $expectedPairs
      *
      * @dataProvider createCollectionFromCookieStringDataProvider
      */
-    public function testCreateCollectionFromCookieString($cookieString, array $expectedPairs)
+    public function testCreateCollectionFromCookieString(string $cookieString, array $expectedPairs): void
     {
         $cookies = CookieFactory::createCollectionFromCookieString($cookieString);
 
@@ -55,12 +50,10 @@ class CookieFactoryTest extends TestCase
     }
 
     /**
-     * @param string $cookieString
-     * @param array $expectedCookies
      *
      * @dataProvider  provideCookieStringAndExpectedCookiesData
      */
-    public function testCreateCollectionFromRequest($cookieString, array $expectedCookies)
+    public function testCreateCollectionFromRequest(string $cookieString, array $expectedCookies): void
     {
         $request = $this->createStub(RequestInterface::class);
         $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
@@ -76,7 +69,7 @@ class CookieFactoryTest extends TestCase
         }
     }
 
-    public static function parsingFromCookieStringDataProvider()
+    public static function parsingFromCookieStringDataProvider(): array
     {
         return [
             ['someCookie=something', 'someCookie', 'something'],
@@ -85,7 +78,7 @@ class CookieFactoryTest extends TestCase
         ];
     }
 
-    public static function createCollectionFromCookieStringDataProvider()
+    public static function createCollectionFromCookieStringDataProvider(): array
     {
         return [
             [
@@ -105,7 +98,7 @@ class CookieFactoryTest extends TestCase
         ];
     }
 
-    public static function provideCookieStringAndExpectedCookiesData()
+    public static function provideCookieStringAndExpectedCookiesData(): array
     {
         return [
             [

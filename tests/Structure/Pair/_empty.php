@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Pair;
 
 trait _empty
 {
-    public function testPropertyEmptyKey()
+    public function testPropertyEmptyKey(): void
     {
         $pair = $this->getPair('a', 1);
         $this->assertFalse(empty($pair->key));
@@ -13,7 +13,7 @@ trait _empty
         $this->assertTrue(empty($pair->key));
     }
 
-    public function testPropertyEmptyValue()
+    public function testPropertyEmptyValue(): void
     {
         $pair = $this->getPair('a', 1);
         $this->assertFalse(empty($pair->value));

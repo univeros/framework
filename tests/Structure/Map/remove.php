@@ -5,7 +5,7 @@ use Altair\Tests\Structure\HashableObject;
 
 trait remove
 {
-    public static function removeDataProvider()
+    public static function removeDataProvider(): array
     {
         $o = new \stdClass();
 
@@ -22,7 +22,7 @@ trait remove
         ];
     }
 
-    public static function removeHashableDataProvider()
+    public static function removeHashableDataProvider(): array
     {
         // Two objects with the same hash code and equals.
         $h1 = new HashableObject(1);
@@ -36,15 +36,13 @@ trait remove
 
     /**
      * @dataProvider removeHashableDataProvider
-     * @param mixed $key
-     * @param mixed $expected
      */
-    public function testRemoveHashable(array $initial, $key, $expected, array $result)
+    public function testRemoveHashable(array $initial, mixed $key, mixed $expected, array $result): void
     {
         $this->testRemove($initial, $key, $expected, $result);
     }
 
-    public function testRemoveAllFromFront()
+    public function testRemoveAllFromFront(): void
     {
         $instance = static::getInstance();
 
@@ -61,7 +59,7 @@ trait remove
         $this->assertTrue($instance->isEmpty());
     }
 
-    public function testRemoveHalfFromMidway()
+    public function testRemoveHalfFromMidway(): void
     {
         $instance = static::getInstance();
 
@@ -76,7 +74,7 @@ trait remove
         $this->assertCount(self::MANY / 2, $instance);
     }
 
-    public function testRandomRemove()
+    public function testRandomRemove(): void
     {
         $instance = static::getInstance();
         $reference = [];
@@ -91,7 +89,7 @@ trait remove
             }
 
             for ($l = 0; $l < self::MANY; $l++) {
-                $k = rand(0, self::MANY * 2);
+                $k = random_int(0, self::MANY * 2);
 
                 unset($reference[$k], $instance[$k]);
             }
@@ -102,10 +100,8 @@ trait remove
 
     /**
      * @dataProvider removeDataProvider
-     * @param mixed $key
-     * @param mixed $expected
      */
-    public function testRemove(array $initial, $key, $expected, array $result)
+    public function testRemove(array $initial, mixed $key, mixed $expected, array $result): void
     {
         $instance = static::getInstance();
 
@@ -117,13 +113,13 @@ trait remove
         $this->assertToArray($result, $instance);
     }
 
-    public function testRemoveDefault()
+    public function testRemoveDefault(): void
     {
         $instance = static::getInstance();
         $this->assertEquals('a', $instance->remove('?', 'a'));
     }
 
-    public function testRemoveKeyNotFoundIsEqualNull()
+    public function testRemoveKeyNotFoundIsEqualNull(): void
     {
         $instance = static::getInstance();
         $this->assertEquals(null, $instance->remove('?'));

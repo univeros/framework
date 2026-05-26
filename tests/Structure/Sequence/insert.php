@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait insert
 {
-    public static function insertDataProvider()
+    public static function insertDataProvider(): array
     {
         $s = static::sample();
 
@@ -31,9 +31,8 @@ trait insert
 
     /**
      * @dataProvider insertDataProvider
-     * @param mixed $index
      */
-    public function testInsertVariadic(array $initial, $index, array $values)
+    public function testInsertVariadic(array $initial, mixed $index, array $values): void
     {
         $expected = $initial;
         array_splice($expected, $index, 0, $values);
@@ -47,9 +46,8 @@ trait insert
 
     /**
      * @dataProvider insertDataProvider
-     * @param mixed $index
      */
-    public function testInsert(array $initial, $index, array $values)
+    public function testInsert(array $initial, mixed $index, array $values): void
     {
         $expected = $initial;
         array_splice($expected, $index, 0, array_reverse($values));
@@ -66,10 +64,8 @@ trait insert
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testInsertIndexOutOfRange($initial, $index)
+    public function testInsertIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
@@ -78,10 +74,8 @@ trait insert
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testInsertIndexBadIndex($initial, $index)
+    public function testInsertIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();
         $this->expectWrongIndexTypeException();

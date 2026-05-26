@@ -22,8 +22,6 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
 
     /**
      * CallableCommandLocatorService constructor.
-     *
-     * @param callable $callable
      */
     public function __construct(callable $callable)
     {
@@ -33,6 +31,7 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function has(string $name): bool
     {
         return call_user_func($this->callable, $name) !== null;
@@ -41,6 +40,7 @@ class CallableCommandLocatorService implements CommandLocatorServiceInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function get(string $name): CommandInterface
     {
         if (!$this->has($name)) {

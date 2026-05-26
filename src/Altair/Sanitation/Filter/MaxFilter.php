@@ -12,23 +12,23 @@ namespace Altair\Sanitation\Filter;
 class MaxFilter extends AbstractFilter
 {
     /**
-     * @var mixed the maximum valid value
-     */
-    protected $max;
-
-    /**
      * MaxRule constructor.
      *
      * @param $max
      */
-    public function __construct($max)
+    public function __construct(
+        /**
+         * @var mixed the maximum valid value
+         */
+        protected mixed $max
+    )
     {
-        $this->max = $max;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function parse($value)
     {
         if (!is_scalar($value)) {

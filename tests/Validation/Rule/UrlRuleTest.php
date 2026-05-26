@@ -5,7 +5,8 @@ use Altair\Validation\Rule\UrlRule;
 
 class UrlRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ["http://example.com"],
@@ -17,7 +18,8 @@ class UrlRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [[]],
@@ -31,7 +33,8 @@ class UrlRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): UrlRule
     {
         return new UrlRule();
     }

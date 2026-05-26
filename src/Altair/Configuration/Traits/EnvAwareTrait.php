@@ -18,9 +18,6 @@ trait EnvAwareTrait
      */
     protected $env;
 
-    /**
-     * @param Env $env
-     */
     public function __construct(Env $env)
     {
         $this->env = $env;

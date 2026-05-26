@@ -33,6 +33,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         // Obtaining an exclusive session level advisory lock requires an integer key.
@@ -64,6 +65,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getDriver(): string
     {
         return self::DRIVER_POSTGRESQL;
@@ -72,6 +74,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSelectSql(): string
     {
         $sql = $this->getIsLockModeTransactional()
@@ -84,6 +87,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
         if (version_compare($this->pdo->getAttribute(\PDO::ATTR_SERVER_VERSION), '9.5', '>=')) {

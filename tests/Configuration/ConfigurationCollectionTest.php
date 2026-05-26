@@ -1,6 +1,7 @@
 <?php
 namespace Altair\Tests\Configuration;
 
+use Altair\Configuration\Exception\InvalidConfigurationException;
 use Altair\Configuration\Collection\ConfigurationCollection;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
@@ -8,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class ConfigurationCollectionTest extends TestCase
 {
-    public function testCollectionApplyWithClassNameString()
+    public function testCollectionApplyWithClassNameString(): void
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
 
@@ -17,7 +18,7 @@ class ConfigurationCollectionTest extends TestCase
         $container
             ->expects($this->once())
             ->method('make')
-            ->with(get_class($configuration))
+            ->with($configuration::class)
             ->willReturn($configuration);
 
         $configuration
@@ -26,13 +27,13 @@ class ConfigurationCollectionTest extends TestCase
             ->with($container);
 
         $collection = new ConfigurationCollection([
-            get_class($configuration)
+            $configuration::class
         ]);
 
         $collection->apply($container);
     }
 
-    public function testCollectionApplyWithObjectInstance()
+    public function testCollectionApplyWithObjectInstance(): void
     {
         $configuration = $this->createMock(ConfigurationInterface::class);
 
@@ -50,9 +51,9 @@ class ConfigurationCollectionTest extends TestCase
         $collection->apply($container);
     }
 
-    public function testInvalidClass()
+    public function testInvalidClass(): void
     {
-        $this->expectException(\Altair\Configuration\Exception\InvalidConfigurationException::class);
+        $this->expectException(InvalidConfigurationException::class);
 
         $container = $this->createMock(Container::class);
         $configuration = new ConfigurationCollection([

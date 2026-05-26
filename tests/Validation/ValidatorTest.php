@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 
 class ValidatorTest extends TestCase
 {
-    public function testValidEntity()
+    public function testValidEntity(): void
     {
         $validator = $this->getValidator();
 
@@ -19,7 +19,7 @@ class ValidatorTest extends TestCase
         $this->assertTrue($validator->validate($entity));
     }
 
-    public function testInvalidEntity()
+    public function testInvalidEntity(): void
     {
         $validator = $this->getValidator();
 
@@ -37,7 +37,7 @@ class ValidatorTest extends TestCase
         $this->assertEquals('"4alias" have invalid alphabetic character(s)', $failures['alias']);
     }
 
-    protected function getValidator()
+    protected function getValidator(): Validator
     {
         return new Validator(new RulesRunner(new RuleResolver(new Container())));
     }

@@ -5,7 +5,7 @@ use Altair\Structure\Contracts\VectorInterface;
 
 trait capacity
 {
-    public function testCapacity()
+    public function testCapacity(): void
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 
@@ -24,7 +24,7 @@ trait capacity
         $this->assertEquals(intval($min * 1.5), $instance->capacity());
     }
 
-    public function testAutoTruncate()
+    public function testAutoTruncate(): void
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 
@@ -38,7 +38,7 @@ trait capacity
         $this->assertEquals($expected, $instance->capacity());
     }
 
-    public function testClearResetsCapacity()
+    public function testClearResetsCapacity(): void
     {
         $min = VectorInterface::MIN_VECTOR_CAPACITY;
 

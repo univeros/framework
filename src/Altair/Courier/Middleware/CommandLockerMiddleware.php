@@ -19,6 +19,7 @@ class CommandLockerMiddleware implements CommandMiddlewareInterface
      * @var array
      */
     protected $queue = [];
+
     /**
      * @var bool
      */
@@ -27,6 +28,7 @@ class CommandLockerMiddleware implements CommandMiddlewareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         // ensure we always execute one and only one command at a time
@@ -41,6 +43,7 @@ class CommandLockerMiddleware implements CommandMiddlewareInterface
                     throw $e;
                 }
             }
+
             $this->running = false;
         }
     }

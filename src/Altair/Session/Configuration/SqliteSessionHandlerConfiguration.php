@@ -26,6 +26,7 @@ class SqliteSessionHandlerConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         $adapterDefinition = $this->getAdapterDefinition();

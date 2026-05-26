@@ -19,6 +19,7 @@ class RuleCollection extends Map
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function put($key, $value): MapInterface
     {
         $this->filterRules($value);
@@ -29,6 +30,7 @@ class RuleCollection extends Map
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $rules) {
@@ -41,10 +43,8 @@ class RuleCollection extends Map
 
     /**
      * Ensures the key is a valid string. Keys supposed to be attributes or keys of the 'subject' to validate.
-     *
-     * @param mixed $key
      */
-    protected function filterKey($key): void
+    protected function filterKey(mixed $key): void
     {
         if (!is_string($key)) {
             throw new InvalidArgumentException(
@@ -58,10 +58,8 @@ class RuleCollection extends Map
 
     /**
      * Ensures rules are implementing the appropriate interface.
-     *
-     * @param mixed $rules
      */
-    protected function filterRules($rules): void
+    protected function filterRules(mixed $rules): void
     {
         if (is_string($rules)) {
             if (!in_array(RuleInterface::class, class_implements($rules), false)) {
@@ -78,6 +76,7 @@ class RuleCollection extends Map
                 if (is_string($rule)) {
                     $rule = ['class' => $rule];
                 }
+
                 $class = $rule['class'] ?? null;
                 if ($class === null || !in_array(RuleInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(

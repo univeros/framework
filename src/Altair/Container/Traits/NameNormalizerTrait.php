@@ -13,8 +13,6 @@ trait NameNormalizerTrait
 {
     /**
      * @param $className
-     *
-     * @return string
      */
     protected function normalizeName(string $className): string
     {

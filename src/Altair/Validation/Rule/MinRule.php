@@ -12,23 +12,23 @@ namespace Altair\Validation\Rule;
 class MinRule extends AbstractRule
 {
     /**
-     * @var mixed the minimum valid value
-     */
-    protected $min;
-
-    /**
      * MaxRule constructor.
      *
      * @param $min
      */
-    public function __construct($min)
+    public function __construct(
+        /**
+         * @var mixed the minimum valid value
+         */
+        protected mixed $min
+    )
     {
-        $this->min = $min;
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function assert($value): bool
     {
         if (!is_scalar($value)) {
@@ -41,6 +41,7 @@ class MinRule extends AbstractRule
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildErrorMessage($value): string
     {
         return sprintf('"%s" is not valid.', $value);

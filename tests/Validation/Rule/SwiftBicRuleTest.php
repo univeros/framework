@@ -5,7 +5,8 @@ use Altair\Validation\Rule\SwiftBicRule;
 
 class SwiftBicRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['RBOSGGSX'],
@@ -18,7 +19,8 @@ class SwiftBicRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             ['CE1EL2LLFFF'],
@@ -26,7 +28,8 @@ class SwiftBicRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): SwiftBicRule
     {
         return new SwiftBicRule();
     }

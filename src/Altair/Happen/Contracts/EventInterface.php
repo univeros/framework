@@ -9,40 +9,32 @@
 
 namespace Altair\Happen;
 
+use Altair\Happen\Exception\InvalidArgumentException;
+
 interface EventInterface
 {
     /**
      * Stop event propagation.
-     *
-     * @return EventInterface
      */
     public function stopPropagation(): EventInterface;
 
     /**
      * Check whether propagation was stopped.
-     *
-     * @return bool
      */
     public function isPropagationStopped(): bool;
 
     /**
      * Returns the timestamp when the event has occured.
-     *
-     * @return int
      */
     public function getOccurredOn(): int;
 
     /**
      * Get the event name.
-     *
-     * @return string
      */
     public function getName(): string;
 
     /**
      * Getter for all arguments.
-     *
-     * @return array
      */
     public function getArguments(): array;
 
@@ -51,46 +43,36 @@ interface EventInterface
      *
      * @param string $key Key
      *
-     * @throws \Altair\Happen\Exception\InvalidArgumentException If key is not found.
+     * @throws InvalidArgumentException If key is not found.
      * @return mixed Contents of array key
-     *
      */
     public function getArgument(string $key);
 
     /**
      * Has Argument.
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function hasArgument(string $key): bool;
 
     /**
      * Returns a new instance with a new name and same set of arguments.
      *
-     * @param string $name
      *
-     * @return EventInterface
      */
     public function withName(string $name): EventInterface;
 
     /**
      * Returns a new instance with new inserted argument.
      *
-     * @param string $key
-     * @param mixed $content
      *
-     * @return EventInterface
      */
-    public function withArgument(string $key, $content) : EventInterface;
+    public function withArgument(string $key, mixed $content) : EventInterface;
 
     /**
      * Returns a new instance with new set of arguments keeping its name.
      *
-     * @param array $arguments
      *
-     * @return EventInterface
      */
     public function withArguments(array $arguments): EventInterface;
 }

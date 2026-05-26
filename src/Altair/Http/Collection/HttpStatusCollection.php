@@ -39,6 +39,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function count()
     {
         return count($this->values);
@@ -47,6 +48,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function getIterator()
     {
         return new ArrayIterator($this->values);
@@ -59,28 +61,22 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @throws InvalidArgumentException If the requested $statusText is not valid
      * @throws OutOfBoundsException     If not status code is found
-     *
-     * @return int|null
      */
-    public function getStatusCode($reason)
+    public function getStatusCode($reason): ?int
     {
         $reason = $this->filterReasonPhrase($reason);
-        $code = $this->fetchCode($reason);
-        if ($code !== false) {
-            return $code;
-        }
+        return $this->fetchCode($reason);
+
         throw new OutOfBoundsException(sprintf("No Http status code is associated to '%s'", $code));
     }
 
     /**
      * Get the text for a given status code.
      *
-     * @param int $code
      *
      * @throws InvalidArgumentException If the requested $statusCode is not valid
      * @throws OutOfBoundsException     If the requested $statusCode is not found
      *
-     * @return string
      */
     public function getReasonPhrase(int $code): string
     {
@@ -98,11 +94,9 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * See the `CLASS_` constants for possible return values
      *
-     * @param int $code
      *
      * @throws InvalidArgumentException If the requested $statusCode is not valid
      *
-     * @return string
      */
     public function getResponseClass(int $code): string
     {
@@ -120,15 +114,13 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * Checks whether a http code exists in the collection.
      *
-     * @param int $code
      *
-     * @return bool
      */
     public function hasCode(int $code): bool
     {
         try {
             $code = $this->filterCode($code);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return false;
         }
 
@@ -138,15 +130,13 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * Checks whether a reason phrase exists in the collection.
      *
-     * @param string $reason
      *
-     * @return bool
      */
     public function hasReasonPhrase(string $reason): bool
     {
         try {
             $reason = $this->filterReasonPhrase($reason);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             return false;
         }
 
@@ -155,11 +145,8 @@ class HttpStatusCollection implements Countable, IteratorAggregate
 
     /**
      * Adds or updates an item into the http status array.
-     *
-     * @param int $code
-     * @param string $reason
      */
-    public function merge(int $code, string $reason)
+    public function merge(int $code, string $reason): void
     {
         $code = $this->filterCode($code);
         $reason = $this->filterReasonPhrase($reason);
@@ -169,6 +156,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
                 "The reason phrase injected is already present in the default values."
             );
         }
+
         $this->values[$code] = $reason;
     }
 
@@ -177,11 +165,12 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @param array|Traversable $values
      */
-    public function mergeAll($values)
+    public function mergeAll($values): void
     {
         if (!is_array($values) || !$values instanceof Traversable) {
             throw new InvalidArgumentException("Values must be a Traversable object or an array");
         }
+
         foreach ($values as $code => $reason) {
             $this->merge($code, $reason);
         }
@@ -192,15 +181,13 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @see HttpStatusInterface
      * @see HttpStatusCodeInterface
-     *
-     * @return array
      */
     protected function buildCommonValues(): array
     {
         $values = [];
         $reflectionClass = new ReflectionClass(HttpStatusInterface::class);
         foreach ($reflectionClass->getConstants() as $name => $value) {
-            $code = constant('Altair\Http\Contracts\HttpStatusCodeInterface::' . $name);
+            $code = constant(HttpStatusCodeInterface::class . '::' . $name);
             $values[$code] = $value;
         }
 
@@ -211,21 +198,15 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      * Fetch the status code for a given reason phrase.
      *
      * @param string $text the reason phrase
-     *
-     * @return int|null
      */
     protected function fetchCode($text):? int
     {
-        $code = array_search(strtolower($text), array_map('strtolower', $this->values));
+        $code = array_search(strtolower($text), array_map('strtolower', $this->values), true);
 
         return $code === false ? null : $code;
     }
 
-    /**
-     * @param string $reason
-     *
-     * @return string
-     */
+    
     protected function filterReasonPhrase(string $reason): string
     {
         $reason = trim($reason);
@@ -239,9 +220,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * Filters the status code
      *
-     * @param int $code
      *
-     * @return int
      */
     protected function filterCode(int $code): int
     {

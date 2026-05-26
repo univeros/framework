@@ -18,7 +18,6 @@ interface ConfigurationInterface
     /**
      * Applies a configuration set to a dependency injector.
      *
-     * @param Container $container
      *
      * @throws InvalidArgumentException
      * @throws InjectionException

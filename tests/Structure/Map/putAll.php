@@ -1,9 +1,17 @@
 <?php
 namespace Altair\Tests\Structure\Map;
 
+use Altair\Structure\Set;
+use Altair\Structure\Map;
+use Altair\Structure\Vector;
+use Altair\Structure\Deque;
+use Altair\Structure\Stack;
+use Altair\Structure\Queue;
+use Altair\Structure\PriorityQueue;
+
 trait putAll
 {
-    public static function putAllDataProvider()
+    public static function putAllDataProvider(): array
     {
         // values, values
         return [
@@ -19,7 +27,7 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAll(array $values)
+    public function testPutAll(array $values): void
     {
         $instance = static::getInstance();
         $instance->putAll($values);
@@ -29,7 +37,7 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllUsingIterator(array $values)
+    public function testPutAllUsingIterator(array $values): void
     {
         $instance = static::getInstance();
         $instance->putAll(new \ArrayIterator($values));
@@ -39,10 +47,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromSet(array $values)
+    public function testPutAllFromSet(array $values): void
     {
         $instance = static::getInstance();
-        $set = new \Altair\Structure\Set($values);
+        $set = new Set($values);
         $instance->putAll($set);
         $this->assertToArray($values, $instance);
     }
@@ -50,10 +58,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromMap(array $values)
+    public function testPutAllFromMap(array $values): void
     {
         $instance = static::getInstance();
-        $map = new \Altair\Structure\Map($values);
+        $map = new Map($values);
         $instance->putAll($map);
         $this->assertToArray($values, $instance);
     }
@@ -61,10 +69,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromVector(array $values)
+    public function testPutAllFromVector(array $values): void
     {
         $instance = static::getInstance();
-        $vector = new \Altair\Structure\Vector($values);
+        $vector = new Vector($values);
         $instance->putAll($vector);
         $this->assertToArray($values, $instance);
     }
@@ -72,10 +80,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromDeque(array $values)
+    public function testPutAllFromDeque(array $values): void
     {
         $instance = static::getInstance();
-        $deque = new \Altair\Structure\Deque($values);
+        $deque = new Deque($values);
         $instance->putAll($deque);
         $this->assertToArray($values, $instance);
     }
@@ -83,10 +91,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromStack(array $values)
+    public function testPutAllFromStack(array $values): void
     {
         $instance = static::getInstance();
-        $stack = new \Altair\Structure\Stack(array_reverse($values));
+        $stack = new Stack(array_reverse($values));
         $instance->putAll($stack);
         $this->assertToArray($values, $instance);
         $this->assertCount(0, $stack);
@@ -95,10 +103,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromQueue(array $values)
+    public function testPutAllFromQueue(array $values): void
     {
         $instance = static::getInstance();
-        $queue = new \Altair\Structure\Queue($values);
+        $queue = new Queue($values);
         $instance->putAll($queue);
         $this->assertToArray($values, $instance);
         $this->assertCount(0, $queue);
@@ -107,10 +115,10 @@ trait putAll
     /**
      * @dataProvider putAllDataProvider
      */
-    public function testPutAllFromPriorityQueue(array $values)
+    public function testPutAllFromPriorityQueue(array $values): void
     {
         $instance = static::getInstance();
-        $queue = new \Altair\Structure\PriorityQueue();
+        $queue = new PriorityQueue();
 
         foreach ($values as $value) {
             $queue->push($value, 0);

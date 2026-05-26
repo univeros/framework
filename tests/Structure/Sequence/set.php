@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait set
 {
-    public static function setDataProvider()
+    public static function setDataProvider(): array
     {
         // initial, index, value, expected
         return [
@@ -20,11 +20,8 @@ trait set
 
     /**
      * @dataProvider setDataProvider
-     * @param mixed $initial
-     * @param mixed $index
-     * @param mixed $value
      */
-    public function testSet($initial, $index, $value, array $expected)
+    public function testSet(mixed $initial, mixed $index, mixed $value, array $expected): void
     {
         $instance = static::getInstance($initial);
 
@@ -38,10 +35,8 @@ trait set
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testSetOutOfRange($initial, $index)
+    public function testSetOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
@@ -50,10 +45,8 @@ trait set
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testSetIndexBadIndex($initial, $index)
+    public function testSetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance();
         $this->expectWrongIndexTypeException();
@@ -62,11 +55,8 @@ trait set
 
     /**
      * @dataProvider setDataProvider
-     * @param mixed $initial
-     * @param mixed $index
-     * @param mixed $value
      */
-    public function testArrayAccessSet($initial, $index, $value, array $expected)
+    public function testArrayAccessSet(mixed $initial, mixed $index, mixed $value, array $expected): void
     {
         $instance = static::getInstance($initial);
         $instance[$index] = $value;
@@ -76,10 +66,8 @@ trait set
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessSetIndexBadIndex($initial, $index)
+    public function testArrayAccessSetIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectWrongIndexTypeException();
@@ -88,17 +76,15 @@ trait set
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessSetIndexOutOfRange($initial, $index)
+    public function testArrayAccessSetIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->expectIndexOutOfRangeException();
         $instance[$index] = 1;
     }
 
-    public function testArrayAccessSetByReference()
+    public function testArrayAccessSetByReference(): void
     {
         $instance = static::getInstance([[1]]);
         $instance[0][0] = 2;

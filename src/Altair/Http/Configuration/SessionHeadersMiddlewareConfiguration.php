@@ -16,6 +16,7 @@ use Altair\Http\Support\NoCacheLimiter;
 
 class SessionHeadersMiddlewareConfiguration implements ConfigurationInterface
 {
+    #[\Override]
     public function apply(Container $container): void
     {
         // forced or fire errors if not set like this?

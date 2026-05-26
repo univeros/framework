@@ -15,10 +15,7 @@ use PDOException;
 
 class PdoSessionHandler implements PdoSessionHandlerInterface
 {
-    /**
-     * @var PdoSessionAdapterInterface
-     */
-    protected $adapter;
+
     /**
      * @var bool whether gc() has been called
      */
@@ -26,19 +23,16 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
 
     /**
      * PdoSessionHandler constructor.
-     *
-     * @param PdoSessionAdapterInterface $adapter
      */
-    public function __construct(
-        PdoSessionAdapterInterface $adapter
-    ) {
-        $this->adapter = $adapter;
+    public function __construct(protected PdoSessionAdapterInterface $adapter)
+    {
     }
 
     /**
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function open($savePath, $sessionName)
     {
         if (!$this->adapter->getIsConnected()) {
@@ -49,6 +43,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     }
 
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function close()
     {
         $gc = $this->gcCalled;
@@ -61,13 +56,14 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function read($sessionId)
     {
         try {
             return $this->adapter->read($sessionId);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             $this->adapter->rollback();
-            throw $e;
+            throw $pdoException;
         }
     }
 
@@ -75,13 +71,14 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function write($sessionId, $data)
     {
         try {
             return $this->adapter->write($sessionId, $data);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             $this->adapter->rollback();
-            throw $e;
+            throw $pdoException;
         }
     }
 
@@ -89,13 +86,14 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function destroy($sessionId)
     {
         try {
             return $this->adapter->delete($sessionId);
-        } catch (PDOException $e) {
+        } catch (PDOException $pdoException) {
             $this->adapter->rollback();
-            throw $e;
+            throw $pdoException;
         }
     }
 
@@ -103,6 +101,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function gc($maxlifetime)
     {
         // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
@@ -112,9 +111,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
 
     /**
      * Returns whether the session has expired or not.
-     *
-     * @return bool
      */
+    #[\Override]
     public function getHasSessionExpired(): bool
     {
         return $this->adapter->getHasSessionExpired();

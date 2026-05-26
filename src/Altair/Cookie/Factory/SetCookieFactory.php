@@ -19,10 +19,8 @@ use Psr\Http\Message\ResponseInterface;
 class SetCookieFactory
 {
     /**
-     * @param string $name
      * @param string|null $value
      *
-     * @return SetCookie
      */
     public static function create(string $name, string $value = null): SetCookie
     {
@@ -30,11 +28,8 @@ class SetCookieFactory
     }
 
     /**
-     * @param string $name
      * @param string|null $value
-     *
      *@throws Exception
-     * @return SetCookie
      */
     public static function createRemembered(string $name, string $value = null): SetCookie
     {
@@ -42,20 +37,14 @@ class SetCookieFactory
     }
 
     /**
-     * @param string $name
      *@throws Exception
-     * @return SetCookie
      */
     public static function createExpired(string $name): SetCookie
     {
         return (new SetCookie($name))->expire();
     }
 
-    /**
-     * @param string $string
-     *
-     * @return SetCookie
-     */
+    
     public static function createFromCookieString(string $string): SetCookie
     {
         $cookieStr = new CookieStr();
@@ -64,7 +53,7 @@ class SetCookieFactory
         $cookie = new SetCookie($name, $value);
 
         while ($attribute = array_shift($attributes)) {
-            $pair = explode('=', $attribute, 2);
+            $pair = explode('=', (string) $attribute, 2);
             $key = strtolower($pair[0]);
             $value = $pair[1]?? null;
 
@@ -72,10 +61,12 @@ class SetCookieFactory
                 $cookie = $cookie->withSecure(true);
                 continue;
             }
+
             if ('httponly' === $key) {
                 $cookie = $cookie->withHttpOnly(true);
                 continue;
             }
+
             if (null === $value) {
                 continue;
             }
@@ -99,35 +90,23 @@ class SetCookieFactory
         return $cookie;
     }
 
-    /**
-     * @param array $strings
-     *
-     * @return SetCookieCollection
-     */
+    
     public static function createCollectionFromCookieStrings(array $strings): SetCookieCollection
     {
         return new SetCookieCollection(
             array_map(
-                static function ($string) {
-                    return static::createFromCookieString($string);
-                },
+                static fn($string): SetCookie => static::createFromCookieString($string),
                 $strings
             )
         );
     }
 
-    /**
-     * @param ResponseInterface $response
-     *
-     * @return SetCookieCollection
-     */
+    
     public static function createCollectionFromResponse(ResponseInterface $response): SetCookieCollection
     {
         return new SetCookieCollection(
             array_map(
-                static function ($string) {
-                    return static::createFromCookieString($string);
-                },
+                static fn($string): SetCookie => static::createFromCookieString($string),
                 $response->getHeader(SetCookieInterface::HEADER)
             )
         );

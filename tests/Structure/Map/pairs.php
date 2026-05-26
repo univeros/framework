@@ -5,7 +5,7 @@ use Altair\Structure\Vector;
 
 trait pairs
 {
-    public static function pairsDataProvider()
+    public static function pairsDataProvider(): array
     {
         return [
             [[], []],
@@ -16,21 +16,19 @@ trait pairs
     /**
      * @dataProvider pairsDataProvider
      */
-    public function testPairs(array $initial, array $expected)
+    public function testPairs(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);
         $pairs = $instance->pairs();
 
         $this->assertInstanceOf(Vector::class, $pairs);
 
-        $to_array = function ($pair) {
-            return [$pair->key, $pair->value];
-        };
+        $to_array = fn($pair): array => [$pair->key, $pair->value];
 
         $this->assertEquals($expected, array_map($to_array, $pairs->toArray()));
     }
 
-    public function testObjectsAreMutableThroughAccess()
+    public function testObjectsAreMutableThroughAccess(): void
     {
         $key = new \stdClass();
         $key->state = true;
@@ -44,7 +42,7 @@ trait pairs
         $this->assertFalse($instance->pairs()->first()->key->state);
     }
 
-    public function testKeysAreNotMutableThroughAccess()
+    public function testKeysAreNotMutableThroughAccess(): void
     {
         $instance = static::getInstance(['a' => 1, 'b' => 2]);
         $instance->pairs()->first()->key = 'c';

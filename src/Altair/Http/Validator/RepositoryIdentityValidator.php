@@ -14,25 +14,16 @@ use Altair\Http\Contracts\IdentityValidatorInterface;
 
 class RepositoryIdentityValidator implements IdentityValidatorInterface
 {
-    /**
-     * @var QueryRepositoryInterface
-     */
-    protected $repository;
-    /**
-     * @var array|null
-     */
-    protected $options;
+
+    protected array $options;
 
     /**
      * RepositoryIdentityValidator constructor.
      *
-     * @param QueryRepositoryInterface $repository
      * @param array|null $options
      */
-    public function __construct(QueryRepositoryInterface $repository, array $options = null)
+    public function __construct(protected QueryRepositoryInterface $repository, array $options = null)
     {
-        $this->repository = $repository;
-
         // Options contain the names of the fields to search on the db by the entity.
         // By default: 'username' and 'hash' are the default fieldname values. You can easily change them as:
         // ['username' => 'my_field_username', 'hash' => 'my_field_name_for_hash']
@@ -43,6 +34,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"] ?? null;
@@ -51,7 +43,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
         $user = $this->repository->findOneBy([$this->options['username'] => $user]);
 
         if (null !== $user) {
-            return password_verify($password, $user->get($this->options['hash']));
+            return password_verify((string) $password, (string) $user->get($this->options['hash']));
         }
 
         return false;

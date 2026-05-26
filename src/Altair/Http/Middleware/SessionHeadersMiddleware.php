@@ -27,23 +27,20 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     ) {
     }
 
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $prevName = session_name();
         $prevId = $this->cookieManager->getFromRequest($request, $prevName);
-        if ($prevId !== null) {
-            session_id($prevId);
-        }
+        session_id($prevId);
 
         $response = $handler->handle($request);
 
         $nextId = session_id();
-        if ($nextId !== $prevId) {
-            $response = $this->cookieManager->setOnResponse(
-                $response,
-                $this->createNewSessionCookie($nextId),
-            );
-        }
+        $response = $this->cookieManager->setOnResponse(
+            $response,
+            $this->createNewSessionCookie($nextId),
+        );
 
         return $nextId !== ''
             ? $this->cacheLimiter->apply($response)

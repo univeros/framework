@@ -34,6 +34,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         throw new Error('SQLite does not support advisory locks.');
@@ -42,6 +43,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getDriver(): string
     {
         return self::DRIVER_SQLITE;
@@ -50,6 +52,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSelectSql(): string
     {
         $sql = 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id';
@@ -60,6 +63,7 @@ class SqlitePdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
         $maxlifetime = (int)ini_get('session.gc_maxlifetime');

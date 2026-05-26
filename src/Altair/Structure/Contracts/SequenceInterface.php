@@ -22,19 +22,16 @@ interface SequenceInterface extends CollectionInterface
      * Updates every value in the sequence by applying a callback, using the return value as the new value.
      *
      * @param callable $callback Accepts the value, returns the new value.
-     *
-     * @return SequenceInterface
      */
     public function apply(callable $callback): SequenceInterface;
 
     /**
      * Determines whether the sequence contains all of zero or more values.
      *
-     * @param mixed ...$values
      *
      * @return bool true if at least one value was provided and the sequence contains all given values, false otherwise.
      */
-    public function contains(...$values): bool;
+    public function contains(mixed ...$values): bool;
 
     /**
      * Returns a new sequence containing only the values for which a callback
@@ -42,19 +39,16 @@ interface SequenceInterface extends CollectionInterface
      *
      * @param callable|null $callback Accepts a value, returns a boolean result: true : include the value, false: skip
      * the value.
-     *
-     * @return SequenceInterface
      */
     public function filter(callable $callback = null): SequenceInterface;
 
     /**
      * Returns the index of a given value, or false if it could not be found.
      *
-     * @param mixed $value
      *
      * @return int|bool
      */
-    public function find($value);
+    public function find(mixed $value);
 
     /**
      * Returns the first value in the sequence.
@@ -69,7 +63,6 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns the value at a given index (position) in the sequence.
      *
-     * @param int $index
      *
      * @throws \OutOfRangeException if the index is not in the range [0, size-1]
      *
@@ -84,22 +77,17 @@ interface SequenceInterface extends CollectionInterface
      * Each value after the index will be moved one position to the right.
      * Values may be inserted at an index equal to the size of the sequence.
      *
-     * @param int $index
-     * @param mixed ...$values
      *
      * @throws \OutOfRangeException if the index is not in the range [0, n]
      *
-     * @return SequenceInterface
      */
-    public function insert(int $index, ...$values): SequenceInterface;
+    public function insert(int $index, mixed ...$values): SequenceInterface;
 
     /**
      * Joins all values of the sequence into a string, adding an optional 'glue' between them. Returns an empty string
      * if the sequence is empty.
      *
-     * @param string $glue
      *
-     * @return string
      */
     public function join(string $glue = null): string;
 
@@ -116,9 +104,7 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns a new sequence using the results of applying a callback to each value.
      *
-     * @param callable $callback
      *
-     * @return SequenceInterface
      */
     public function map(callable $callback): SequenceInterface;
 
@@ -126,8 +112,6 @@ interface SequenceInterface extends CollectionInterface
      * Returns the result of adding all given values to the sequence.
      *
      * @param array|\Traversable $values
-     *
-     * @return SequenceInterface
      */
     public function merge($values): SequenceInterface;
 
@@ -144,11 +128,9 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Adds zero or more values to the end of the sequence.
      *
-     * @param mixed ...$values
      *
-     * @return SequenceInterface
      */
-    public function push(...$values): SequenceInterface;
+    public function push(mixed ...$values): SequenceInterface;
 
     /**
      * Iteratively reduces the sequence to a single value using a callback.
@@ -174,8 +156,6 @@ interface SequenceInterface extends CollectionInterface
 
     /**
      * Reverses the sequence in-place.
-     *
-     * @return SequenceInterface
      */
     public function reverse(): SequenceInterface;
 
@@ -185,22 +165,17 @@ interface SequenceInterface extends CollectionInterface
      * positive, or 'pop' and 'unshift' if negative.
      *
      * @param int $rotations The number of rotations (can be negative).
-     *
-     * @return SequenceInterface
      */
     public function rotate(int $rotations) : SequenceInterface;
 
     /**
      * Replaces the value at a given index in the sequence with a new value.
      *
-     * @param int $index
-     * @param mixed $value
      *
      * @throws \OutOfRangeException if the index is not in the range [0, size-1]
      *
-     * @return SequenceInterface
      */
-    public function set(int $index, $value): SequenceInterface;
+    public function set(int $index, mixed $value): SequenceInterface;
 
     /**
      * Removes and returns the first value in the sequence.
@@ -224,8 +199,6 @@ interface SequenceInterface extends CollectionInterface
      *
      * If a length is not provided, the resulting sequence will contain all values between the index and the end of the
      * sequence.
-     *
-     * @return SequenceInterface
      */
     public function slice(int $index, int $length = null): SequenceInterface;
 
@@ -234,8 +207,6 @@ interface SequenceInterface extends CollectionInterface
      * comparator. Natural ordering will be used if a comparator is not given.
      *
      * @param callable|null $comparator Accepts two values to be compared. Should return the result of a <=> b.
-     *
-     * @return SequenceInterface
      */
     public function sort(callable $comparator = null): SequenceInterface;
 
@@ -249,9 +220,7 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Adds zero or more values to the front of the sequence.
      *
-     * @param mixed ...$values
      *
-     * @return SequenceInterface
      */
-    public function unshift(...$values): SequenceInterface;
+    public function unshift(mixed ...$values): SequenceInterface;
 }

@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait _empty
 {
-    public function testArrayAccessEmpty()
+    public function testArrayAccessEmpty(): void
     {
         $instance = static::getInstance();
         $this->expectArrayAccessUnsupportedException();

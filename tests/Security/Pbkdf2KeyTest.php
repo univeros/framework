@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class Pbkdf2KeyTest extends TestCase
 {
-    public static function dataProvider()
+    public static function dataProvider(): array
     {
         return [
             [
@@ -35,14 +35,8 @@ class Pbkdf2KeyTest extends TestCase
 
     /**
      * @dataProvider dataProvider
-     *
-     * @param string $password
-     * @param string $salt
-     * @param int $iterations
-     * @param int $length
-     * @param string $okm
      */
-    public function testPbkdf2($password, $salt, $iterations, $length, $okm)
+    public function testPbkdf2(string $password, string $salt, int $iterations, int $length, string $okm): void
     {
         $derivedKey = (new Pbkdf2Key($password, $salt, $length, $iterations))->derive();
         $this->assertEquals($okm, bin2hex($derivedKey));

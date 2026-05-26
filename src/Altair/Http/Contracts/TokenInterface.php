@@ -13,9 +13,6 @@ interface TokenInterface
 {
     const TOKEN_KEY = 'altair:http:token';
 
-    /**
-     * @return string
-     */
     public function getToken(): string;
 
     /**

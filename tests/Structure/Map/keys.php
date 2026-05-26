@@ -5,7 +5,7 @@ use Altair\Structure\Set;
 
 trait keys
 {
-    public static function keysDataProvider()
+    public static function keysDataProvider(): array
     {
         return [
             [[], []],
@@ -17,7 +17,7 @@ trait keys
     /**
      * @dataProvider keysDataProvider
      */
-    public function testKeys(array $initial, array $expected)
+    public function testKeys(array $initial, array $expected): void
     {
         $instance = static::getInstance($initial);
         $keys = $instance->keys();

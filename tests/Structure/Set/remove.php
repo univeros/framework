@@ -3,9 +3,9 @@ namespace Altair\Tests\Structure\Set;
 
 trait remove
 {
-    public static function removeDataProvider()
+    public static function removeDataProvider(): array
     {
-        list($unique, $duplicates) = static::getUniqueAndDuplicateData();
+        [$unique, $duplicates] = static::getUniqueAndDuplicateData();
 
         // initial, values to remove, expected.
         return [
@@ -41,7 +41,7 @@ trait remove
         array $initial,
         array $values,
         array $expected
-    ) {
+    ): void {
         $instance = static::getInstance($initial);
 
         foreach ($values as $value) {
@@ -66,7 +66,7 @@ trait remove
         array $initial,
         array $values,
         array $expected
-    ) {
+    ): void {
         $instance = static::getInstance($initial);
         $instance->remove(...$values);
 

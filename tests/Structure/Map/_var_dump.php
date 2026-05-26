@@ -5,7 +5,7 @@ use Altair\Structure\Pair;
 
 trait _var_dump
 {
-    public static function varDumpDataProvider()
+    public static function varDumpDataProvider(): array
     {
         // values, expected array repr
         return [
@@ -27,7 +27,7 @@ trait _var_dump
     /**
      * @dataProvider varDumpDataProvider
      */
-    public function testVarDump(array $values, array $expected)
+    public function testVarDump(array $values, array $expected): void
     {
         $instance = static::getInstance($values);
         $this->assertInstanceDump($expected, $instance);

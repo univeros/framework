@@ -5,11 +5,9 @@ use Altair\Structure\Vector;
 
 trait __construct
 {
-    public static function constructDataProvider()
+    public static function constructDataProvider(): array
     {
-        return array_map(function ($a) {
-            return [$a, $a];
-        }, [
+        return array_map(fn($a): array => [$a, $a], [
             [],
             ['a'],
             ['a', 'b'],
@@ -21,9 +19,8 @@ trait __construct
 
     /**
      * @dataProvider constructDataProvider
-     * @param mixed $values
      */
-    public function testConstruct($values, array $expected)
+    public function testConstruct(mixed $values, array $expected): void
     {
         $this->assertToArray($expected, new Vector($values));
     }
@@ -31,12 +28,12 @@ trait __construct
     /**
      * @dataProvider constructDataProvider
      */
-    public function testConstructUsingNonArrayIterable(array $values, array $expected)
+    public function testConstructUsingNonArrayIterable(array $values, array $expected): void
     {
         $this->assertToArray($expected, new Vector(new \ArrayIterator($values)));
     }
 
-    public function testConstructNoParams()
+    public function testConstructNoParams(): void
     {
         $this->assertToArray([], new Vector());
     }

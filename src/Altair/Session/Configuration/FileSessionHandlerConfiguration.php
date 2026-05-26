@@ -20,6 +20,7 @@ class FileSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
+    #[\Override]
     public function apply(Container $container): void
     {
         $definition = new Definition([

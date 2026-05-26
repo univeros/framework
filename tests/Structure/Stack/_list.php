@@ -3,10 +3,10 @@ namespace Altair\Tests\Structure\Stack;
 
 trait _list
 {
-    public function testList()
+    public function testList(): void
     {
         $instance = static::getInstance(['a', 'b', 'c']);
         $this->expectListNotSupportedException();
-        list($a, $b, $c) = $instance;
+        [$a, $b, $c] = $instance;
     }
 }

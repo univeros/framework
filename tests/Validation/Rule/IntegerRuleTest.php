@@ -5,7 +5,8 @@ use Altair\Validation\Rule\IntegerRule;
 
 class IntegerRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ["+1234567890"],
@@ -16,7 +17,8 @@ class IntegerRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [' '],
@@ -28,7 +30,8 @@ class IntegerRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): IntegerRule
     {
         return new IntegerRule();
     }

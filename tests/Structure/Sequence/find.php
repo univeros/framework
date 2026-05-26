@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait find
 {
-    public static function findDataProvider()
+    public static function findDataProvider(): array
     {
         // initial, value, expected
         return [
@@ -25,11 +25,8 @@ trait find
 
     /**
      * @dataProvider findDataProvider
-     * @param mixed $initial
-     * @param mixed $value
-     * @param mixed $expected
      */
-    public function testFind($initial, $value, $expected)
+    public function testFind(mixed $initial, mixed $value, mixed $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->find($value));

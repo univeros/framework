@@ -9,6 +9,7 @@
 
 namespace Altair\Sanitation\Resolver;
 
+use Altair\Container\Exception\InjectionException;
 use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Sanitation\Contracts\FilterInterface;
@@ -17,31 +18,24 @@ use Altair\Sanitation\Contracts\ResolverInterface;
 class FilterResolver implements ResolverInterface
 {
     /**
-     * @var Container
-     */
-    protected $container;
-
-    /**
      * RuleResolver constructor.
-     *
-     * @param Container $container
      */
-    public function __construct(Container $container)
+    public function __construct(protected Container $container)
     {
-        $this->container = $container;
     }
 
     /**
      * @param mixed $entry
-     * @throws \Altair\Container\Exception\InjectionException
+     * @throws InjectionException
      * @throws \ReflectionException
-     * @return FilterInterface
      */
+    #[\Override]
     public function __invoke($entry): FilterInterface
     {
         if (is_object($entry)) { // string
             return $entry;
         }
+
         $arguments = [];
         if (is_array($entry)) { // ['class' => FilterB::class, ':argument1' => 'value1', ':argument2' => 'value2']
             $arguments = array_slice($entry, 1);

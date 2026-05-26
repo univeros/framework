@@ -21,7 +21,6 @@ class CacheItemUnserializer
      * Replaces native unserialize() to be able to throw an exception if the value cannot be instantiated as a class or
      * if we are not successful on the process.
      *
-     * @param string $value
      *
      * @throws ErrorException
      * @return mixed
@@ -31,14 +30,16 @@ class CacheItemUnserializer
         if (0 === (static::BOOL_FALSE <=> $value)) {
             return false;
         }
-        $handler = ini_set('unserialize_callback_func', __CLASS__ . '::handleUnserializeCallback');
+
+        $handler = ini_set('unserialize_callback_func', self::class . '::handleUnserializeCallback');
         try {
             if (false !== ($value = unserialize($value, ['allowed_classes' => true]))) {
                 return $value;
             }
+
             throw new UnserializeException('Failed to unserialize cached value.');
-        } catch (Error $e) { // ensure error is an instance of \Exception
-            throw new ErrorException($e->getMessage(), $e->getCode(), E_ERROR, $e->getFile(), $e->getLine());
+        } catch (Error $error) { // ensure error is an instance of \Exception
+            throw new ErrorException($error->getMessage(), $error->getCode(), E_ERROR, $error->getFile(), $error->getLine());
         } finally { // reset
             ini_set('unserialize_callback_func', $handler);
         }
@@ -49,7 +50,7 @@ class CacheItemUnserializer
      *
      * @param $class
      */
-    public static function handleUnserializeCallback($class): void
+    public static function handleUnserializeCallback(string $class): void
     {
         throw new UnserializeException('Class not found: ' . $class);
     }

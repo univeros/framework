@@ -16,10 +16,8 @@ interface TokenParserInterface
     /**
      * Parses a token string and returns a Token instance.
      *
-     * @param string $token
      *
      * @throws InvalidTokenException
-     * @return TokenInterface
      *
      */
     public function parse(string $token): TokenInterface;

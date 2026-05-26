@@ -9,6 +9,8 @@
 
 namespace Altair\Structure;
 
+use Altair\Structure\Traits\CollectionTrait;
+use Altair\Structure\Traits\SquaredCapacityTrait;
 use Altair\Structure\Contracts\CollectionInterface;
 use Altair\Structure\Contracts\PriorityNodeInterface;
 use IteratorAggregate;
@@ -26,8 +28,8 @@ use UnderflowException;
  */
 class PriorityQueue implements IteratorAggregate, CollectionInterface
 {
-    use Traits\CollectionTrait;
-    use Traits\SquaredCapacityTrait;
+    use CollectionTrait;
+    use SquaredCapacityTrait;
 
     /**
      * @var PriorityNodeInterface[]
@@ -51,7 +53,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * {@inheritDoc}
      */
-    public function copy()
+    #[\Override]
+    public function copy(): \Altair\Structure\PriorityQueue
     {
         return new PriorityQueue($this->heap, $this->capacity);
     }
@@ -60,6 +63,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      * {@inheritDoc}
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function count(): int
     {
         return count($this->heap);
@@ -91,7 +95,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
         // Last leaf of the heap to become the new root.
         $leaf = array_pop($this->heap);
 
-        if (empty($this->heap)) {
+        if ($this->heap === []) {
             return $leaf->value;
         }
 
@@ -108,11 +112,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Pushes a value into the queue, with a specified priority.
-     *
-     * @param mixed $value
-     * @param int $priority
      */
-    public function push($value, int $priority)
+    public function push(mixed $value, int $priority): void
     {
         $this->adjustCapacity();
 
@@ -124,6 +125,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * {@inheritDoc}
      */
+    #[\Override]
     public function toArray(): array
     {
         $heap = $this->heap;
@@ -142,6 +144,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      * Get iterator.
      */
     #[\ReturnTypeWillChange]
+    #[\Override]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -152,9 +155,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Left.
      *
-     * @param int $index
      *
-     * @return int
      */
     protected function left(int $index): int
     {
@@ -164,9 +165,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Right.
      *
-     * @param int $index
      *
-     * @return int
      */
     protected function right(int $index): int
     {
@@ -176,9 +175,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Parent.
      *
-     * @param int $index
      *
-     * @return int
      */
     protected function parent(int $index): int
     {
@@ -188,12 +185,9 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Compare.
      *
-     * @param int $a
-     * @param int $b
      *
-     * @return int
      */
-    protected function compare(int $a, int $b)
+    protected function compare(int $a, int $b): int
     {
         $x = $this->heap[$a];
         $y = $this->heap[$b];
@@ -204,9 +198,6 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Swap.
-     *
-     * @param int $a
-     * @param int $b
      */
     protected function swap(int $a, int $b)
     {
@@ -218,11 +209,9 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Get Largest Leaf.
      *
-     * @param int $parent
      *
-     * @return int
      */
-    protected function getLargestLeaf(int $parent)
+    protected function getLargestLeaf(int $parent): int
     {
         $left = $this->left($parent);
         $right = $this->right($parent);
@@ -236,8 +225,6 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Sift Up.
-     *
-     * @param int $leaf
      */
     protected function siftUp(int $leaf)
     {
@@ -255,8 +242,6 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Set Root.
-     *
-     * @param PriorityNodeInterface $node
      */
     protected function setRoot(PriorityNodeInterface $node)
     {
@@ -265,8 +250,6 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Get Root.
-     *
-     * @return PriorityNodeInterface
      */
     protected function getRoot(): PriorityNodeInterface
     {
@@ -275,10 +258,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Sift Down.
-     *
-     * @param int $node
      */
-    private function siftDown(int $node)
+    private function siftDown(int $node): void
     {
         $last = floor(count($this->heap) / 2);
 

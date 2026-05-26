@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait xor_
 {
-    public static function xorDataProvider()
+    public static function xorDataProvider(): array
     {
         // Keys in either A or B, but not both.
         // A, B, expected result
@@ -20,7 +20,7 @@ trait xor_
     /**
      * @dataProvider xorDataProvider
      */
-    public function testXor(array $a, array $b, array $expected)
+    public function testXor(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
         $b = static::getInstance($b);
@@ -31,7 +31,7 @@ trait xor_
     /**
      * @dataProvider xorDataProvider
      */
-    public function testXorWithSelf(array $a, array $b, array $expected)
+    public function testXorWithSelf(array $a, array $b, array $expected): void
     {
         $map = static::getInstance($a);
 

@@ -20,6 +20,7 @@ use Dotenv\Dotenv;
 class EnvironmentConfiguration implements ConfigurationInterface
 {
     private readonly string $directory;
+
     private readonly string $fileName;
 
     /**
@@ -31,13 +32,14 @@ class EnvironmentConfiguration implements ConfigurationInterface
         private readonly bool $immutable = true,
     ) {
         if (!is_file($filePath) || !is_readable($filePath)) {
-            throw new InvalidArgumentException("Invalid environment file path: '{$filePath}'");
+            throw new InvalidArgumentException(sprintf("Invalid environment file path: '%s'", $filePath));
         }
 
         $this->directory = dirname($filePath);
         $this->fileName = basename($filePath);
     }
 
+    #[\Override]
     public function apply(Container $container): void
     {
         $container

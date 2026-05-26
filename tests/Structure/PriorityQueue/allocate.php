@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\PriorityQueue;
 
 trait allocate
 {
-    public static function allocateDataProvider()
+    public static function allocateDataProvider(): array
     {
         // initial, allocation, expected capacity
         return [
@@ -22,7 +22,7 @@ trait allocate
     /**
      * @dataProvider allocateDataProvider
      */
-    public function testAllocate(int $initial, int $allocate, int $expected)
+    public function testAllocate(int $initial, int $allocate, int $expected): void
     {
         $instance = static::getInstance();
 

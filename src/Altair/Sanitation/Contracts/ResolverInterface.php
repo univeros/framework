@@ -17,8 +17,6 @@ interface ResolverInterface
      * FilterInterface.
      *
      * @param mixed $entry The middleware sanitation queue entry.
-     *
-     * @return FilterInterface
      */
-    public function __invoke($entry): FilterInterface;
+    public function __invoke(mixed $entry): FilterInterface;
 }

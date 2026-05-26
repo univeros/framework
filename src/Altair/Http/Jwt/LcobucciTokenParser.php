@@ -28,28 +28,22 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class LcobucciTokenParser implements TokenParserInterface
 {
-    protected $request;
-    protected $parser;
-    protected $config;
+
+
+
     /**
      * @var Validator
      */
     protected $validator;
 
-    public function __construct(
-        ServerRequestInterface $request,
-        Parser $parser,
-        TokenConfigurationInterface $config,
-        Validator $validator
-    ) {
-        $this->request = $request;
-        $this->parser = $parser;
-        $this->config = $config;
+    public function __construct(protected ServerRequestInterface $request, protected Parser $parser, protected TokenConfigurationInterface $config)
+    {
     }
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function parse(string $token): TokenInterface
     {
         /** @var Plain $parsed */
@@ -60,23 +54,18 @@ class LcobucciTokenParser implements TokenParserInterface
     }
 
     /**
-     * @param string $token
-     *
      * @throws InvalidTokenException
-     * @return \Lcobucci\JWT\Token
      */
     protected function parseToken(string $token): LcobucciToken
     {
         try {
             return $this->parser->parse($token);
-        } catch (InvalidArgumentException $e) {
+        } catch (InvalidArgumentException) {
             throw new InvalidTokenException(sprintf('Count not parse authorization token "%s"', $token));
         }
     }
 
     /**
-     * @param Plain $token
-     * @param string $jwt
      *
      * @throws InvalidTokenException
      */
@@ -92,16 +81,14 @@ class LcobucciTokenParser implements TokenParserInterface
     }
 
     /**
-     * @param Plain $token
-     *
      * @throws InvalidTokenException
      */
     protected function validateToken(Plain $token)
     {
         try {
             $this->validator->assert($token, new IssuedBy($this->request->getUri()), new ValidAt(new SystemClock()));
-        } catch (LcobucciInvalidTokenException $e) {
-            throw new InvalidTokenException($e->getMessage());
+        } catch (LcobucciInvalidTokenException $lcobucciInvalidTokenException) {
+            throw new InvalidTokenException($lcobucciInvalidTokenException->getMessage());
         }
     }
 }

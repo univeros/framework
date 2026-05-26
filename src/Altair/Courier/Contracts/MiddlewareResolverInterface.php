@@ -21,5 +21,5 @@ interface MiddlewareResolverInterface
      * @return callable|CommandMiddlewareInterface
      *
      */
-    public function __invoke($entry);
+    public function __invoke(mixed $entry);
 }

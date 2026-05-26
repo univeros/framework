@@ -3,14 +3,14 @@ namespace Altair\Tests\Structure\Map;
 
 trait _unset
 {
-    public function testArrayAccessUnset()
+    public function testArrayAccessUnset(): void
     {
         $instance = static::getInstance(['a' => 1]);
         unset($instance['a']);
         $this->assertToArray([], $instance);
     }
 
-    public function testArrayAccessUnsetByReference()
+    public function testArrayAccessUnsetByReference(): void
     {
         $instance = static::getInstance(['a' => [1]]);
         unset($instance['a'][0]);

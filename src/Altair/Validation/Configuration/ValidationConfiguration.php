@@ -19,9 +19,7 @@ use Altair\Validation\RulesRunner;
 
 class ValidationConfiguration implements ConfigurationInterface
 {
-    /**
-     * @param Container $container
-     */
+    #[\Override]
     public function apply(Container $container): void
     {
         $container

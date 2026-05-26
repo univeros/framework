@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait hasValue
 {
-    public static function hasValueDataProvider()
+    public static function hasValueDataProvider(): array
     {
         // initial, value, expected
         return [
@@ -16,15 +16,14 @@ trait hasValue
 
     /**
      * @dataProvider hasValueDataProvider
-     * @param mixed $value
      */
-    public function testHasValue(array $initial, $value, bool $expected)
+    public function testHasValue(array $initial, mixed $value, bool $expected): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($expected, $instance->hasValue($value));
     }
 
-    public function testHasValueAfterRemoveAndPut()
+    public function testHasValueAfterRemoveAndPut(): void
     {
         $instance = static::getInstance(['a' => 1]);
         $this->assertTrue($instance->hasValue(1));

@@ -24,6 +24,7 @@ class MiddlewareConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         $container

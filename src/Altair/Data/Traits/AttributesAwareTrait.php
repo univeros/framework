@@ -17,9 +17,7 @@ trait AttributesAwareTrait
     /**
      * Checks whether a property exists in the instance.
      *
-     * @param string $key
      *
-     * @return bool
      */
     public function has(string $key): bool
     {
@@ -29,7 +27,6 @@ trait AttributesAwareTrait
     /**
      * Returns a property value.
      *
-     * @param string $key
      *
      * @throws InvalidArgumentException if the property is not found
      * @return mixed
@@ -46,7 +43,6 @@ trait AttributesAwareTrait
     /**
      * Returns a copy of the instance with the new data.
      *
-     * @param array $data
      *
      * @return mixed
      */
@@ -71,7 +67,7 @@ trait AttributesAwareTrait
         return array_map(
             static function ($value) {
                 if ($value instanceof ArrayableInterface) {
-                    $value = $value->toArray();
+                    return $value->toArray();
                 }
 
                 return $value;

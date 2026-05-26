@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Sequence;
 
 trait _empty
 {
-    public static function emptyDataProvider()
+    public static function emptyDataProvider(): array
     {
         // initial, index, empty
         return [
@@ -37,10 +37,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessEmpty($initial, $index, bool $empty)
+    public function testArrayAccessEmpty(mixed $initial, mixed $index, bool $empty): void
     {
         $instance = static::getInstance($initial);
         $this->assertEquals($empty, empty($instance[$index]));
@@ -48,10 +46,8 @@ trait _empty
 
     /**
      * @dataProvider badIndexDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessEmptyIndexBadIndex($initial, $index)
+    public function testArrayAccessEmptyIndexBadIndex(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
@@ -59,10 +55,8 @@ trait _empty
 
     /**
      * @dataProvider outOfRangeDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessEmptyIndexOutOfRange($initial, $index)
+    public function testArrayAccessEmptyIndexOutOfRange(mixed $initial, mixed $index): void
     {
         $instance = static::getInstance($initial);
         $this->assertTrue(empty($instance[$index]));
@@ -70,10 +64,8 @@ trait _empty
 
     /**
      * @dataProvider emptyDataProvider
-     * @param mixed $initial
-     * @param mixed $index
      */
-    public function testArrayAccessEmptyByReference($initial, $index, bool $empty)
+    public function testArrayAccessEmptyByReference(mixed $initial, mixed $index, bool $empty): void
     {
         $instance = static::getInstance([$initial]);
         $this->assertEquals($empty, empty($instance[0][$index]));

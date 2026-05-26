@@ -5,7 +5,7 @@ use Altair\Structure\Contracts\CapacityInterface;
 
 trait allocate
 {
-    public static function allocateDataProvider()
+    public static function allocateDataProvider(): array
     {
         $m = CapacityInterface::MIN_CAPACITY;
 
@@ -26,7 +26,7 @@ trait allocate
     /**
      * @dataProvider allocateDataProvider
      */
-    public function testAllocate(int $initial, int $allocate, int $expected)
+    public function testAllocate(int $initial, int $allocate, int $expected): void
     {
         $instance = static::getInstance();
 

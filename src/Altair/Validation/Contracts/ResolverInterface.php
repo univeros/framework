@@ -17,8 +17,6 @@ interface ResolverInterface
      * RuleInterface.
      *
      * @param mixed $entry The middleware rule queue entry.
-     *
-     * @return RuleInterface
      */
-    public function __invoke($entry): RuleInterface;
+    public function __invoke(mixed $entry): RuleInterface;
 }

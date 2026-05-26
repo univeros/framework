@@ -26,6 +26,7 @@ class SimpleCache implements CacheInterface
     ) {
     }
 
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         try {
@@ -39,6 +40,7 @@ class SimpleCache implements CacheInterface
         return $item->isHit() ? $item->get() : $default;
     }
 
+    #[\Override]
     public function set(string $key, mixed $value, null|int|DateInterval $ttl = null): bool
     {
         try {
@@ -48,6 +50,7 @@ class SimpleCache implements CacheInterface
         } catch (Psr6CacheException $e) {
             throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
         }
+
         if ($ttl !== null) {
             $item->expiresAfter($ttl);
         }
@@ -55,6 +58,7 @@ class SimpleCache implements CacheInterface
         return $this->pool->save($item);
     }
 
+    #[\Override]
     public function delete(string $key): bool
     {
         try {
@@ -66,14 +70,16 @@ class SimpleCache implements CacheInterface
         }
     }
 
+    #[\Override]
     public function clear(): bool
     {
         return $this->pool->clear();
     }
 
+    #[\Override]
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
-        $keys = $this->iterableToArray($keys, 'Cache keys');
+        $keys = $this->iterableToArray($keys);
 
         try {
             $items = $this->pool->getItems($keys);
@@ -91,6 +97,7 @@ class SimpleCache implements CacheInterface
         return $values;
     }
 
+    #[\Override]
     public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
     {
         $valuesIsArray = is_array($values);
@@ -108,6 +115,7 @@ class SimpleCache implements CacheInterface
                 foreach ($values as $key => $value) {
                     $keys[] = (string) $key;
                 }
+
                 $items = $this->pool->getItems($keys);
             } else {
                 foreach ($values as $key => $value) {
@@ -126,18 +134,21 @@ class SimpleCache implements CacheInterface
             if ($valuesIsArray) {
                 $item->set($values[$key]);
             }
+
             if ($ttl !== null) {
                 $item->expiresAfter($ttl);
             }
+
             $success = $this->pool->saveDeferred($item) && $success;
         }
 
         return $this->pool->commit() && $success;
     }
 
+    #[\Override]
     public function deleteMultiple(iterable $keys): bool
     {
-        $keys = $this->iterableToArray($keys, 'Cache keys');
+        $keys = $this->iterableToArray($keys);
 
         try {
             return $this->pool->deleteItems($keys);
@@ -148,6 +159,7 @@ class SimpleCache implements CacheInterface
         }
     }
 
+    #[\Override]
     public function has(string $key): bool
     {
         try {
@@ -162,7 +174,7 @@ class SimpleCache implements CacheInterface
     /**
      * @return list<string>
      */
-    private function iterableToArray(iterable $values, string $label): array
+    private function iterableToArray(iterable $values): array
     {
         if ($values instanceof Traversable) {
             return iterator_to_array($values, false);

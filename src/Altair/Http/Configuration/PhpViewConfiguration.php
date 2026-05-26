@@ -23,6 +23,7 @@ class PhpViewConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function apply(Container $container): void
     {
         $definition = new Definition([
@@ -32,8 +33,6 @@ class PhpViewConfiguration implements ConfigurationInterface
 
         $container
             ->define(PhpViewFormatter::class, $definition)
-            ->prepare(FormattedResponder::class, function (FormattedResponder $responder): FormattedResponder {
-                return $responder->withFormatter(PhpViewFormatter::class, 1.0);
-            });
+            ->prepare(FormattedResponder::class, fn(FormattedResponder $responder): FormattedResponder => $responder->withFormatter(PhpViewFormatter::class, 1.0));
     }
 }

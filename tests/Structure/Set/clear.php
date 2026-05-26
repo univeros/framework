@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Set;
 
 trait clear
 {
-    public function testClear()
+    public function testClear(): void
     {
         $instance = static::getInstance(static::sample());
         $instance = $instance->clear();

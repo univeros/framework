@@ -12,7 +12,7 @@ use PHPUnit\Framework\TestCase;
 
 class FiltersRunnerTest extends TestCase
 {
-    public function testRunner()
+    public function testRunner(): void
     {
         $runner = $this->getFiltersRunner();
         $payload = call_user_func($runner, $this->getPayload());
@@ -31,7 +31,7 @@ class FiltersRunnerTest extends TestCase
         $this->assertEquals('A:alphaFilter4:B', $subject->test);
     }
 
-    protected function getFiltersRunner()
+    protected function getFiltersRunner(): FiltersRunner
     {
         $queue = new Queue(
             [
@@ -46,7 +46,7 @@ class FiltersRunnerTest extends TestCase
         return new FiltersRunner($resolver, $queue);
     }
 
-    protected function getPayload()
+    protected function getPayload(): \Altair\Middleware\Contracts\PayloadInterface
     {
         return (new Payload())
             ->withAttribute(PayloadInterface::ATTRIBUTE_SUBJECT, ['test' => 'alphaFilter4'])

@@ -11,47 +11,29 @@ namespace Altair\Security\Support;
 
 use Altair\Security\Contracts\EncrypterInterface;
 use Altair\Security\Contracts\KeyInterface;
-use Altair\Security\Exception\InvalidConfigException;
 
-abstract class AbstractKey implements KeyInterface
+abstract class AbstractKey implements KeyInterface, \Stringable
 {
     /**
      * @var string
      */
-    protected $algorithm;
-    /**
-     * @var string
-     */
-    protected $key;
-    /**
-     * @var string
-     */
-    protected $salt;
-    /**
-     * @var int
-     */
-    protected $length;
+    protected $algorithm = EncrypterInterface::HASH_SHA256_ALGORITHM;
+
+
+
 
     /**
      * AbstractKey constructor.
      *
-     * @param string $key
      * @param string|null $salt
-     * @param int $length
      *
      */
-    public function __construct(string $key, string $salt = null, int $length = 0)
+    public function __construct(protected string $key, protected ?string $salt = null, protected int $length = 0)
     {
-        $this->algorithm = EncrypterInterface::HASH_SHA256_ALGORITHM;
-        $this->key = $key;
-        $this->salt = $salt;
-        $this->length = $length;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    #[\Override]
+    public function __toString(): string
     {
         return $this->derive();
     }

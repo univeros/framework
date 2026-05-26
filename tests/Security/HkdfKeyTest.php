@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class HkdfKeyTest extends TestCase
 {
-    public static function dataProvider()
+    public static function dataProvider(): array
     {
         return [
             [
@@ -42,7 +42,7 @@ class HkdfKeyTest extends TestCase
      * @param $l
      * @param $okm
      */
-    public function testHkdf($ikm, $salt, $info, $l, $okm)
+    public function testHkdf(string $ikm, string $salt, string $info, int $l, string $okm): void
     {
         $derivedKey = (new HkdfKey(hex2bin($ikm), hex2bin($salt), hex2bin($info), $l))->derive();
 

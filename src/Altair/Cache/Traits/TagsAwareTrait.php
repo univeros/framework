@@ -43,6 +43,7 @@ trait TagsAwareTrait
             if (!$cloned->tagValidator->validate($tag)) {
                 throw new InvalidArgumentException($cloned->tagValidator->getFailureReason());
             }
+
             $cloned->tags[$tag] = $tag;
         }
 

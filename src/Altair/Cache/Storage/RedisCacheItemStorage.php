@@ -20,22 +20,21 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 {
     use RedisNamespaceValidationAwareTrait;
 
-    protected $client;
+    protected \Redis $client;
+
     protected $namespace;
 
     /**
      * RedisCacheItemPoolStorage constructor.
-     *
-     * @param Redis $redis
-     * @param string $namespace
      */
-    public function __construct(Redis $redis, $namespace = '')
+    public function __construct(Redis $redis, string $namespace = '')
     {
         $info = $redis->info('Server');
         $info = $info['Server'] ?? $info;
         if (!version_compare($info['redis_version'], '2.8', '>=')) {
             throw new InvalidArgumentException(sprintf('%s requires Redis 2.8 or above.', static::class));
         }
+
         $this->client = $redis;
         $this->useNamespace($namespace);
     }
@@ -43,6 +42,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -52,10 +52,11 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
      * @inheritDoc
      * @throws \ErrorException
      */
+    #[\Override]
     public function getItems(array $keys = []): array
     {
         $items = [];
-        if (!empty($keys)) {
+        if ($keys !== []) {
             $values = $this->client->mget($keys);
             foreach ($keys as $index => $key) {
                 if ($values[$index]) {
@@ -70,6 +71,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasItem(string $key): bool
     {
         return (bool)$this->client->exists($key);
@@ -78,6 +80,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         if (!isset($this->namespace[0])) {
@@ -91,6 +94,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
             if (isset($keys[1]) && is_array($keys[1])) {
                 [$cursor, $keys] = $keys;
             }
+
             if ($keys) {
                 $this->client->del($keys);
             }
@@ -102,9 +106,10 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteItems(array $keys): bool
     {
-        if (!empty($keys)) {
+        if ($keys !== []) {
             return $this->client->del($keys) === count($keys);
         }
 
@@ -114,24 +119,29 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function save(array $values, int $lifespan)
     {
-        $serialized = $failed = [];
+        $serialized = [];
+        $failed = [];
         foreach ($values as $id => $value) {
             try {
                 $serialized[$id] = serialize($value);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $failed[] = $id;
             }
         }
-        if (empty($serialized)) {
+
+        if ($serialized === []) {
             return $failed;
         }
+
         if (0 >= $lifespan) {
             $this->client->mset($serialized);
 
             return $failed;
         }
+
         $this->client->multi(Redis::PIPELINE);
         $ids = [];
         foreach ($serialized as $id => $value) {
@@ -140,8 +150,10 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
             } else {
                 $this->client->setex($id, $lifespan, $value);
             }
+
             $ids[] = $id;
         }
+
         $results = $this->client->exec();
 
         foreach ($ids as $key => $id) {
@@ -151,12 +163,11 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
             }
         }
 
-        return empty($failed) ? true : $failed;
+        return $failed === [] ? true : $failed;
     }
 
     /**
      *
-     * @param string $namespace
      * @throws InvalidArgumentException if the namespace contains invalid characters
      */
     public function validateNamespace(string $namespace): void
@@ -170,6 +181,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
                 )
             );
         }
+
         $this->namespace = $namespace;
     }
 }

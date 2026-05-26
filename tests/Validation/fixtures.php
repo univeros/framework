@@ -10,11 +10,14 @@ use Altair\Validation\Rule\AlphaRule;
 
 class RuleA implements RuleInterface
 {
+    #[\Override]
     public function __invoke(PayloadInterface $payload, callable $next)
     {
         $payload = $payload->withAttribute(self::class, 'A passed');
         return $next($payload);
     }
+
+    #[\Override]
     public function assert($value): bool
     {
         return true;
@@ -23,10 +26,13 @@ class RuleA implements RuleInterface
 
 class RuleB implements RuleInterface
 {
+    #[\Override]
     public function __invoke(PayloadInterface $payload, callable $next)
     {
         return $next($payload->withAttribute(self::class, 'B passed'));
     }
+
+    #[\Override]
     public function assert($value): bool
     {
         return true;
@@ -36,8 +42,10 @@ class RuleB implements RuleInterface
 class ValidEntity implements ValidatableInterface
 {
     public $firstName = 'antonio';
+
     public $lastName = 'ramirez';
 
+    #[\Override]
     public function getRules(): RuleCollection
     {
         return (new RuleCollection())
@@ -49,9 +57,12 @@ class ValidEntity implements ValidatableInterface
 class InvalidEntity implements ValidatableInterface
 {
     public $firstName = '4nt0n10';
+
     public $lastName = 'ramirez';
+
     public $alias = '4alias';
 
+    #[\Override]
     public function getRules(): RuleCollection
     {
         return new RuleCollection(

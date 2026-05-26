@@ -24,8 +24,6 @@ interface CollectionInterface extends Traversable, Countable, JsonSerializable
 
     /**
      * Returns the size of the collection.
-     *
-     * @return int
      */
     public function count(): int;
 
@@ -41,8 +39,6 @@ interface CollectionInterface extends Traversable, Countable, JsonSerializable
      *
      * This should be equivalent to a count of zero, but is not required.
      * Implementations should define what empty means in their own context.
-     *
-     * @return bool
      */
     public function isEmpty(): bool;
 
@@ -52,8 +48,6 @@ interface CollectionInterface extends Traversable, Countable, JsonSerializable
      * The format of the returned array is implementation-dependent.
      * Some implementations may throw an exception if an array representation
      * could not be created.
-     *
-     * @return array
      */
     public function toArray(): array;
 

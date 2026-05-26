@@ -6,7 +6,8 @@ use Altair\Validation\Rule\InRule;
 
 class InRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             ['val0'],
@@ -15,7 +16,8 @@ class InRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             [5],
@@ -30,7 +32,7 @@ class InRuleTest extends AbstractRuleTest
      * @dataProvider trueProvider
      * @param mixed $value
      */
-    public function testPayloadTrueWithStringHaystack($value)
+    public function testPayloadTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertPayloadWithStringHaystack($value));
     }
@@ -39,7 +41,7 @@ class InRuleTest extends AbstractRuleTest
      * @dataProvider falseProvider
      * @param mixed $value
      */
-    public function testPayloadFalseWithStringHaystack($value)
+    public function testPayloadFalseWithStringHaystack(int|string $value): void
     {
         $this->assertFalse($this->assertPayloadWithStringHaystack($value));
     }
@@ -48,7 +50,7 @@ class InRuleTest extends AbstractRuleTest
      * @dataProvider trueProvider
      * @param mixed $value
      */
-    public function testValueTrueWithStringHaystack($value)
+    public function testValueTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertValueWithStringHaystack($value));
     }
@@ -57,18 +59,16 @@ class InRuleTest extends AbstractRuleTest
      * @dataProvider falseProvider
      * @param mixed $value
      */
-    public function testValueFalseWithStringHaystack($value)
+    public function testValueFalseWithStringHaystack(int|string $value): void
     {
         $this->assertFalse($this->assertValueWithStringHaystack($value));
     }
 
-    protected function assertPayloadWithStringHaystack($value)
+    protected function assertPayloadWithStringHaystack($value): bool
     {
         $rule = $this->buildRuleWithStringHaystack();
         $payload = $this->buildPayload($value);
-        $callback = function (\Altair\Middleware\Contracts\PayloadInterface $payload) {
-            return $payload;
-        };
+        $callback = fn(\Altair\Middleware\Contracts\PayloadInterface $payload): \Altair\Middleware\Contracts\PayloadInterface => $payload;
 
         $payload =  call_user_func_array($rule, [$payload, $callback]);
 
@@ -82,12 +82,13 @@ class InRuleTest extends AbstractRuleTest
         return $rule->assert($value);
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): InRule
     {
         return new InRule(['val0', 'val1', 'key0' => 'val2', 'key1' => 'val3']);
     }
 
-    protected function buildRuleWithStringHaystack()
+    protected function buildRuleWithStringHaystack(): InRule
     {
         return new InRule('val0, val1, key0, val2, key1, val3');
     }

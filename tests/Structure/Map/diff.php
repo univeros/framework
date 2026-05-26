@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait diff
 {
-    public static function diffDataProvider()
+    public static function diffDataProvider(): array
     {
         // Keys in A but not in B.
         // A, B, expected result
@@ -20,7 +20,7 @@ trait diff
     /**
      * @dataProvider diffDataProvider
      */
-    public function testDiff(array $a, array $b, array $expected)
+    public function testDiff(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
         $b = static::getInstance($b);
@@ -31,7 +31,7 @@ trait diff
     /**
      * @dataProvider diffDataProvider
      */
-    public function testDiffWithSelf(array $a, array $b, array $expected)
+    public function testDiffWithSelf(array $a, array $b, array $expected): void
     {
         $map = static::getInstance($a);
 

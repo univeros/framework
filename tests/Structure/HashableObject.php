@@ -8,20 +8,20 @@ use Altair\Structure\Contracts\HashableInterface;
  */
 class HashableObject implements HashableInterface
 {
-    private $value;
     private $hash;
 
-    public function __construct($value, $hash = null)
+    public function __construct(private $value, $hash = null)
     {
-        $this->value = $value;
-        $this->hash = func_num_args() === 1 ? $value : $hash;
+        $this->hash = func_num_args() === 1 ? $this->value : $hash;
     }
 
+    #[\Override]
     public function equals($obj): bool
     {
         return $obj->value === $this->value;
     }
 
+    #[\Override]
     public function hash()
     {
         return $this->hash;

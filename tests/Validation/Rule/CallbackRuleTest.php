@@ -5,7 +5,8 @@ use Altair\Validation\Rule\CallbackRule;
 
 class CallbackRuleTest extends AbstractRuleTest
 {
-    public static function trueProvider()
+    #[\Override]
+    public static function trueProvider(): array
     {
         return [
             [true],
@@ -35,7 +36,8 @@ class CallbackRuleTest extends AbstractRuleTest
         ];
     }
 
-    public static function falseProvider()
+    #[\Override]
+    public static function falseProvider(): array
     {
         return [
             ['nothing'],
@@ -44,13 +46,13 @@ class CallbackRuleTest extends AbstractRuleTest
         ];
     }
 
-    protected function buildRule()
+    #[\Override]
+    protected function buildRule(): CallbackRule
     {
-        $callback = function ($value) {
+        $callback = fn($value): bool =>
             // lets mimic boolean rule
             // it can be anything though
-            return is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
-        };
+            is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
         return new CallbackRule($callback);
     }
 }

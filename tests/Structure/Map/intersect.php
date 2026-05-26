@@ -3,7 +3,7 @@ namespace Altair\Tests\Structure\Map;
 
 trait intersect
 {
-    public static function intersectDataProvider()
+    public static function intersectDataProvider(): array
     {
         // Keys in A that are also in B.
         // A, B, expected result
@@ -19,7 +19,7 @@ trait intersect
     /**
      * @dataProvider intersectDataProvider
      */
-    public function testIntersect(array $a, array $b, array $expected)
+    public function testIntersect(array $a, array $b, array $expected): void
     {
         $a = static::getInstance($a);
         $b = static::getInstance($b);
@@ -30,7 +30,7 @@ trait intersect
     /**
      * @dataProvider intersectDataProvider
      */
-    public function testIntersectWithSelf(array $a, array $b, array $expected)
+    public function testIntersectWithSelf(array $a, array $b, array $expected): void
     {
         $map = static::getInstance($a);
 

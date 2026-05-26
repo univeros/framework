@@ -11,7 +11,7 @@ use Laminas\Diactoros\Response;
 
 class SetCookieTest extends TestCase
 {
-    public function testThatCanBeAddedToAResponse()
+    public function testThatCanBeAddedToAResponse(): void
     {
         $setCookie = new SetCookie('name', 'value');
         $manager = new CookieManager();
@@ -25,12 +25,10 @@ class SetCookieTest extends TestCase
     }
 
     /**
-     * @param string $setCookieString
-     * @param SetCookieInterface $expectedSetCookie
      *
      * @dataProvider parsesFromSetCookieStringDataProvider
      */
-    public function testParsesFromSetCookieString($setCookieString, SetCookieInterface $expectedSetCookie)
+    public function testParsesFromSetCookieString(string $setCookieString, SetCookieInterface $expectedSetCookie): void
     {
         $setCookie = SetCookieFactory::createFromCookieString($setCookieString);
 
@@ -38,7 +36,7 @@ class SetCookieTest extends TestCase
         $this->assertEquals($setCookieString, (string)$setCookie);
     }
 
-    public static function parsesFromSetCookieStringDataProvider()
+    public static function parsesFromSetCookieStringDataProvider(): array
     {
         return [
             [
@@ -132,14 +130,14 @@ class SetCookieTest extends TestCase
         ];
     }
 
-    public function testCreatesExpiredCookies()
+    public function testCreatesExpiredCookies(): void
     {
         $setCookie = SetCookieFactory::createExpired('name');
 
         $this->assertLessThan(time(), $setCookie->getExpires());
     }
 
-    public function testItCreatesEverLastingCookies()
+    public function testItCreatesEverLastingCookies(): void
     {
         $setCookie = SetCookieFactory::createRemembered('name');
 
