@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,21 +14,19 @@ namespace Altair\Session;
 use Altair\Security\Support\Salt;
 use Altair\Session\Contracts\CsrfTokenInterface;
 use Altair\Session\Contracts\SessionBlockInterface;
+use Override;
 
 class CsrfToken implements CsrfTokenInterface
 {
-
     /**
      * CsrfToken constructor.
      */
-    public function __construct(protected SessionBlockInterface $sessionBlock, protected Salt $salt)
-    {
-    }
+    public function __construct(protected SessionBlockInterface $sessionBlock, protected Salt $salt) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function isValid(string $value): bool
     {
         return hash_equals($this->getValue(), $value);
@@ -35,7 +35,7 @@ class CsrfToken implements CsrfTokenInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getValue(): string
     {
         return $this->sessionBlock->get('value');
@@ -44,7 +44,7 @@ class CsrfToken implements CsrfTokenInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function generateValue(): string
     {
         $value = hash('sha512', $this->salt->generate());

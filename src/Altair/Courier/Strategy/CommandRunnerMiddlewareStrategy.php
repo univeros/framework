@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,6 +17,7 @@ use Altair\Courier\Contracts\CommandRunnerStrategyInterface;
 use Altair\Courier\Contracts\MiddlewareResolverInterface;
 use Altair\Courier\Exception\InvalidCommandMiddlewareException;
 use Closure;
+use Override;
 
 class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 {
@@ -23,7 +26,6 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
      */
     protected $middlewares;
 
-
     /**
      * CommandRunnerMiddlewareStrategy constructor.
      *
@@ -31,7 +33,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
      */
     public function __construct(array $middlewares = null, protected ?MiddlewareResolverInterface $resolver = null)
     {
-        $this->middlewares = $middlewares?? [];
+        $this->middlewares = $middlewares ?? [];
     }
 
     /**
@@ -45,7 +47,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
         foreach ($middlewares as $middleware) {
             if (!is_subclass_of($middleware, CommandMiddlewareInterface::class)) {
                 throw new InvalidCommandMiddlewareException(
-                    sprintf(
+                    \sprintf(
                         'Invalid command middleware %s does not implement %s',
                         $middleware,
                         CommandMiddlewareInterface::class
@@ -57,7 +59,6 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
         return new static($middlewares);
     }
 
-
     public function add(CommandMiddlewareInterface $middleware): CommandRunnerStrategyInterface
     {
         $this->middlewares[] = $middleware;
@@ -68,10 +69,10 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
     /**
      * Initiates middleware sequence.
      */
-    #[\Override]
+    #[Override]
     public function run(CommandMessageInterface $message): void
     {
-        call_user_func($this->call(0), $message);
+        \call_user_func($this->call(0), $message);
     }
 
     /**
@@ -82,14 +83,13 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
     protected function call(int $index): Closure
     {
         if (!isset($this->middlewares[$index])) {
-            return function (): void {
-            };
+            return function (): void {};
         }
 
         $middleware = $this->middlewares[$index];
 
-        if ($this->resolver !== null) {
-            $middleware = call_user_func($this->resolver, $middleware);
+        if ($this->resolver instanceof MiddlewareResolverInterface) {
+            $middleware = \call_user_func($this->resolver, $middleware);
             $this->middlewares[$index] = $middleware;
         }
 

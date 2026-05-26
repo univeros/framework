@@ -16,6 +16,7 @@ use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Contracts\StatusCodeValidatorInterface;
 use Altair\Http\Support\DefaultErrorHandler;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -24,11 +25,9 @@ use Throwable;
 
 class ExceptionHandlerMiddleware implements MiddlewareInterface
 {
-    public function __construct(private readonly ResponseFactoryInterface $responseFactory, private readonly ErrorHandlerInterface $handler = new DefaultErrorHandler(), private readonly ?StatusCodeValidatorInterface $validator = null, private readonly bool $capture = false)
-    {
-    }
+    public function __construct(private readonly ResponseFactoryInterface $responseFactory, private readonly ErrorHandlerInterface $handler = new DefaultErrorHandler(), private readonly ?StatusCodeValidatorInterface $validator = null, private readonly bool $capture = false) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         ob_start();

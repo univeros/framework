@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,6 +18,7 @@ use Altair\Session\Adapter\SqlitePdoSessionAdapter;
 use Altair\Session\Contracts\PdoSessionAdapterInterface;
 use Altair\Session\Handler\PdoSessionHandler;
 use Altair\Session\Traits\PdoAdapterDefinitionAwareTrait;
+use Override;
 use SessionHandlerInterface;
 
 class SqliteSessionHandlerConfiguration implements ConfigurationInterface
@@ -26,7 +29,7 @@ class SqliteSessionHandlerConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $adapterDefinition = $this->getAdapterDefinition();

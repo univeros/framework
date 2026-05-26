@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -22,11 +24,11 @@ trait PdoAdapterDefinitionAwareTrait
                 ':username' => $this->env->get('SESSION_PDO_USERNAME'),
                 ':password' => $this->env->get('SESSION_PDO_PASSWORD'),
                 ':table' => $this->env->get('SESSION_PDO_TABLE'),
-                ':lockMode' => (int)$this->env->get(
+                ':lockMode' => (int) $this->env->get(
                     'SESSION_LOCK_MODE',
                     PdoSessionAdapterInterface::LOCK_TRANSACTIONAL
                 ),
-                ':options' => [] // if you need to add X connection options, create your own ;)
+                ':options' => [], // if you need to add X connection options, create your own ;)
             ]
         );
     }

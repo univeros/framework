@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,9 +13,9 @@ namespace Altair\Session\Contracts;
 
 interface SessionBlockInterface
 {
-    const CSRF_KEY = 'altair:session:csrf';
+    public const CSRF_KEY = 'altair:session:csrf';
 
-    const FLASH_KEY = 'altair:session:flash';
+    public const FLASH_KEY = 'altair:session:flash';
 
     /**
      * Returns the value of a key in the session block.

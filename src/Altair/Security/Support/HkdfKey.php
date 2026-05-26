@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,17 +12,16 @@
 namespace Altair\Security\Support;
 
 use Altair\Security\Exception\InvalidConfigException;
+use Override;
 
 class HkdfKey extends AbstractKey
 {
-
     protected int $hashLength;
 
     /**
      * HkdfKey constructor.
      *
      * @param string|null $salt
-     * @param string|null $context
      *
      * @throws InvalidConfigException
      */
@@ -41,7 +42,7 @@ class HkdfKey extends AbstractKey
         }
     }
 
-    #[\Override]
+    #[Override]
     public function derive(): string
     {
         $blocks = $this->length !== 0 ? ceil($this->length / $this->hashLength) : 1;
@@ -55,12 +56,12 @@ class HkdfKey extends AbstractKey
         $hmac = '';
         $outputKey = '';
         for ($i = 1; $i <= $blocks; $i++) {
-            $hmac = hash_hmac($this->algorithm, $hmac . $this->context . chr($i), $prKey, true);
+            $hmac = hash_hmac($this->algorithm, $hmac . $this->context . \chr($i), $prKey, true);
             $outputKey .= $hmac;
         }
 
         if ($this->length !== 0) {
-            $outputKey = mb_substr($outputKey, 0, $this->length, '8bit');
+            return mb_substr($outputKey, 0, $this->length, '8bit');
         }
 
         return $outputKey;

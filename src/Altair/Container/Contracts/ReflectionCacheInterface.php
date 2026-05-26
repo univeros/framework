@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -27,7 +29,6 @@ interface ReflectionCacheInterface
      * @return mixed
      */
     public function get(string $key);
-
 
     public function put(string $key, mixed $data): ReflectionCacheInterface;
 }

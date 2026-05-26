@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,18 +16,19 @@ use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Container\Definition;
 use Altair\Session\Handler\FileSessionHandler;
+use Override;
 use SessionHandlerInterface;
 
 class FileSessionHandlerConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $definition = new Definition([
             ':path' => $this->env->get('SESSION_FILE_PATH'),
-            ':minutes' => $this->env->get('SESSION_FILE_MINUTES')
+            ':minutes' => $this->env->get('SESSION_FILE_MINUTES'),
         ]);
 
         $container

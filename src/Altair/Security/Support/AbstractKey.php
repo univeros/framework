@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,28 +13,24 @@ namespace Altair\Security\Support;
 
 use Altair\Security\Contracts\EncrypterInterface;
 use Altair\Security\Contracts\KeyInterface;
+use Override;
+use Stringable;
 
-abstract class AbstractKey implements KeyInterface, \Stringable
+abstract class AbstractKey implements KeyInterface, Stringable
 {
     /**
      * @var string
      */
     protected $algorithm = EncrypterInterface::HASH_SHA256_ALGORITHM;
 
-
-
-
     /**
      * AbstractKey constructor.
      *
-     * @param string|null $salt
      *
      */
-    public function __construct(protected string $key, protected ?string $salt = null, protected int $length = 0)
-    {
-    }
+    public function __construct(protected string $key, protected ?string $salt = null, protected int $length = 0) {}
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         return $this->derive();

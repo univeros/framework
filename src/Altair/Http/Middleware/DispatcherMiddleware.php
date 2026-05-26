@@ -16,6 +16,7 @@ use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\HttpMethodNotAllowedException;
 use Altair\Http\Exception\HttpNotFoundException;
 use FastRoute\Dispatcher;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,10 +25,9 @@ class DispatcherMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private readonly Dispatcher $dispatcher,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         [$action, $args] = $this->dispatch(
@@ -45,10 +45,10 @@ class DispatcherMiddleware implements MiddlewareInterface
     }
 
     /**
-     * @return array{0: Action, 1: array<string, mixed>}
      *
      * @throws HttpMethodNotAllowedException
      * @throws HttpNotFoundException
+     * @return array{0: Action, 1: array<string, mixed>}
      */
     private function dispatch(Dispatcher $dispatcher, string $method, string $path): array
     {
@@ -59,7 +59,7 @@ class DispatcherMiddleware implements MiddlewareInterface
             Dispatcher::FOUND => $route,
             Dispatcher::METHOD_NOT_ALLOWED => throw new HttpMethodNotAllowedException(
                 array_shift($route),
-                sprintf("Cannot access resource '%s' using method '%s'", $path, $method),
+                \sprintf("Cannot access resource '%s' using method '%s'", $path, $method),
                 405,
             ),
             default => throw new HttpNotFoundException($path),

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -90,7 +92,7 @@ trait PdoSessionAdapterAwareTrait
         $this->username = $username;
         $this->password = $password;
         $this->table = $table;
-        $this->lockMode = $lockMode?? PdoSessionAdapterInterface::LOCK_TRANSACTIONAL;
+        $this->lockMode = $lockMode ?? PdoSessionAdapterInterface::LOCK_TRANSACTIONAL;
         $this->options = $options;
     }
 
@@ -152,11 +154,11 @@ trait PdoSessionAdapterAwareTrait
             $rows = $query->fetchAll(PDO::FETCH_NUM);
 
             if ($rows) {
-                if ($this->checkIfSessionExpired((int)$rows[0][1], (int)$rows[0][2])) {
+                if ($this->checkIfSessionExpired((int) $rows[0][1], (int) $rows[0][2])) {
                     return '';
                 }
 
-                return is_resource($rows[0][0]) ? stream_get_contents($rows[0][0]) : $rows[0][0];
+                return \is_resource($rows[0][0]) ? stream_get_contents($rows[0][0]) : $rows[0][0];
             }
 
             if ($this->getIsLockModeTransactional() &&
@@ -166,7 +168,7 @@ trait PdoSessionAdapterAwareTrait
                     $query = $this
                         ->getConnection()
                         ->prepare(
-                            sprintf(
+                            \sprintf(
                                 'INSERT INTO %s (id, content, session_lifetime, session_time) ' .
                                 'VALUES (:id, :content, :lifetime, :session_time)',
                                 $this->table
@@ -203,7 +205,7 @@ trait PdoSessionAdapterAwareTrait
      */
     public function write(string $sessionId, string $data): bool
     {
-        $maxlifetime = (int)ini_get('session.gc_maxlifetime');
+        $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
 
         $mergeQuery = $this->getMergePdoStatement($sessionId, $data);
         if ($mergeQuery instanceof PDOStatement) {
@@ -215,7 +217,7 @@ trait PdoSessionAdapterAwareTrait
         $updateQuery = $this
             ->getConnection()
             ->prepare(
-                sprintf(
+                \sprintf(
                     'UPDATE %s SET content=:content, session_lifetime=:lifetime, session_time=:session_time ' .
                     'WHERE id=:id',
                     $this->table
@@ -238,7 +240,7 @@ trait PdoSessionAdapterAwareTrait
                 $insertQuery = $this
                     ->getConnection()
                     ->prepare(
-                        sprintf(
+                        \sprintf(
                             'INSERT INTO %s (id, content, session_lifetime, session_time) ' .
                             'VALUES (:id, :content, :lifetime, :session_time)',
                             $this->table
@@ -330,7 +332,7 @@ trait PdoSessionAdapterAwareTrait
     public function delete(string $sessionId): bool
     {
         // delete the record associated with this id
-        $sql = sprintf('DELETE FROM %s WHERE id = :id', $this->table);
+        $sql = \sprintf('DELETE FROM %s WHERE id = :id', $this->table);
 
         $query = $this->getConnection()->prepare($sql);
         $query->bindParam(':id', $sessionId);
@@ -349,7 +351,7 @@ trait PdoSessionAdapterAwareTrait
         $this->executeUnlockStatements();
 
         if ($gcCalled) {
-            $sql = sprintf('DELETE FROM %s WHERE (session_lifetime + session_time) < :session_time', $this->table);
+            $sql = \sprintf('DELETE FROM %s WHERE (session_lifetime + session_time) < :session_time', $this->table);
             $query = $this->getConnection()->prepare($sql);
             $query->bindValue(':session_time', time(), PDO::PARAM_INT);
             $query->execute();
@@ -373,7 +375,7 @@ trait PdoSessionAdapterAwareTrait
     /**
      * Executed unlock statements if any
      */
-    protected function executeUnlockStatements()
+    protected function executeUnlockStatements(): void
     {
         while ($query = array_shift($this->unlockStatements)) {
             $query->execute();

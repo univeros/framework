@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,9 @@
  */
 
 namespace Altair\Structure\Contracts;
+
+use OutOfRangeException;
+use Traversable;
 
 interface SetInterface extends CollectionInterface
 {
@@ -86,7 +91,7 @@ interface SetInterface extends CollectionInterface
      * Returns the value at a specified position in the set.
      *
      *
-     * @throws \OutOfRangeException
+     * @throws OutOfRangeException
      *
      * @return mixed|null
      *
@@ -155,7 +160,7 @@ interface SetInterface extends CollectionInterface
     /**
      * Returns the result of adding all given values to the set.
      *
-     * @param array|\Traversable $values
+     * @param array|Traversable $values
      */
     public function merge($values): SetInterface;
 

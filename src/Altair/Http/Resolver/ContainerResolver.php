@@ -20,11 +20,10 @@ class ContainerResolver
 {
     public function __construct(
         private readonly Container $container,
-    ) {
-    }
+    ) {}
 
     public function __invoke(object|string $entry): object
     {
-        return is_object($entry) ? $entry : $this->container->make($entry);
+        return \is_object($entry) ? $entry : $this->container->make($entry);
     }
 }

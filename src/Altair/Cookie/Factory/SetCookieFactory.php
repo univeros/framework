@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -44,7 +46,6 @@ class SetCookieFactory
         return (new SetCookie($name))->expire();
     }
 
-    
     public static function createFromCookieString(string $string): SetCookie
     {
         $cookieStr = new CookieStr();
@@ -55,7 +56,7 @@ class SetCookieFactory
         while ($attribute = array_shift($attributes)) {
             $pair = explode('=', (string) $attribute, 2);
             $key = strtolower($pair[0]);
-            $value = $pair[1]?? null;
+            $value = $pair[1] ?? null;
 
             if ('secure' === $key) {
                 $cookie = $cookie->withSecure(true);
@@ -76,7 +77,7 @@ class SetCookieFactory
                     $cookie = $cookie->withExpires($value);
                     break;
                 case 'max-age':
-                    $cookie = $cookie->withMaxAge((int)$value);
+                    $cookie = $cookie->withMaxAge((int) $value);
                     break;
                 case 'domain':
                     $cookie = $cookie->withDomain($value);
@@ -90,7 +91,6 @@ class SetCookieFactory
         return $cookie;
     }
 
-    
     public static function createCollectionFromCookieStrings(array $strings): SetCookieCollection
     {
         return new SetCookieCollection(
@@ -101,7 +101,6 @@ class SetCookieFactory
         );
     }
 
-    
     public static function createCollectionFromResponse(ResponseInterface $response): SetCookieCollection
     {
         return new SetCookieCollection(

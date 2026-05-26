@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,10 +12,10 @@
 namespace Altair\Validation\Rule;
 
 use Altair\Validation\Exception\InvalidArgumentException;
+use Override;
 
 class IpRule extends AbstractRule
 {
-
     protected ?array $range;
 
     /**
@@ -29,7 +31,7 @@ class IpRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
         return $this->assertAddress($value) && $this->assertNetwork($value);
@@ -38,12 +40,11 @@ class IpRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid IP address.', $value);
+        return \sprintf('"%s" is not a valid IP address.', $value);
     }
-
 
     protected function parseRange(string $value): ?array
     {
@@ -74,7 +75,6 @@ class IpRule extends AbstractRule
         return $range;
     }
 
-
     protected function parseRangeUsingWildcards(string $value, array $range): array
     {
         $value = $this->fillAddress($value);
@@ -84,14 +84,13 @@ class IpRule extends AbstractRule
         return $range;
     }
 
-
     protected function parseRangeUsingCidr(string $value, array $range): array
     {
         [$min, $max] = explode('/', $value);
         $range['min'] = $this->fillAddress($min, '0');
         $isMask = mb_strpos($max, '.') !== false;
         if ($isMask && $this->assertAddress($max)) {
-            $range['mask'] = sprintf('%032b', ip2long($max));
+            $range['mask'] = \sprintf('%032b', ip2long($max));
             return $range;
         }
 
@@ -99,11 +98,10 @@ class IpRule extends AbstractRule
             throw new InvalidArgumentException('Invalid network mask.');
         }
 
-        $range['mask'] = sprintf('%032b', ip2long(long2ip(~((2 ** (32 - $max)) - 1))));
+        $range['mask'] = \sprintf('%032b', ip2long(long2ip(~((2 ** (32 - $max)) - 1))));
 
         return $range;
     }
-
 
     protected function fillAddress(string $input, string $char = '*'): string
     {
@@ -114,12 +112,10 @@ class IpRule extends AbstractRule
         return $input;
     }
 
-
     protected function assertAddress(string $address): bool
     {
-        return (bool)filter_var($address, FILTER_VALIDATE_IP, ['flags' => $this->options,]);
+        return (bool) filter_var($address, FILTER_VALIDATE_IP, ['flags' => $this->options,]);
     }
-
 
     protected function assertNetwork(string $value): bool
     {
@@ -131,9 +127,9 @@ class IpRule extends AbstractRule
             return $this->assertSubnet($value);
         }
 
-        $value = sprintf('%u', ip2long($value));
-        return bccomp($value, sprintf('%u', ip2long($this->range['min']))) >= 0
-            && bccomp($value, sprintf('%u', ip2long($this->range['max']))) <= 0;
+        $value = \sprintf('%u', ip2long($value));
+        return bccomp($value, \sprintf('%u', ip2long($this->range['min']))) >= 0
+            && bccomp($value, \sprintf('%u', ip2long($this->range['max']))) <= 0;
     }
 
     /**
@@ -144,8 +140,8 @@ class IpRule extends AbstractRule
     protected function assertSubnet(string $value): bool
     {
         $range = $this->range;
-        $min = sprintf('%032b', ip2long($range['min']));
-        $value = sprintf('%032b', ip2long($value));
+        $min = \sprintf('%032b', ip2long($range['min']));
+        $value = \sprintf('%032b', ip2long($value));
         return ($value & $range['mask']) === ($min & $range['mask']);
     }
 }

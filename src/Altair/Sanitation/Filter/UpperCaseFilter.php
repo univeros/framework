@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,29 +11,28 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class UpperCaseFilter extends AbstractFilter
 {
     /**
      * UpperCaseFilter constructor.
      */
-    public function __construct(protected bool $firstOnly = false)
-    {
-    }
+    public function __construct(protected bool $firstOnly = false) {}
 
     /**
      * @param mixed $value
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?string
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 
         return $this->firstOnly ? $this->getFirstToUpper($value) : strtoupper($value);
     }
 
-    
     protected function getFirstToUpper(string $value): string
     {
         $length = mb_strlen($value);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -21,7 +23,7 @@ trait RedisNamespaceValidationAwareTrait
     {
         if (preg_match('/[^-+_.A-Za-z0-9]/', $namespace, $match)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'The namespace for %s contains "%s" but only chars in [-+_.A-Za-z0-9] are allowed.',
                     static::class,
                     $match[0]

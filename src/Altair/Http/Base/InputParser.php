@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,7 @@ namespace Altair\Http\Base;
 use Altair\Http\Collection\InputCollection;
 use Altair\Http\Contracts\InputInterface;
 use JsonSerializable;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class InputParser implements InputInterface
@@ -19,12 +22,9 @@ class InputParser implements InputInterface
     /**
      * InputParser constructor.
      */
-    public function __construct(protected InputCollection $inputCollection)
-    {
-    }
+    public function __construct(protected InputCollection $inputCollection) {}
 
-    
-    #[\Override]
+    #[Override]
     public function __invoke(ServerRequestInterface $request): InputCollection
     {
         $this->inputCollection->putAll(
@@ -40,7 +40,6 @@ class InputParser implements InputInterface
         return $this->inputCollection;
     }
 
-    
     protected function getParsedBody(ServerRequestInterface $request): array
     {
         $body = $request->getParsedBody();
@@ -52,6 +51,6 @@ class InputParser implements InputInterface
         return $body instanceof JsonSerializable
             ? $body->jsonSerialize()
             // if parsed body is an object but doesn't implements JsonSerializable use json parsing instead
-            : (is_object($body) ? json_decode(json_encode($body), true) : $body);
+            : (\is_object($body) ? json_decode(json_encode($body), true) : $body);
     }
 }

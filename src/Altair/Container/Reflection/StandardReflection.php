@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,11 +12,13 @@
 namespace Altair\Container\Reflection;
 
 use Altair\Container\Contracts\ReflectionInterface;
+use Override;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
+use ReflectionNamedType;
 use ReflectionParameter;
 
 class StandardReflection implements ReflectionInterface
@@ -23,7 +27,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function getClass(string $class): ReflectionClass
     {
         return new ReflectionClass($class);
@@ -33,7 +37,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function getConstructor(string $class): ?ReflectionMethod
     {
         $reflectionClass = $this->getClass($class);
@@ -45,7 +49,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function getConstructorParameters(string $class): ?array
     {
         $reflectionConstructor = $this->getConstructor($class);
@@ -58,11 +62,11 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getParameterTypeHint(ReflectionFunctionAbstract $function, ReflectionParameter $parameter): ?string
     {
         $type = $parameter->getType();
-        if (!$type instanceof \ReflectionNamedType || $type->isBuiltin()) {
+        if (!$type instanceof ReflectionNamedType || $type->isBuiltin()) {
             return null;
         }
 
@@ -73,7 +77,7 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function getFunction($name): ReflectionFunction
     {
         return new ReflectionFunction($name);
@@ -91,10 +95,10 @@ class StandardReflection implements ReflectionInterface
      * @inheritDoc
      * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
     {
-        $className = is_string($classNameOrInstance)
+        $className = \is_string($classNameOrInstance)
             ? $classNameOrInstance
             : $classNameOrInstance::class;
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,9 +13,11 @@ namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\ErrorHandlerInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
+use GdImage;
+use Laminas\Diactoros\Response;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Laminas\Diactoros\Response;
 
 class DefaultErrorHandler implements ErrorHandlerInterface
 {
@@ -46,7 +50,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
     {
         $error = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_EXCEPTION);
@@ -57,7 +61,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
         foreach ($this->handlers as $types) {
             foreach ($types as $type) {
                 if (stripos($accept, (string) $type) !== false) {
-                    call_user_func([$this, $type], $response->getStatusCode(), $message);
+                    \call_user_func([$this, $type], $response->getStatusCode(), $message);
 
                     return $response->withHeader('Content-Type', $type);
                 }
@@ -75,15 +79,15 @@ class DefaultErrorHandler implements ErrorHandlerInterface
      * @param int $statusCode
      * @param string $message
      */
-    protected function svg($statusCode, $message)
+    protected function svg($statusCode, $message): void
     {
         echo <<<EOT
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
-    <text x="20" y="30" font-family="sans-serif" title="{$message}">
-        Error {$statusCode}
-    </text>
-</svg>
-EOT;
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
+                <text x="20" y="30" font-family="sans-serif" title="{$message}">
+                    Error {$statusCode}
+                </text>
+            </svg>
+            EOT;
     }
 
     /**
@@ -92,23 +96,23 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function html($statusCode, $message)
+    protected function html($statusCode, $message): void
     {
         echo <<<EOT
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Error {$statusCode}</title>
-    <style>html{font-family: sans-serif;}</style>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-</head>
-<body>
-    <h1>Error {$statusCode}</h1>
-    {$message}
-</body>
-</html>
-EOT;
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <meta charset="utf-8">
+                <title>Error {$statusCode}</title>
+                <style>html{font-family: sans-serif;}</style>
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+            </head>
+            <body>
+                <h1>Error {$statusCode}</h1>
+                {$message}
+            </body>
+            </html>
+            EOT;
     }
 
     /**
@@ -117,7 +121,7 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function json($statusCode, $message)
+    protected function json($statusCode, $message): void
     {
         $output = ['error' => $statusCode];
         if (!empty($message)) {
@@ -133,15 +137,15 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function xml($statusCode, $message)
+    protected function xml($statusCode, $message): void
     {
         echo <<<EOT
-<?xml version="1.0" encoding="UTF-8"?>
-<error>
-    <code>{$statusCode}</code>
-    <message>{$message}</message>
-</error>
-EOT;
+            <?xml version="1.0" encoding="UTF-8"?>
+            <error>
+                <code>{$statusCode}</code>
+                <message>{$message}</message>
+            </error>
+            EOT;
     }
 
     /**
@@ -150,7 +154,7 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function jpeg($statusCode, $message)
+    protected function jpeg($statusCode, $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagejpeg($image);
@@ -162,7 +166,7 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function gif($statusCode, $message)
+    protected function gif($statusCode, $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagegif($image);
@@ -174,7 +178,7 @@ EOT;
      * @param int $statusCode
      * @param string $message
      */
-    protected function png($statusCode, $message)
+    protected function png($statusCode, $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagepng($image);
@@ -188,13 +192,13 @@ EOT;
      *
      * @return resource
      */
-    protected function createImage($statusCode, $message): \GdImage|false
+    protected function createImage($statusCode, $message): GdImage|false
     {
         $size = 200;
         $image = imagecreatetruecolor($size, $size);
         $textColor = imagecolorallocate($image, 255, 255, 255);
         imagestring($image, 5, 10, 10, 'Error ' . $statusCode, $textColor);
-        foreach (str_split($message, intval($size / 10)) as $line => $text) {
+        foreach (str_split($message, \intval($size / 10)) as $line => $text) {
             imagestring($image, 5, 10, ($line * 18) + 28, $text, $textColor);
         }
 

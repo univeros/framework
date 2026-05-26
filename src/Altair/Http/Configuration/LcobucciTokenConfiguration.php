@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -20,6 +22,7 @@ use Lcobucci\JWT\Builder;
 use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Validator;
+use Override;
 
 class LcobucciTokenConfiguration implements ConfigurationInterface
 {
@@ -28,12 +31,12 @@ class LcobucciTokenConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $tokenGeneratorConfigurationFactory = fn(): TokenConfiguration => new TokenConfiguration(
             $this->env->get('TOKEN_PUBLIC_KEY', 'YOU_SHOULD_CHANGE_THIS'),
-            (int) $this->env->get('TOKEN_TTL', ini_get('session.gc_maxlifetime')),
+            (int) $this->env->get('TOKEN_TTL', \ini_get('session.gc_maxlifetime')),
             new Sha256(),
             null,
             $this->env->get('TOKEN_PRIVATE_KEY')

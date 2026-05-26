@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Middleware;
 
 use Altair\Middleware\Contracts\PayloadInterface;
 use JsonSerializable;
+use Override;
 
 class Payload implements PayloadInterface, JsonSerializable
 {
@@ -23,22 +26,22 @@ class Payload implements PayloadInterface, JsonSerializable
      */
     public function __construct(array $attributes = null)
     {
-        $this->attributes = $attributes?? [];
+        $this->attributes = $attributes ?? [];
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getAttribute($name, $default = null)
     {
-        return $this->attributes[$name]?? $default;
+        return $this->attributes[$name] ?? $default;
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getAttributes(): array
     {
         return $this->attributes;
@@ -47,7 +50,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withAttribute($name, $value): PayloadInterface
     {
         $cloned = clone $this;
@@ -59,7 +62,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withAttributes(array $attributes): PayloadInterface
     {
         $cloned = clone $this;
@@ -71,7 +74,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function withoutAttribute($name): PayloadInterface
     {
         $cloned = clone $this;
@@ -83,7 +86,7 @@ class Payload implements PayloadInterface, JsonSerializable
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function jsonSerialize(): mixed
     {
         return $this->attributes;

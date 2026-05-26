@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\MiddlewareInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -22,17 +23,7 @@ use Psr\Http\Server\RequestHandlerInterface;
  */
 abstract class AbstractContentHandlerMiddleware implements MiddlewareInterface
 {
-    /**
-     * @return list<string>
-     */
-    abstract protected function contentTypes(): array;
-
-    /**
-     * @return array<string, mixed>|object|null
-     */
-    abstract protected function parse(string $body): array|object|null;
-
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->matchesContentType($request)) {
@@ -46,6 +37,16 @@ abstract class AbstractContentHandlerMiddleware implements MiddlewareInterface
 
         return $handler->handle($request->withParsedBody($this->parse($body)));
     }
+
+    /**
+     * @return list<string>
+     */
+    abstract protected function contentTypes(): array;
+
+    /**
+     * @return array<string, mixed>|object|null
+     */
+    abstract protected function parse(string $body): array|object|null;
 
     private function matchesContentType(ServerRequestInterface $request): bool
     {

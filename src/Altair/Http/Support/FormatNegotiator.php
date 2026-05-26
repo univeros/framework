@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,6 +16,7 @@ use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Exception;
 use Negotiation\Negotiator;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class FormatNegotiator implements FormatNegotiatorInterface
@@ -76,7 +79,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getFromServerRequestAttribute(ServerRequestInterface $request): ?string
     {
         return $request->getAttribute(MiddlewareInterface::ATTRIBUTE_FORMAT);
@@ -85,14 +88,14 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getFromServerRequestUriPath(ServerRequestInterface $request): ?string
     {
         $extension = strtolower(pathinfo($request->getUri()->getPath(), PATHINFO_EXTENSION));
 
         if ($extension !== '' && $extension !== '0') {
             foreach ($this->formats as $format => $data) {
-                if (in_array($extension, $data[0], true)) {
+                if (\in_array($extension, $data[0], true)) {
                     return $format;
                 }
             }
@@ -104,15 +107,15 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getFromServerRequestHeaderLine(ServerRequestInterface $request): ?string
     {
-        $headers = call_user_func('array_merge', array_column($this->formats, 1));
+        $headers = \call_user_func('array_merge', array_column($this->formats, 1));
         $mimeType = $this->negotiateHeader($request->getHeaderLine('Accept'), $headers);
 
         if (null !== $mimeType) {
             foreach ($this->formats as $format => $data) {
-                if (in_array($mimeType, $data[1], true)) {
+                if (\in_array($mimeType, $data[1], true)) {
                     return $format;
                 }
             }
@@ -124,11 +127,11 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getContentTypeByFormat(string $format): string
     {
         if (isset($this->formats[$format])) {
-            throw new InvalidArgumentException(sprintf('Unknown format "%s"', $format));
+            throw new InvalidArgumentException(\sprintf('Unknown format "%s"', $format));
         }
 
         return $this->formats[$format][1][0];

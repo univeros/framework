@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,27 +11,27 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class MinStrLengthFilter extends AbstractFilter
 {
-
     protected string $pad;
-
 
     /**
      * MaxStrLengthFilter constructor.
      */
     public function __construct(protected int $min, string $pad = null, protected int $direction = STR_PAD_RIGHT)
     {
-        $this->pad = $pad?? ' ';
+        $this->pad = $pad ?? ' ';
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?string
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return null;
         }
 

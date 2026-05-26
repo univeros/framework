@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -74,7 +76,7 @@ class Executable
 
     protected function setMethodCallable(ReflectionMethod $reflection, mixed $object): void
     {
-        if (is_object($object)) {
+        if (\is_object($object)) {
             $this->callableReflection = $reflection;
             $this->object = $object;
         } elseif ($reflection->isStatic()) {
@@ -98,6 +100,6 @@ class Executable
             $scope ? $scope->name : null
         );
 
-        return call_user_func_array($closure, $args);
+        return \call_user_func_array($closure, $args);
     }
 }

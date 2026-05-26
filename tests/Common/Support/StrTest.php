@@ -11,6 +11,7 @@ class StrTest extends TestCase
 {
     private Str $str;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->str = new Str();

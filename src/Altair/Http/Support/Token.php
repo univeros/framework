@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\TokenInterface;
+use Override;
 
 class Token implements TokenInterface
 {
@@ -19,14 +22,12 @@ class Token implements TokenInterface
      * @param $token
      * @param string $token
      */
-    public function __construct(private $token, private array $metadata)
-    {
-    }
+    public function __construct(private $token, private array $metadata) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getToken(): string
     {
         return $this->token;
@@ -35,7 +36,7 @@ class Token implements TokenInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMetadata(string $key = null)
     {
         return null !== $key

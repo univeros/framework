@@ -27,7 +27,7 @@ class CallbackListenerTest extends TestCase
 
     public function testImplementsListenerInterface(): void
     {
-        $listener = new CallbackListener(static fn() => null);
+        $listener = new CallbackListener(static fn(): null => null);
 
         $this->assertInstanceOf(ListenerInterface::class, $listener);
     }

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,5 +13,5 @@ namespace Altair\Structure\Contracts;
 
 interface VectorInterface extends SequenceInterface
 {
-    const MIN_VECTOR_CAPACITY = 10;
+    public const MIN_VECTOR_CAPACITY = 10;
 }

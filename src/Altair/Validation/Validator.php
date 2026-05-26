@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,10 +17,10 @@ use Altair\Validation\Contracts\PayloadInterface;
 use Altair\Validation\Contracts\RulesRunnerInterface;
 use Altair\Validation\Contracts\ValidatableInterface;
 use Altair\Validation\Contracts\ValidatorInterface;
+use Override;
 
 class Validator implements ValidatorInterface
 {
-
     /**
      * @var Payload
      */
@@ -27,12 +29,9 @@ class Validator implements ValidatorInterface
     /**
      * Validator constructor.
      */
-    public function __construct(protected RulesRunnerInterface $runner)
-    {
-    }
+    public function __construct(protected RulesRunnerInterface $runner) {}
 
-
-    #[\Override]
+    #[Override]
     public function validate(ValidatableInterface $validatable): bool
     {
         $this->payload = $this->buildPayload($validatable);
@@ -40,11 +39,11 @@ class Validator implements ValidatorInterface
         foreach ($validatable->getRules() as $key => $value) {
             $keys = explode(',', $this->sanitize($key));
             foreach ($keys as $attribute) {
-                $rules = is_array($value) ? $value : [$value];
+                $rules = \is_array($value) ? $value : [$value];
                 $runner = $this->runner->withRules($rules);
                 $payload = $this->payload->withAttribute(PayloadInterface::ATTRIBUTE_KEY, $attribute);
 
-                $this->payload = call_user_func($runner, $payload);
+                $this->payload = \call_user_func($runner, $payload);
             }
         }
 
@@ -54,7 +53,7 @@ class Validator implements ValidatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getPayload(): ?MiddlewarePayloadInterface
     {
         return $this->payload;
@@ -70,7 +69,7 @@ class Validator implements ValidatorInterface
     protected function buildPayload(ValidatableInterface $validatable): MiddlewarePayloadInterface
     {
         $attributes = [
-            PayloadInterface::ATTRIBUTE_SUBJECT => $validatable
+            PayloadInterface::ATTRIBUTE_SUBJECT => $validatable,
         ];
 
         foreach ($validatable->getRules()->keys() as $key) {
@@ -86,7 +85,6 @@ class Validator implements ValidatorInterface
 
         return new Payload($attributes);
     }
-
 
     protected function sanitize(string $value): string
     {

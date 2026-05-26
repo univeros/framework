@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Security\Support;
 
 use Altair\Security\Exception\InvalidConfigException;
+use Override;
 
 class Pbkdf2Key extends AbstractKey
 {
@@ -30,10 +33,10 @@ class Pbkdf2Key extends AbstractKey
      *
      * @throws InvalidConfigException
      */
-    #[\Override]
+    #[Override]
     public function derive(): string
     {
-        $outputKey = hash_pbkdf2($this->algorithm, $this->key, $this->salt, $this->iterations, $this->length, true);
+        $outputKey = hash_pbkdf2($this->algorithm, $this->key, (string) $this->salt, $this->iterations, $this->length, true);
 
         if ($outputKey === false) {
             throw new InvalidConfigException('Invalid parameters to hash_pbkdf2().');

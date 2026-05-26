@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,29 +11,29 @@
 
 namespace Altair\Middleware\Resolver;
 
-use Altair\Container\Exception\InjectionException;
 use Altair\Container\Container;
+use Altair\Container\Exception\InjectionException;
 use Altair\Middleware\Contracts\MiddlewareInterface;
 use Altair\Middleware\Contracts\MiddlewareResolverInterface;
+use Override;
+use ReflectionException;
 
 class MiddlewareResolver implements MiddlewareResolverInterface
 {
     /**
      * MiddlewareResolver constructor.
      */
-    public function __construct(protected Container $container)
-    {
-    }
+    public function __construct(protected Container $container) {}
 
     /**
      * @param mixed $entry
      * @throws InjectionException
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
-    #[\Override]
+    #[Override]
     public function __invoke($entry): MiddlewareInterface
     {
-        if (is_object($entry)) {
+        if (\is_object($entry)) {
             return $entry;
         }
 

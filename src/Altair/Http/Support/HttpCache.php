@@ -76,6 +76,7 @@ final class HttpCache
         if (isset($directives['s-maxage'])) {
             return max(0, (int) $directives['s-maxage']);
         }
+
         if (isset($directives['max-age'])) {
             return max(0, (int) $directives['max-age']);
         }
@@ -84,6 +85,7 @@ final class HttpCache
         if ($expires === '') {
             return 0;
         }
+
         $expiresAt = strtotime($expires);
 
         return $expiresAt === false ? 0 : max(0, $expiresAt - time());
@@ -98,6 +100,7 @@ final class HttpCache
         if ($header === '') {
             return [];
         }
+
         $directives = [];
         foreach (preg_split('/\s*,\s*/', $header) ?: [] as $directive) {
             if (str_contains($directive, '=')) {
@@ -115,6 +118,6 @@ final class HttpCache
     {
         $tags = array_map('trim', explode(',', $ifNoneMatch));
 
-        return in_array('*', $tags, true) || ($responseEtag !== '' && in_array($responseEtag, $tags, true));
+        return \in_array('*', $tags, true) || ($responseEtag !== '' && \in_array($responseEtag, $tags, true));
     }
 }

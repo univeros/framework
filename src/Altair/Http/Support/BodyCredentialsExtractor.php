@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\CredentialsExtractorInterface;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class BodyCredentialsExtractor implements CredentialsExtractorInterface
@@ -20,14 +23,12 @@ class BodyCredentialsExtractor implements CredentialsExtractorInterface
      * @param string $identifier
      * @param string $password
      */
-    public function __construct(private $identifier = 'username', private $password = 'password')
-    {
-    }
+    public function __construct(private $identifier = 'username', private $password = 'password') {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function extract(ServerRequestInterface $request): ?array
     {
         $body = $request->getParsedBody();

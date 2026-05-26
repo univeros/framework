@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -61,13 +63,12 @@ trait ImmutableAttributesAwareTrait
      * @param string $key
      *
      * @throws RuntimeException
-     * @return void
      *
      */
-    public function __set($key, mixed $value)
+    public function __set($key, mixed $value): void
     {
         throw new RuntimeException(
-            sprintf(
+            \sprintf(
                 'Modification of immutable object `%s` is not allowed',
                 $this::class
             )
@@ -80,13 +81,12 @@ trait ImmutableAttributesAwareTrait
      * @param string $key
      *
      * @throws RuntimeException
-     * @return void
      *
      */
-    public function __unset($key)
+    public function __unset($key): void
     {
         throw new RuntimeException(
-            sprintf(
+            \sprintf(
                 'Modification of immutable object `%s` is not allowed',
                 $this::class
             )

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,11 +13,12 @@ namespace Altair\Session\Handler;
 
 use Altair\Session\Contracts\PdoSessionAdapterInterface;
 use Altair\Session\Contracts\PdoSessionHandlerInterface;
+use Override;
 use PDOException;
+use ReturnTypeWillChange;
 
 class PdoSessionHandler implements PdoSessionHandlerInterface
 {
-
     /**
      * @var bool whether gc() has been called
      */
@@ -24,15 +27,13 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * PdoSessionHandler constructor.
      */
-    public function __construct(protected PdoSessionAdapterInterface $adapter)
-    {
-    }
+    public function __construct(protected PdoSessionAdapterInterface $adapter) {}
 
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function open($savePath, $sessionName)
     {
         if (!$this->adapter->getIsConnected()) {
@@ -42,8 +43,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
         return true;
     }
 
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function close()
     {
         $gc = $this->gcCalled;
@@ -55,8 +56,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function read($sessionId)
     {
         try {
@@ -70,8 +71,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function write($sessionId, $data)
     {
         try {
@@ -85,8 +86,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function destroy($sessionId)
     {
         try {
@@ -100,8 +101,8 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function gc($maxlifetime)
     {
         // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
@@ -112,7 +113,7 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
     /**
      * Returns whether the session has expired or not.
      */
-    #[\Override]
+    #[Override]
     public function getHasSessionExpired(): bool
     {
         return $this->adapter->getHasSessionExpired();

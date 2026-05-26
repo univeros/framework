@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Sanitation\Filter;
+
+use Override;
 
 class MinFilter extends AbstractFilter
 {
@@ -21,17 +25,15 @@ class MinFilter extends AbstractFilter
          * @var mixed the minimum valid value
          */
         protected mixed $min
-    )
-    {
-    }
+    ) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value)
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 

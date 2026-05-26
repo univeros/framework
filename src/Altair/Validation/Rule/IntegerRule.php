@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,23 +11,25 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class IntegerRule extends AbstractRule
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        return is_int($value) || (is_numeric($value) && $value == (int)$value);
+        return \is_int($value) || (is_numeric($value) && $value == (int) $value);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid integer value.', $value);
+        return \sprintf('"%s" is not a valid integer value.', $value);
     }
 }

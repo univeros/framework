@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,10 +16,10 @@ use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Structure\Queue;
+use Override;
 
 class FiltersRunner implements FiltersRunnerInterface
 {
-
     /**
      *
      * A callable to convert queue entries to callables.
@@ -44,7 +46,7 @@ class FiltersRunner implements FiltersRunnerInterface
      *
      *
      */
-    #[\Override]
+    #[Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
         $entry = $this->queue->isEmpty() ? null : $this->queue->pop();
@@ -52,8 +54,7 @@ class FiltersRunner implements FiltersRunnerInterface
         return $middleware($payload, $this);
     }
 
-
-    #[\Override]
+    #[Override]
     public function withFilters(array $filters): FiltersRunnerInterface
     {
         $this->queue = new Queue($filters);
@@ -78,6 +79,6 @@ class FiltersRunner implements FiltersRunnerInterface
             return $entry;
         }
 
-        return call_user_func($this->resolver, $entry);
+        return \call_user_func($this->resolver, $entry);
     }
 }

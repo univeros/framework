@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,13 +12,14 @@
 namespace Altair\Cache\Storage;
 
 use Altair\Cache\Contracts\CacheItemStorageInterface;
+use Override;
 
 class NullCacheItemStorage implements CacheItemStorageInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMaxIdLength(): ?int
     {
         return null;
@@ -25,7 +28,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): array
     {
         return [];
@@ -34,7 +37,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function hasItem(string $key): bool
     {
         return false;
@@ -43,7 +46,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         return true;
@@ -52,7 +55,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         return true;
@@ -61,7 +64,7 @@ class NullCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(array $values, int $lifespan): bool
     {
         return false;

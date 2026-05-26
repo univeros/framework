@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,7 +11,6 @@
 
 namespace Altair\Cache;
 
-use Psr\Log\LoggerInterface;
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
 use Altair\Cache\Contracts\CacheItemStorageInterface;
 use Altair\Cache\Exception\InvalidArgumentException;
@@ -18,15 +19,16 @@ use Altair\Cache\Validator\CacheItemKeyValidator;
 use Closure;
 use Exception;
 use Generator;
+use Override;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 {
     use LoggerAwareTrait;
-
 
     protected CacheItemKeyValidatorInterface $cacheItemKeyValidator;
 
@@ -34,9 +36,9 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 
     protected $deferred = [];
 
-    protected \Closure $cacheItemFactory;
+    protected Closure $cacheItemFactory;
 
-    protected \Closure $deferredMergerClosure;
+    protected Closure $deferredMergerClosure;
 
     /**
      * CacheItemPool constructor.
@@ -68,7 +70,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         $this->ensureCommitDeferred();
     }
 
-    #[\Override]
+    #[Override]
     public function getItem(string $key): CacheItemInterface
     {
         foreach ($this->getItems([$key]) as $item) {
@@ -78,7 +80,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return ($this->cacheItemFactory)($key, null, false);
     }
 
-    #[\Override]
+    #[Override]
     public function getItems(array $keys = []): iterable
     {
         $this->ensureCommitDeferred();
@@ -96,7 +98,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return $this->createCacheItemsGenerator($items, array_combine($ids, $keys));
     }
 
-    #[\Override]
+    #[Override]
     public function hasItem(string $key): bool
     {
         $id = $this->makeId($key);
@@ -120,7 +122,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function clear(): bool
     {
         $this->deferred = [];
@@ -134,7 +136,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return false;
     }
 
-    #[\Override]
+    #[Override]
     public function deleteItem(string $key): bool
     {
         return $this->deleteItems([$key]);
@@ -143,7 +145,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function deleteItems(array $keys): bool
     {
         $ids = [];
@@ -165,7 +167,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function save(CacheItemInterface $item): bool
     {
         if (!$this->saveDeferred($item)) {
@@ -178,7 +180,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function saveDeferred(CacheItemInterface $item): bool
     {
         if (!$item instanceof CacheItem) {
@@ -193,11 +195,11 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function commit(): bool
     {
         $success = true;
-        [$merged, $expired] = call_user_func(
+        [$merged, $expired] = \call_user_func(
             $this->deferredMergerClosure,
             $this->deferred,
             $this->namespace
@@ -216,14 +218,14 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             } catch (Exception $e) {
             }
 
-            if (is_array($e) || 1 === count($values)) {
-                foreach (is_array($e) ? $e : array_keys($values) as $id) {
+            if (\is_array($e) || 1 === \count($values)) {
+                foreach (\is_array($e) ? $e : array_keys($values) as $id) {
                     $success = false;
                     $value = $values[$id];
                     $this->log(
                         'Failed to save cache item with key ":key" (:type)',
                         [
-                            'key' => substr((string) $id, strlen((string) $this->namespace)),
+                            'key' => substr((string) $id, \strlen($this->namespace)),
                             'type' => get_debug_type($value),
                             'exception' => $e instanceof Exception ? $e : null,
                         ]
@@ -286,7 +288,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 $this->log(
                     'Failed to save cache item with key ":key" (:type)',
                     [
-                        'key' => substr((string) $id, strlen((string) $this->namespace)),
+                        'key' => substr((string) $id, \strlen($this->namespace)),
                         'type' => get_debug_type($value),
                         'exception' => $e instanceof Exception ? $e : null,
                     ]
@@ -300,7 +302,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * If there are items postponed to be saved, save them.
      */
-    protected function ensureCommitDeferred()
+    protected function ensureCommitDeferred(): void
     {
         if (!empty($this->deferred)) {
             $this->commit();
@@ -311,7 +313,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      * Generates the cache items returning a generator.
      *
      *
-     * @return \Generator
+     * @return Generator
      */
     protected function createCacheItemsGenerator(array $items, array $keys): ?Generator
     {
@@ -319,14 +321,14 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
             foreach ($items as $id => $value) {
                 $key = $keys[$id];
                 unset($keys[$id]);
-                yield $key => call_user_func($this->cacheItemFactory, $key, $value, true);
+                yield $key => \call_user_func($this->cacheItemFactory, $key, $value, true);
             }
         } catch (Exception $exception) {
             $this->log('Failed to fetch requested items', ['keys' => array_values($keys), 'exception' => $exception]);
         }
 
         foreach ($keys as $key) {
-            yield $key => call_user_func($this->cacheItemFactory, $key, null, false);
+            yield $key => \call_user_func($this->cacheItemFactory, $key, null, false);
         }
     }
 
@@ -400,7 +402,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 
         $id = $this->namespace . $key;
 
-        return strlen($id) > $this->store->getMaxIdLength()
+        return \strlen($id) > $this->store->getMaxIdLength()
             ? $this->namespace . substr_replace(base64_encode(hash('sha256', $key, true)), ':', -22)
             : $id;
     }
@@ -409,14 +411,14 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      * Logging helper function. If no logger has been set, then a warning error will be triggered having
      * previously replaced the tokens on the error message (i.e. ':key') for its correspondent value in the context.
      */
-    protected function log(string $message, array $context = [])
+    protected function log(string $message, array $context = []): void
     {
         if ($this->logger instanceof LoggerInterface) {
             $this->logger->warning($message, $context);
         } else {
             $replace_pairs = [];
             foreach ($context as $key => $value) {
-                if (is_scalar($value)) {
+                if (\is_scalar($value)) {
                     $replace[':' . $key] = $value;
                 }
             }

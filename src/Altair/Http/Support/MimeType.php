@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -17,7 +19,7 @@ class MimeType
     /**
      * default mime type
      */
-    const DEFAULT_MIME_TYPE = 'application/octet-stream';
+    public const DEFAULT_MIME_TYPE = 'application/octet-stream';
 
     /**
      * @var array of mime types according to file extensions
@@ -1023,11 +1025,11 @@ class MimeType
             return static::DEFAULT_MIME_TYPE;
         }
 
-        if (array_key_exists($extension, $this->mimeTypes)) {
+        if (\array_key_exists($extension, $this->mimeTypes)) {
             return $this->mimeTypes[$extension];
         }
 
-        if (function_exists('finfo_open') && $file->isFile()) {
+        if (\function_exists('finfo_open') && $file->isFile()) {
             $path = $file->getPath();
             $fileInfo = finfo_open(FILEINFO_MIME);
             $mimeType = finfo_file($fileInfo, $path);

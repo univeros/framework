@@ -15,6 +15,7 @@ use Altair\Cookie\CookieManager;
 use Altair\Cookie\SetCookie;
 use Altair\Http\Contracts\CacheLimiterInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -24,10 +25,9 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     public function __construct(
         private readonly CookieManager $cookieManager,
         private readonly CacheLimiterInterface $cacheLimiter,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $prevName = session_name();

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Session\Adapter;
 
 use Altair\Session\Contracts\PdoSessionAdapterInterface;
 use Altair\Session\Traits\PdoSessionAdapterAwareTrait;
+use Override;
 use PDO;
 use PDOStatement;
 
@@ -33,7 +36,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         // Obtaining an exclusive session level advisory lock requires an integer key.
@@ -65,7 +68,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getDriver(): string
     {
         return self::DRIVER_POSTGRESQL;
@@ -74,25 +77,25 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getSelectSql(): string
     {
         $sql = $this->getIsLockModeTransactional()
             ? 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id FOR UPDATE'
             : 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id';
 
-        return sprintf($sql, $this->table);
+        return \sprintf($sql, $this->table);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
-        if (version_compare($this->pdo->getAttribute(\PDO::ATTR_SERVER_VERSION), '9.5', '>=')) {
-            $maxlifetime = (int)ini_get('session.gc_maxlifetime');
-            $sql = sprintf(
+        if (version_compare($this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION), '9.5', '>=')) {
+            $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
+            $sql = \sprintf(
                 'INSERT INTO %s (id, content, session_lifetime, session_time) ' .
                 'VALUES (:id, :content, :lifetime, :session_time) ' .
                 'ON CONFLICT (id) DO UPDATE SET (id, lifetime, session_time) = ' .

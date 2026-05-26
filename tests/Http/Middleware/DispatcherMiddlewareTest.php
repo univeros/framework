@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Http\Middleware;
 
+use Laminas\Diactoros\Uri;
 use Altair\Http\Base\Action;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\HttpMethodNotAllowedException;
@@ -29,7 +30,7 @@ class DispatcherMiddlewareTest extends AbstractMiddlewareTest
         $collector->addRoute('GET', '/users/{id:\d+}', $action);
 
         $middleware = new DispatcherMiddleware(new GroupCountBased($collector->getData()));
-        $request = (new ServerRequest())->withMethod('GET')->withUri(new \Laminas\Diactoros\Uri('/users/42'));
+        $request = (new ServerRequest())->withMethod('GET')->withUri(new Uri('/users/42'));
 
         $captured = null;
         $this->dispatch([$middleware, $this->captureRequest($captured)], $request);
@@ -42,7 +43,7 @@ class DispatcherMiddlewareTest extends AbstractMiddlewareTest
     {
         $collector = new RouteCollector(new Std(), new DataGenerator());
         $middleware = new DispatcherMiddleware(new GroupCountBased($collector->getData()));
-        $request = (new ServerRequest())->withMethod('GET')->withUri(new \Laminas\Diactoros\Uri('/missing'));
+        $request = (new ServerRequest())->withMethod('GET')->withUri(new Uri('/missing'));
 
         $this->expectException(HttpNotFoundException::class);
 
@@ -55,7 +56,7 @@ class DispatcherMiddlewareTest extends AbstractMiddlewareTest
         $collector->addRoute('POST', '/things', $this->createMock(Action::class));
 
         $middleware = new DispatcherMiddleware(new GroupCountBased($collector->getData()));
-        $request = (new ServerRequest())->withMethod('GET')->withUri(new \Laminas\Diactoros\Uri('/things'));
+        $request = (new ServerRequest())->withMethod('GET')->withUri(new Uri('/things'));
 
         $this->expectException(HttpMethodNotAllowedException::class);
 
