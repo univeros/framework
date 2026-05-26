@@ -1,0 +1,36 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\Http\Inputs;
+
+/**
+ * Generated input DTO for POST /users.
+ */
+final readonly class CreateUserInput
+{
+    public function __construct(
+        public string $email,
+        public string $password
+    ) {}
+
+    /**
+     * Validation rules per field, consumed by Altair\Validation.
+     *
+     * @return array<string, list<string>>
+     */
+    public static function rules(): array
+    {
+        return [
+            'email' => ['email', 'required'],
+            'password' => ['min:8', 'required'],
+        ];
+    }
+}

@@ -39,6 +39,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
 │   ├── Middleware/    ← PSR-15 middleware primitives
 │   ├── Sanitation/    ← Input sanitation rules
+│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold)
 │   ├── Security/      ← Hashing, encryption, CSRF tokens
 │   ├── Session/       ← Session handlers (file, Redis, Mongo)
 │   ├── Structure/     ← Collection primitives (Map, Set, etc.)
@@ -83,6 +84,8 @@ CI runs the same scripts on every push/PR (see `.github/workflows/ci.yml`).
 
 | Package | Version | Notes |
 |---|---|---|
+| `nikic/php-parser` | ^5 | Used by `univeros/scaffold` drift linter to re-parse emitted code |
+| `symfony/yaml` | ^7 | Spec parsing in `univeros/scaffold` |
 | `psr/log` | ^3 | Typed signatures |
 | `psr/container` | ^2 | Typed `get`/`has` |
 | `psr/cache` | ^3 | |
@@ -283,6 +286,7 @@ After `composer update` succeeds and tests pass:
 - **Adding a new sub-package:** mirror the layout of `src/Altair/Structure/` (smallest, cleanest). Add a `composer.json`, register in root `replace`, add an autoload entry.
 - **Touching HTTP/middleware:** PSR-15 single-pass only. Implement `Psr\Http\Server\MiddlewareInterface`.
 - **Touching cache:** PSR-6 (`CacheItemPoolInterface`) is the primary contract; PSR-16 is a façade over it.
+- **Adding HTTP endpoints:** write a YAML spec under `api/` and run `bin/altair spec:scaffold api/<file>.yaml`. The generator emits Action / Input / Responder / domain stub / test / OpenAPI fragment / route entry. Hand-edits to these files surface via `bin/altair spec:lint`.
 
 ### Verification before claiming done
 

@@ -1,0 +1,34 @@
+openapi: 3.1.0
+info:
+  title: 'Create a new user'
+  version: 0.0.0
+paths:
+  /users:
+    post:
+      summary: 'Create a new user'
+      tags:
+        - users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: { email: { type: string }, password: { type: string } }
+              required: [email, password]
+      responses:
+        201:
+          description: 'Response 201'
+          content:
+            application/json:
+              schema: { type: object, properties: { user: { type: object } } }
+        422:
+          description: 'Response 422'
+          content:
+            application/json:
+              schema: { type: object, properties: { errors: { type: array, items: { type: string } } } }
+        409:
+          description: 'Response 409'
+          content:
+            application/json:
+              schema: { type: object, properties: { message: { type: string } } }
