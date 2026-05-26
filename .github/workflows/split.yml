@@ -156,12 +156,20 @@ jobs:
           remote="https://x-access-token:${SPLIT_TOKEN}@github.com/univeros/${{ matrix.package.name }}.git"
           sha="${{ steps.split.outputs.sha }}"
 
+          # Belt-and-suspenders: explicitly clear any Authorization extraheader
+          # for github.com on this single command so the URL-embedded PAT is the
+          # only credential git presents. This survives even if some upstream
+          # step has persisted the runner's GITHUB_TOKEN into git config.
+          git_push() {
+            git -c http.https://github.com/.extraheader= push "$@"
+          }
+
           if [[ "$GITHUB_REF" == refs/tags/* ]]; then
             # Tag push: propagate the tag at the split SHA
             echo "Pushing tag $GITHUB_REF to univeros/${{ matrix.package.name }}"
-            git push "$remote" "${sha}:${GITHUB_REF}"
+            git_push "$remote" "${sha}:${GITHUB_REF}"
           else
             # Branch push: force-update master on the sub-repo
             echo "Pushing $sha to univeros/${{ matrix.package.name }} master"
-            git push "$remote" "${sha}:refs/heads/master" --force
+            git_push "$remote" "${sha}:refs/heads/master" --force
           fi
