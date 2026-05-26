@@ -1,0 +1,19 @@
+{
+    "name": "univeros/agent-spec",
+    "description": "Generates AI-readable manifests describing every framework package and the host application.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/cli": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\AgentSpec\\": ""
+        }
+    }
+}
