@@ -1,0 +1,37 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Tests\Http\Actions;
+
+use App\Http\Actions\CreateUserAction;
+use App\Http\Inputs\CreateUserInput;
+use App\Http\Responders\CreateUserResponder;
+use PHPUnit\Framework\TestCase;
+
+final class CreateUserActionTest extends TestCase
+{
+    public function testActionWiresInputResponderAndDomain(): void
+    {
+        $action = new \App\Http\Actions\CreateUserAction();
+
+        self::assertSame(\App\Http\Inputs\CreateUserInput::class, $action->getInputClassName());
+        self::assertSame(\App\Http\Responders\CreateUserResponder::class, $action->getResponderClassName());
+    }
+
+    public function testSpecDeclaredStatusesAreProducibleByResponder(): void
+    {
+        $declared = \App\Http\Responders\CreateUserResponder::statuses();
+
+        self::assertContains(201, $declared);
+        self::assertContains(422, $declared);
+        self::assertContains(409, $declared);
+    }
+}
