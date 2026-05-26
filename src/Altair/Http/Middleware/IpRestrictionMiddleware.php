@@ -40,7 +40,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 class IpRestrictionMiddleware implements MiddlewareInterface
 {
     private readonly CidrMatcher $allow;
+
     private readonly CidrMatcher $deny;
+
     private readonly bool $allowConfigured;
 
     /**
@@ -100,6 +102,7 @@ class IpRestrictionMiddleware implements MiddlewareInterface
         if (\is_array($ips)) {
             return array_values(array_filter($ips, 'is_string'));
         }
+
         if (\is_string($ips) && $ips !== '') {
             return [$ips];
         }

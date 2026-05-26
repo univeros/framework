@@ -35,6 +35,7 @@ class Encrypter implements EncrypterInterface
         if (!\extension_loaded('openssl')) {
             throw new InvalidConfigException('Encryption requires the OpenSSL PHP extension.');
         }
+
         $this->derivedKey = $this->key->derive();
 
         if (!$this->supports($this->derivedKey, $this->cipher)) {

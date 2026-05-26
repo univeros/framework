@@ -143,6 +143,7 @@ class Inflector
         if (\in_array($number % 100, range(11, 13), false)) {
             return $number . 'th';
         }
+
         return match ($number % 10) {
             1 => $number . 'st',
             2 => $number . 'nd',

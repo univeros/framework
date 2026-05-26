@@ -26,7 +26,6 @@ abstract class AbstractKey implements KeyInterface, Stringable
     /**
      * AbstractKey constructor.
      *
-     * @param string|null $salt
      *
      */
     public function __construct(protected string $key, protected ?string $salt = null, protected int $length = 0) {}

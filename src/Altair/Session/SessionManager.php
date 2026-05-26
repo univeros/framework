@@ -56,7 +56,6 @@ class SessionManager implements SessionManagerInterface
     /**
      * SessionManager constructor.
      *
-     * @param SessionHandlerInterface|null $sessionHandler
      * @param callable|null $deleteCookieCallable
      */
     public function __construct(
@@ -201,7 +200,7 @@ class SessionManager implements SessionManagerInterface
     public function start(): bool
     {
         if (!$this->getIsActive()) {
-            if ($this->sessionHandler !== null) {
+            if ($this->sessionHandler instanceof SessionHandlerInterface) {
                 session_set_save_handler($this->sessionHandler, false);
             }
 

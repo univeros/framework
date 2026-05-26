@@ -37,6 +37,7 @@ abstract class AbstractContentHandlerMiddleware implements MiddlewareInterface
 
         return $handler->handle($request->withParsedBody($this->parse($body)));
     }
+
     /**
      * @return list<string>
      */

@@ -39,20 +39,15 @@ class DigestSignatureValidator implements IdentityValidatorInterface
         $realm = $arguments['realm'];
         $method = $arguments['method'];
         $user = $this->repository->findOneBy([$this->options['username'] => $authorization['username']]);
-        if (!null !== $user) {
-            $data = [
-                md5(\sprintf('%s:%s:%s', $authorization['username'], $realm, $user->get($this->options['password']))),
-                $authorization['nonce'],
-                $authorization['nc'],
-                $authorization['cnonce'],
-                $authorization['qop'],
-                md5(\sprintf('%s:%s', $method, $authorization['uri'])),
-            ];
-            $hash = md5(implode(':', $data));
-
-            return $authorization['response'] === $hash;
-        }
-
-        return false;
+        $data = [
+            md5(\sprintf('%s:%s:%s', $authorization['username'], $realm, $user->get($this->options['password']))),
+            $authorization['nonce'],
+            $authorization['nc'],
+            $authorization['cnonce'],
+            $authorization['qop'],
+            md5(\sprintf('%s:%s', $method, $authorization['uri'])),
+        ];
+        $hash = md5(implode(':', $data));
+        return $authorization['response'] === $hash;
     }
 }

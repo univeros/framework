@@ -76,7 +76,7 @@ class InRuleTest extends AbstractRuleTest
         return $payload->getAttribute(PayloadInterface::ATTRIBUTE_RESULT) === true;
     }
 
-    protected function assertValueWithStringHaystack($value)
+    protected function assertValueWithStringHaystack($value): bool
     {
         $rule = $this->buildRuleWithStringHaystack();
 

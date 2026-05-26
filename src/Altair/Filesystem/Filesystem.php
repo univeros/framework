@@ -159,7 +159,7 @@ class Filesystem
      * @throws FileNotFoundException
      * @return false|int
      */
-    public function prepend(string $path, string $data)
+    public function prepend(string $path, string $data): int|false
     {
         if ($this->exists($path)) {
             return $this->put($path, $data . $this->get($path));

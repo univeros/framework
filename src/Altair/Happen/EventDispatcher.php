@@ -16,7 +16,6 @@ use Altair\Happen\Contracts\EventInterface;
 use Altair\Happen\Contracts\EventStackInterface;
 use Altair\Happen\Contracts\EventSubscriberInterface;
 use Altair\Happen\Contracts\ListenerProviderInterface;
-use Altair\Happen\Factory\ListenerFactory;
 use Override;
 
 class EventDispatcher implements EventDispatcherInterface
@@ -192,6 +191,7 @@ class EventDispatcher implements EventDispatcherInterface
             if ($event->isPropagationStopped()) {
                 break;
             }
+
             $listener($event);
         }
 

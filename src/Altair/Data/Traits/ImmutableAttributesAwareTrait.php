@@ -63,7 +63,6 @@ trait ImmutableAttributesAwareTrait
      * @param string $key
      *
      * @throws RuntimeException
-     * @return void
      *
      */
     public function __set($key, mixed $value): void
@@ -82,7 +81,6 @@ trait ImmutableAttributesAwareTrait
      * @param string $key
      *
      * @throws RuntimeException
-     * @return void
      *
      */
     public function __unset($key): void

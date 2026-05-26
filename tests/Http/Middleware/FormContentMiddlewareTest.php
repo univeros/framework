@@ -20,6 +20,7 @@ class FormContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = null;
         $body = new Stream('php://temp', 'r+');
         $body->write('name=alice&age=30');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded')
             ->withBody($body);
@@ -34,6 +35,7 @@ class FormContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = 'unchanged';
         $body = new Stream('php://temp', 'r+');
         $body->write('name=alice');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
@@ -48,6 +50,7 @@ class FormContentMiddlewareTest extends AbstractMiddlewareTest
         $captured = null;
         $body = new Stream('php://temp', 'r+');
         $body->write('k=v');
+
         $request = (new ServerRequest())
             ->withHeader('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
             ->withBody($body);

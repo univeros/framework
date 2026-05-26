@@ -40,6 +40,7 @@ class FlysystemAdapter implements FilesystemAdapterInterface
         if ($this->driver->fileExists($path)) {
             return true;
         }
+
         return $this->driver->directoryExists($path);
     }
 

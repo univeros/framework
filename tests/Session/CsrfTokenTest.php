@@ -25,9 +25,11 @@ class CsrfTokenTest extends TestCase
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_write_close();
         }
+
         foreach (glob($this->tmpDir . '/*') ?: [] as $file) {
             @unlink($file);
         }
+
         @rmdir($this->tmpDir);
     }
 
