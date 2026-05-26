@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+use Altair\Cli\Application;
+use Altair\Cli\Configuration\CliConfiguration;
+use Altair\Container\Container;
+
+(static function (): void {
+    $autoloadCandidates = [
+        __DIR__ . '/../vendor/autoload.php',         // run from inside this repo
+        __DIR__ . '/../../../autoload.php',          // run from inside a consuming project's vendor/bin
+    ];
+
+    foreach ($autoloadCandidates as $autoload) {
+        if (is_file($autoload)) {
+            require $autoload;
+
+            return;
+        }
+    }
+
+    fwrite(STDERR, "Unable to locate Composer autoloader; run 'composer install' first.\n");
+    exit(1);
+})();
+
+$paths = [];
+
+// Built-in framework commands ship with their own packages.
+$builtIn = [
+    __DIR__ . '/../src/Altair/AgentSpec/Cli',
+];
+foreach ($builtIn as $entry) {
+    if (is_dir($entry)) {
+        $paths[] = $entry;
+    }
+}
+
+foreach (['ALTAIR_CLI_PATHS', 'ALTAIR_CLI_PATH'] as $envName) {
+    $value = getenv($envName);
+    if ($value === false || $value === '') {
+        continue;
+    }
+    foreach (explode(PATH_SEPARATOR, $value) as $entry) {
+        $entry = trim($entry);
+        if ($entry !== '' && is_dir($entry)) {
+            $paths[] = $entry;
+        }
+    }
+}
+
+$container = new Container();
+(new CliConfiguration($paths))->apply($container);
+
+$application = $container->make(Application::class);
+
+exit($application->run());
