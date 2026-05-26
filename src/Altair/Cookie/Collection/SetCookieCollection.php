@@ -151,6 +151,8 @@ class SetCookieCollection extends Map
                 return $pair;
             }
         }
+
+        return null;
     }
 
     /**

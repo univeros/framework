@@ -146,6 +146,8 @@ class CookieCollection extends Map
                 return $pair;
             }
         }
+
+        return null;
     }
 
     /**

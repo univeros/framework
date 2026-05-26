@@ -27,9 +27,9 @@ class Definition
     }
 
 
-    public function replace(Definition $definition): Definition
+    public function replace(Definition $definition): self
     {
-        return new static(array_replace($definition->getArguments(), $this->arguments));
+        return new self(array_replace($definition->getArguments(), $this->arguments));
     }
 
     public function getArguments(): array

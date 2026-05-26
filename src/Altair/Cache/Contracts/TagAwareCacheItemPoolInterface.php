@@ -42,7 +42,7 @@ interface TagAwareCacheItemPoolInterface extends CacheItemPoolInterface
     /**
      * {@inheritDoc}
      *
-     * @return array|\Traversable|TagAwareCacheItemInterface[]
+     * @return iterable<string, TagAwareCacheItemInterface>
      */
-    public function getItems(array $keys = []);
+    public function getItems(array $keys = []): iterable;
 }

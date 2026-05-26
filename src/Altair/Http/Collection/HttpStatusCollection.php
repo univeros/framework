@@ -40,7 +40,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      * {@inheritDoc}
      */
     #[\Override]
-    public function count()
+    public function count(): int
     {
         return count($this->values);
     }
@@ -49,7 +49,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      * {@inheritDoc}
      */
     #[\Override]
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->values);
     }

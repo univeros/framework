@@ -63,16 +63,24 @@ class CacheMiddleware implements MiddlewareInterface
 
     private function ensureCacheControlHeader(ResponseInterface $response): ResponseInterface
     {
-        return $response->hasHeader('Cache-Control')
-            ? $response
-            : $this->cacheUtil->withCacheControl($response, $this->cacheControl);
+        if ($response->hasHeader('Cache-Control')) {
+            return $response;
+        }
+        /** @var ResponseInterface $next */
+        $next = $this->cacheUtil->withCacheControl($response, $this->cacheControl);
+
+        return $next;
     }
 
     private function ensureLastModified(ResponseInterface $response): ResponseInterface
     {
-        return $response->hasHeader('Last-Modified')
-            ? $response
-            : $this->cacheUtil->withLastModified($response, time());
+        if ($response->hasHeader('Last-Modified')) {
+            return $response;
+        }
+        /** @var ResponseInterface $next */
+        $next = $this->cacheUtil->withLastModified($response, time());
+
+        return $next;
     }
 
     private function checkETag(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface

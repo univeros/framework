@@ -31,18 +31,23 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $prevName = session_name();
-        $prevId = $this->cookieManager->getFromRequest($request, $prevName);
-        session_id($prevId);
+        $prevCookie = $this->cookieManager->getFromRequest($request, $prevName);
+        $prevId = $prevCookie?->getValue();
+        if ($prevId !== null) {
+            session_id($prevId);
+        }
 
         $response = $handler->handle($request);
 
         $nextId = session_id();
-        $response = $this->cookieManager->setOnResponse(
-            $response,
-            $this->createNewSessionCookie($nextId),
-        );
+        if ($nextId !== $prevId) {
+            $response = $this->cookieManager->setOnResponse(
+                $response,
+                $this->createNewSessionCookie($nextId !== false ? $nextId : ''),
+            );
+        }
 
-        return $nextId !== ''
+        return $nextId !== '' && $nextId !== false
             ? $this->cacheLimiter->apply($response)
             : $response;
     }
@@ -51,10 +56,11 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     {
         $params = session_get_cookie_params();
 
-        return (new SetCookie(session_name(), $sessionId))
+        return (new SetCookie((string) session_name(), $sessionId))
             ->withDomain($params['domain'] ?? null)
+            ->withPath($params['path'] ?? null)
             ->withExpires($params['lifetime'] ?? null)
-            ->withSecure($params['path'] ?? null)
-            ->withHttpOnly($params['httponly'] ?? null);
+            ->withSecure(!empty($params['secure']))
+            ->withHttpOnly(!empty($params['httponly']));
     }
 }
