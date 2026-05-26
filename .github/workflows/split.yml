@@ -45,6 +45,10 @@ on:
 
 env:
   SPLITSH_VERSION: v1.0.1
+  # Opt into Node 24 ahead of the June 2026 default flip; silences the
+  # "Node.js 20 actions are deprecated" warning emitted by actions/checkout
+  # and other JS-based actions on the current runner image.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
 
 jobs:
   # GitHub Actions doesn't allow matrix.* in job-level if: conditions —
