@@ -7,21 +7,19 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Altair\Happen;
+namespace Altair\Happen\Contracts;
 
 interface EventStackInterface
 {
     /**
      * Adds an event.
-     *
-     * @param EventInterface|string $event
      */
-    public function addEvent($event): self;
+    public function addEvent(string|EventInterface $event): self;
 
     /**
-     * Returns all added events
+     * Returns all added events.
      *
-     * @return EventInterface[]
+     * @return list<string|EventInterface>
      */
     public function getStack(): array;
 }

@@ -7,7 +7,7 @@
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Altair\Happen;
+namespace Altair\Happen\Contracts;
 
 use Altair\Happen\Exception\InvalidArgumentException;
 use Psr\EventDispatcher\StoppableEventInterface;

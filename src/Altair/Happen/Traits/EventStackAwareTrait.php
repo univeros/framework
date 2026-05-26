@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,36 +11,26 @@
 
 namespace Altair\Happen\Traits;
 
-use Altair\Happen\EventInterface;
-use Altair\Happen\Exception\InvalidArgumentException;
+use Altair\Happen\Contracts\EventInterface;
 
 trait EventStackAwareTrait
 {
     /**
-     * @var array events stack that can be later used for batch dispatch.
+     * @var list<string|EventInterface> events queued for batch dispatch.
      *
      * @see \Altair\Happen\EventDispatcher::dispatchStack()
      */
-    protected $stack = [];
+    protected array $stack = [];
 
-    /**
-     * @inheritDoc
-     */
-    public function addEvent($event): self
+    public function addEvent(string|EventInterface $event): self
     {
-        if (!is_string($event) || !($event instanceof EventInterface)) {
-            throw new InvalidArgumentException(
-                sprintf('"%s" must be a string or an instance of "%s"', $event, EventInterface::class)
-            );
-        }
-
         $this->stack[] = $event;
 
         return $this;
     }
 
     /**
-     * @inheritDoc
+     * @return list<string|EventInterface>
      */
     public function getStack(): array
     {

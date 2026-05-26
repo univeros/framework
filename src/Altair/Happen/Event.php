@@ -9,6 +9,7 @@
 
 namespace Altair\Happen;
 
+use Altair\Happen\Contracts\EventInterface;
 use Altair\Happen\Exception\InvalidArgumentException;
 use Carbon\Carbon;
 
