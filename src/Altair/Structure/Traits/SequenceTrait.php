@@ -118,7 +118,9 @@ trait SequenceTrait
             throw new OutOfRangeException('Out of bounds');
         }
 
-        return new static(array_splice($this->internal, $index, 0, $values));
+        array_splice($this->internal, $index, 0, $values);
+
+        return $this;
     }
 
     /**
