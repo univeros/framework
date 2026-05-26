@@ -37,4 +37,25 @@ class PayloadTest extends TestCase
         $this->assertSame(5, $new->getAttribute('e'));
         $this->assertSame($newAttrs, $new->getAttributes());
     }
+
+    public function testWithoutAttributeReturnsCloneWithKeyRemoved(): void
+    {
+        $payload = new Payload(['a' => 1, 'b' => 2]);
+
+        $new = $payload->withoutAttribute('a');
+
+        $this->assertNotSame($new, $payload);
+        $this->assertSame(['a' => 1, 'b' => 2], $payload->getAttributes());
+        $this->assertSame(['b' => 2], $new->getAttributes());
+    }
+
+    public function testWithoutAttributeIsNoOpForMissingKey(): void
+    {
+        $payload = new Payload(['a' => 1]);
+
+        $new = $payload->withoutAttribute('does-not-exist');
+
+        $this->assertNotSame($new, $payload);
+        $this->assertSame(['a' => 1], $new->getAttributes());
+    }
 }
