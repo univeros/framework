@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,13 +11,16 @@
 
 namespace Altair\Structure;
 
-use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\QueueInterface;
+use Altair\Structure\Traits\CollectionTrait;
 use ArrayAccess;
 use Error;
 use IteratorAggregate;
 use OutOfBoundsException;
+use Override;
+use ReturnTypeWillChange;
+use Traversable;
 
 /**
  * Queue.
@@ -32,7 +37,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|\Traversable|Queue $values
+     * @param array|Traversable|Queue $values
      */
     public function __construct($values = null)
     {
@@ -42,7 +47,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function peek()
     {
         return $this->internal->first();
@@ -51,7 +56,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function pop()
     {
         return $this->internal->shift();
@@ -60,7 +65,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function push(...$values): QueueInterface
     {
         $this->internal->push(...$values);
@@ -71,7 +76,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function allocate(int $capacity): QueueInterface
     {
         $this->internal->allocate($capacity);
@@ -82,7 +87,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * Returns the current capacity of the queue.
      */
-    #[\Override]
+    #[Override]
     public function capacity(): int
     {
         return $this->internal->capacity();
@@ -91,7 +96,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function copy(): static
     {
         return new static($this->internal);
@@ -100,7 +105,7 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function toArray(): array
     {
         return $this->internal->toArray();
@@ -109,8 +114,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * Get iterator.
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function getIterator()
     {
         while (!$this->isEmpty()) {
@@ -123,8 +128,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws OutOfBoundsException
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
+    #[ReturnTypeWillChange]
+    #[Override]
     public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
@@ -139,9 +144,9 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetGet($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetGet($offset): void
     {
         throw new Error('Not supported');
     }
@@ -151,9 +156,9 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetUnset($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetUnset($offset): void
     {
         throw new Error('Not supported');
     }
@@ -163,9 +168,9 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      *
      * @throws Error
      */
-    #[\ReturnTypeWillChange]
-    #[\Override]
-    public function offsetExists($offset)
+    #[ReturnTypeWillChange]
+    #[Override]
+    public function offsetExists($offset): bool
     {
         throw new Error('Not supported');
     }

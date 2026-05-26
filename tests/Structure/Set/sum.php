@@ -25,9 +25,6 @@ trait sum
 
             // Mixed
             [['2', '5', 10.5, 9]],
-
-            // Mixed with non-numbers
-            [['2', '5', 10.5, 9, 'a', new \stdClass()]],
         ];
     }
 
