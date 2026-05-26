@@ -14,6 +14,7 @@ namespace Altair\Http\Middleware;
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Support\CidrMatcher;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -57,7 +58,7 @@ class IpRestrictionMiddleware implements MiddlewareInterface
         $this->allowConfigured = $allow !== [];
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $ips = $this->extractIps($request);
@@ -96,10 +97,10 @@ class IpRestrictionMiddleware implements MiddlewareInterface
     private function extractIps(ServerRequestInterface $request): array
     {
         $ips = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_IP_ADDRESS);
-        if (is_array($ips)) {
+        if (\is_array($ips)) {
             return array_values(array_filter($ips, 'is_string'));
         }
-        if (is_string($ips) && $ips !== '') {
+        if (\is_string($ips) && $ips !== '') {
             return [$ips];
         }
 

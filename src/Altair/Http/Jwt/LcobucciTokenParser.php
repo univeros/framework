@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -24,26 +26,22 @@ use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\ValidAt;
 use Lcobucci\JWT\Validation\InvalidTokenException as LcobucciInvalidTokenException;
 use Lcobucci\JWT\Validator;
+use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
 class LcobucciTokenParser implements TokenParserInterface
 {
-
-
-
     /**
      * @var Validator
      */
     protected $validator;
 
-    public function __construct(protected ServerRequestInterface $request, protected Parser $parser, protected TokenConfigurationInterface $config)
-    {
-    }
+    public function __construct(protected ServerRequestInterface $request, protected Parser $parser, protected TokenConfigurationInterface $config) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse(string $token): TokenInterface
     {
         /** @var Plain $parsed */
@@ -61,7 +59,7 @@ class LcobucciTokenParser implements TokenParserInterface
         try {
             return $this->parser->parse($token);
         } catch (InvalidArgumentException) {
-            throw new InvalidTokenException(sprintf('Count not parse authorization token "%s"', $token));
+            throw new InvalidTokenException(\sprintf('Count not parse authorization token "%s"', $token));
         }
     }
 
@@ -69,13 +67,13 @@ class LcobucciTokenParser implements TokenParserInterface
      *
      * @throws InvalidTokenException
      */
-    protected function verifySignature(Plain $token, string $jwt)
+    protected function verifySignature(Plain $token, string $jwt): void
     {
         $key = new Key($this->config->getPublicKey());
 
         if (!$this->config->getSigner()->verify($token->signature()->hash(), $token->payload(), $key)) {
             throw new InvalidTokenException(
-                sprintf('Provided authorization token %s is invalid.', $jwt)
+                \sprintf('Provided authorization token %s is invalid.', $jwt)
             );
         }
     }
@@ -83,7 +81,7 @@ class LcobucciTokenParser implements TokenParserInterface
     /**
      * @throws InvalidTokenException
      */
-    protected function validateToken(Plain $token)
+    protected function validateToken(Plain $token): void
     {
         try {
             $this->validator->assert($token, new IssuedBy($this->request->getUri()), new ValidAt(new SystemClock()));

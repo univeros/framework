@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,7 +15,6 @@ use Altair\Http\Contracts\CacheLimiterInterface;
 
 abstract class AbstractCacheLimiter implements CacheLimiterInterface
 {
-
     /**
      *
      * The current Unix timestamp.
@@ -33,8 +34,8 @@ abstract class AbstractCacheLimiter implements CacheLimiterInterface
      * @see session_cache_expire()
      *
      */
-    protected int $cacheExpire = 180)
-    {
+        protected int $cacheExpire = 180
+    ) {
         $this->time = time();
     }
 

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,22 +11,22 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class BetweenRule extends AbstractRule
 {
     /**
      * BetweenRule constructor.
      */
-    public function __construct(protected mixed $min, protected mixed $max)
-    {
-    }
+    public function __construct(protected mixed $min, protected mixed $max) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
@@ -34,9 +36,9 @@ class BetweenRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not between "%s" and "%s"', $value, $this->min, $this->max);
+        return \sprintf('"%s" is not between "%s" and "%s"', $value, $this->min, $this->max);
     }
 }

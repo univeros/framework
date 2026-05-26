@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Cache\Validator;
 
 use Altair\Cache\Contracts\CacheItemKeyValidatorInterface;
 use Altair\Cache\Traits\FailureReasonAwareTrait;
+use Override;
 
 class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
 {
@@ -19,11 +22,11 @@ class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function validate($key): bool
     {
-        if (!is_string($key)) {
-            $this->reason = sprintf(
+        if (!\is_string($key)) {
+            $this->reason = \sprintf(
                 'Cache key must be string, "%s" given.',
                 get_debug_type($key)
             );
@@ -37,7 +40,7 @@ class CacheItemKeyValidator implements CacheItemKeyValidatorInterface
         }
 
         if (false !== strpbrk($key, '{}()/\@:')) {
-            $this->reason = sprintf('The key %s is invalid. It contains one ore more reserved characters {}()/\@:', $key);
+            $this->reason = \sprintf('The key %s is invalid. It contains one ore more reserved characters {}()/\@:', $key);
             return false;
         }
 

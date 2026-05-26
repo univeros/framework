@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,9 +11,10 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class RegexFilter extends AbstractFilter
 {
-
     /**
      * RegexRule constructor.
      */
@@ -21,17 +24,15 @@ class RegexFilter extends AbstractFilter
          */
         protected string $pattern,
         protected string $replace
-    )
-    {
-    }
+    ) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): null|string|array
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return null;
         }
 

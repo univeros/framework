@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,6 +18,7 @@ use ErrorException;
 use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use SplFileInfo;
 
 /**
  * Thanks Laravel
@@ -115,7 +118,7 @@ class Filesystem
             return chmod($path, $mode);
         }
 
-        return substr(sprintf('%o', fileperms($path)), -4);
+        return substr(\sprintf('%o', fileperms($path)), -4);
     }
 
     /**
@@ -182,7 +185,7 @@ class Filesystem
      */
     public function delete($paths): bool
     {
-        $paths = is_array($paths) ? $paths : func_get_args();
+        $paths = \is_array($paths) ? $paths : \func_get_args();
         $success = true;
         foreach ($paths as $path) {
             try {
@@ -221,7 +224,7 @@ class Filesystem
         }
 
         $mode = $this->isDirectory($target) ? 'J' : 'H';
-        exec(sprintf('mklink /%s "%s" "%s"', $mode, $link, $target));
+        exec(\sprintf('mklink /%s "%s" "%s"', $mode, $link, $target));
         return true;
     }
 
@@ -230,7 +233,7 @@ class Filesystem
      *
      *
      */
-    public function makeDirectory(string $path, int $mode = 0755, bool $recursive = false, bool $force = false): bool
+    public function makeDirectory(string $path, int $mode = 0o755, bool $recursive = false, bool $force = false): bool
     {
         if (file_exists($path) && is_dir($path)) {
             return true;
@@ -277,7 +280,7 @@ class Filesystem
         // create it recursively, which just gets the destination prepared to copy
         // the files over. Once we make the directory we'll proceed the copying.
         if (!$this->isDirectory($destination)) {
-            $this->makeDirectory($destination, 0777, true);
+            $this->makeDirectory($destination, 0o777, true);
         }
 
         $items = new FilesystemIterator($directory, $options);
@@ -345,7 +348,7 @@ class Filesystem
     public function clearDirectory(string $path): bool
     {
         if (!$this->isDirectory($path)) {
-            throw new InvalidArgumentException(sprintf('"%s" is not a directory.', $path));
+            throw new InvalidArgumentException(\sprintf('"%s" is not a directory.', $path));
         }
 
         return $this->deleteDirectory($path, true);
@@ -523,7 +526,7 @@ class Filesystem
      *
      * @param string $pattern
      * @param boolean $ignoreDotFiles
-     * @return \SplFileInfo[]
+     * @return SplFileInfo[]
      */
     public function listAllFiles(string $directory, $pattern = '/^.*\.*$/i', $ignoreDotFiles = true): array
     {
@@ -556,7 +559,7 @@ class Filesystem
     public function listDirectories($directory, $ignoreDotDirectories = true): array
     {
         if (!$this->isDirectory($directory)) {
-            throw new InvalidArgumentException(sprintf('"%s" is not a directory.', $directory));
+            throw new InvalidArgumentException(\sprintf('"%s" is not a directory.', $directory));
         }
 
         $directories = [];

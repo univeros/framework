@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -18,13 +20,14 @@ use Altair\Middleware\Contracts\MiddlewareRunnerInterface;
 use Altair\Middleware\MiddlewareManager;
 use Altair\Middleware\Resolver\MiddlewareResolver;
 use Altair\Middleware\Runner;
+use Override;
 
 class MiddlewareConfiguration implements ConfigurationInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container

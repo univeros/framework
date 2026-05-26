@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -15,22 +17,23 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Memcached;
+use Override;
 
 class MemcachedCacheItemStorageConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
 
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
-        $factory = function (): \Memcached {
+        $factory = function (): Memcached {
             $memcached = new Memcached();
             $memcached->addServers([
                 [
                     $this->env->get('CACHE_MEMCACHED_HOST', 'localhost'),
                     $this->env->get('CACHE_MEMCACHED_PORT', 11211),
                     // $this->nv->get('CACHE_MEMCACHED_WEIGHT', 1)
-                ]
+                ],
             ]);
 
             return $memcached;

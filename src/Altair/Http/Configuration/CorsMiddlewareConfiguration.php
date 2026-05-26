@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -17,13 +19,14 @@ use Neomerx\Cors\Contracts\AnalyzerInterface;
 use Neomerx\Cors\Contracts\Factory\FactoryInterface;
 use Neomerx\Cors\Factory\Factory;
 use Neomerx\Cors\Strategies\Settings;
+use Override;
 
 class CorsMiddlewareConfiguration implements ConfigurationInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $container

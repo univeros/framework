@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -22,10 +24,7 @@ class Definition
     /**
      * Definition constructor.
      */
-    public function __construct(protected array $arguments)
-    {
-    }
-
+    public function __construct(protected array $arguments) {}
 
     public function replace(Definition $definition): self
     {
@@ -66,10 +65,9 @@ class Definition
         return $this->add(self::DELEGATE_PREFIX . $key, $value);
     }
 
-
     public function hasIndex(int $position): bool
     {
-        return isset($this->arguments[$position]) || array_key_exists($position, $this->arguments);
+        return isset($this->arguments[$position]) || \array_key_exists($position, $this->arguments);
     }
 
     /**
@@ -77,7 +75,7 @@ class Definition
      */
     public function has($name): bool
     {
-        return isset($this->arguments[$name]) || array_key_exists($name, $this->arguments);
+        return isset($this->arguments[$name]) || \array_key_exists($name, $this->arguments);
     }
 
     /**
@@ -121,8 +119,8 @@ class Definition
      */
     public function get($name)
     {
-        if (!array_key_exists($name, $this->arguments) && !isset($this->arguments[$name])) {
-            throw new OutOfBoundsException(sprintf("'%s' not found in definition.", $name));
+        if (!\array_key_exists($name, $this->arguments) && !isset($this->arguments[$name])) {
+            throw new OutOfBoundsException(\sprintf("'%s' not found in definition.", $name));
         }
 
         return $this->arguments[$name];

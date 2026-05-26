@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -18,6 +20,7 @@ use Altair\Structure\Contracts\VectorInterface;
 use Altair\Structure\Map;
 use Altair\Structure\Pair;
 use Altair\Structure\Vector;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 
 class SetCookieCollection extends Map
@@ -44,7 +47,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function put($key, $value): MapInterface
     {
         $pair = $this->lookupKey($key);
@@ -62,7 +65,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $value) {
@@ -79,7 +82,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function sort(callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
@@ -102,7 +105,7 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function values(): VectorInterface
     {
         $sequence = new Vector();
@@ -117,10 +120,10 @@ class SetCookieCollection extends Map
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function sum(): never
     {
-        throw new InvalidCallException(sprintf('This method is not supported: %s', __FUNCTION__));
+        throw new InvalidCallException(\sprintf('This method is not supported: %s', __FUNCTION__));
     }
 
     /**
@@ -132,7 +135,7 @@ class SetCookieCollection extends Map
     {
         $response = $response->withoutHeader(SetCookieInterface::HEADER);
         foreach ($this->toArray() as $cookie) {
-            $response = $response->withAddedHeader(SetCookieInterface::HEADER, (string)$cookie);
+            $response = $response->withAddedHeader(SetCookieInterface::HEADER, (string) $cookie);
         }
 
         return $response;
@@ -143,7 +146,7 @@ class SetCookieCollection extends Map
      *
      * @param mixed $value
      */
-    #[\Override]
+    #[Override]
     protected function lookupValue($value): ?PairInterface
     {
         foreach ($this->internal as $pair) {
@@ -160,13 +163,13 @@ class SetCookieCollection extends Map
      *
      * @param $pairs
      */
-    #[\Override]
+    #[Override]
     protected function pairsToArray($pairs): array
     {
         $array = [];
         /** @var Pair $pair */
         foreach ($pairs as $pair) {
-            $array[$pair->key] = (string)$pair->value;
+            $array[$pair->key] = (string) $pair->value;
         }
 
         return $array;

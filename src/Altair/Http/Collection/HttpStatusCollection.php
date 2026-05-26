@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -16,6 +18,7 @@ use Altair\Http\Exception\OutOfBoundsException;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
+use Override;
 use ReflectionClass;
 use Traversable;
 
@@ -39,16 +42,16 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function count(): int
     {
-        return count($this->values);
+        return \count($this->values);
     }
 
     /**
      * {@inheritDoc}
      */
-    #[\Override]
+    #[Override]
     public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->values);
@@ -66,8 +69,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     {
         $reason = $this->filterReasonPhrase($reason);
         return $this->fetchCode($reason);
-
-        throw new OutOfBoundsException(sprintf("No Http status code is associated to '%s'", $code));
+        throw new OutOfBoundsException(\sprintf("No Http status code is associated to '%s'", $code));
     }
 
     /**
@@ -83,7 +85,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
         $code = $this->filterCode($code);
 
         if (!isset($this->values[$code])) {
-            throw new OutOfBoundsException(sprintf("Unknown http status code: '%s'", $code));
+            throw new OutOfBoundsException(\sprintf("Unknown http status code: '%s'", $code));
         }
 
         return $this->values[$code];
@@ -140,7 +142,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
             return false;
         }
 
-        return (bool)$this->fetchCode($reason);
+        return (bool) $this->fetchCode($reason);
     }
 
     /**
@@ -151,7 +153,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
         $code = $this->filterCode($code);
         $reason = $this->filterReasonPhrase($reason);
         $internalCode = $this->fetchCode($reason);
-        if ((bool)$internalCode && $internalCode !== $code) {
+        if ((bool) $internalCode && $internalCode !== $code) {
             throw new InvalidArgumentException(
                 "The reason phrase injected is already present in the default values."
             );
@@ -167,7 +169,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      */
     public function mergeAll($values): void
     {
-        if (!is_array($values) || !$values instanceof Traversable) {
+        if (!\is_array($values) || !$values instanceof Traversable) {
             throw new InvalidArgumentException("Values must be a Traversable object or an array");
         }
 
@@ -187,7 +189,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
         $values = [];
         $reflectionClass = new ReflectionClass(HttpStatusInterface::class);
         foreach ($reflectionClass->getConstants() as $name => $value) {
-            $code = constant(HttpStatusCodeInterface::class . '::' . $name);
+            $code = \constant(HttpStatusCodeInterface::class . '::' . $name);
             $values[$code] = $value;
         }
 
@@ -199,14 +201,13 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @param string $text the reason phrase
      */
-    protected function fetchCode($text):? int
+    protected function fetchCode($text): ?int
     {
         $code = array_search(strtolower($text), array_map('strtolower', $this->values), true);
 
         return $code === false ? null : $code;
     }
 
-    
     protected function filterReasonPhrase(string $reason): string
     {
         $reason = trim($reason);
@@ -230,14 +231,14 @@ class HttpStatusCollection implements Countable, IteratorAggregate
             [
                 'options' => [
                     'min_range' => HttpStatusCodeInterface::HTTP_MIN_RANGE,
-                    'max_range' => HttpStatusCodeInterface::HTTP_MAX_RANGE
-                ]
+                    'max_range' => HttpStatusCodeInterface::HTTP_MAX_RANGE,
+                ],
             ]
         );
 
         if (!$filtered) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     "A status code must be positive integer between '%s' and '%s', '%s' given.",
                     HttpStatusCodeInterface::HTTP_MIN_RANGE,
                     HttpStatusCodeInterface::HTTP_MAX_RANGE,

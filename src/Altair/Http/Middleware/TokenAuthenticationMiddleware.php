@@ -23,6 +23,7 @@ use Altair\Http\Exception\AuthorizationException;
 use Altair\Http\Exception\AuthorizationTokenException;
 use Altair\Http\Exception\InvalidTokenException;
 use Altair\Http\Traits\HttpAuthenticationAwareTrait;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -51,7 +52,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
         $this->initAuthentication($identityValidator, $rules, $options);
     }
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if (!$this->shouldAuthenticateRequest($request)) {
@@ -69,7 +70,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
                 $authToken = $this->tokenFactory->fromTokenString($token);
             } elseif ($credentials = $this->credentialsExtractor->extract($request)) {
                 [$user, $password] = $credentials;
-                if (call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) === false) {
+                if (\call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) === false) {
                     throw new AuthorizationException('Invalid credentials.');
                 }
 
@@ -89,7 +90,7 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
 
         if ($statusCode !== null) {
             $response = $this->responseFactory->createResponse($statusCode);
-            if (is_callable($this->onError)) {
+            if (\is_callable($this->onError)) {
                 $callableResponse = ($this->onError)($request, $response, $exception);
                 if ($callableResponse instanceof ResponseInterface) {
                     return $callableResponse;

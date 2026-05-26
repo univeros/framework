@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface FormatNegotiatorInterface
 {
-    const DEFAULT_FORMAT = 'html';
+    public const DEFAULT_FORMAT = 'html';
 
     /**
      * Returns the format from request attribute.

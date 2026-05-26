@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,17 +15,18 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Exception\InvalidConfigurationException;
 use Altair\Container\Container;
 use Altair\Structure\Set;
+use Override;
 
 class ConfigurationCollection extends Set implements ConfigurationInterface
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         foreach ($this as $configuration) {
-            if (!is_object($configuration)) {
+            if (!\is_object($configuration)) {
                 $configuration = $container->make($configuration);
             }
 
@@ -31,9 +34,9 @@ class ConfigurationCollection extends Set implements ConfigurationInterface
                 $configuration->apply($container);
             } else {
                 throw new InvalidConfigurationException(
-                    sprintf(
+                    \sprintf(
                         "Configuration class '%s' must implement '%s'",
-                        is_object($configuration) ? $configuration::class : $configuration,
+                        \is_object($configuration) ? $configuration::class : $configuration,
                         ConfigurationInterface::class
                     )
                 );

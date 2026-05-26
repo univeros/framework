@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -18,12 +20,11 @@ class SharesCollection extends Map
 {
     use NameNormalizerTrait;
 
-    
     public function shareClass(string $name, AliasesCollection $aliasesCollection): MapInterface
     {
         [, $normalizedName] = $aliasesCollection->resolve($name);
 
-        return $this->put($normalizedName, $this[$normalizedName]?? null);
+        return $this->put($normalizedName, $this[$normalizedName] ?? null);
     }
 
     /**
@@ -35,7 +36,7 @@ class SharesCollection extends Map
         $normalizedName = $this->normalizeName($instance::class);
         if (isset($aliasesCollection[$normalizedName])) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Cannot share class %s because it is currently aliased to %s',
                     $normalizedName,
                     $aliasesCollection->get($normalizedName)

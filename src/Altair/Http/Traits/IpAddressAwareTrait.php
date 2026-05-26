@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -14,15 +16,15 @@ use Psr\Http\Message\ServerRequestInterface;
 
 trait IpAddressAwareTrait
 {
-    protected function getIps(ServerRequestInterface $request):? array
+    protected function getIps(ServerRequestInterface $request): ?array
     {
         return $request->getAttribute(MiddlewareInterface::ATTRIBUTE_IP_ADDRESS);
     }
 
-    protected function getIp(ServerRequestInterface $request):? string
+    protected function getIp(ServerRequestInterface $request): ?string
     {
         $ips = $this->getIps($request);
 
-        return $ips[0]?? null;
+        return $ips[0] ?? null;
     }
 }

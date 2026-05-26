@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,19 +11,19 @@
 
 namespace Altair\Sanitation\Filter;
 
+use Override;
+
 class BetweenFilter extends AbstractFilter
 {
     /**
      * BetweenFilter constructor.
      */
-    public function __construct(protected mixed $min, protected mixed $max)
-    {
-    }
+    public function __construct(protected mixed $min, protected mixed $max) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value)
     {
         if ($value < $this->min) {

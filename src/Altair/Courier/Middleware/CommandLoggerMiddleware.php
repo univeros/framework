@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,26 +11,24 @@
 
 namespace Altair\Courier\Middleware;
 
-use Altair\Courier\Contracts\LogMessageInterface;
 use Altair\Courier\Contracts\CommandMessageInterface;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
+use Altair\Courier\Contracts\LogMessageInterface;
+use Override;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 class CommandLoggerMiddleware implements CommandMiddlewareInterface
 {
-
     /**
      * LoggerMiddleware constructor.
      */
-    public function __construct(protected LoggerInterface $logger, protected string $level = LogLevel::INFO)
-    {
-    }
+    public function __construct(protected LoggerInterface $logger, protected string $level = LogLevel::INFO) {}
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function handle(CommandMessageInterface $message, callable $next): void
     {
         $level = $this->level;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Http\Responder;
 
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Contracts\ResponderInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -19,7 +22,7 @@ class RedirectResponder implements ResponderInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

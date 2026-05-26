@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,12 +11,14 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class SwiftBicRule extends AbstractRule
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
         return (bool) preg_match('/^([a-zA-Z]){4}([a-zA-Z]){2}([0-9a-zA-Z]){2}([0-9a-zA-Z]{3})?$/', (string) $value);
@@ -23,9 +27,9 @@ class SwiftBicRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid SWIFT/BIC number.', $value);
+        return \sprintf('"%s" is not a valid SWIFT/BIC number.', $value);
     }
 }

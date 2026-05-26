@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,13 +15,12 @@ use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Altair\Http\Exception\RuntimeException;
 use Exception;
+use Override;
 use Throwable;
 
 class PhpViewFormatter extends AbstractHtmlFormatter
 {
     protected string $templatesPath;
-
-
 
     /**
      * PhpViewFormatter constructor.
@@ -27,14 +28,13 @@ class PhpViewFormatter extends AbstractHtmlFormatter
     public function __construct(string $templatesPath, protected ?string $layout = null, protected string $defaultExtension = 'php')
     {
         if (!is_dir($templatesPath)) {
-            throw new InvalidArgumentException(sprintf("'%s' is not a valid directory path.", $templatesPath));
+            throw new InvalidArgumentException(\sprintf("'%s' is not a valid directory path.", $templatesPath));
         }
 
         $this->templatesPath = $templatesPath;
     }
 
-
-    #[\Override]
+    #[Override]
     public function body(PayloadInterface $payload): string
     {
         return $this->render($payload);
@@ -53,7 +53,7 @@ class PhpViewFormatter extends AbstractHtmlFormatter
         $file = $this->getViewFile($template);
 
         if (!is_file($file)) {
-            throw new RuntimeException(sprintf('Template file "%s" not found.', $file));
+            throw new RuntimeException(\sprintf('Template file "%s" not found.', $file));
         }
 
         $content = $this->renderPhpFile($file, $payload->getOutput());
@@ -77,7 +77,7 @@ class PhpViewFormatter extends AbstractHtmlFormatter
         if (null !== $layout) {
             $file = $this->getViewFile($layout);
             if (!is_file($file)) {
-                throw new RuntimeException(sprintf('Layout file "%s" not found.', $file));
+                throw new RuntimeException(\sprintf('Layout file "%s" not found.', $file));
             }
 
             $params = $payload->getOutput();

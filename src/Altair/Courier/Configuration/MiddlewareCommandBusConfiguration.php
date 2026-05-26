@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -28,6 +30,7 @@ use Altair\Courier\Service\InMemoryCommandLocatorService;
 use Altair\Courier\Strategy\CommandRunnerMiddlewareStrategy;
 use Altair\Courier\Support\MessageCommandMap;
 use Altair\Filesystem\Filesystem;
+use Override;
 
 class MiddlewareCommandBusConfiguration implements ConfigurationInterface
 {
@@ -36,7 +39,7 @@ class MiddlewareCommandBusConfiguration implements ConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(Container $container): void
     {
         $fs = new Filesystem();
@@ -51,8 +54,8 @@ class MiddlewareCommandBusConfiguration implements ConfigurationInterface
                     // ensure a Psr\Log\LoggerInterface is configured
                     // on the application's container
                     CommandLoggerMiddleware::class,
-                    CommandHandlerMiddleware::class
-                ]
+                    CommandHandlerMiddleware::class,
+                ],
             ]
         );
 

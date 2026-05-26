@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -61,24 +63,24 @@ trait HttpAuthenticationAwareTrait
     public function __construct(IdentityValidatorInterface $identityValidator, array $rules = null, array $options = null)
     {
         $this->identityValidator = $identityValidator;
-        $this->rules = $rules?? [];
+        $this->rules = $rules ?? [];
         if ($this->rules === []) {
             $this->rules[] = new RequestMethodRule(); // OPTIONS by default
         } else {
             foreach ($this->rules as $rule) {
                 if (!($rule instanceof HttpAuthRuleInterface)) {
                     throw new InvalidArgumentException(
-                        sprintf('Rules must be of type "%s".', HttpAuthRuleInterface::class)
+                        \sprintf('Rules must be of type "%s".', HttpAuthRuleInterface::class)
                     );
                 }
             }
         }
 
-        $this->realm = $options['realm']?? 'Login';
-        $this->environment = $options['environment']?? 'HTTP_AUTHORIZATION';
-        $this->ssl = $options['ssl']?? true;
-        $this->allowed = $options['allowed']?? ['localhost', '127.0.0.1', '::1'];
-        $this->onError = $options['onError']?? null;
+        $this->realm = $options['realm'] ?? 'Login';
+        $this->environment = $options['environment'] ?? 'HTTP_AUTHORIZATION';
+        $this->ssl = $options['ssl'] ?? true;
+        $this->allowed = $options['allowed'] ?? ['localhost', '127.0.0.1', '::1'];
+        $this->onError = $options['onError'] ?? null;
     }
 
     /**
@@ -108,9 +110,9 @@ trait HttpAuthenticationAwareTrait
     protected function checkAllowance(string $host, string $scheme): void
     {
         if ('https' !== $scheme && true === $this->ssl) {
-            $allowed = is_string($this->allowed) ? explode(',', $this->allowed) : $this->allowed;
-            if (!in_array($host, $allowed, false)) {
-                $message = sprintf(
+            $allowed = \is_string($this->allowed) ? explode(',', $this->allowed) : $this->allowed;
+            if (!\in_array($host, $allowed, false)) {
+                $message = \sprintf(
                     'Insecure (HTTP) use of middleware over %s is denied.',
                     strtoupper($scheme)
                 );

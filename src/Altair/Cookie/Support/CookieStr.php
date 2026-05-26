@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -30,7 +32,7 @@ class CookieStr
     public function splitPair(string $value): array
     {
         $pairParts = explode('=', $value, 2);
-        if (count($pairParts) === 1) {
+        if (\count($pairParts) === 1) {
             $pairParts[1] = '';
         }
 

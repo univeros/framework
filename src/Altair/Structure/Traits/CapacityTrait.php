@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -55,7 +57,7 @@ trait CapacityTrait
      */
     protected function adjustCapacity(): void
     {
-        $size = count($this);
+        $size = \count($this);
 
         // Automatically truncate the allocated buffer when the size of the
         // structure drops low enough.

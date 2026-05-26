@@ -13,6 +13,7 @@ namespace Altair\Http\Middleware;
 
 use Altair\Http\Exception\HttpBadRequestException;
 use JsonException;
+use Override;
 
 class JsonContentMiddleware extends AbstractContentHandlerMiddleware
 {
@@ -20,16 +21,15 @@ class JsonContentMiddleware extends AbstractContentHandlerMiddleware
         private readonly bool $associative = true,
         private readonly int $maxDepth = 512,
         private readonly int $flags = 0,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     protected function contentTypes(): array
     {
         return ['application/json', 'text/json', 'application/x-json'];
     }
 
-    #[\Override]
+    #[Override]
     protected function parse(string $body): array|object|null
     {
         try {

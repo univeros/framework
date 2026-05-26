@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -10,6 +12,7 @@
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\CacheLimiterInterface;
+use Override;
 use Psr\Http\Message\ResponseInterface;
 
 class PrivateCacheLimiter extends AbstractCacheLimiter
@@ -17,7 +20,7 @@ class PrivateCacheLimiter extends AbstractCacheLimiter
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function apply(ResponseInterface $response): ResponseInterface
     {
         return (new PrivateNoExpireCacheLimiter($this->cacheExpire))

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -13,13 +15,14 @@ use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Exception\InvalidArgumentException;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
+use Override;
 
 class FilterCollection extends Map
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function put($key, $value): MapInterface
     {
         $this->parseFilters($value);
@@ -30,7 +33,7 @@ class FilterCollection extends Map
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function putAll($values): MapInterface
     {
         foreach ($values as $key => $filters) {
@@ -46,11 +49,11 @@ class FilterCollection extends Map
      */
     protected function filterKey(mixed $key): void
     {
-        if (!is_string($key)) {
+        if (!\is_string($key)) {
             throw new InvalidArgumentException(
-                sprintf(
+                \sprintf(
                     'Keys of filters must be of type string to match a name of the subject. Type "%s" given.',
-                    gettype($key)
+                    \gettype($key)
                 )
             );
         }
@@ -61,10 +64,10 @@ class FilterCollection extends Map
      */
     protected function parseFilters(mixed $filters): void
     {
-        if (is_string($filters)) {
-            if (!in_array(FilterInterface::class, class_implements($filters), false)) {
+        if (\is_string($filters)) {
+            if (!\in_array(FilterInterface::class, class_implements($filters), false)) {
                 throw new InvalidArgumentException(
-                    sprintf(
+                    \sprintf(
                         '"%s" does not implement %s.',
                         $filters,
                         FilterInterface::class
@@ -73,14 +76,14 @@ class FilterCollection extends Map
             }
         } else {
             foreach ($filters as $filter) {
-                if (is_string($filter)) {
+                if (\is_string($filter)) {
                     $filter = ['class' => $filter];
                 }
 
                 $class = $filter['class'] ?? null;
-                if ($class === null || !in_array(FilterInterface::class, class_implements($class), false)) {
+                if ($class === null || !\in_array(FilterInterface::class, class_implements($class), false)) {
                     throw new InvalidArgumentException(
-                        sprintf(
+                        \sprintf(
                             'A definition of a filter as array must have a "class" key and must implement %s.',
                             FilterInterface::class
                         )

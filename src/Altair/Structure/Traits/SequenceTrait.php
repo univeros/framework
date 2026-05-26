@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,7 +13,9 @@ namespace Altair\Structure\Traits;
 
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\SequenceInterface;
+use Generator;
 use OutOfRangeException;
+use ReturnTypeWillChange;
 use UnderflowException;
 
 /**
@@ -46,7 +50,7 @@ trait SequenceTrait
      */
     public function merge($values): SequenceInterface
     {
-        if (!is_array($values)) {
+        if (!\is_array($values)) {
             $values = iterator_to_array($values);
         }
 
@@ -110,7 +114,7 @@ trait SequenceTrait
      */
     public function insert(int $index, ...$values): SequenceInterface
     {
-        if ($index < 0 || $index > count($this->internal)) {
+        if ($index < 0 || $index > \count($this->internal)) {
             throw new OutOfRangeException('Out of bounds');
         }
 
@@ -208,11 +212,11 @@ trait SequenceTrait
      */
     public function rotate(int $rotations): SequenceInterface
     {
-        if (count($this) < 2) {
+        if (\count($this) < 2) {
             return $this;
         }
 
-        $rotations = $this->normalizeRotations($rotations, count($this));
+        $rotations = $this->normalizeRotations($rotations, \count($this));
 
         while ($rotations--) {
             $this->push($this->shift());
@@ -255,11 +259,11 @@ trait SequenceTrait
      */
     public function slice(int $offset, int $length = null): SequenceInterface
     {
-        if (func_num_args() === 1) {
-            $length = count($this);
+        if (\func_num_args() === 1) {
+            $length = \count($this);
         }
 
-        return new static(array_slice($this->internal, $offset, $length));
+        return new static(\array_slice($this->internal, $offset, $length));
     }
 
     /**
@@ -302,9 +306,9 @@ trait SequenceTrait
     }
 
     /**
-     * @return \Generator
+     * @return Generator
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function getIterator()
     {
         foreach ($this->internal as $value) {
@@ -315,7 +319,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetSet($offset, $value): void
     {
         if ($offset === null) {
@@ -328,7 +332,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function &offsetGet($offset)
     {
         $this->checkRange($offset);
@@ -339,11 +343,11 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetUnset($offset): void
     {
         // Unset should be quiet, so we shouldn't allow 'remove' to throw.
-        if (is_int($offset) && $offset >= 0 && $offset < count($this)) {
+        if (\is_int($offset) && $offset >= 0 && $offset < \count($this)) {
             $this->remove($offset);
         }
     }
@@ -351,25 +355,23 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function offsetExists($offset)
     {
-        if ($offset < 0 || $offset >= count($this)) {
+        if ($offset < 0 || $offset >= \count($this)) {
             return false;
         }
 
         return $this->get($offset) !== null;
     }
 
-    
     protected function checkRange(int $index): void
     {
-        if ($index < 0 || $index >= count($this->internal)) {
+        if ($index < 0 || $index >= \count($this->internal)) {
             throw new OutOfRangeException('Out of range');
         }
     }
 
-    
     protected function normalizeRotations(int $rotations, int $count): int
     {
         if ($rotations < 0) {

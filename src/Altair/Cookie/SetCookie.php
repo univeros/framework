@@ -15,6 +15,7 @@ use Altair\Cookie\Contracts\SetCookieInterface;
 use DateTime;
 use DateTimeInterface;
 use Exception;
+use Override;
 use Stringable;
 
 final readonly class SetCookie extends AbstractCookie implements SetCookieInterface, Stringable
@@ -32,54 +33,54 @@ final readonly class SetCookie extends AbstractCookie implements SetCookieInterf
         parent::__construct($name, $value);
     }
 
-    #[\Override]
+    #[Override]
     public function __toString(): string
     {
         $parts = [
             urlencode($this->name) . '=' . ($this->value !== null && $this->value !== '' ? urlencode($this->value) : ''),
         ];
 
-        $parts[] = $this->domain !== null && $this->domain !== '' ? sprintf('Domain=%s', $this->domain) : null;
-        $parts[] = $this->path !== null && $this->path !== '' ? sprintf('Path=%s', $this->path) : null;
-        $parts[] = $this->expires !== 0 ? sprintf('Expires=%s', gmdate('D, d M Y H:i:s T', $this->expires)) : null;
-        $parts[] = $this->maxAge !== 0 ? sprintf('Max-Age=%s', $this->maxAge) : null;
+        $parts[] = $this->domain !== null && $this->domain !== '' ? \sprintf('Domain=%s', $this->domain) : null;
+        $parts[] = $this->path !== null && $this->path !== '' ? \sprintf('Path=%s', $this->path) : null;
+        $parts[] = $this->expires !== 0 ? \sprintf('Expires=%s', gmdate('D, d M Y H:i:s T', $this->expires)) : null;
+        $parts[] = $this->maxAge !== 0 ? \sprintf('Max-Age=%s', $this->maxAge) : null;
         $parts[] = $this->secure ? 'Secure' : null;
         $parts[] = $this->httpOnly ? 'HttpOnly' : null;
 
         return implode('; ', array_filter($parts));
     }
 
-    #[\Override]
+    #[Override]
     public function getExpires(): int
     {
         return $this->expires;
     }
 
-    #[\Override]
+    #[Override]
     public function getMaxAge(): int
     {
         return $this->maxAge;
     }
 
-    #[\Override]
+    #[Override]
     public function getPath(): ?string
     {
         return $this->path;
     }
 
-    #[\Override]
+    #[Override]
     public function getDomain(): ?string
     {
         return $this->domain;
     }
 
-    #[\Override]
+    #[Override]
     public function getSecure(): bool
     {
         return $this->secure;
     }
 
-    #[\Override]
+    #[Override]
     public function getHttpOnly(): bool
     {
         return $this->httpOnly;
@@ -183,7 +184,7 @@ final readonly class SetCookie extends AbstractCookie implements SetCookieInterf
             return (int) $expires;
         }
 
-        if (is_string($expires)) {
+        if (\is_string($expires)) {
             $expiresTime = strtotime($expires);
 
             return $expiresTime !== false ? $expiresTime : null;

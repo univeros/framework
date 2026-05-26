@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -17,5 +19,5 @@ interface CommandInterface
      *
      * @return void
      */
-    public function exec(CommandMessageInterface $message);
+    public function exec(CommandMessageInterface $message): void;
 }

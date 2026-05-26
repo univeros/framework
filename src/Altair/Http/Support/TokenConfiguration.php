@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\TokenConfigurationInterface;
 use Lcobucci\JWT\Signer;
+use Override;
 
 final readonly class TokenConfiguration implements TokenConfigurationInterface
 {
@@ -34,7 +37,7 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getPublicKey(): string
     {
         return $this->publicKey;
@@ -43,7 +46,7 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getTtl(): int
     {
         return $this->ttl;
@@ -52,7 +55,7 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getSigner(): Signer
     {
         return $this->signer;
@@ -61,8 +64,8 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
-    public function getTimestamp():int
+    #[Override]
+    public function getTimestamp(): int
     {
         return $this->timestamp;
     }
@@ -70,7 +73,7 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getPrivateKey(): ?string
     {
         return $this->privateKey;
@@ -79,7 +82,7 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getExpirationTimestamp(): int
     {
         return $this->timestamp + $this->ttl;

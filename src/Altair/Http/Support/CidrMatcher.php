@@ -23,8 +23,7 @@ final class CidrMatcher
      */
     public function __construct(
         private readonly array $patterns,
-    ) {
-    }
+    ) {}
 
     public function matches(string $ip): bool
     {
@@ -55,12 +54,12 @@ final class CidrMatcher
         }
 
         // IPv4 (4 bytes) and IPv6 (16 bytes) must match across the same family
-        if (strlen($address) !== strlen($subnetAddress)) {
+        if (\strlen($address) !== \strlen($subnetAddress)) {
             return false;
         }
 
         $bits = (int) $maskBits;
-        $maxBits = strlen($address) * 8;
+        $maxBits = \strlen($address) * 8;
         if ($bits < 0 || $bits > $maxBits) {
             return false;
         }
@@ -79,7 +78,7 @@ final class CidrMatcher
             return true;
         }
 
-        $mask = chr(0xFF << (8 - $remainder) & 0xFF);
+        $mask = \chr(0xFF << (8 - $remainder) & 0xFF);
 
         return ($address[$fullBytes] & $mask) === ($subnetAddress[$fullBytes] & $mask);
     }

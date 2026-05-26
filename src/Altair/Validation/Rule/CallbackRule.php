@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Validation\Rule;
+
+use Override;
 
 class CallbackRule extends AbstractRule
 {
@@ -27,18 +31,18 @@ class CallbackRule extends AbstractRule
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        return call_user_func($this->callable, $value);
+        return \call_user_func($this->callable, $value);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid value.', $value);
+        return \sprintf('"%s" is not a valid value.', $value);
     }
 }

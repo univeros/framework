@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -8,6 +10,8 @@
  */
 
 namespace Altair\Sanitation\Filter;
+
+use Override;
 
 class TrimFilter extends AbstractFilter
 {
@@ -20,16 +24,16 @@ class TrimFilter extends AbstractFilter
      */
     public function __construct(string $chars = null)
     {
-        $this->chars = $chars?? " \t\n\r\0\x0B";
+        $this->chars = $chars ?? " \t\n\r\0\x0B";
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function parse($value): ?string
     {
-        if (!is_string($value)) {
+        if (!\is_string($value)) {
             return null;
         }
 

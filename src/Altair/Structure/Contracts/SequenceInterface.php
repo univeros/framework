@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,12 +11,16 @@
 
 namespace Altair\Structure\Contracts;
 
+use OutOfRangeException;
+use Traversable;
+use UnderflowException;
+
 interface SequenceInterface extends CollectionInterface
 {
     /**
      * Creates a new sequence using the values of either an array or iterable object as initial values.
      *
-     * @param array|\Traversable|null $values
+     * @param array|Traversable|null $values
      */
     public function __construct($values = null);
 
@@ -53,7 +59,7 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns the first value in the sequence.
      *
-     * @throws \UnderflowException if the sequence is empty.
+     * @throws UnderflowException if the sequence is empty.
      *
      * @return mixed
      *
@@ -64,7 +70,7 @@ interface SequenceInterface extends CollectionInterface
      * Returns the value at a given index (position) in the sequence.
      *
      *
-     * @throws \OutOfRangeException if the index is not in the range [0, size-1]
+     * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
      * @return mixed
      *
@@ -78,7 +84,7 @@ interface SequenceInterface extends CollectionInterface
      * Values may be inserted at an index equal to the size of the sequence.
      *
      *
-     * @throws \OutOfRangeException if the index is not in the range [0, n]
+     * @throws OutOfRangeException if the index is not in the range [0, n]
      *
      */
     public function insert(int $index, mixed ...$values): SequenceInterface;
@@ -94,7 +100,7 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns the last value in the sequence.
      *
-     * @throws \UnderflowException if the sequence is empty.
+     * @throws UnderflowException if the sequence is empty.
      *
      * @return mixed
      *
@@ -111,14 +117,14 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns the result of adding all given values to the sequence.
      *
-     * @param array|\Traversable $values
+     * @param array|Traversable $values
      */
     public function merge($values): SequenceInterface;
 
     /**
      * Removes the last value in the sequence, and returns it.
      *
-     * @throws \UnderflowException if the sequence is empty.
+     * @throws UnderflowException if the sequence is empty.
      *
      * @return mixed what was the last value in the sequence.
      *
@@ -147,7 +153,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @param int $index this index to remove.
      *
-     * @throws \OutOfRangeException if the index is not in the range [0, size-1]
+     * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
      * @return mixed the removed value.
      *
@@ -166,13 +172,13 @@ interface SequenceInterface extends CollectionInterface
      *
      * @param int $rotations The number of rotations (can be negative).
      */
-    public function rotate(int $rotations) : SequenceInterface;
+    public function rotate(int $rotations): SequenceInterface;
 
     /**
      * Replaces the value at a given index in the sequence with a new value.
      *
      *
-     * @throws \OutOfRangeException if the index is not in the range [0, size-1]
+     * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
      */
     public function set(int $index, mixed $value): SequenceInterface;
@@ -180,7 +186,7 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Removes and returns the first value in the sequence.
      *
-     * @throws \UnderflowException if the sequence was empty.
+     * @throws UnderflowException if the sequence was empty.
      *
      * @return mixed what was the first value in the sequence.
      *

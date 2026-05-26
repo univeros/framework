@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -11,6 +13,7 @@ namespace Altair\Session\Adapter;
 
 use Altair\Session\Contracts\PdoSessionAdapterInterface;
 use Altair\Session\Traits\PdoSessionAdapterAwareTrait;
+use Override;
 use PDO;
 use PDOStatement;
 
@@ -34,7 +37,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function doAdvisoryLocking(string $sessionId): PDOStatement
     {
         // should we handle the return value? 0 on timeout, null on error
@@ -53,7 +56,7 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getDriver(): string
     {
         return self::DRIVER_MYSQL;
@@ -62,25 +65,25 @@ class MySqlPdoSessionAdapter implements PdoSessionAdapterInterface
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getSelectSql(): string
     {
         $sql = $this->getIsLockModeTransactional()
             ? 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id FOR UPDATE'
             : 'SELECT content, session_lifetime, session_time FROM %s WHERE id = :id';
 
-        return sprintf($sql, $this->table);
+        return \sprintf($sql, $this->table);
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
-        $maxlifetime = (int)ini_get('session.gc_maxlifetime');
+        $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
 
-        $sql = sprintf(
+        $sql = \sprintf(
             'INSERT INTO %s (id, content, session_lifetime, session_time) ' .
             'VALUES (:id, :content, :lifetime, :session_time) ON DUPLICATE KEY UPDATE ' .
             'content=VALUES(content), session_lifetime=VALUES(session_lifetime), session_time=VALUES(session_time)',

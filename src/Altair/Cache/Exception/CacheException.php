@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -12,6 +14,4 @@ namespace Altair\Cache\Exception;
 use Psr\Cache\CacheException as CacheExceptionInterface;
 use RuntimeException;
 
-class CacheException extends RuntimeException implements CacheExceptionInterface
-{
-}
+class CacheException extends RuntimeException implements CacheExceptionInterface {}

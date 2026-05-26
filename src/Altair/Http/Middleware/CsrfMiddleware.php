@@ -17,6 +17,7 @@ use Altair\Http\Support\MimeType;
 use Altair\Http\Traits\IpAddressAwareTrait;
 use Altair\Session\SessionManager;
 use Laminas\Diactoros\Stream;
+use Override;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -32,10 +33,9 @@ class CsrfMiddleware implements MiddlewareInterface
         private readonly SessionManager $sessionManager,
         private readonly MimeType $mimeType,
         private readonly ResponseFactoryInterface $responseFactory,
-    ) {
-    }
+    ) {}
 
-    #[\Override]
+    #[Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($this->isUnsafeMethod($request) && !$this->validateCsrfTokenFromRequest($request)) {
@@ -51,7 +51,7 @@ class CsrfMiddleware implements MiddlewareInterface
 
     private function isUnsafeMethod(ServerRequestInterface $request): bool
     {
-        return !in_array(
+        return !\in_array(
             strtoupper($request->getMethod()),
             ['GET', 'HEAD', 'CONNECT', 'TRACE', 'OPTIONS'],
             true,
@@ -61,7 +61,7 @@ class CsrfMiddleware implements MiddlewareInterface
     private function validateCsrfTokenFromRequest(ServerRequestInterface $request): bool
     {
         $data = $request->getParsedBody();
-        if (!is_array($data) || !isset($data[self::PARAM])) {
+        if (!\is_array($data) || !isset($data[self::PARAM])) {
             return false;
         }
 
@@ -81,7 +81,7 @@ class CsrfMiddleware implements MiddlewareInterface
         $token = rtrim(base64_encode($this->sessionManager->getCsrfToken()->getValue()), '=');
         $token = htmlentities($token, ENT_QUOTES, 'UTF-8');
 
-        $replace = fn (array $match): string => $match[0]
+        $replace = fn(array $match): string => $match[0]
             . '<input type="hidden" name="' . self::PARAM . '" value="' . $token . '">';
 
         $html = preg_replace_callback(

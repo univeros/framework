@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the univeros/framework
@@ -9,27 +11,29 @@
 
 namespace Altair\Validation\Rule;
 
+use Override;
+
 class BooleanRule extends AbstractRule
 {
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     public function assert($value): bool
     {
-        if (!is_scalar($value)) {
+        if (!\is_scalar($value)) {
             return false;
         }
 
-        return is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
+        return \is_bool(filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE));
     }
 
     /**
      * @inheritDoc
      */
-    #[\Override]
+    #[Override]
     protected function buildErrorMessage($value): string
     {
-        return sprintf('"%s" is not a valid boolean value.', $value);
+        return \sprintf('"%s" is not a valid boolean value.', $value);
     }
 }
