@@ -78,7 +78,7 @@ class Payload implements PayloadInterface, JsonSerializable
     public function withoutAttribute($name): PayloadInterface
     {
         $cloned = clone $this;
-        unset($cloned[$name]);
+        unset($cloned->attributes[$name]);
 
         return $cloned;
     }
