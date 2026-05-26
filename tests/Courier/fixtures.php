@@ -25,7 +25,7 @@ class TestCommandInjectsErrorLogMessage implements CommandInterface
     #[\Override]
     public function exec(CommandMessageInterface $message): void
     {
-        $message->withLogMessage(new LogMessage('test message', LogLevel::ERROR));
+        $message->setLogMessage(new LogMessage('test message', LogLevel::ERROR));
     }
 }
 
