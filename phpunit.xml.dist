@@ -3,6 +3,10 @@
   <testsuites>
     <testsuite name="Univeros Test Suite">
       <directory suffix="Test.php">./tests</directory>
+      <exclude>./tests/Http/Middleware/AbstractMiddlewareTest.php</exclude>
+      <exclude>./tests/Sanitation/Filter/AbstractFilterTest.php</exclude>
+      <exclude>./tests/Structure/AbstractCollectionTest.php</exclude>
+      <exclude>./tests/Validation/Rule/AbstractRuleTest.php</exclude>
     </testsuite>
   </testsuites>
   <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">

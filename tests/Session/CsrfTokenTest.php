@@ -20,8 +20,15 @@ class CsrfTokenTest extends TestCase
     }
 
     #[\Override]
-    protected function tearDown(): void    {
-        rmdir($this->tmpDir);
+    protected function tearDown(): void
+    {
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_write_close();
+        }
+        foreach (glob($this->tmpDir . '/*') ?: [] as $file) {
+            @unlink($file);
+        }
+        @rmdir($this->tmpDir);
     }
 
     public function testCsrfToken(): void
