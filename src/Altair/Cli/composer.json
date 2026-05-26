@@ -1,0 +1,21 @@
+{
+    "name": "univeros/cli",
+    "description": "Attribute-driven CLI built on top of Symfony Console.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "symfony/console": "^7.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Cli\\": ""
+        }
+    }
+}
