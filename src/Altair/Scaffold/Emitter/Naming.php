@@ -18,15 +18,15 @@ use Altair\Scaffold\Spec\Ast\Spec;
  * derived from a Spec. Keeps the convention "PascalCase + suffix" consistent
  * across every emitter.
  */
-final class Naming
+final readonly class Naming
 {
     public function __construct(
-        private readonly string $appNamespace = 'App',
-        private readonly string $httpRelativeRoot = 'app/Http',
-        private readonly string $domainRelativeRoot = 'app',
-        private readonly string $testsRelativeRoot = 'tests',
-        private readonly string $openApiRelativeRoot = 'docs/openapi',
-        private readonly string $routesPath = 'config/routes.php',
+        private string $appNamespace = 'App',
+        private string $httpRelativeRoot = 'app/Http',
+        private string $domainRelativeRoot = 'app',
+        private string $testsRelativeRoot = 'tests',
+        private string $openApiRelativeRoot = 'docs/openapi',
+        private string $routesPath = 'config/routes.php',
     ) {}
 
     public function actionShortName(Spec $spec): string

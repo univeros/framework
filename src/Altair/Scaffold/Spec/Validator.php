@@ -27,15 +27,15 @@ use Altair\Scaffold\Spec\Ast\Spec;
  */
 class Validator
 {
-    private const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+    private const array HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
-    private const SCALAR_TYPES = ['string', 'int', 'integer', 'float', 'bool', 'boolean', 'enum', 'array'];
+    private const array SCALAR_TYPES = ['string', 'int', 'integer', 'float', 'bool', 'boolean', 'enum', 'array'];
 
     /**
      * Rules that ship with Altair\Validation\Rule\*Rule plus the bare "required"
      * marker the parser uses to flag mandatory fields.
      */
-    private const KNOWN_RULES = [
+    private const array KNOWN_RULES = [
         'required', 'alphanum', 'alpha', 'between', 'boolean', 'callback',
         'creditcard', 'datetime', 'email', 'iban', 'in', 'integer', 'ip',
         'isbn', 'max', 'min', 'regex', 'swiftbic', 'url', 'zipcode',
@@ -113,6 +113,6 @@ class Validator
             return false;
         }
 
-        return (bool) preg_match('/^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$/', $class);
+        return (bool) preg_match('/^[A-Za-z_]\w*(\\\[A-Za-z_]\w*)+$/', $class);
     }
 }

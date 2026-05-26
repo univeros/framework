@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Altair\Tests\Scaffold\Linter;
 
 use Altair\Scaffold\Emitter\EmissionPlan;
-use Altair\Scaffold\Emitter\EmittedFileKind;
 use Altair\Scaffold\Linter\DriftDetector;
 use Altair\Scaffold\Linter\DriftKind;
 use Altair\Scaffold\Writer\FileWriter;
@@ -16,6 +15,7 @@ final class DriftDetectorTest extends TestCase
 {
     private string $tempRoot;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tempRoot = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'scaffold-drift-' . bin2hex(random_bytes(4));
@@ -28,6 +28,7 @@ final class DriftDetectorTest extends TestCase
         }
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         if (is_dir($this->tempRoot)) {
@@ -39,7 +40,7 @@ final class DriftDetectorTest extends TestCase
     {
         $report = (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser());
 
-        self::assertFalse($report->hasDrift(), implode("\n", array_map(static fn ($f) => $f->message, $report->findings)));
+        self::assertFalse($report->hasDrift(), implode("\n", array_map(static fn ($f): string => $f->message, $report->findings)));
     }
 
     public function testMissingFieldDetected(): void
@@ -64,8 +65,9 @@ final class DriftDetectorTest extends TestCase
     {
         $params = [];
         foreach ($fields as $field) {
-            $params[] = "        public string \${$field},";
+            $params[] = sprintf('        public string $%s,', $field);
         }
+
         $params[] = '    ) {}';
         $ctor = "    public function __construct(\n" . implode("\n", $params);
 

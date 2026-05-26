@@ -43,8 +43,8 @@ class Parser
     {
         try {
             $data = Yaml::parse($yaml);
-        } catch (ParseException $e) {
-            throw new SpecParseException(\sprintf('YAML parse error in %s: %s', $sourcePath ?: '<string>', $e->getMessage()), 0, $e);
+        } catch (ParseException $parseException) {
+            throw new SpecParseException(\sprintf('YAML parse error in %s: %s', $sourcePath ?: '<string>', $parseException->getMessage()), 0, $parseException);
         }
 
         if (!\is_array($data)) {

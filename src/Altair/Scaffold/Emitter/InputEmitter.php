@@ -68,11 +68,12 @@ class InputEmitter
         $last = \count($spec->inputs) - 1;
         foreach ($spec->inputs as $i => $field) {
             $type = $this->typeMapper->toPhpType($field);
-            $nullable = !$field->isRequired() ? '?' : '';
+            $nullable = $field->isRequired() ? '' : '?';
             $default = $this->renderDefault($field);
             $sep = $i === $last ? '' : ',';
             $lines[] = \sprintf('        public %s%s $%s%s%s', $nullable, $type, $field->name, $default, $sep);
         }
+
         $lines[] = '    ) {}';
 
         return implode("\n", $lines);
@@ -84,6 +85,7 @@ class InputEmitter
             if ($field->isEnum() && \is_string($field->default)) {
                 return \sprintf(' = \\%s::%s', ltrim($field->of ?? '', '\\'), $field->default);
             }
+
             return ' = ' . var_export($field->default, true);
         }
 
