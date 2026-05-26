@@ -13,8 +13,7 @@ namespace Altair\Http\Middleware;
 
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
-use Micheh\Cache\CacheUtil;
-use Micheh\Cache\Header\CacheControl;
+use Altair\Http\Support\HttpCache;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
@@ -27,8 +26,8 @@ class CacheMiddleware implements MiddlewareInterface
 {
     public function __construct(
         private readonly CacheItemPoolInterface $cache,
-        private readonly CacheUtil $cacheUtil,
-        private readonly CacheControl $cacheControl,
+        private readonly HttpCache $httpCache,
+        private readonly string $defaultCacheControl,
         private readonly ResponseFactoryInterface $responseFactory,
     ) {
     }
@@ -45,7 +44,7 @@ class CacheMiddleware implements MiddlewareInterface
                 $cached = $cached->withHeader($name, $header);
             }
 
-            if ($this->cacheUtil->isNotModified($request, $cached)) {
+            if ($this->httpCache->isNotModified($request, $cached)) {
                 return $cached;
             }
 
@@ -63,24 +62,16 @@ class CacheMiddleware implements MiddlewareInterface
 
     private function ensureCacheControlHeader(ResponseInterface $response): ResponseInterface
     {
-        if ($response->hasHeader('Cache-Control')) {
-            return $response;
-        }
-        /** @var ResponseInterface $next */
-        $next = $this->cacheUtil->withCacheControl($response, $this->cacheControl);
-
-        return $next;
+        return $response->hasHeader('Cache-Control')
+            ? $response
+            : $this->httpCache->withCacheControl($response, $this->defaultCacheControl);
     }
 
     private function ensureLastModified(ResponseInterface $response): ResponseInterface
     {
-        if ($response->hasHeader('Last-Modified')) {
-            return $response;
-        }
-        /** @var ResponseInterface $next */
-        $next = $this->cacheUtil->withLastModified($response, time());
-
-        return $next;
+        return $response->hasHeader('Last-Modified')
+            ? $response
+            : $this->httpCache->withLastModified($response, time());
     }
 
     private function checkETag(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
@@ -105,12 +96,12 @@ class CacheMiddleware implements MiddlewareInterface
 
     private function saveToCache(CacheItemInterface $item, ResponseInterface $response): bool
     {
-        if (!$this->cacheUtil->isCacheable($response)) {
+        if (!$this->httpCache->isCacheable($response)) {
             return false;
         }
 
         $item->set($response->getHeaders());
-        $item->expiresAfter($this->cacheUtil->getLifetime($response));
+        $item->expiresAfter($this->httpCache->getLifetime($response));
 
         return $this->cache->save($item);
     }
