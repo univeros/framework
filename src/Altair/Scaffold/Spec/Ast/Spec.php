@@ -17,7 +17,7 @@ namespace Altair\Scaffold\Spec\Ast;
 final readonly class Spec
 {
     /**
-     * @param list<InputFieldSpec>    $inputs
+     * @param list<InputFieldSpec>     $inputs
      * @param list<OutputResponseSpec> $outputs
      */
     public function __construct(
@@ -26,6 +26,7 @@ final readonly class Spec
         public array $outputs,
         public DomainSpec $domain,
         public string $sourcePath = '',
+        public ?PersistenceSpec $persistence = null,
     ) {}
 
     /**
@@ -38,5 +39,10 @@ final readonly class Spec
         $parts = explode('\\', $this->domain->class);
 
         return end($parts) ?: 'Endpoint';
+    }
+
+    public function hasPersistence(): bool
+    {
+        return $this->persistence instanceof PersistenceSpec;
     }
 }

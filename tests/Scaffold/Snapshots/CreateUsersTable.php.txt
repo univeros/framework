@@ -1,0 +1,34 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Database\Migrations;
+
+use Cycle\Migrations\Migration;
+
+final class M20260428000000CreateUsersTable extends Migration
+{
+    protected const string DATABASE = 'default';
+
+    public function up(): void
+    {
+        $this->table('users')
+            ->addColumn('id', 'string', ['nullable' => false])
+            ->addColumn('email', 'string', ['nullable' => false, 'unique' => true])
+            ->addColumn('password_hash', 'string', ['nullable' => false])
+            ->addColumn('created_at', 'datetime', ['nullable' => false, 'default' => 'CURRENT_TIMESTAMP'])
+            ->create();
+    }
+
+    public function down(): void
+    {
+        $this->table('users')->drop();
+    }
+}
