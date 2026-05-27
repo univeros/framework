@@ -1,6 +1,29 @@
 # univeros/scaffold  ·  Altair\Scaffold
 
-**Purpose:** Spec-to-API code generator: YAML spec in, Action/Input/Responder + OpenAPI + tests out. Includes a **journal** sub-feature for rewindable/replayable scaffold operations.
+**Purpose:** Spec-to-API code generator: YAML spec in, Action/Input/Responder + OpenAPI + tests out. Includes a **journal** sub-feature for rewindable/replayable scaffold operations and **SDK emitters** that turn the OpenAPI document into typed TypeScript / Python clients.
+
+## SDK emitters (issue #22)
+
+`bin/altair spec:emit-sdk <language>` reads the merged OpenAPI 3.1 document and emits a production-quality, idiomatic client SDK. No external code-gen runtime (no Java / openapi-generator) — the OpenAPI document is parsed with `symfony/yaml` (already a dep) into a language-neutral model, and each language emitter walks that model.
+
+```bash
+bin/altair spec:emit-sdk typescript > sdk.ts
+bin/altair spec:emit-sdk typescript --out=clients/ts --multi-file
+bin/altair spec:emit-sdk python --out=clients/python
+bin/altair spec:emit-sdk --list                 # available languages
+bin/altair spec:emit-sdk typescript --out=sdk.ts --check   # exit 1 on drift (CI gate)
+bin/altair spec:emit-sdk python --openapi=docs/openapi.yaml  # explicit input doc
+```
+
+The document defaults to merging `docs/openapi/*.yaml` fragments (same merge as `spec:emit-openapi`); `--openapi=<path>` overrides.
+
+**TypeScript output** (`Sdk\TypeScript\TypeScriptEmitter`): `fetch`-based, zero runtime deps, `interface` for objects + `type` for unions, status-discriminated response unions (`{ status: 201; data: ... } | { status: 422; data: ... }`), one tree-shakeable exported function per operation, plus `ApiOptions` / `ApiError` / a private `request()` helper.
+
+**Python output** (`Sdk\Python\PythonEmitter`): `httpx` + `pydantic v2`, `str, Enum` for enums, snake_case fields with `Field(alias=...)` for wire-name mapping, both `Client` (sync) and `AsyncClient`.
+
+Both are deterministic (named types alpha-sorted, operations in document order) so `--check` is a reliable CI drift gate. The `Sdk\EmitterRegistry` maps `language → emitter`; add Go/Rust/etc. by registering more `Sdk\Contracts\EmitterInterface` implementations.
+
+Model: `Sdk\Model\{OpenApiParser, OpenApiDocument, OperationModel, ResponseModel, SchemaType}`. CLI: `Cli\EmitSdkCommand`.
 
 ## Journal sub-feature (issue #72)
 
