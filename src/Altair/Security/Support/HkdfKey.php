@@ -21,13 +21,11 @@ class HkdfKey extends AbstractKey
     /**
      * HkdfKey constructor.
      *
-     * @param string|null $salt
-     *
      * @throws InvalidConfigException
      */
     public function __construct(
         string $key,
-        string $salt = null,
+        ?string $salt = null,
         protected ?string $context = null,
         int $length = 0
     ) {
