@@ -43,13 +43,14 @@ final readonly class SnapshotStorage
 
         try {
             $json = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        } catch (JsonException $e) {
-            throw new StorageException('Snapshot payload is not JSON-encodable: ' . $e->getMessage(), 0, $e);
+        } catch (JsonException $jsonException) {
+            throw new StorageException('Snapshot payload is not JSON-encodable: ' . $jsonException->getMessage(), 0, $jsonException);
         }
 
         if (@file_put_contents($tmp, $json, LOCK_EX) === false) {
             throw new StorageException(\sprintf("Cannot write snapshot tmp file '%s'.", $tmp));
         }
+
         if (!@rename($tmp, $path)) {
             @unlink($tmp);
             throw new StorageException(\sprintf("Cannot rename snapshot '%s' → '%s'.", $tmp, $path));

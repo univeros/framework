@@ -41,7 +41,7 @@ final readonly class StatsCommand
             return 0;
         }
 
-        echo "Events: {$stats['total']}\n";
+        echo \sprintf('Events: %d%s', $stats['total'], PHP_EOL);
         echo "First:  " . ($stats['first_at'] ?? '(none)') . "\n";
         echo "Last:   " . ($stats['last_at'] ?? '(none)') . "\n";
         echo "Total duration: {$stats['total_duration_ms']}ms\n";

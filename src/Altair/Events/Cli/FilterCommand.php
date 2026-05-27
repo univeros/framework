@@ -44,8 +44,8 @@ final readonly class FilterCommand
         try {
             $kinds = $this->parseKinds($kind);
             $statuses = $this->parseStatuses($status);
-        } catch (Throwable $e) {
-            echo $e->getMessage(), "\n";
+        } catch (Throwable $throwable) {
+            echo $throwable->getMessage(), "\n";
 
             return 2;
         }

@@ -43,6 +43,7 @@ class EventsConfigurationTest extends TestCase
             unset($_ENV[$key], $_SERVER[$key]);
             putenv($key);
         }
+
         $this->appliedKeys = [];
 
         $this->rrmdir($this->tmpRoot);
@@ -103,7 +104,7 @@ class EventsConfigurationTest extends TestCase
         foreach ($values as $key => $value) {
             $_ENV[$key] = $value;
             $_SERVER[$key] = $value;
-            putenv("{$key}={$value}");
+            putenv(sprintf('%s=%s', $key, $value));
             $this->appliedKeys[] = $key;
         }
     }
@@ -113,12 +114,14 @@ class EventsConfigurationTest extends TestCase
         if (!is_dir($dir)) {
             return;
         }
+
         foreach (new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($dir, \FilesystemIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST,
         ) as $file) {
             $file->isDir() ? @rmdir((string) $file) : @unlink((string) $file);
         }
+
         @rmdir($dir);
     }
 }

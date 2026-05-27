@@ -51,8 +51,8 @@ final readonly class CheckpointStorage
 
         try {
             $json = json_encode($payload, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        } catch (JsonException $e) {
-            throw new StorageException('Checkpoint payload not JSON-encodable: ' . $e->getMessage(), 0, $e);
+        } catch (JsonException $jsonException) {
+            throw new StorageException('Checkpoint payload not JSON-encodable: ' . $jsonException->getMessage(), 0, $jsonException);
         }
 
         $path = $this->pathFor($name);
@@ -88,8 +88,8 @@ final readonly class CheckpointStorage
         try {
             /** @var array<string, mixed> $decoded */
             $decoded = json_decode($raw, true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException $e) {
-            throw new StorageException("Checkpoint '{$name}' is not valid JSON: " . $e->getMessage(), 0, $e);
+        } catch (JsonException $jsonException) {
+            throw new StorageException(\sprintf("Checkpoint '%s' is not valid JSON: ", $name) . $jsonException->getMessage(), 0, $jsonException);
         }
 
         foreach (['name', 'event_id', 'created_at'] as $required) {
@@ -124,9 +124,14 @@ final readonly class CheckpointStorage
 
         $names = [];
         foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($this->directory, FilesystemIterator::SKIP_DOTS)) as $file) {
-            if (!$file->isFile() || $file->getExtension() !== 'json') {
+            if (!$file->isFile()) {
                 continue;
             }
+
+            if ($file->getExtension() !== 'json') {
+                continue;
+            }
+
             $relative = ltrim(substr((string) $file, \strlen($this->directory)), DIRECTORY_SEPARATOR);
             $name = substr($relative, 0, -\strlen('.json'));
             // Normalise back-slashes (Windows) to forward-slashes so the
@@ -156,6 +161,7 @@ final readonly class CheckpointStorage
                 \sprintf("Invalid checkpoint name '%s'. Allowed: alphanumeric, '_', '.', '-', '/'.", $name),
             );
         }
+
         if (str_contains($name, '..')) {
             throw new InvalidArgumentException("Checkpoint name must not contain '..'.");
         }

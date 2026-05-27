@@ -66,12 +66,15 @@ final readonly class Event
         if ($id === '') {
             throw new InvalidArgumentException('Event id must not be empty.');
         }
+
         if ($command === '') {
             throw new InvalidArgumentException('Event command must not be empty.');
         }
+
         if ($durationMs < 0) {
             throw new InvalidArgumentException('Event duration must be non-negative.');
         }
+
         if ($status === EventStatus::Fail && ($error === null || $error === '')) {
             throw new InvalidArgumentException('Failed events must carry a non-empty error description.');
         }
@@ -125,12 +128,14 @@ final readonly class Event
             'duration_ms' => $this->durationMs,
         ];
 
-        if ($this->changes !== null) {
+        if ($this->changes instanceof Changes) {
             $out['changes'] = $this->changes->toArray();
         }
+
         if ($this->error !== null) {
             $out['error'] = $this->error;
         }
+
         if ($this->extra !== []) {
             $out['extra'] = $this->extra;
         }
@@ -145,8 +150,8 @@ final readonly class Event
     {
         try {
             return json_encode($this->toArray(), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        } catch (JsonException $e) {
-            throw new InvalidArgumentException('Event is not JSON-encodable: ' . $e->getMessage(), 0, $e);
+        } catch (JsonException $jsonException) {
+            throw new InvalidArgumentException('Event is not JSON-encodable: ' . $jsonException->getMessage(), 0, $jsonException);
         }
     }
 

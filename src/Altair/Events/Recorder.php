@@ -54,9 +54,9 @@ final readonly class Recorder implements RecorderInterface
 
         try {
             $this->storage->append($scrubbed);
-        } catch (Throwable $e) {
+        } catch (Throwable $throwable) {
             $this->logger->warning('Event recorder failed: {message}', [
-                'message' => $e->getMessage(),
+                'message' => $throwable->getMessage(),
                 'event_id' => $event->id,
                 'kind' => $event->kind->value,
             ]);

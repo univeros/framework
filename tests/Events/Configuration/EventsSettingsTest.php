@@ -23,6 +23,7 @@ class EventsSettingsTest extends TestCase
             unset($_ENV[$key], $_SERVER[$key]);
             putenv($key);
         }
+
         $this->appliedKeys = [];
     }
 
@@ -79,7 +80,7 @@ class EventsSettingsTest extends TestCase
         foreach ($vars as $key => $value) {
             $_ENV[$key] = $value;
             $_SERVER[$key] = $value;
-            putenv("{$key}={$value}");
+            putenv(sprintf('%s=%s', $key, $value));
             $this->appliedKeys[] = $key;
         }
     }
