@@ -34,6 +34,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Cookie/        ← Cookie value objects (PSR-7 aware)
 │   ├── Courier/       ← Mail/transport abstraction
 │   ├── Data/          ← Entity/DTO base + attribute mutators
+│   ├── Events/        ← Append-only mutation event log (.altair/events.jsonl) + CLI (events:tail/show/since/checkpoint/compact)
 │   ├── Filesystem/    ← Flysystem v3 adapters & configuration
 │   ├── Happen/        ← Event dispatcher
 │   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
