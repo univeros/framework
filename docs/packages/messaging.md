@@ -104,6 +104,28 @@ The transport bridges are loaded reflectively: `MessengerConfiguration` adds `Sy
 
 ## Running workers
 
+> **Host-application boot is required.** The framework's `bin/altair` only wires CLI discovery (`CliConfiguration`); it does **not** apply `MessengerConfiguration` on its behalf. Invoking `bin/altair worker` directly from a fresh framework checkout fails with `TransportSettings is not instantiable`, because nothing has registered the messenger delegates with the container. The same caveat applies to `bin/altair db:migrate` (which needs `CycleOrmConfiguration` applied first). The host application is expected to ship its own entry point that constructs the container, applies the configurations it uses, then hands off to `Altair\Cli\Application::run()`. A typical host entry looks like:
+>
+> ```php
+> #!/usr/bin/env php
+> <?php
+> require __DIR__ . '/../vendor/autoload.php';
+>
+> use Altair\Cli\Application;
+> use Altair\Cli\Configuration\CliConfiguration;
+> use Altair\Configuration\Support\Env;
+> use Altair\Container\Container;
+> use Altair\Messaging\Configuration\MessengerConfiguration;
+>
+> $container = new Container();
+> $container->share(new Env());
+>
+> (new CliConfiguration([__DIR__ . '/../app/Cli']))->apply($container);
+> (new MessengerConfiguration([__DIR__ . '/../app/Messages']))->apply($container);
+>
+> exit($container->make(Application::class)->run());
+> ```
+
 ```bash
 bin/altair worker                          # consume every configured transport
 bin/altair worker --transports=default,high
