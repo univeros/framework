@@ -30,11 +30,8 @@ class CachedReflection implements ReflectionInterface
 
     /**
      * CachedReflection constructor.
-     *
-     * @param ReflectionInterface|null $reflector
-     * @param ReflectionCacheInterface|null $cache
      */
-    public function __construct(ReflectionInterface $reflector = null, ReflectionCacheInterface $cache = null)
+    public function __construct(?ReflectionInterface $reflector = null, ?ReflectionCacheInterface $cache = null)
     {
         $this->reflector = $reflector ?? new StandardReflection();
         $this->cache = $cache ?? new ArrayCache();

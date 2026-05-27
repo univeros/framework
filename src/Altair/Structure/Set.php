@@ -125,7 +125,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function filter(callable $callback = null): SetInterface
+    public function filter(?callable $callback = null): SetInterface
     {
         return new static(array_filter($this->toArray(), $callback ?: 'boolval'));
     }
@@ -220,7 +220,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function slice(int $offset, int $length = null): SetInterface
+    public function slice(int $offset, ?int $length = null): SetInterface
     {
         return new static($this->internal->slice($offset, $length)->keys());
     }
@@ -229,7 +229,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function sort(callable $comparator = null): SetInterface
+    public function sort(?callable $comparator = null): SetInterface
     {
         return new static($this->getMap()->ksort($comparator)->keys());
     }

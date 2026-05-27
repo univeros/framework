@@ -26,10 +26,8 @@ class FileCache implements ReflectionCacheInterface
 
     /**
      * FileCache constructor.
-     *
-     * @param string|null $path
      */
-    public function __construct(string $path = null)
+    public function __construct(?string $path = null)
     {
         $this->path = $path ?? sys_get_temp_dir();
     }

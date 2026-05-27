@@ -20,9 +20,8 @@ interface TokenInterface
     /**
      * Returns a value from its metadata if any.
      *
-     * @param string|null $key
      *
      * @return mixed
      */
-    public function getMetadata(string $key = null);
+    public function getMetadata(?string $key = null);
 }

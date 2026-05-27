@@ -21,7 +21,7 @@ class DateTimeFilter extends AbstractFilter
     /**
      * DateTimeFilter constructor.
      */
-    public function __construct(string $format = null)
+    public function __construct(?string $format = null)
     {
         $this->format = $format ?? 'Y-m-d H:i:s';
     }

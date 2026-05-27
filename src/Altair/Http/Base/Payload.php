@@ -43,11 +43,8 @@ class Payload implements PayloadInterface
 
     /**
      * Payload constructor.
-     *
-     * @param InputCollection|null $inputCollection
-     * @param SettingsCollection|null $settingsCollection
      */
-    public function __construct(InputCollection $inputCollection = null, SettingsCollection $settingsCollection = null)
+    public function __construct(?InputCollection $inputCollection = null, ?SettingsCollection $settingsCollection = null)
     {
         $this->inputCollection = $inputCollection ?? new InputCollection();
         $this->settingsCollection = $settingsCollection ?? new SettingsCollection();

@@ -20,10 +20,8 @@ class IpRule extends AbstractRule
 
     /**
      * IpRule constructor.
-     *
-     * @param string|null $range
      */
-    public function __construct(protected ?int $options = null, string $range = null)
+    public function __construct(protected ?int $options = null, ?string $range = null)
     {
         $this->range = $range !== null ? $this->parseRange($range) : null;
     }

@@ -77,15 +77,13 @@ trait PdoSessionAdapterAwareTrait
 
     /**
      * PdoSessionHandler constructor.
-     *
-     * @param int|null $lockMode
      */
     public function __construct(
         string $dsn,
         string $username,
         string $password,
         string $table,
-        int $lockMode = null,
+        ?int $lockMode = null,
         array $options = []
     ) {
         $this->dsn = $dsn;

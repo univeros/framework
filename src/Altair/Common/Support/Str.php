@@ -33,7 +33,7 @@ class Str
      * @param int $start the starting position.
      * @param int|null $length the desired portion length. If none specified, there will be no limit on length.
      */
-    public function byteSubString(string $value, int $start, int $length = null, string $encoding = '8bit'): string
+    public function byteSubString(string $value, int $start, ?int $length = null, string $encoding = '8bit'): string
     {
         return mb_substr($value, $start, $length ?? mb_strlen($value, $encoding), $encoding);
     }

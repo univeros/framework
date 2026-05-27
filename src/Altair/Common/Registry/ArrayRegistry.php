@@ -21,10 +21,8 @@ class ArrayRegistry implements RegistryInterface
 
     /**
      * ArrayRegistry constructor.
-     *
-     * @param array|null $data
      */
-    public function __construct(array $data = null)
+    public function __construct(?array $data = null)
     {
         $this->data = $data ?? [];
     }

@@ -22,10 +22,8 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
 
     /**
      * RepositoryIdentityValidator constructor.
-     *
-     * @param array|null $options
      */
-    public function __construct(protected QueryRepositoryInterface $repository, array $options = null)
+    public function __construct(protected QueryRepositoryInterface $repository, ?array $options = null)
     {
         // Options contain the names of the fields to search on the db by the entity.
         // By default: 'username' and 'hash' are the default fieldname values. You can easily change them as:
