@@ -21,6 +21,7 @@ use Altair\Messaging\HandlerLocator;
 use Altair\Messaging\MessageBus;
 use Altair\Messaging\Middleware\ContainerHandlerMiddleware;
 use Altair\Messaging\Transport\FailureSenderContainer;
+use Altair\Messaging\Transport\LazyBus;
 use Altair\Messaging\Transport\TransportLocator;
 use Altair\Messaging\Transport\TransportRegistry;
 use Override;
@@ -82,7 +83,7 @@ final class MessengerConfiguration implements ConfigurationInterface
             ->alias(SerializerInterface::class, PhpSerializer::class)
             ->delegate(
                 TransportFactory::class,
-                static fn(): TransportFactory => new TransportFactory(self::collectTransportFactories()),
+                static fn(): TransportFactory => new TransportFactory(self::collectTransportFactories(new LazyBus($container))),
             )
             ->share(TransportFactory::class)
             ->alias(TransportFactoryInterface::class, TransportFactory::class)
@@ -172,10 +173,10 @@ final class MessengerConfiguration implements ConfigurationInterface
     /**
      * @return list<TransportFactoryInterface>
      */
-    private static function collectTransportFactories(): array
+    private static function collectTransportFactories(SymfonyMessageBusInterface $lazyBus): array
     {
         $factories = [
-            new SyncTransportFactory(),
+            new SyncTransportFactory($lazyBus),
             new InMemoryTransportFactory(),
         ];
 

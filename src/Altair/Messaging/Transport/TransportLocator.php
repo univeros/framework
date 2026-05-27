@@ -30,7 +30,7 @@ final readonly class TransportLocator implements ContainerInterface
     public function get(string $id): TransportInterface
     {
         if (!$this->registry->has($id)) {
-            throw new class(\sprintf("Transport '%s' is not configured.", $id)) extends UnknownTransportException implements NotFoundExceptionInterface {};
+            throw new class (\sprintf("Transport '%s' is not configured.", $id)) extends UnknownTransportException implements NotFoundExceptionInterface {};
         }
 
         return $this->registry->get($id);

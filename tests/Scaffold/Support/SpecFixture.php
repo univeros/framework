@@ -11,6 +11,7 @@ use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
 use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
+use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 final class SpecFixture
@@ -35,6 +36,27 @@ final class SpecFixture
             ],
             domain: new DomainSpec(class: 'App\\User\\CreateUser'),
             sourcePath: 'api/users/create.yaml',
+        );
+    }
+
+    public static function createUserWithQueue(): Spec
+    {
+        $base = self::createUser();
+
+        return new Spec(
+            endpoint: $base->endpoint,
+            inputs: $base->inputs,
+            outputs: $base->outputs,
+            domain: $base->domain,
+            sourcePath: $base->sourcePath,
+            queue: [
+                new QueueDispatchSpec(
+                    name: 'on_create',
+                    message: 'App\\Messages\\SendWelcomeEmail',
+                    fields: ['userId' => 'string', 'email' => 'string'],
+                    transport: 'default',
+                ),
+            ],
         );
     }
 
