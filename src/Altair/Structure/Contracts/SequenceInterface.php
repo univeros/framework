@@ -46,7 +46,7 @@ interface SequenceInterface extends CollectionInterface
      * @param callable|null $callback Accepts a value, returns a boolean result: true : include the value, false: skip
      * the value.
      */
-    public function filter(callable $callback = null): SequenceInterface;
+    public function filter(?callable $callback = null): SequenceInterface;
 
     /**
      * Returns the index of a given value, or false if it could not be found.
@@ -95,7 +95,7 @@ interface SequenceInterface extends CollectionInterface
      *
      *
      */
-    public function join(string $glue = null): string;
+    public function join(?string $glue = null): string;
 
     /**
      * Returns the last value in the sequence.
@@ -206,7 +206,7 @@ interface SequenceInterface extends CollectionInterface
      * If a length is not provided, the resulting sequence will contain all values between the index and the end of the
      * sequence.
      */
-    public function slice(int $index, int $length = null): SequenceInterface;
+    public function slice(int $index, ?int $length = null): SequenceInterface;
 
     /**
      * Returns a sorted copy of the sequence, based on an optional callable
@@ -214,7 +214,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @param callable|null $comparator Accepts two values to be compared. Should return the result of a <=> b.
      */
-    public function sort(callable $comparator = null): SequenceInterface;
+    public function sort(?callable $comparator = null): SequenceInterface;
 
     /**
      * Returns the sum of all values in the sequence.

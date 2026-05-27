@@ -228,10 +228,8 @@ class ZipCodeRule extends AbstractRule
 
     /**
      * ZipCodeRule constructor.
-     *
-     * @param string|null $country
      */
-    public function __construct(string $country = null)
+    public function __construct(?string $country = null)
     {
         $this->country = strtoupper(trim($country ?? 'US'));
         if (!\array_key_exists($this->country, self::$patterns)) {

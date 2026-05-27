@@ -73,7 +73,7 @@ class ListenerInspectorTest extends TestCase
             }
 
             #[Override]
-            public function dispatch(string $name, EventInterface $event = null): EventInterface
+            public function dispatch(string $name, ?EventInterface $event = null): EventInterface
             {
                 throw new \RuntimeException('not implemented');
             }

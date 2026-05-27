@@ -27,10 +27,8 @@ interface SessionManagerInterface
 
     /**
      * Sets the callable used to clear the session cookie when destroying the session.
-     *
-     * @param callable|null $callable
      */
-    public function setDeleteCookieCallable(callable $callable = null);
+    public function setDeleteCookieCallable(?callable $callable = null);
 
     /**
      * Creates a session block.

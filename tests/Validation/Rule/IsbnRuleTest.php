@@ -72,7 +72,7 @@ class IsbnRuleTest extends TestCase
      * @param null|mixed $type
      */
     #[DataProvider('trueProvider')]
-    public function testPayloadTrue(string $value, int $type = null): void
+    public function testPayloadTrue(string $value, ?int $type = null): void
     {
         $this->assertTrue($this->assertPayload($value, $type));
     }
@@ -82,7 +82,7 @@ class IsbnRuleTest extends TestCase
      * @param null|mixed $type
      */
     #[DataProvider('falseProvider')]
-    public function testPayloadFalse(string|int $value, int $type = null): void
+    public function testPayloadFalse(string|int $value, ?int $type = null): void
     {
         $this->assertFalse($this->assertPayload($value, $type));
     }
@@ -92,7 +92,7 @@ class IsbnRuleTest extends TestCase
      * @param null|mixed $type
      */
     #[DataProvider('trueProvider')]
-    public function testValueTrue(string $value, int $type = null): void
+    public function testValueTrue(string $value, ?int $type = null): void
     {
         $this->assertTrue($this->assertValue($value, $type));
     }
@@ -102,7 +102,7 @@ class IsbnRuleTest extends TestCase
      * @param null|mixed $type
      */
     #[DataProvider('falseProvider')]
-    public function testValueFalse(string|int $value, int $type = null): void
+    public function testValueFalse(string|int $value, ?int $type = null): void
     {
         $this->assertFalse($this->assertValue($value, $type));
     }

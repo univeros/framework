@@ -32,7 +32,7 @@ class Inflector
      * @param string $replacement the replacement to use for spaces
      * @param bool $lowercase whether to return the string in lowercase or not. Defaults to true.
      */
-    public function slug(string $value, string $replacement = null, $lowercase = true): string
+    public function slug(string $value, ?string $replacement = null, $lowercase = true): string
     {
         $replacement ??= '-';
         $value = $this->transliterator->transliterate($value);

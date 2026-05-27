@@ -32,10 +32,8 @@ class Event implements EventInterface
 
     /**
      * Event constructor.
-     *
-     * @param array|null $arguments
      */
-    public function __construct(protected string $name, array $arguments = null)
+    public function __construct(protected string $name, ?array $arguments = null)
     {
         $this->arguments = $arguments ?? [];
         $this->occurredOn = Carbon::today('UTC')->getTimestamp();
