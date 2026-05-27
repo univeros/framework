@@ -84,6 +84,7 @@
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",
         "univeros/http": "self.version",
+        "univeros/introspection": "self.version",
         "univeros/messaging": "self.version",
         "univeros/middleware": "self.version",
         "univeros/persistence": "self.version",

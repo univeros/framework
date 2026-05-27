@@ -349,6 +349,16 @@ class Container implements ContainerInterface
     }
 
     /**
+     * Read-only access to registered prepare callables, keyed by normalized class name.
+     *
+     * Walking this collection is safe — it never triggers instantiation.
+     */
+    public function getPrepares(): PreparesCollection
+    {
+        return $this->prepares;
+    }
+
+    /**
      * @param $name
      */
     public function isset($name): bool
