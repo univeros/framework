@@ -78,6 +78,34 @@ class CommandsSmokeTest extends TestCase
         $this->assertJson(trim($output));
     }
 
+    public function testContainerInspectRealizedListsInstantiatedServices(): void
+    {
+        $container = new Container();
+        $container->share(new \ArrayObject());
+
+        $command = new ContainerInspectCommand(new ContainerInspector($container), $this->renderers);
+
+        ob_start();
+        $exit = $command(id: null, shared: false, filter: null, format: 'json', realized: true);
+        $output = (string) ob_get_clean();
+
+        $this->assertSame(0, $exit);
+        $this->assertJson(trim($output));
+        $this->assertStringContainsString('ArrayObject', $output);
+    }
+
+    public function testContainerInspectRealizedReportsEmptyInHumanMode(): void
+    {
+        $command = new ContainerInspectCommand(new ContainerInspector(new Container()), $this->renderers);
+
+        ob_start();
+        $exit = $command(id: null, shared: false, filter: null, format: 'human', realized: true);
+        $output = (string) ob_get_clean();
+
+        $this->assertSame(0, $exit);
+        $this->assertStringContainsString('No services realised yet.', $output);
+    }
+
     public function testContainerInspectReportsUnknownBinding(): void
     {
         $command = new ContainerInspectCommand(new ContainerInspector(new Container()), $this->renderers);

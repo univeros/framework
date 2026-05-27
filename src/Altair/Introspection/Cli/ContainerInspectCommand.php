@@ -43,15 +43,27 @@ final readonly class ContainerInspectCommand
         ?string $filter = null,
         #[Option(description: 'Output format: human or json.')]
         string $format = 'human',
+        #[Option(description: 'Only show services the Container has actually instantiated (realised view).')]
+        bool $realized = false,
     ): int {
         try {
-            $table = $id !== null
-                ? $this->inspector->inspectOne($id)
-                : $this->inspector->inspectAll(sharedOnly: $shared, filter: $filter);
+            $table = match (true) {
+                $id !== null => $this->inspector->inspectOne($id),
+                $realized => $this->inspector->inspectRealized(filter: $filter),
+                default => $this->inspector->inspectAll(sharedOnly: $shared, filter: $filter),
+            };
         } catch (NotFoundException $notFoundException) {
             echo $notFoundException->getMessage(), "\n";
 
             return 1;
+        }
+
+        // Human mode gets an explicit "nothing realised yet" line; JSON mode
+        // already conveys it as an empty `rows` array, which agents parse.
+        if ($realized && $id === null && $table->isEmpty() && $format !== 'json') {
+            echo "No services realised yet.\n";
+
+            return 0;
         }
 
         try {

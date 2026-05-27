@@ -82,4 +82,59 @@ class ContainerInspectorTest extends TestCase
         $this->expectException(NotFoundException::class);
         (new ContainerInspector(new Container()))->inspectOne('Nonexistent\\Class');
     }
+
+    public function testInspectRealizedIncludesBuiltInstancesAndExcludesUnbuiltShares(): void
+    {
+        $container = new Container();
+        // Registered as a singleton but never constructed → null placeholder, not realized.
+        $container->share(NullLogger::class);
+        // Sharing an existing instance realizes it immediately (shareInstance path).
+        $container->share(new \ArrayObject());
+
+        $before = (new ContainerInspector($container))->inspectRealized();
+        $idsBefore = array_map('strtolower', array_column($before->rows, 'id'));
+
+        $this->assertContains(strtolower(\ArrayObject::class), $idsBefore, 'instance-shared services are realized at once');
+        $this->assertNotContains(strtolower(NullLogger::class), $idsBefore, 'registered-but-unbuilt shares are not realized');
+
+        // Constructing the logger via make() flips it to realized.
+        $container->make(NullLogger::class);
+
+        $after = (new ContainerInspector($container))->inspectRealized();
+        $idsAfter = array_map('strtolower', array_column($after->rows, 'id'));
+        $this->assertContains(strtolower(NullLogger::class), $idsAfter);
+
+        $loggerRows = array_values(array_filter(
+            $after->rows,
+            static fn(array $row): bool => strtolower((string) $row['id']) === strtolower(NullLogger::class),
+        ));
+        $this->assertCount(1, $loggerRows);
+        $this->assertSame(NullLogger::class, $loggerRows[0]['class'], 'class column carries the concrete runtime class');
+        $this->assertSame(\count($after->rows), $after->extras['total']);
+    }
+
+    public function testInspectRealizedIsEmptyBeforeAnyInstantiation(): void
+    {
+        $container = new Container();
+        $container->share(NullLogger::class); // placeholder only — nothing built yet
+
+        $table = (new ContainerInspector($container))->inspectRealized();
+
+        $this->assertTrue($table->isEmpty());
+        $this->assertSame([], $table->rows);
+        $this->assertSame(0, $table->extras['total']);
+    }
+
+    public function testInspectRealizedAppliesFilter(): void
+    {
+        $container = new Container();
+        $container->share(new \ArrayObject());
+        $container->share(new \SplStack());
+
+        $table = (new ContainerInspector($container))->inspectRealized(filter: 'array');
+        $ids = array_map('strtolower', array_column($table->rows, 'id'));
+
+        $this->assertContains(strtolower(\ArrayObject::class), $ids);
+        $this->assertNotContains(strtolower(\SplStack::class), $ids);
+    }
 }
