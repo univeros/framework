@@ -22,6 +22,7 @@ class TransportSettingsTest extends TestCase
             unset($_ENV[$key], $_SERVER[$key]);
             putenv($key);
         }
+
         $this->appliedKeys = [];
         parent::tearDown();
     }

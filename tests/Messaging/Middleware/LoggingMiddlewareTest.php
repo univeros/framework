@@ -44,8 +44,8 @@ class LoggingMiddlewareTest extends TestCase
         try {
             $middleware->handle($envelope, $stack);
             $this->fail('Expected RuntimeException to propagate.');
-        } catch (RuntimeException $exception) {
-            $this->assertSame('boom', $exception->getMessage());
+        } catch (RuntimeException $runtimeException) {
+            $this->assertSame('boom', $runtimeException->getMessage());
         }
 
         $errorLevels = array_column($logger->records, 'level');

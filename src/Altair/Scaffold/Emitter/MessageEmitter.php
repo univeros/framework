@@ -66,6 +66,7 @@ class MessageEmitter
             $lines[] = \sprintf('        public %s $%s%s', $phpType, $name, $sep);
             $i++;
         }
+
         $lines[] = '    ) {}';
 
         return implode("\n", $lines);

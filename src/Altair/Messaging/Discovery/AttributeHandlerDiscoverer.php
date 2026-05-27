@@ -42,6 +42,7 @@ class AttributeHandlerDiscoverer
                 if (isset($seen[$key])) {
                     continue;
                 }
+
                 $seen[$key] = true;
 
                 yield $entry;
@@ -80,7 +81,11 @@ class AttributeHandlerDiscoverer
         );
 
         foreach ($iterator as $file) {
-            if (!$file->isFile() || $file->getExtension() !== 'php') {
+            if (!$file->isFile()) {
+                continue;
+            }
+
+            if ($file->getExtension() !== 'php') {
                 continue;
             }
 

@@ -30,7 +30,7 @@ final class ContainerHandlerMiddleware extends HandleMessageMiddleware
     ) {
         parent::__construct($locator, $allowNoHandlers);
 
-        if ($logger !== null) {
+        if ($logger instanceof LoggerInterface) {
             $this->setLogger($logger);
         }
     }

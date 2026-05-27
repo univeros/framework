@@ -100,11 +100,13 @@ final readonly class TransportSettings
                 $candidates[(string) $name] = true;
             }
         }
+
         foreach ($_SERVER as $name => $value) {
             if (str_starts_with((string) $name, self::ENV_PREFIX)) {
                 $candidates[(string) $name] = true;
             }
         }
+
         foreach (self::scanProcessEnv() as $name) {
             if (str_starts_with($name, self::ENV_PREFIX)) {
                 $candidates[$name] = true;
@@ -114,13 +116,19 @@ final readonly class TransportSettings
         $dsns = [];
         foreach (array_keys($candidates) as $envName) {
             $value = $env->get($envName);
-            if (!\is_string($value) || $value === '') {
+            if (!\is_string($value)) {
                 continue;
             }
+
+            if ($value === '') {
+                continue;
+            }
+
             $transportName = strtolower(substr($envName, \strlen(self::ENV_PREFIX)));
             if ($transportName === '') {
                 continue;
             }
+
             $dsns[$transportName] = $value;
         }
 

@@ -6,5 +6,4 @@ namespace Altair\Tests\Messaging\Fixtures;
 
 final class NotAHandler
 {
-    public function nothing(): void {}
 }

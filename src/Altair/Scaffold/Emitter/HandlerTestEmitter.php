@@ -31,7 +31,7 @@ class HandlerTestEmitter
         $testNamespace = 'Tests\\Messages';
 
         $header = PhpHeader::render($testNamespace);
-        $messageShort = $this->shortNameOf($messageFqcn);
+        $this->shortNameOf($messageFqcn);
         $handlerShort = $this->shortNameOf($handlerFqcn);
 
         $body = <<<PHP
@@ -82,7 +82,7 @@ class HandlerTestEmitter
             'float'           => '0.0',
             'bool', 'boolean' => 'false',
             'string'          => "''",
-            default           => "new \\{$type}()",
+            default           => \sprintf('new \%s()', $type),
         };
     }
 
