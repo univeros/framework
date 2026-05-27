@@ -9,7 +9,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 ## 1. Project at a glance
 
 - **Name:** `univeros/framework` — PHP framework, MIT licensed.
-- **Root namespace:** `Altair\*` (legacy reasons; the Composer package is `univeros/*` and 16 sub-packages are bundled via `replace`).
+- **Root namespace:** `Altair\*` (legacy reasons; the Composer package is `univeros/*` and 18 sub-packages are bundled via `replace`).
 - **Origin:** Started ~7 years ago as a learning vehicle. Originally targeted PHP 7.0-7.2 and PSR-3/6/7/11/15/16 v1.
 - **Current target:** PHP **8.3+** (modernization started 2026-05).
 - **Architecture style:** Library-first / framework-agnostic — every sub-package is meant to be usable standalone behind PSR interfaces.
@@ -38,8 +38,9 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Happen/        ← Event dispatcher
 │   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
 │   ├── Middleware/    ← PSR-15 middleware primitives
+│   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
 │   ├── Sanitation/    ← Input sanitation rules
-│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold)
+│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: block
 │   ├── Security/      ← Hashing, encryption, CSRF tokens
 │   ├── Session/       ← Session handlers (file, Redis, Mongo)
 │   ├── Structure/     ← Collection primitives (Map, Set, etc.)

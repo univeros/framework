@@ -8,6 +8,9 @@ use Altair\Scaffold\Spec\Ast\DomainSpec;
 use Altair\Scaffold\Spec\Ast\EndpointSpec;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
+use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 final class SpecFixture
@@ -32,6 +35,37 @@ final class SpecFixture
             ],
             domain: new DomainSpec(class: 'App\\User\\CreateUser'),
             sourcePath: 'api/users/create.yaml',
+        );
+    }
+
+    public static function createUserWithPersistence(): Spec
+    {
+        $base = self::createUser();
+
+        return new Spec(
+            endpoint: $base->endpoint,
+            inputs: $base->inputs,
+            outputs: $base->outputs,
+            domain: $base->domain,
+            sourcePath: $base->sourcePath,
+            persistence: new PersistenceSpec(
+                entity: new PersistenceEntitySpec(
+                    class: 'App\\User\\User',
+                    table: 'users',
+                    fields: [
+                        new PersistenceFieldSpec(name: 'id', type: 'uuid', primary: true),
+                        new PersistenceFieldSpec(name: 'email', type: 'string', unique: true),
+                        new PersistenceFieldSpec(name: 'password_hash', type: 'string'),
+                        new PersistenceFieldSpec(
+                            name: 'created_at',
+                            type: 'datetime',
+                            hasDefault: true,
+                            default: 'now',
+                        ),
+                    ],
+                ),
+                repository: 'App\\User\\UserRepository',
+            ),
         );
     }
 }
