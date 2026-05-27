@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Messaging\Integration;
 
+use Altair\Messaging\Attribute\AsHandler;
+use Psr\Container\ContainerInterface;
 use Altair\Container\Container;
 use Altair\Messaging\Discovery\HandlerRegistry;
 use Altair\Messaging\HandlerLocator;
@@ -32,7 +34,7 @@ class DispatchAndConsumeTest extends TestCase
         $registry = new HandlerRegistry();
         $registry->registerFromAttribute(
             SendWelcomeEmailHandler::class,
-            new \Altair\Messaging\Attribute\AsHandler(SendWelcomeEmail::class),
+            new AsHandler(SendWelcomeEmail::class),
         );
 
         $locator = new HandlerLocator($container, $registry);
@@ -58,7 +60,7 @@ class DispatchAndConsumeTest extends TestCase
         $registry = new HandlerRegistry();
         $registry->registerFromAttribute(
             SendWelcomeEmailHandler::class,
-            new \Altair\Messaging\Attribute\AsHandler(SendWelcomeEmail::class),
+            new AsHandler(SendWelcomeEmail::class),
         );
 
         $locator = new HandlerLocator($container, $registry);
@@ -67,7 +69,7 @@ class DispatchAndConsumeTest extends TestCase
         $transport = new InMemoryTransport();
         $sendersLocator = new SendersLocator(
             [SendWelcomeEmail::class => ['default']],
-            new class($transport) implements \Psr\Container\ContainerInterface {
+            new class($transport) implements ContainerInterface {
                 public function __construct(private readonly InMemoryTransport $transport) {}
 
                 public function get(string $id): InMemoryTransport
@@ -91,6 +93,7 @@ class DispatchAndConsumeTest extends TestCase
 
         $dispatcher = new EventDispatcher();
         $dispatcher->addSubscriber(new StopWorkerOnMessageLimitListener(1));
+
         $worker = new Worker(['default' => $transport], $bus, $dispatcher);
         $worker->run(['sleep' => 0]);
 

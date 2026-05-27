@@ -35,7 +35,7 @@ final readonly class FailureSenderContainer implements ContainerInterface
     #[Override]
     public function get(string $id): SenderInterface
     {
-        if (!$this->has($id) || $this->failureTransport === null) {
+        if (!$this->has($id) || !$this->failureTransport instanceof TransportInterface) {
             throw new class (\sprintf("No failure transport configured for receiver '%s'.", $id)) extends UnknownTransportException implements NotFoundExceptionInterface {};
         }
 
@@ -45,6 +45,6 @@ final readonly class FailureSenderContainer implements ContainerInterface
     #[Override]
     public function has(string $id): bool
     {
-        return $this->failureTransport !== null && \in_array($id, $this->receiverNames, true);
+        return $this->failureTransport instanceof TransportInterface && \in_array($id, $this->receiverNames, true);
     }
 }

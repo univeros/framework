@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Messaging\Configuration;
 
+use Symfony\Component\Messenger\Envelope;
 use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
 use Altair\Messaging\Configuration\MessengerConfiguration;
@@ -30,6 +31,7 @@ class MessengerConfigurationTest extends TestCase
             unset($_ENV[$key], $_SERVER[$key]);
             putenv($key);
         }
+
         $this->appliedKeys = [];
         parent::tearDown();
     }
@@ -97,7 +99,7 @@ class MessengerConfigurationTest extends TestCase
         /** @var HandlerLocator $locator */
         $locator = $container->make(HandlerLocator::class);
 
-        $envelope = new \Symfony\Component\Messenger\Envelope(new SendWelcomeEmail('u1', 'a@b.test'));
+        $envelope = new Envelope(new SendWelcomeEmail('u1', 'a@b.test'));
         $descriptors = iterator_to_array($locator->getHandlers($envelope), false);
 
         $this->assertCount(1, $descriptors);

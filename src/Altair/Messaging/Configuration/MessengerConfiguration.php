@@ -53,14 +53,14 @@ use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
  * only needs to install transport bridges it actually uses
  * (symfony/redis-messenger, symfony/doctrine-messenger, symfony/amqp-messenger).
  */
-final class MessengerConfiguration implements ConfigurationInterface
+final readonly class MessengerConfiguration implements ConfigurationInterface
 {
     /**
      * @param list<string> $handlerPaths Directories scanned for #[AsHandler] classes
      */
     public function __construct(
-        private readonly array $handlerPaths = [],
-        private readonly bool $allowNoHandlers = false,
+        private array $handlerPaths = [],
+        private bool $allowNoHandlers = false,
     ) {}
 
     #[Override]
@@ -173,7 +173,7 @@ final class MessengerConfiguration implements ConfigurationInterface
     /**
      * @return list<TransportFactoryInterface>
      */
-    private static function collectTransportFactories(SymfonyMessageBusInterface $lazyBus): array
+    private static function collectTransportFactories(LazyBus $lazyBus): array
     {
         $factories = [
             new SyncTransportFactory($lazyBus),

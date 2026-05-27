@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Messaging\Attribute;
 
+use Altair\Tests\Messaging\Fixtures\SendWelcomeEmailHandler;
 use Altair\Messaging\Attribute\AsHandler;
 use Altair\Tests\Messaging\Fixtures\SendWelcomeEmail;
 use PHPUnit\Framework\TestCase;
@@ -13,7 +14,7 @@ class AsHandlerTest extends TestCase
 {
     public function testAttributeIsReadableFromHandlerClass(): void
     {
-        $reflection = new ReflectionClass(\Altair\Tests\Messaging\Fixtures\SendWelcomeEmailHandler::class);
+        $reflection = new ReflectionClass(SendWelcomeEmailHandler::class);
         $attributes = $reflection->getAttributes(AsHandler::class);
 
         $this->assertCount(1, $attributes);

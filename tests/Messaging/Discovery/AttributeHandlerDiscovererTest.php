@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Messaging\Discovery;
 
+use Altair\Tests\Messaging\Fixtures\NotAHandler;
 use Altair\Messaging\Discovery\AttributeHandlerDiscoverer;
 use Altair\Messaging\Exception\InvalidArgumentException;
 use Altair\Tests\Messaging\Fixtures\SendWelcomeEmail;
@@ -27,7 +28,7 @@ class AttributeHandlerDiscovererTest extends TestCase
         $found = iterator_to_array($discoverer->scan([__DIR__ . '/../Fixtures']), false);
 
         $classes = array_map(static fn(array $e): string => $e['class'], $found);
-        $this->assertNotContains(\Altair\Tests\Messaging\Fixtures\NotAHandler::class, $classes);
+        $this->assertNotContains(NotAHandler::class, $classes);
         $this->assertNotContains(SendWelcomeEmail::class, $classes);
     }
 
