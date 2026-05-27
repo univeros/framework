@@ -18,9 +18,12 @@
 - `EndpointSpec` _(final)_
 - `EntityEmitter` _(final)_
 - `FileWriter`
+- `HandlerEmitter`
+- `HandlerTestEmitter`
 - `InputEmitter`
 - `InputFieldSpec` _(final)_
 - `LintCommand` _(final)_
+- `MessageEmitter`
 - `MigrationEmitter` _(final)_
 - `Naming` _(final)_
 - `OpenApiEmitter`
@@ -31,6 +34,7 @@
 - `PersistenceFieldSpec` _(final)_
 - `PersistenceSpec` _(final)_
 - `PhpHeader` _(final)_
+- `QueueDispatchSpec` _(final)_
 - `RepositoryEmitter` _(final)_
 - `ResponderEmitter`
 - `RouteEmitter`
@@ -49,7 +53,10 @@
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
 - `tests/Scaffold/Emitter/EntityEmitterTest.php`
+- `tests/Scaffold/Emitter/HandlerEmitterTest.php`
+- `tests/Scaffold/Emitter/HandlerTestEmitterTest.php`
 - `tests/Scaffold/Emitter/InputEmitterTest.php`
+- `tests/Scaffold/Emitter/MessageEmitterTest.php`
 - `tests/Scaffold/Emitter/MigrationEmitterTest.php`
 - `tests/Scaffold/Emitter/OpenApiEmitterTest.php`
 - `tests/Scaffold/Emitter/RepositoryEmitterTest.php`

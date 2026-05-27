@@ -85,6 +85,7 @@
 - `tests/Session/MongoSessionHandlerTest.php`
 - `tests/Session/PdoSessionHandlerTest.php`
 - `tests/Session/SessionBlockTest.php`
+- `tests/Session/SessionManagerTest.php`
 
 ## Related packages
 

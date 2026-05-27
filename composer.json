@@ -34,6 +34,8 @@
         "relay/relay": "^2.1",
         "spiral/tokenizer": "^3.13",
         "symfony/console": "^7.0",
+        "symfony/messenger": "^7.0",
+        "symfony/serializer": "^7.0",
         "symfony/yaml": "^7.0",
         "vlucas/phpdotenv": "^5.6",
         "willdurand/negotiation": "^3.1"
@@ -80,6 +82,7 @@
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",
         "univeros/http": "self.version",
+        "univeros/messaging": "self.version",
         "univeros/middleware": "self.version",
         "univeros/persistence": "self.version",
         "univeros/queue": "self.version",

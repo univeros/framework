@@ -37,10 +37,11 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Filesystem/    ← Flysystem v3 adapters & configuration
 │   ├── Happen/        ← Event dispatcher
 │   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
+│   ├── Messaging/     ← MessageBus + worker over Symfony Messenger, attribute-driven handlers, scaffold queue: block
 │   ├── Middleware/    ← PSR-15 middleware primitives
 │   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
 │   ├── Sanitation/    ← Input sanitation rules
-│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: block
+│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: and queue: blocks
 │   ├── Security/      ← Hashing, encryption, CSRF tokens
 │   ├── Session/       ← Session handlers (file, Redis, Mongo)
 │   ├── Structure/     ← Collection primitives (Map, Set, etc.)

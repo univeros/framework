@@ -34,6 +34,9 @@ class EmissionPlan
         private readonly EntityEmitter $entityEmitter = new EntityEmitter(),
         private readonly RepositoryEmitter $repositoryEmitter = new RepositoryEmitter(),
         private readonly MigrationEmitter $migrationEmitter = new MigrationEmitter(),
+        private readonly MessageEmitter $messageEmitter = new MessageEmitter(),
+        private readonly HandlerEmitter $handlerEmitter = new HandlerEmitter(),
+        private readonly HandlerTestEmitter $handlerTestEmitter = new HandlerTestEmitter(),
     ) {}
 
     /**
@@ -58,6 +61,12 @@ class EmissionPlan
             }
 
             $files[] = $this->migrationEmitter->emit($spec);
+        }
+
+        foreach ($spec->queue as $queue) {
+            $files[] = $this->messageEmitter->emit($queue);
+            $files[] = $this->handlerEmitter->emit($queue);
+            $files[] = $this->handlerTestEmitter->emit($queue);
         }
 
         return $files;

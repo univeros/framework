@@ -32,5 +32,4 @@
 
 ## Related packages
 
-- `psr/http-server-middleware`
 - `univeros/structure`

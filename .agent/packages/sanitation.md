@@ -33,6 +33,7 @@
 - `MinFilter` — implements `FilterInterface`, `MiddlewareInterface`
 - `MinStrLengthFilter` — implements `FilterInterface`, `MiddlewareInterface`
 - `RegexFilter` — implements `FilterInterface`, `MiddlewareInterface`
+- `SanitationConfiguration` — implements `ConfigurationInterface`
 - `Sanitizer` — implements `SanitizerInterface`
 - `TitleCaseFilter` — implements `FilterInterface`, `MiddlewareInterface`
 - `TrimFilter` — implements `FilterInterface`, `MiddlewareInterface`
@@ -48,6 +49,7 @@
 ## Tests as documentation
 
 - `tests/Sanitation/Collection/FilterCollectionTest.php`
+- `tests/Sanitation/Configuration/SanitationConfigurationTest.php`
 - `tests/Sanitation/Filter/AbstractFilterTest.php`
 - `tests/Sanitation/Filter/AlphaFilterTest.php`
 - `tests/Sanitation/Filter/AlphaNumFilterTest.php`

@@ -19,6 +19,7 @@ use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
 use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
+use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -63,6 +64,7 @@ class Parser
             persistence: isset($data['persistence'])
                 ? $this->parsePersistence($this->requireMap($data, 'persistence', $sourcePath))
                 : null,
+            queue: $this->parseQueue($this->optionalMap($data, 'queue')),
         );
     }
 
@@ -109,6 +111,44 @@ class Parser
             entity: $entity,
             repository: (string) ($data['repository'] ?? ''),
         );
+    }
+
+    /**
+     * @param  array<int|string, mixed>   $data
+     * @return list<QueueDispatchSpec>
+     */
+    private function parseQueue(array $data): array
+    {
+        $queue = [];
+        foreach ($data as $name => $raw) {
+            if (!\is_array($raw)) {
+                throw new SpecParseException(\sprintf("queue entry '%s' must be a map.", $name));
+            }
+
+            $messageClass = (string) ($raw['message'] ?? '');
+            if ($messageClass === '') {
+                throw new SpecParseException(\sprintf("queue entry '%s' is missing required 'message' FQCN.", $name));
+            }
+
+            $fields = $raw['fields'] ?? [];
+            if (!\is_array($fields)) {
+                throw new SpecParseException(\sprintf("queue entry '%s' fields must be a map.", $name));
+            }
+
+            $fieldMap = [];
+            foreach ($fields as $field => $type) {
+                $fieldMap[(string) $field] = (string) $type;
+            }
+
+            $queue[] = new QueueDispatchSpec(
+                name: (string) $name,
+                message: $messageClass,
+                fields: $fieldMap,
+                transport: isset($raw['transport']) ? (string) $raw['transport'] : null,
+            );
+        }
+
+        return $queue;
     }
 
     /**

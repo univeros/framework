@@ -23,4 +23,7 @@ enum EmittedFileKind: string
     case Entity = 'entity';
     case Repository = 'repository';
     case Migration = 'migration';
+    case Message = 'message';
+    case Handler = 'handler';
+    case HandlerTest = 'handler-test';
 }
