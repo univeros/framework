@@ -37,6 +37,7 @@ $paths = [];
 // Built-in framework commands ship with their own packages.
 $builtIn = [
     __DIR__ . '/../src/Altair/AgentSpec/Cli',
+    __DIR__ . '/../src/Altair/Persistence/Cli',
     __DIR__ . '/../src/Altair/Scaffold/Cli',
 ];
 foreach ($builtIn as $entry) {

@@ -16,16 +16,22 @@
 - `EmittedFile` _(final)_
 - `EmittedFileKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `EndpointSpec` _(final)_
+- `EntityEmitter` _(final)_
 - `FileWriter`
 - `InputEmitter`
 - `InputFieldSpec` _(final)_
 - `LintCommand` _(final)_
+- `MigrationEmitter` _(final)_
 - `Naming` _(final)_
 - `OpenApiEmitter`
 - `OutputResponseSpec` _(final)_
 - `Parser`
 - `PathResolver`
+- `PersistenceEntitySpec` _(final)_
+- `PersistenceFieldSpec` _(final)_
+- `PersistenceSpec` _(final)_
 - `PhpHeader` _(final)_
+- `RepositoryEmitter` _(final)_
 - `ResponderEmitter`
 - `RouteEmitter`
 - `ScaffoldCommand` _(final)_
@@ -42,13 +48,18 @@
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
+- `tests/Scaffold/Emitter/EntityEmitterTest.php`
 - `tests/Scaffold/Emitter/InputEmitterTest.php`
+- `tests/Scaffold/Emitter/MigrationEmitterTest.php`
 - `tests/Scaffold/Emitter/OpenApiEmitterTest.php`
+- `tests/Scaffold/Emitter/RepositoryEmitterTest.php`
 - `tests/Scaffold/Emitter/ResponderEmitterTest.php`
 - `tests/Scaffold/Emitter/RouteEmitterTest.php`
 - `tests/Scaffold/Emitter/TestEmitterTest.php`
 - `tests/Scaffold/Linter/DriftDetectorTest.php`
 - `tests/Scaffold/Spec/ParserTest.php`
+- `tests/Scaffold/Spec/PersistenceParserTest.php`
+- `tests/Scaffold/Spec/PersistenceValidatorTest.php`
 - `tests/Scaffold/Spec/ValidatorTest.php`
 
 ## Related packages
