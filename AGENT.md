@@ -186,6 +186,20 @@ New objects, never mutate. Value objects use `readonly` properties (or `readonly
 - Don't add Flysystem v1 adapters (Rackspace, GridFs, ZipArchive, WebDAV, cached-adapter — **removed in v3**).
 - Don't write `@var`/`@param`/`@return` when a native type works. PHPDoc supplements types, doesn't replace them.
 
+### Determinism (every emitter & command) — #74
+
+Determinism is a first-class quality, not a nice-to-have. Any command or emitter that writes files or produces `--format=json` MUST be **byte-stable**: the same inputs produce byte-identical output across runs, machines, and PHP minor versions. Agents read `diff` as signal — non-deterministic output looks like drift and triggers phantom "fixes".
+
+The standard — a deterministic emitter has:
+
+1. **Byte-identical output** — same content, same LF line endings, same trailing newline.
+2. **Stable ordering** — sort by a stable key (name, numeric id) before emitting anywhere you iterate a map/set, and `->sortByName()` on every `Finder`/`scandir` used for code generation (FS order is inode-dependent).
+3. **No wall-clock timestamps inside emitted content** — except a single explicit `generated_at` / `duration_ms` field where one is genuinely useful.
+4. **No machine identifiers** — no hostname, username, or absolute paths.
+5. **No nondeterministic randomness** — derive any UUID from the spec SHA (`uuid5`), never `random_*`.
+
+Enforcement: every emitter ships a "run twice, diff empty" PHPUnit test; `bin/altair doctor`'s `determinism_check` runs the regenerate-and-diff gate (see `univeros/doctor`); host projects run the same gate in CI. **Any new package added to the framework must meet this standard** — it's a review gate, tracked in [#74](https://github.com/univeros/framework/issues/74).
+
 ---
 
 ## 6. Testing
