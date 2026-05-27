@@ -133,6 +133,13 @@ final readonly class Naming
         return $this->classFileRelativePath($spec->persistence->repository);
     }
 
+    /**
+     * Cycle's FileRepository expects filenames in the form
+     * `<Ymd.His>_<chunk>_<name>.php` — the separator between date and time
+     * is a dot, not an underscore (see Cycle\Migrations\FileRepository
+     * ::TIMESTAMP_FORMAT). Using underscores throughout makes Cycle reject
+     * the file with "corrupted date format" at migrator load time.
+     */
     public function migrationPath(Spec $spec, ?int $timestamp = null): string
     {
         if (!$spec->persistence instanceof PersistenceSpec) {
@@ -140,10 +147,10 @@ final readonly class Naming
         }
 
         $stamp = ($timestamp ?? time());
-        $date = gmdate('Ymd_His', $stamp);
+        $date = gmdate('Ymd.His', $stamp);
         $table = preg_replace('/[^a-z0-9_]+/i', '_', strtolower($spec->persistence->entity->table)) ?? 'table';
 
-        return $this->migrationsRelativeRoot . '/' . $date . '_create_' . $table . '.php';
+        return $this->migrationsRelativeRoot . '/' . $date . '_0_create_' . $table . '.php';
     }
 
     public function migrationClassName(Spec $spec, ?int $timestamp = null): string
