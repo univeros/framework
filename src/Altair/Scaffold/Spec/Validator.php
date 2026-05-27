@@ -13,6 +13,7 @@ namespace Altair\Scaffold\Spec;
 
 use Altair\Scaffold\Exception\SpecValidationException;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 /**
@@ -30,6 +31,16 @@ class Validator
     private const array HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     private const array SCALAR_TYPES = ['string', 'int', 'integer', 'float', 'bool', 'boolean', 'enum', 'array'];
+
+    /**
+     * Column types accepted in `persistence.entity.fields[].type`. Mirrors
+     * the Cycle column types we generate for inside emitters.
+     */
+    private const array PERSISTENCE_TYPES = [
+        'uuid', 'string', 'text', 'int', 'integer', 'bigint', 'smallint',
+        'float', 'decimal', 'bool', 'boolean', 'datetime', 'date', 'time',
+        'json', 'enum',
+    ];
 
     /**
      * Rules that ship with Altair\Validation\Rule\*Rule plus the bare "required"
@@ -70,6 +81,10 @@ class Validator
             $errors[] = \sprintf("domain.class '%s' is not a well-formed fully-qualified class name.", $spec->domain->class);
         }
 
+        if ($spec->persistence instanceof PersistenceSpec) {
+            array_push($errors, ...$this->validatePersistence($spec->persistence));
+        }
+
         return $errors;
     }
 
@@ -80,6 +95,53 @@ class Validator
         if ($errors !== []) {
             throw new SpecValidationException($errors);
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validatePersistence(PersistenceSpec $persistence): array
+    {
+        $errors = [];
+
+        if (!$this->isFullyQualifiedClassName($persistence->entity->class)) {
+            $errors[] = \sprintf("persistence.entity.class '%s' is not a well-formed fully-qualified class name.", $persistence->entity->class);
+        }
+
+        if ($persistence->entity->table === '') {
+            $errors[] = 'persistence.entity.table must not be empty.';
+        }
+
+        if ($persistence->repository !== '' && !$this->isFullyQualifiedClassName($persistence->repository)) {
+            $errors[] = \sprintf("persistence.repository '%s' is not a well-formed fully-qualified class name.", $persistence->repository);
+        }
+
+        if ($persistence->entity->fields === []) {
+            $errors[] = 'persistence.entity.fields must declare at least one column.';
+
+            return $errors;
+        }
+
+        $primaryCount = 0;
+        foreach ($persistence->entity->fields as $field) {
+            if (!\in_array($field->type, self::PERSISTENCE_TYPES, true)) {
+                $errors[] = \sprintf("persistence field '%s' has unknown type '%s'.", $field->name, $field->type);
+            }
+
+            if ($field->isEnum() && !$this->isFullyQualifiedClassName($field->of ?? '')) {
+                $errors[] = \sprintf("persistence field '%s' enum target '%s' is not a fully-qualified class name.", $field->name, $field->of ?? '');
+            }
+
+            if ($field->primary) {
+                $primaryCount++;
+            }
+        }
+
+        if ($primaryCount !== 1) {
+            $errors[] = \sprintf('persistence.entity.fields must declare exactly one primary field (found %d).', $primaryCount);
+        }
+
+        return $errors;
     }
 
     /**

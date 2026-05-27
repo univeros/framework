@@ -1,0 +1,41 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace App\User;
+
+use Cycle\Annotated\Annotation\Column;
+use Cycle\Annotated\Annotation\Entity;
+use DateTimeImmutable;
+
+#[Entity(table: 'users')]
+final class User
+{
+    #[Column(type: 'string(36)', primary: true)]
+    public string $id;
+
+    #[Column(type: 'string', unique: true)]
+    public string $email;
+
+    #[Column(type: 'string')]
+    public string $password_hash;
+
+    #[Column(type: 'datetime', default: 'CURRENT_TIMESTAMP')]
+    public DateTimeImmutable $created_at;
+
+    public function __construct(
+        string $email,
+        string $password_hash,
+    ) {
+        $this->email = $email;
+        $this->password_hash = $password_hash;
+    }
+
+}

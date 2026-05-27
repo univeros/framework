@@ -1,0 +1,27 @@
+{
+    "name": "univeros/persistence",
+    "description": "Thin Repository + UnitOfWork contract over Cycle ORM v2, wired through Altair's Container.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "cycle/annotated": "^4.2",
+        "cycle/database": "^2.10",
+        "cycle/migrations": "^4.2",
+        "cycle/orm": "^2.7",
+        "cycle/schema-builder": "^2.7",
+        "spiral/tokenizer": "^3.13",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Persistence\\": ""
+        }
+    }
+}

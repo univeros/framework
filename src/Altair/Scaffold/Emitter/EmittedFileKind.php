@@ -20,4 +20,7 @@ enum EmittedFileKind: string
     case Test = 'test';
     case OpenApi = 'openapi';
     case Route = 'route';
+    case Entity = 'entity';
+    case Repository = 'repository';
+    case Migration = 'migration';
 }
