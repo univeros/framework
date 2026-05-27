@@ -1,0 +1,19 @@
+{
+    "name": "univeros/test-reporter",
+    "description": "AI-native PHPUnit reporter: structured JSON output mapped to the production source under test.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "phpunit/phpunit": "^11.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\TestReporter\\": ""
+        }
+    }
+}

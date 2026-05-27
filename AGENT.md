@@ -47,6 +47,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Security/      ← Hashing, encryption, CSRF tokens
 │   ├── Session/       ← Session handlers (file, Redis, Mongo)
 │   ├── Structure/     ← Collection primitives (Map, Set, etc.)
+│   ├── TestReporter/  ← AI-native PHPUnit Extension: JSON output with failures mapped to source-under-test (`bin/altair test --format=json`)
 │   └── Validation/    ← Validation rules + middleware
 └── tests/             ← Mirrors `src/Altair` layout. Suffix `Test.php`. Fixtures: `tests/{pkg}/fixtures.php`.
 ```

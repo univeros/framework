@@ -7,6 +7,9 @@
       <exclude>./tests/Sanitation/Filter/AbstractFilterTest.php</exclude>
       <exclude>./tests/Structure/AbstractCollectionTest.php</exclude>
       <exclude>./tests/Validation/Rule/AbstractRuleTest.php</exclude>
+      <exclude>./tests/TestReporter/Fixtures/ExampleHttpCacheTest.php</exclude>
+      <exclude>./tests/TestReporter/Fixtures/ExampleNoCoversTest.php</exclude>
+      <exclude>./tests/TestReporter/Fixtures/LegacyCoversAnnotationTest.php</exclude>
     </testsuite>
   </testsuites>
   <source restrictNotices="true" restrictWarnings="true" ignoreIndirectDeprecations="true">

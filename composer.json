@@ -94,6 +94,7 @@
         "univeros/security": "self.version",
         "univeros/session": "self.version",
         "univeros/structure": "self.version",
+        "univeros/test-reporter": "self.version",
         "univeros/validation": "self.version"
     },
     "autoload-dev": {
