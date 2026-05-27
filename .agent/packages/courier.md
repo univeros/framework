@@ -12,7 +12,7 @@
 |  | `has(string)` | `bool` |  |
 | `CommandMessageInterface` | `getLogMessage()` | `LogMessageInterface\|null` |  |
 |  | `getName()` | `string` |  |
-|  | `withLogMessage(LogMessageInterface)` | `CommandMessageInterface` |  |
+|  | `setLogMessage(LogMessageInterface)` | `void` |  |
 | `CommandMessageNameResolverInterface` | `resolve(CommandMessageInterface)` | `string` |  |
 | `CommandMiddlewareInterface` | `handle(CommandMessageInterface, callable)` | `mixed` |  |
 | `CommandRunnerStrategyInterface` | `run(CommandMessageInterface)` | `void` |  |
@@ -46,6 +46,7 @@
 - `tests/Courier/CallableCommandLocatorServiceTest.php`
 - `tests/Courier/CommandBusTest.php`
 - `tests/Courier/InMemoryCommandLocatorServiceTest.php`
+- `tests/Courier/LogMessageTraitTest.php`
 
 ## Related packages
 

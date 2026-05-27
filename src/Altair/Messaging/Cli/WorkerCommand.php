@@ -16,6 +16,10 @@ use Altair\Cli\Attribute\Option;
 use Altair\Messaging\Worker\WorkerFactory;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+
+use const SIGINT;
+use const SIGTERM;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Messenger\EventListener\DispatchPcntlSignalListener;
 use Symfony\Component\Messenger\EventListener\StopWorkerOnMemoryLimitListener;
@@ -80,8 +84,8 @@ final readonly class WorkerCommand
             $stop = static function () use ($worker): void {
                 $worker->stop();
             };
-            pcntl_signal(\SIGTERM, $stop);
-            pcntl_signal(\SIGINT, $stop);
+            pcntl_signal(SIGTERM, $stop);
+            pcntl_signal(SIGINT, $stop);
             pcntl_async_signals(true);
         }
 
@@ -108,7 +112,7 @@ final readonly class WorkerCommand
 
         $size = (int) $matches[1];
 
-        return match (strtoupper($matches[2] ?? '')) {
+        return match (strtoupper($matches[2])) {
             'K' => $size * 1024,
             'M' => $size * 1024 * 1024,
             'G' => $size * 1024 * 1024 * 1024,

@@ -79,4 +79,50 @@ final class ParserTest extends TestCase
         $this->expectException(SpecParseException::class);
         (new Parser())->parseFile('/does/not/exist.yaml');
     }
+
+    public function testQueueBlockParses(): void
+    {
+        $yaml = <<<'YAML'
+            endpoint:
+              method: post
+              path: /users
+              tags: [users]
+            domain:
+              class: App\User\CreateUser
+            queue:
+              on_create:
+                message: App\Messages\SendWelcomeEmail
+                fields:
+                  user_id: string
+                  email: string
+                transport: default
+            YAML;
+
+        $spec = (new Parser())->parseString($yaml);
+
+        self::assertCount(1, $spec->queue);
+        self::assertSame('on_create', $spec->queue[0]->name);
+        self::assertSame('App\\Messages\\SendWelcomeEmail', $spec->queue[0]->message);
+        self::assertSame('default', $spec->queue[0]->transport);
+        self::assertSame(['user_id' => 'string', 'email' => 'string'], $spec->queue[0]->fields);
+    }
+
+    public function testQueueEntryMissingMessageRaises(): void
+    {
+        $yaml = <<<'YAML'
+            endpoint:
+              method: post
+              path: /users
+              tags: []
+            domain:
+              class: App\User\CreateUser
+            queue:
+              on_create:
+                fields:
+                  user_id: string
+            YAML;
+
+        $this->expectException(SpecParseException::class);
+        (new Parser())->parseString($yaml);
+    }
 }

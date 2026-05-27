@@ -165,11 +165,55 @@ final readonly class Naming
         return 'M' . gmdate('YmdHis', $stamp) . 'Create' . $this->camelize($table) . 'Table';
     }
 
+    public function messagePath(string $messageFqcn): string
+    {
+        return $this->classFileRelativePath($messageFqcn);
+    }
+
+    public function handlerFqcn(string $messageFqcn): string
+    {
+        $namespace = $this->namespaceOf($messageFqcn);
+        $short = $this->shortNameOf($messageFqcn) . 'Handler';
+
+        return ($namespace === '' ? '' : $namespace . '\\') . $short;
+    }
+
+    public function handlerPath(string $messageFqcn): string
+    {
+        return $this->classFileRelativePath($this->handlerFqcn($messageFqcn));
+    }
+
+    public function handlerTestPath(string $messageFqcn): string
+    {
+        $short = $this->shortNameOf($this->handlerFqcn($messageFqcn)) . 'Test';
+
+        return $this->testsRelativeRoot . '/Messages/' . $short . '.php';
+    }
+
+    public function handlerTestShortName(string $messageFqcn): string
+    {
+        return $this->shortNameOf($this->handlerFqcn($messageFqcn)) . 'Test';
+    }
+
     private function classFileRelativePath(string $fqcn): string
     {
         $relative = str_replace([$this->appNamespace . '\\', '\\'], ['', '/'], $fqcn);
 
         return $this->domainRelativeRoot . '/' . $relative . '.php';
+    }
+
+    private function namespaceOf(string $fqcn): string
+    {
+        $pos = strrpos($fqcn, '\\');
+
+        return $pos === false ? '' : substr($fqcn, 0, $pos);
+    }
+
+    private function shortNameOf(string $fqcn): string
+    {
+        $pos = strrpos($fqcn, '\\');
+
+        return $pos === false ? $fqcn : substr($fqcn, $pos + 1);
     }
 
     private function camelize(string $value): string

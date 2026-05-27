@@ -91,6 +91,23 @@ bin/altair db:schema-sync --entities=app/User,app/Order   # DEV ONLY — never i
 
 When adding a persisted entity, write the spec's `persistence:` block first; don't hand-write entity + migration + repository — they drift otherwise. Treat repositories as the only place that constructs Cycle queries; keep Cycle imports out of HTTP/domain code.
 
+### Messaging (Symfony Messenger bridge)
+
+The `univeros/messaging` sub-package wraps Symfony Messenger behind a framework-owned `MessageBusInterface`, resolves handlers through `Altair\Container`, and parses transport DSNs from `MESSENGER_*` env vars via `MessengerConfiguration`. Handlers are discovered by scanning for `#[AsHandler(MessageClass::class)]` — no manual registration.
+
+Adding a `queue:` block to a spec extends the scaffolder to also emit a readonly message DTO, a handler stub decorated with `#[AsHandler]`, and a PHPUnit test alongside the HTTP artifacts.
+
+```bash
+bin/altair worker                          # consume every configured transport
+bin/altair worker --transports=default,high
+bin/altair worker --time-limit=3600 --memory-limit=128M
+bin/altair worker --limit=100              # exit after N messages
+bin/altair worker:show-failed              # list failed envelopes
+bin/altair worker:retry-failed             # re-dispatch from failure transport
+```
+
+When adding a queue dispatch, write the spec's `queue:` block first and re-scaffold — don't hand-write the DTO + handler + test trio. Keep `Symfony\Component\Messenger\*` imports out of HTTP/domain code; type against `Altair\Messaging\Contracts\MessageBusInterface` instead.
+
 ### Plan/Skill choices for the open work
 
 - **Phase 2 (Rector):** Don't `Plan` it — just run `composer rector:fix`, then `composer cs:fix && composer test`. Triage failures one at a time.

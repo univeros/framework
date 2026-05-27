@@ -40,6 +40,7 @@ Talking to external systems and managing cryptographic primitives.
 
 - [Cache](./packages/cache.md) — PSR-6 cache item pool and PSR-16 simple cache, backed by Filesystem, Memcached, Redis, or Predis storage.
 - [Filesystem](./packages/filesystem.md) — Flysystem v3 wrapper with Local, S3, FTP, SFTP, and Dropbox adapters, plus a convenience decorator.
+- [Messaging](./packages/messaging.md) — thin `MessageBus` + worker bridge over Symfony Messenger, with attribute-driven handler discovery, `bin/altair worker*` commands, and an optional `queue:` block on endpoint specs.
 - [Persistence](./packages/persistence.md) — thin Repository / UnitOfWork contract over Cycle ORM v2, with `bin/altair db:*` migration commands and an optional `persistence:` block on endpoint specs.
 - [Security](./packages/security.md) — cryptographic primitives — HKDF / PBKDF2 key derivation, an encryption envelope with double-HMAC MAC, and salt generation.
 
