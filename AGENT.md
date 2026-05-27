@@ -206,7 +206,7 @@ vendor/bin/phpunit --testsuite "Univeros Test Suite"
 
 ## 7. Modernization status (started 2026-05)
 
-The codebase is mid-migration from PHP 7.2 / abandoned deps to PHP 8.3. Phase 1 (tooling baseline) is **done**; Phases 2-4 are the remaining work.
+The codebase is mid-migration from PHP 7.2 / abandoned deps to PHP 8.3. Phases 1, 2, 3a–3c are **done**; Phase 3d is all but PSR-14 (tracked in [#97](https://github.com/univeros/framework/issues/97)); Phase 4 is in progress (PHPStan at level 6, burn-down tracked in [#96](https://github.com/univeros/framework/issues/96); PHPUnit attribute migration done).
 
 ### Phase 1 — COMPLETE
 
@@ -220,18 +220,13 @@ The codebase is mid-migration from PHP 7.2 / abandoned deps to PHP 8.3. Phase 1 
 - `.pre-commit-config.yaml` updated.
 - `.gitignore` covers new tool caches.
 
-### Phase 2 — PENDING (Rector automated)
+### Phase 2 — COMPLETE (Rector automated)
 
-Run `composer rector:fix` after `composer update`. Rector will apply:
+`composer rector:fix` has been applied across the codebase; `rector process --dry-run` is **green on master** and runs in CI's `static-analysis` job (note: it is **not** part of `composer qa`, so run it manually before pushing). All the configured sets are satisfied — constructor promotion, native types from PHPDoc, `match`, nullsafe/`??=`/first-class-callables/`str_contains`, dead-code/early-return/`instanceof` simplifications, and `PRIVATIZATION`.
 
-- Constructor property promotion (still many old-style two-step constructors outside of HTTP middleware).
-- Native param/return/property types from PHPDoc.
-- `match` expressions replacing `switch` chains.
-- Nullsafe `?->`, `??=`, first-class callables, `str_contains/starts_with/ends_with`.
-- Dead code removal, early returns, `instanceof` simplifications.
-- Final classes/private methods/properties where safe (`PRIVATIZATION` set).
+PHP 8.4's `ExplicitNullableParamTypeRector` was added (target lifted to 8.4 to arm it) so implicit-nullable params (`Type $x = null`) stay fixed going forward — see [#93](https://github.com/univeros/framework/issues/93).
 
-**After Rector, run `composer cs:fix && composer test`.** Expect some Rector edits to need manual cleanup.
+One rule is **deliberately skipped** in `rector.php`: `NewInInitializerRector`. Collapsing `?? new X()` bodies into promoted `= new X()` defaults narrows public constructor contracts (an explicit `null` arg becomes a TypeError); declined as a needless BC change. Remove the skip to adopt it intentionally.
 
 ### Phase 3a — COMPLETE (HTTP middleware to PSR-15)
 
@@ -262,24 +257,18 @@ Decorator middleware that depend on the next response (CORS, cache headers) must
 - `FilesystemAdapterConfiguration` no longer wires a `CachedAdapter` — Flysystem v3 removed caching from core. Wrap with a caching decorator separately if needed.
 - The `FlysystemAdapter.php` exclusion from PHPUnit coverage, PHPStan, and Rector is removed — the new implementation is testable.
 
-### Phase 3d — PENDING (targeted modern idioms)
+### Phase 3d — MOSTLY COMPLETE (targeted modern idioms)
 
-After `composer update` succeeds and tests pass:
+- Value objects → `readonly` — **done** (148 `readonly` classes in `src/`).
+- Sentinel `class const` → **enums** — **done** (8 enums in `src/`).
+- Rector-driven cleanup of PHPDoc-only types — **done** (`TYPE_DECLARATION` set applied; `rector --dry-run` clean).
+- **Remaining:** `Altair\Happen\*` PSR-14. The dep + `StoppableEventInterface` are already wired, but the dispatcher/provider are name-based, not PSR-14's object-based interfaces — tracked in [#97](https://github.com/univeros/framework/issues/97) (it's a design choice, deferred deliberately).
 
-- Value objects (CacheItem, Cookie, immutable DTOs) → `readonly` properties / `readonly class` (PHP 8.2+).
-- Sentinel `class const` constants representing closed sets → promote to **enums** (`BackedEnum`).
-- `Altair\Happen\*` event dispatcher predates PSR-14 — consider adding `psr/event-dispatcher` and implementing the standard interfaces alongside the existing API.
-- Rector-driven cleanup of remaining PHPDoc-only types throughout the codebase.
+### Phase 4 — IN PROGRESS (static analysis + test attribute migration)
 
-### Phase 4 — PENDING (static analysis + test attribute migration)
-
-1. Raise `phpstan.neon.dist` `level` from 5 → 8 incrementally. Fix or `ignoreErrors` each error.
-2. PHPUnit annotation → attribute migration:
-   - `@dataProvider foo` → `#[DataProvider('foo')]`
-   - `@group slow` → `#[Group('slow')]`
-   - `@test` → `#[Test]`
-   - `@covers` → `#[CoversClass(...)]`
-3. Verify coverage ≥ 80% per sub-package.
+1. **PHPStan level 5 → 8.** Now at **level 6** (raised in [#95](https://github.com/univeros/framework/pull/95)) with a regenerated `phpstan-baseline.neon` grandfathering 746 errors (mostly missing `array<K,V>` value-type shapes). Burn-down of the baseline and the 6 → 7 → 8 raises are tracked in [#96](https://github.com/univeros/framework/issues/96). Don't hand-edit the baseline — regenerate with `vendor/bin/phpstan analyse --generate-baseline`.
+2. PHPUnit annotation → attribute migration — **done**. The suite already uses `#[DataProvider]` (157 files) / `#[CoversClass]` (43 files); the only remaining `@covers` is `tests/TestReporter/Fixtures/LegacyCoversAnnotationTest.php`, an intentional fixture exercising the test-reporter's legacy-annotation fallback.
+3. Verify coverage ≥ 80% per sub-package. (Still a standing goal.)
 
 ---
 
