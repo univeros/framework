@@ -25,9 +25,12 @@ use Throwable;
  * instantiation — so it's safe to run against a project whose database
  * is down or whose Configuration `prepare` hooks would have side effects.
  *
- * Reports definitions (what *would* be built), not realised instances
- * (what *has* been built). The follow-up issue #83 covers the realised
- * view for long-running-process introspection.
+ * `inspectAll()` / `inspectOne()` report definitions (what *would* be
+ * built). `inspectRealized()` reports the complementary view — instances
+ * the Container has actually constructed so far — for long-running-process
+ * introspection (worker memory growth, surprised-by-singleton, prepare-hook
+ * ordering). It still never instantiates: it only reads the already-built
+ * objects sitting in the shares collection.
  */
 final readonly class ContainerInspector
 {
@@ -64,6 +67,55 @@ final readonly class ContainerInspector
         return new InspectionTable(
             title: 'Container bindings',
             columns: ['id', 'kind', 'target', 'shared'],
+            rows: $rows,
+            extras: ['total' => \count($rows)],
+        );
+    }
+
+    /**
+     * Realised view: only the singletons the Container has actually
+     * constructed so far.
+     *
+     * The shares collection holds a `null` placeholder for a singleton
+     * that has been registered but not yet built (see
+     * `SharesCollection::shareClass()`), and the constructed object once
+     * `make()` (or `share($instance)`) has run. So a non-null value is the
+     * "has been instantiated" signal — we filter on exactly that.
+     *
+     * Safe by construction: we read instances that already exist and only
+     * call `::class` on them. We never `make()`, and never serialise (which
+     * would fire `__sleep` / `__serialize` side effects).
+     *
+     * @param string|null $filter Case-insensitive substring match on the binding name.
+     */
+    public function inspectRealized(?string $filter = null): InspectionTable
+    {
+        $needle = $filter !== null && $filter !== '' ? strtolower($filter) : null;
+        $rows = [];
+
+        foreach ($this->container->getShares() as $name => $instance) {
+            if (!\is_object($instance)) {
+                continue; // null placeholder — registered but not yet built.
+            }
+
+            $id = $this->displayName((string) $name);
+
+            if ($needle !== null && !str_contains(strtolower($id), $needle)) {
+                continue;
+            }
+
+            $rows[] = [
+                'id' => $id,
+                'kind' => 'share',
+                'class' => $instance::class,
+            ];
+        }
+
+        usort($rows, static fn(array $a, array $b): int => strcmp($a['id'], $b['id']));
+
+        return new InspectionTable(
+            title: 'Realised container services',
+            columns: ['id', 'kind', 'class'],
             rows: $rows,
             extras: ['total' => \count($rows)],
         );
