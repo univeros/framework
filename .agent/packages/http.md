@@ -158,6 +158,7 @@
 - `tests/Http/Rule/RequestPathRuleTest.php`
 - `tests/Http/Support/CacheLimiterTest.php`
 - `tests/Http/Support/CidrMatcherTest.php`
+- `tests/Http/Support/FormatNegotiatorTest.php`
 - `tests/Http/Support/HeaderTokenExtractorTest.php`
 - `tests/Http/Support/HttpCacheTest.php`
 - `tests/Http/Support/MimeTypeTest.php`
@@ -166,6 +167,8 @@
 ## Related packages
 
 - `laminas/laminas-diactoros`
+- `lcobucci/clock`
+- `lcobucci/jwt`
 - `neomerx/cors-psr7`
 - `nikic/fast-route`
 - `psr/cache`

@@ -14,6 +14,7 @@ namespace Altair\Scaffold\Spec;
 use Altair\Scaffold\Exception\SpecValidationException;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
+use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 /**
@@ -83,6 +84,10 @@ class Validator
 
         if ($spec->persistence instanceof PersistenceSpec) {
             array_push($errors, ...$this->validatePersistence($spec->persistence));
+        }
+
+        foreach ($spec->queue as $queue) {
+            array_push($errors, ...$this->validateQueue($queue));
         }
 
         return $errors;
@@ -163,6 +168,28 @@ class Validator
             $ruleName = strtolower(explode(':', $rule, 2)[0]);
             if (!\in_array($ruleName, self::KNOWN_RULES, true)) {
                 $errors[] = \sprintf("input '%s' uses unknown validation rule '%s'.", $input->name, $rule);
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validateQueue(QueueDispatchSpec $queue): array
+    {
+        $errors = [];
+
+        if (!$this->isFullyQualifiedClassName($queue->message)) {
+            $errors[] = \sprintf("queue '%s' message '%s' is not a well-formed fully-qualified class name.", $queue->name, $queue->message);
+        }
+
+        $allowedTypes = ['string', 'int', 'integer', 'float', 'bool', 'boolean'];
+        foreach ($queue->fields as $field => $type) {
+            $normalized = strtolower($type);
+            if (!\in_array($normalized, $allowedTypes, true) && !$this->isFullyQualifiedClassName($type)) {
+                $errors[] = \sprintf("queue '%s' field '%s' has unsupported type '%s'.", $queue->name, $field, $type);
             }
         }
 

@@ -1,0 +1,24 @@
+{
+    "name": "univeros/messaging",
+    "description": "Thin MessageBus + worker bridge over Symfony Messenger, wired through Altair's Container.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "psr/log": "^3.0",
+        "symfony/messenger": "^7.0",
+        "symfony/serializer": "^7.0",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Messaging\\": ""
+        }
+    }
+}

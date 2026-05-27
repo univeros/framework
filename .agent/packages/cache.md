@@ -45,6 +45,7 @@
 - `tests/Cache/CacheItemKeyValidatorTest.php`
 - `tests/Cache/CacheItemPoolTest.php`
 - `tests/Cache/CacheItemTest.php`
+- `tests/Cache/Configuration/RedisCacheItemStorageConfigurationTest.php`
 - `tests/Cache/FilesystemCacheItemStorageTest.php`
 - `tests/Cache/MemcachedCacheItemStorageTest.php`
 - `tests/Cache/PredisCacheItemStorageTest.php`

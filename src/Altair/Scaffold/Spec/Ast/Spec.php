@@ -19,6 +19,7 @@ final readonly class Spec
     /**
      * @param list<InputFieldSpec>     $inputs
      * @param list<OutputResponseSpec> $outputs
+     * @param list<QueueDispatchSpec>  $queue
      */
     public function __construct(
         public EndpointSpec $endpoint,
@@ -27,6 +28,7 @@ final readonly class Spec
         public DomainSpec $domain,
         public string $sourcePath = '',
         public ?PersistenceSpec $persistence = null,
+        public array $queue = [],
     ) {}
 
     /**
