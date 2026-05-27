@@ -128,6 +128,27 @@ bin/altair events:compact --before=2026-04-01     # archive old events to .altai
 
 When adding a new mutating command anywhere in the framework, type-hint `RecorderInterface` in the constructor and call `record(Event::create(...))` after success/failure — don't hand-write the event JSON. Use the named-constructor `Event::create()` so the ULID + timestamp stamping stays consistent. Keep `.altair/` in the host app's `.gitignore` (events are local).
 
+### Spec journal (rewind / replay)
+
+The `univeros/scaffold` sub-package now ships a **journal** sub-feature. Every successful `bin/altair spec:scaffold` writes a self-contained `.altair/journal/<id>.json` entry capturing the spec content, per-file SHAs, and full `content_before` for modified files. Failed iterations become recoverable rather than catastrophic.
+
+`ScaffoldCommand` resolves `Altair\Scaffold\Journal\Journal` and `Altair\Events\Contracts\RecorderInterface` as optional constructor dependencies — both nullable so minimal hosts can scaffold without either. When both are bound (via `ScaffoldJournalConfiguration` + `EventsConfiguration`), each scaffold writes a journal entry **and** emits a `scaffold` event into `.altair/events.jsonl`.
+
+```bash
+bin/altair journal:list -n 50                  # newest 50 entries (human or --format=json)
+bin/altair journal:show <id>                   # full detail (resolves unambiguous prefixes)
+bin/altair journal:diff <id>                   # per-file diffs embedded in the entry
+bin/altair journal:rewind                      # undo the most recent scaffold
+bin/altair journal:rewind --to=<id>            # undo back to a point
+bin/altair journal:rewind --dry-run            # preview without writing
+bin/altair journal:rewind --force              # clobber hand-edited files (warned about by default)
+bin/altair journal:replay <id>                 # re-apply one entry
+bin/altair journal:replay --from=<id>          # re-apply forward from a point
+bin/altair journal:replay --all                # nuclear — replay the whole journal (confirms)
+```
+
+When adding a new spec scaffolder downstream, do NOT bypass `ScaffoldCommand` — write a YAML spec and call `spec:scaffold`. That way the journal entry gets written automatically and `journal:rewind` keeps working. Commands named `journal:*` (not `spec:*`) to avoid collision with introspection's `spec:list` / `spec:show`.
+
 ### Plan/Skill choices for the open work
 
 - **Phase 2 (Rector):** Don't `Plan` it — just run `composer rector:fix`, then `composer cs:fix && composer test`. Triage failures one at a time.

@@ -43,7 +43,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Middleware/    ← PSR-15 middleware primitives
 │   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
 │   ├── Sanitation/    ← Input sanitation rules
-│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: and queue: blocks
+│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: and queue: blocks; includes Journal sub-feature (journal:list/show/diff/rewind/replay) for rewindable scaffold operations
 │   ├── Security/      ← Hashing, encryption, CSRF tokens
 │   ├── Session/       ← Session handlers (file, Redis, Mongo)
 │   ├── Structure/     ← Collection primitives (Map, Set, etc.)
