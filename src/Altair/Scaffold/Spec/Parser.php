@@ -16,6 +16,9 @@ use Altair\Scaffold\Spec\Ast\DomainSpec;
 use Altair\Scaffold\Spec\Ast\EndpointSpec;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
+use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
@@ -57,6 +60,54 @@ class Parser
             outputs: $this->parseOutputs($this->optionalMap($data, 'output')),
             domain: $this->parseDomain($this->requireMap($data, 'domain', $sourcePath)),
             sourcePath: $sourcePath,
+            persistence: isset($data['persistence'])
+                ? $this->parsePersistence($this->requireMap($data, 'persistence', $sourcePath))
+                : null,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function parsePersistence(array $data): PersistenceSpec
+    {
+        if (!isset($data['entity']) || !\is_array($data['entity'])) {
+            throw new SpecParseException("'persistence.entity' must be a map.");
+        }
+
+        $entityData = $data['entity'];
+        $fieldsData = $entityData['fields'] ?? [];
+        if (!\is_array($fieldsData)) {
+            throw new SpecParseException("'persistence.entity.fields' must be a map.");
+        }
+
+        $fields = [];
+        foreach ($fieldsData as $name => $raw) {
+            if (!\is_array($raw)) {
+                throw new SpecParseException(\sprintf("Persistence field '%s' must be a map.", $name));
+            }
+
+            $fields[] = new PersistenceFieldSpec(
+                name: (string) $name,
+                type: (string) ($raw['type'] ?? 'string'),
+                primary: (bool) ($raw['primary'] ?? false),
+                nullable: (bool) ($raw['nullable'] ?? false),
+                unique: (bool) ($raw['unique'] ?? false),
+                hasDefault: \array_key_exists('default', $raw),
+                default: $raw['default'] ?? null,
+                of: isset($raw['of']) ? (string) $raw['of'] : null,
+            );
+        }
+
+        $entity = new PersistenceEntitySpec(
+            class: (string) ($entityData['class'] ?? ''),
+            table: (string) ($entityData['table'] ?? ''),
+            fields: $fields,
+        );
+
+        return new PersistenceSpec(
+            entity: $entity,
+            repository: (string) ($data['repository'] ?? ''),
         );
     }
 

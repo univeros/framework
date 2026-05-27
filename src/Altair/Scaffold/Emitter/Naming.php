@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Emitter;
 
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 /**
@@ -27,6 +28,7 @@ final readonly class Naming
         private string $testsRelativeRoot = 'tests',
         private string $openApiRelativeRoot = 'docs/openapi',
         private string $routesPath = 'config/routes.php',
+        private string $migrationsRelativeRoot = 'database/migrations',
     ) {}
 
     public function actionShortName(Spec $spec): string
@@ -111,6 +113,68 @@ final readonly class Naming
     public function appNamespace(): string
     {
         return $this->appNamespace;
+    }
+
+    public function entityPath(Spec $spec): string
+    {
+        if (!$spec->persistence instanceof PersistenceSpec) {
+            return '';
+        }
+
+        return $this->classFileRelativePath($spec->persistence->entity->class);
+    }
+
+    public function repositoryPath(Spec $spec): string
+    {
+        if (!$spec->persistence instanceof PersistenceSpec || $spec->persistence->repository === '') {
+            return '';
+        }
+
+        return $this->classFileRelativePath($spec->persistence->repository);
+    }
+
+    /**
+     * Cycle's FileRepository expects filenames in the form
+     * `<Ymd.His>_<chunk>_<name>.php` — the separator between date and time
+     * is a dot, not an underscore (see Cycle\Migrations\FileRepository
+     * ::TIMESTAMP_FORMAT). Using underscores throughout makes Cycle reject
+     * the file with "corrupted date format" at migrator load time.
+     */
+    public function migrationPath(Spec $spec, ?int $timestamp = null): string
+    {
+        if (!$spec->persistence instanceof PersistenceSpec) {
+            return '';
+        }
+
+        $stamp = ($timestamp ?? time());
+        $date = gmdate('Ymd.His', $stamp);
+        $table = preg_replace('/[^a-z0-9_]+/i', '_', strtolower($spec->persistence->entity->table)) ?? 'table';
+
+        return $this->migrationsRelativeRoot . '/' . $date . '_0_create_' . $table . '.php';
+    }
+
+    public function migrationClassName(Spec $spec, ?int $timestamp = null): string
+    {
+        if (!$spec->persistence instanceof PersistenceSpec) {
+            return 'Migration';
+        }
+
+        $stamp = ($timestamp ?? time());
+        $table = preg_replace('/[^a-zA-Z0-9_]+/', '_', $spec->persistence->entity->table) ?? 'table';
+
+        return 'M' . gmdate('YmdHis', $stamp) . 'Create' . $this->camelize($table) . 'Table';
+    }
+
+    private function classFileRelativePath(string $fqcn): string
+    {
+        $relative = str_replace([$this->appNamespace . '\\', '\\'], ['', '/'], $fqcn);
+
+        return $this->domainRelativeRoot . '/' . $relative . '.php';
+    }
+
+    private function camelize(string $value): string
+    {
+        return str_replace(' ', '', ucwords(str_replace(['_', '-'], ' ', strtolower($value))));
     }
 
     private function slugify(Spec $spec): string

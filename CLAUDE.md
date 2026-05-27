@@ -9,7 +9,7 @@ Claude Code entry point for the **Univeros / Altair Framework** (`univeros/frame
 
 ## 1. Quick orientation
 
-- **What it is:** A monorepo PHP framework with 17 sub-packages under `src/Altair/*`, bundled via composer `replace`.
+- **What it is:** A monorepo PHP framework with 18 sub-packages under `src/Altair/*`, bundled via composer `replace`.
 - **Where conventions live:** [AGENT.md](AGENT.md) §5 (coding style), §6 (testing).
 - **Where the modernization roadmap lives:** [AGENT.md](AGENT.md) §7. Phase 1 done; Phases 2-4 pending.
 
@@ -74,6 +74,22 @@ bin/altair spec:lint                                    # drift check
 ```
 
 When you add a new HTTP endpoint, write the YAML spec first and scaffold it — don't hand-write the Action/Input/Responder triple. After hand-editing generated files, run `bin/altair spec:lint` so drift surfaces in CI.
+
+### Persistence (Cycle ORM bridge)
+
+The `univeros/persistence` sub-package wraps Cycle ORM v2 behind framework-owned `RepositoryInterface` / `UnitOfWorkInterface` / `EntityManagerInterface` contracts. The host application binds a `SchemaProviderInterface` (either build-time pre-compiled or `AttributeSchemaProvider`), then `CycleOrmConfiguration` wires the rest from `DB_*` env vars.
+
+Adding a `persistence:` block to a spec extends the scaffolder to also emit a Cycle-annotated entity, a domain-specific repository, and a Cycle migration file. See [AGENT.md §2](AGENT.md#2-repository-layout) for sub-package layout.
+
+```bash
+bin/altair db:migrate                # apply pending migrations
+bin/altair db:migrate --dry-run      # list pending without applying
+bin/altair db:migrate:rollback       # roll back last migration (--steps=N)
+bin/altair db:migrate:status         # list applied/pending (exit 1 if any pending)
+bin/altair db:schema-sync --entities=app/User,app/Order   # DEV ONLY — never in prod
+```
+
+When adding a persisted entity, write the spec's `persistence:` block first; don't hand-write entity + migration + repository — they drift otherwise. Treat repositories as the only place that constructs Cycle queries; keep Cycle imports out of HTTP/domain code.
 
 ### Plan/Skill choices for the open work
 

@@ -11,11 +11,15 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Emitter;
 
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 
 /**
  * Runs every emitter against a Spec and returns the list of EmittedFile
  * results. Pure: nothing is written to disk here.
+ *
+ * Persistence-related emitters only fire when the Spec carries a
+ * `persistence:` block.
  */
 class EmissionPlan
 {
@@ -27,6 +31,9 @@ class EmissionPlan
         private readonly TestEmitter $testEmitter = new TestEmitter(),
         private readonly OpenApiEmitter $openApiEmitter = new OpenApiEmitter(),
         private readonly RouteEmitter $routeEmitter = new RouteEmitter(),
+        private readonly EntityEmitter $entityEmitter = new EntityEmitter(),
+        private readonly RepositoryEmitter $repositoryEmitter = new RepositoryEmitter(),
+        private readonly MigrationEmitter $migrationEmitter = new MigrationEmitter(),
     ) {}
 
     /**
@@ -34,7 +41,7 @@ class EmissionPlan
      */
     public function build(Spec $spec): array
     {
-        return [
+        $files = [
             $this->actionEmitter->emit($spec),
             $this->inputEmitter->emit($spec),
             $this->responderEmitter->emit($spec),
@@ -43,5 +50,16 @@ class EmissionPlan
             $this->openApiEmitter->emit($spec),
             $this->routeEmitter->emit($spec),
         ];
+
+        if ($spec->persistence instanceof PersistenceSpec) {
+            $files[] = $this->entityEmitter->emit($spec);
+            if ($spec->persistence->repository !== '') {
+                $files[] = $this->repositoryEmitter->emit($spec);
+            }
+
+            $files[] = $this->migrationEmitter->emit($spec);
+        }
+
+        return $files;
     }
 }
