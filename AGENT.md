@@ -38,6 +38,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Filesystem/    ← Flysystem v3 adapters & configuration
 │   ├── Happen/        ← Event dispatcher
 │   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
+│   ├── Introspection/ ← "What's wired into this project right now?" CLI inspectors (container:inspect, routes:list, listeners:list, middleware:list, manifest:diff, spec:list/show, config:dump)
 │   ├── Messaging/     ← MessageBus + worker over Symfony Messenger, attribute-driven handlers, scaffold queue: block
 │   ├── Middleware/    ← PSR-15 middleware primitives
 │   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
