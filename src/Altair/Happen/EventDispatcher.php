@@ -129,6 +129,43 @@ class EventDispatcher implements EventDispatcherInterface
     }
 
     /**
+     * Every event name with at least one registered listener, sorted alphabetically.
+     *
+     * Read-only introspection — does not dispatch events.
+     *
+     * @return list<string>
+     */
+    public function getEventNames(): array
+    {
+        $names = array_keys(array_filter(
+            $this->listeners,
+            static fn(array $priorityBuckets): bool => $priorityBuckets !== [],
+        ));
+        sort($names);
+
+        return $names;
+    }
+
+    /**
+     * Number of listeners currently registered for the given event name.
+     *
+     * Read-only introspection — does not dispatch the event.
+     */
+    public function listenerCount(string $name): int
+    {
+        if (!isset($this->listeners[$name])) {
+            return 0;
+        }
+
+        $total = 0;
+        foreach ($this->listeners[$name] as $priorityBucket) {
+            $total += \count($priorityBucket);
+        }
+
+        return $total;
+    }
+
+    /**
      * @inheritDoc
      */
     #[Override]
