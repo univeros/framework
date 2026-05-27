@@ -11,7 +11,12 @@
         "php": ">=8.3",
         "nikic/php-parser": "^5.0",
         "symfony/yaml": "^7.0",
-        "univeros/cli": "^2.0"
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "suggest": {
+        "univeros/events": "Hooks scaffold operations into the .altair/events.jsonl mutation log for cross-session agent memory."
     },
     "autoload": {
         "psr-4": {
