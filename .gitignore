@@ -48,3 +48,6 @@ phpstan.neon.cache
 .rector.cache
 /.rector-cache/
 
+# build artefacts (univeros/test-reporter JSON output, etc.)
+/build/
+

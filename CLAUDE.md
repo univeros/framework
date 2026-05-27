@@ -149,6 +149,25 @@ bin/altair journal:replay --all                # nuclear — replay the whole jo
 
 When adding a new spec scaffolder downstream, do NOT bypass `ScaffoldCommand` — write a YAML spec and call `spec:scaffold`. That way the journal entry gets written automatically and `journal:rewind` keeps working. Commands named `journal:*` (not `spec:*`) to avoid collision with introspection's `spec:list` / `spec:show`.
 
+### Test reporter (AI-native PHPUnit JSON)
+
+The `univeros/test-reporter` sub-package ships `Altair\TestReporter\AltairExtension`, a PHPUnit 11 Extension that emits a structured JSON report at the end of every run — failures mapped back to the production source under test, structured diffs for `assertSame` / `assertEquals`, one-word `result` field for agents to branch on.
+
+```xml
+<extensions>
+    <bootstrap class="Altair\TestReporter\AltairExtension">
+        <parameter name="output" value="json"/>
+        <parameter name="file" value="build/test-results.json"/>
+    </bootstrap>
+</extensions>
+```
+
+The report's `failures[].source_under_test` field resolves the production file/method via (1) `#[CoversClass]` attributes, (2) legacy `@covers` annotations, (3) namespace heuristic (`Altair\Tests\Http\Support\HttpCacheTest` → `Altair\Http\Support\HttpCache`). When no signal matches, the field is `[]` and the agent knows it's on its own.
+
+When writing new tests, **don't fight the resolver** — name the test class `<Class>Test` in a sibling `Tests\` namespace, and name test methods with a prefix matching the source method (`testIsCacheableReturnsTrueWithMaxAge` covers `isCacheable`). When that's awkward, prefer `#[CoversClass(X::class)]` as an explicit override; do NOT use `@covers` annotations in new code (legacy fallback only).
+
+Output is deterministic for the same outcomes — golden-file-safe for CI. `build/test-results.json` is gitignored.
+
 ### Plan/Skill choices for the open work
 
 - **Phase 2 (Rector):** Don't `Plan` it — just run `composer rector:fix`, then `composer cs:fix && composer test`. Triage failures one at a time.
