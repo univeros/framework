@@ -75,6 +75,19 @@ bin/altair spec:lint                                    # drift check
 
 When you add a new HTTP endpoint, write the YAML spec first and scaffold it — don't hand-write the Action/Input/Responder triple. After hand-editing generated files, run `bin/altair spec:lint` so drift surfaces in CI.
 
+### Client SDK emitters
+
+`bin/altair spec:emit-sdk typescript|python` turns the merged OpenAPI 3.1 document into a typed client SDK — no external code-gen runtime (the doc is parsed with `symfony/yaml` into a neutral model under `Altair\Scaffold\Sdk\Model`, then each emitter walks it).
+
+```bash
+bin/altair spec:emit-sdk typescript > sdk.ts            # fetch-based, zero-dep, discriminated unions
+bin/altair spec:emit-sdk python --out=clients/python    # httpx + pydantic v2, sync + async clients
+bin/altair spec:emit-sdk typescript --out=sdk.ts --check  # CI drift gate (exit 1 on drift)
+bin/altair spec:emit-sdk --list
+```
+
+Output is deterministic — wire it into CI with `--check` so the committed SDK can't drift from the spec. Don't hand-edit emitted SDKs; regenerate. To add a language, implement `Altair\Scaffold\Sdk\Contracts\EmitterInterface` and register it in `EmitterRegistry` — don't fork the TypeScript/Python emitters.
+
 ### Persistence (Cycle ORM bridge)
 
 The `univeros/persistence` sub-package wraps Cycle ORM v2 behind framework-owned `RepositoryInterface` / `UnitOfWorkInterface` / `EntityManagerInterface` contracts. The host application binds a `SchemaProviderInterface` (either build-time pre-compiled or `AttributeSchemaProvider`), then `CycleOrmConfiguration` wires the rest from `DB_*` env vars.
