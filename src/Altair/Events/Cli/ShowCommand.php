@@ -14,6 +14,7 @@ namespace Altair\Events\Cli;
 use Altair\Cli\Attribute\Argument;
 use Altair\Cli\Attribute\Command;
 use Altair\Cli\Attribute\Option;
+use Altair\Events\Event;
 use Altair\Events\Reader;
 use Altair\Events\Storage\SnapshotStorage;
 
@@ -40,7 +41,7 @@ final readonly class ShowCommand
         string $format = 'human',
     ): int {
         $event = $this->reader->findById($id);
-        if ($event === null) {
+        if (!$event instanceof Event) {
             echo "Event '{$id}' not found.\n";
 
             return 1;
@@ -53,6 +54,7 @@ final readonly class ShowCommand
             if ($snapshot !== null) {
                 $payload['snapshot'] = $snapshot;
             }
+
             echo json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT), "\n";
 
             return 0;

@@ -36,7 +36,7 @@ enum EventKind: string
     public static function fromString(string $value): self
     {
         $kind = self::tryFrom($value);
-        if ($kind === null) {
+        if (!$kind instanceof \Altair\Events\EventKind) {
             throw new InvalidArgumentException(
                 \sprintf("Unknown event kind '%s'.", $value),
             );

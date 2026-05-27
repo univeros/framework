@@ -49,10 +49,11 @@ final readonly class SinceCommand
             try {
                 $threshold = new DateTimeImmutable($when);
             } catch (Throwable $e) {
-                echo "Could not parse '{$when}' as a timestamp: {$e->getMessage()}\n";
+                echo \sprintf("Could not parse '%s' as a timestamp: %s%s", $when, $e->getMessage(), PHP_EOL);
 
                 return 2;
             }
+
             $events = $this->reader->since($threshold);
         }
 

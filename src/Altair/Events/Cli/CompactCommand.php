@@ -52,8 +52,8 @@ final readonly class CompactCommand
             $cutoff = $before !== null
                 ? new DateTimeImmutable($before)
                 : new DateTimeImmutable('-30 days');
-        } catch (Throwable $e) {
-            echo "Could not parse '--before' value: {$e->getMessage()}\n";
+        } catch (Throwable $throwable) {
+            echo \sprintf("Could not parse '--before' value: %s%s", $throwable->getMessage(), PHP_EOL);
 
             return 2;
         }
@@ -146,10 +146,12 @@ final readonly class CompactCommand
             if (!flock($handle, LOCK_EX)) {
                 throw new StorageException(\sprintf("Cannot lock tmp file '%s'.", $tmp));
             }
+
             try {
                 foreach ($events as $event) {
                     fwrite($handle, $event->toJsonLine() . "\n");
                 }
+
                 fflush($handle);
             } finally {
                 flock($handle, LOCK_UN);

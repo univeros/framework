@@ -27,6 +27,7 @@ class SnapshotStorageTest extends TestCase
             foreach (glob($this->tmpDir . '/*') ?: [] as $file) {
                 @unlink($file);
             }
+
             @rmdir($this->tmpDir);
         }
     }

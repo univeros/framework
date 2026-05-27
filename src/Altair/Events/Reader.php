@@ -67,6 +67,7 @@ final readonly class Reader
             if ($event->timestamp <= $threshold) {
                 return;
             }
+
             yield $event;
         }
     }
@@ -85,6 +86,7 @@ final readonly class Reader
             if ($event->id === $eventId) {
                 break;
             }
+
             $buffer[] = $event;
         }
 
@@ -114,6 +116,7 @@ final readonly class Reader
             if ($event->status === EventStatus::Ok) {
                 return;
             }
+
             yield $event;
         }
     }
@@ -135,9 +138,11 @@ final readonly class Reader
             if ($kindValues !== [] && !\in_array($event->kind->value, $kindValues, true)) {
                 continue;
             }
+
             if ($statusValues !== [] && !\in_array($event->status->value, $statusValues, true)) {
                 continue;
             }
+
             yield $event;
         }
     }

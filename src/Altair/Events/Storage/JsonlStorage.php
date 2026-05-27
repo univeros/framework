@@ -54,11 +54,13 @@ final readonly class JsonlStorage implements EventStorageInterface
             if (!flock($handle, LOCK_EX)) {
                 throw new StorageException(\sprintf("Cannot lock '%s' for append.", $this->path));
             }
+
             try {
                 $written = fwrite($handle, $line);
                 if ($written === false || $written !== \strlen($line)) {
                     throw new StorageException(\sprintf("Short write to '%s'.", $this->path));
                 }
+
                 fflush($handle);
             } finally {
                 flock($handle, LOCK_UN);
@@ -79,12 +81,16 @@ final readonly class JsonlStorage implements EventStorageInterface
         $file->setFlags(SplFileObject::DROP_NEW_LINE | SplFileObject::SKIP_EMPTY);
 
         foreach ($file as $raw) {
-            if (!\is_string($raw) || trim($raw) === '') {
+            if (!\is_string($raw)) {
+                continue;
+            }
+
+            if (trim($raw) === '') {
                 continue;
             }
 
             $event = $this->tryDecode($raw);
-            if ($event !== null) {
+            if ($event instanceof Event) {
                 yield $event;
             }
         }
@@ -104,7 +110,7 @@ final readonly class JsonlStorage implements EventStorageInterface
 
         for ($i = \count($lines) - 1; $i >= 0; $i--) {
             $event = $this->tryDecode($lines[$i]);
-            if ($event !== null) {
+            if ($event instanceof Event) {
                 yield $event;
             }
         }

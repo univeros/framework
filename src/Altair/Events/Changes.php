@@ -37,6 +37,7 @@ final readonly class Changes
             if (!\is_string($verb) || $verb === '') {
                 throw new InvalidArgumentException('Changes bucket keys must be non-empty strings.');
             }
+
             foreach ($entries as $entry) {
                 if (!\is_string($entry)) {
                     throw new InvalidArgumentException(
@@ -100,6 +101,7 @@ final readonly class Changes
                 if ($value !== null && !\is_string($value)) {
                     throw new InvalidArgumentException('snapshot_ref must be a string.');
                 }
+
                 $snapshotRef = $value;
                 continue;
             }
@@ -109,6 +111,7 @@ final readonly class Changes
                     \sprintf("Changes bucket '%s' must be a list.", $key),
                 );
             }
+
             $buckets[$key] = array_values($value);
         }
 

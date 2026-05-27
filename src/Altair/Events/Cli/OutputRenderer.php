@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Events\Cli;
 
+use Altair\Events\Changes;
 use Altair\Events\Event;
 use DateTimeInterface;
 
@@ -25,7 +26,7 @@ final readonly class OutputRenderer
 {
     public function eventLineHuman(Event $event): string
     {
-        $changes = $event->changes !== null
+        $changes = $event->changes instanceof Changes
             ? $this->summariseChanges($event->changes->toArray())
             : '';
 
@@ -37,7 +38,7 @@ final readonly class OutputRenderer
             $event->status->value,
             $event->durationMs,
             $event->command,
-            $changes === '' ? '' : "  [{$changes}]",
+            $changes === '' ? '' : \sprintf('  [%s]', $changes),
         );
     }
 
@@ -58,9 +59,11 @@ final readonly class OutputRenderer
         if ($event->user !== null) {
             $out[] = 'user:       ' . $event->user;
         }
+
         if ($event->client !== null) {
             $out[] = 'client:     ' . $event->client;
         }
+
         $out[] = 'command:    ' . $event->command;
         $out[] = 'kind:       ' . $event->kind->value;
         $out[] = 'status:     ' . $event->status->value;
@@ -68,21 +71,24 @@ final readonly class OutputRenderer
         if ($event->error !== null) {
             $out[] = 'error:      ' . $event->error;
         }
-        if ($event->changes !== null) {
+
+        if ($event->changes instanceof Changes) {
             $out[] = 'changes:';
             foreach ($event->changes->toArray() as $bucket => $entries) {
                 if ($bucket === 'snapshot_ref') {
-                    $out[] = '  snapshot_ref: ' . (string) $entries;
+                    $out[] = '  snapshot_ref: ' . $entries;
                     continue;
                 }
+
                 $out[] = '  ' . $bucket . ':';
                 if (\is_array($entries)) {
                     foreach ($entries as $entry) {
-                        $out[] = '    - ' . (string) $entry;
+                        $out[] = '    - ' . $entry;
                     }
                 }
             }
         }
+
         if ($event->extra !== []) {
             $out[] = 'extra:      ' . json_encode($event->extra, JSON_UNESCAPED_SLASHES);
         }
@@ -100,6 +106,7 @@ final readonly class OutputRenderer
             if ($verb === 'snapshot_ref') {
                 continue;
             }
+
             if (\is_array($entries) && $entries !== []) {
                 $parts[] = $verb . ':' . \count($entries);
             }

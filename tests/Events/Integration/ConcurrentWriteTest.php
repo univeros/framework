@@ -37,6 +37,7 @@ class ConcurrentWriteTest extends TestCase
         if (isset($this->logPath) && is_file($this->logPath)) {
             unlink($this->logPath);
         }
+
         if (isset($this->tmpDir) && is_dir($this->tmpDir)) {
             rmdir($this->tmpDir);
         }
@@ -62,12 +63,13 @@ class ConcurrentWriteTest extends TestCase
                         id: \sprintf('01H%05dWORKER%020d', $w, $i),
                         timestamp: new \DateTimeImmutable('now'),
                         actor: Actor::Cli,
-                        command: "bin/altair foo worker={$w} iter={$i}",
+                        command: sprintf('bin/altair foo worker=%d iter=%d', $w, $i),
                         kind: EventKind::Scaffold,
                         status: EventStatus::Ok,
                         durationMs: 1,
                     ));
                 }
+
                 exit(0);
             }
 

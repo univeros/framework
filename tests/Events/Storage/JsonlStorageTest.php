@@ -33,6 +33,7 @@ class JsonlStorageTest extends TestCase
         if (is_file($this->logPath)) {
             unlink($this->logPath);
         }
+
         if (is_dir($this->tmpDir)) {
             rmdir($this->tmpDir);
         }
