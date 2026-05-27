@@ -28,10 +28,8 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 
     /**
      * CommandRunnerMiddlewareStrategy constructor.
-     *
-     * @param array|null $middlewares
      */
-    public function __construct(array $middlewares = null, protected ?MiddlewareResolverInterface $resolver = null)
+    public function __construct(?array $middlewares = null, protected ?MiddlewareResolverInterface $resolver = null)
     {
         $this->middlewares = $middlewares ?? [];
     }

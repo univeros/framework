@@ -96,7 +96,7 @@ interface MapInterface extends CollectionInterface
      *
      * If a length is not provided, the resulting map will contains all pairs between the offset and the end of the map.
      */
-    public function slice(int $offset, int $length = null): MapInterface;
+    public function slice(int $offset, ?int $length = null): MapInterface;
 
     /**
      * Returns a sorted copy of the map, based on an optional callable
@@ -104,7 +104,7 @@ interface MapInterface extends CollectionInterface
      *
      * @param callable|null $comparator Accepts two values to be compared.
      */
-    public function sort(callable $comparator = null): MapInterface;
+    public function sort(?callable $comparator = null): MapInterface;
 
     /**
      * Returns a sorted copy of the map, based on an optional callable
@@ -112,7 +112,7 @@ interface MapInterface extends CollectionInterface
      *
      * @param callable|null $comparator Accepts two keys to be compared.
      */
-    public function ksort(callable $comparator = null): MapInterface;
+    public function ksort(?callable $comparator = null): MapInterface;
 
     /**
      * Merges two maps.

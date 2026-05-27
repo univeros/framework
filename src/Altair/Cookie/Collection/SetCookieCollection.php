@@ -83,7 +83,7 @@ class SetCookieCollection extends Map
      * {@inheritDoc}
      */
     #[Override]
-    public function sort(callable $comparator = null): MapInterface
+    public function sort(?callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 

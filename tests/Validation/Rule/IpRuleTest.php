@@ -74,7 +74,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $range
      */
     #[DataProvider('trueProvider')]
-    public function testPayloadTrue(string $value, $options = null, string $range = null): void
+    public function testPayloadTrue(string $value, $options = null, ?string $range = null): void
     {
         $this->assertTrue($this->assertPayload($value, $options, $range));
     }
@@ -85,7 +85,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $range
      */
     #[DataProvider('falseProvider')]
-    public function testPayloadFalse(string $value, int $options = null, $range = null): void
+    public function testPayloadFalse(string $value, ?int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertPayload($value, $options, $range));
     }
@@ -96,7 +96,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $range
      */
     #[DataProvider('trueProvider')]
-    public function testValueTrue(string $value, $options = null, string $range = null): void
+    public function testValueTrue(string $value, $options = null, ?string $range = null): void
     {
         $this->assertTrue($this->assertValue($value, $options, $range));
     }
@@ -107,7 +107,7 @@ class IpRuleTest extends TestCase
      * @param null|mixed $range
      */
     #[DataProvider('falseProvider')]
-    public function testValueFalse(string $value, int $options = null, $range = null): void
+    public function testValueFalse(string $value, ?int $options = null, $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));
     }
@@ -116,7 +116,7 @@ class IpRuleTest extends TestCase
      * @param $value
      */
     #[DataProvider('invalidIpsForNetworkRangeProvider')]
-    public function testInvalidIpsForRange(string $value, $options = null, string $range = null): void
+    public function testInvalidIpsForRange(string $value, $options = null, ?string $range = null): void
     {
         $this->assertFalse($this->assertValue($value, $options, $range));
     }

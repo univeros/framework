@@ -19,11 +19,7 @@ use Psr\Http\Message\RequestInterface;
 
 class CookieFactory
 {
-    /**
-     * @param string|null $value
-     *
-     */
-    public static function create(string $name, string $value = null): Cookie
+    public static function create(string $name, ?string $value = null): Cookie
     {
         return new Cookie($name, $value);
     }

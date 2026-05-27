@@ -20,10 +20,8 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
 
     /**
      * ArrayIdentityValidator constructor.
-     *
-     * @param array|null $users
      */
-    public function __construct(array $users = null)
+    public function __construct(?array $users = null)
     {
         $this->users = $users ?? [];
     }

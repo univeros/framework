@@ -19,10 +19,8 @@ class TrimFilter extends AbstractFilter
 
     /**
      * TrimFilter constructor.
-     *
-     * @param string|null $chars
      */
-    public function __construct(string $chars = null)
+    public function __construct(?string $chars = null)
     {
         $this->chars = $chars ?? " \t\n\r\0\x0B";
     }

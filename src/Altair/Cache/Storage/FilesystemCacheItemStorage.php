@@ -28,10 +28,8 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * FilesystemCacheItemPoolStorage constructor.
-     *
-     * @param string|null $directory
      */
-    public function __construct(Filesystem $filesystem, string $directory = null)
+    public function __construct(Filesystem $filesystem, ?string $directory = null)
     {
         $this->setCacheDirectory($filesystem, $directory);
         $this->filesystem = $filesystem;
@@ -141,10 +139,9 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      * Modified version to return a boolean when writing contents to the file
      *
      * @param $value
-     * @param int|null $expiresAt
      *
      */
-    protected function put(string $id, $value, int $expiresAt = null): bool
+    protected function put(string $id, $value, ?int $expiresAt = null): bool
     {
         $file = $this->getFilePath($id, true);
 

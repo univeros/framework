@@ -21,14 +21,12 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
 
     /**
      * TokenGeneratorConfiguration constructor.
-     *
-     * @param int|null $timestamp
      */
     public function __construct(
         private string $publicKey,
         private int $ttl,
         private Signer $signer,
-        int $timestamp = null,
+        ?int $timestamp = null,
         private ?string $privateKey = null
     ) {
         $this->timestamp = $timestamp ?: time();

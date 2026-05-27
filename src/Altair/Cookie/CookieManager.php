@@ -18,11 +18,7 @@ use Psr\Http\Message\ResponseInterface;
 
 class CookieManager
 {
-    /**
-     * @param string|null $value
-     *
-     */
-    public function getFromRequest(RequestInterface $request, string $name, string $value = null): Cookie
+    public function getFromRequest(RequestInterface $request, string $name, ?string $value = null): Cookie
     {
         $cookies = CookieFactory::createCollectionFromRequest($request);
 
@@ -58,11 +54,7 @@ class CookieManager
         return $cookies->injectIntoRequestHeader($request);
     }
 
-    /**
-     * @param string|null $value
-     *
-     */
-    public function getFromResponse(ResponseInterface $response, string $name, string $value = null): SetCookie
+    public function getFromResponse(ResponseInterface $response, string $name, ?string $value = null): SetCookie
     {
         $cookies = SetCookieFactory::createCollectionFromResponse($response);
 

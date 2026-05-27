@@ -20,7 +20,7 @@ class MinStrLengthFilter extends AbstractFilter
     /**
      * MaxStrLengthFilter constructor.
      */
-    public function __construct(protected int $min, string $pad = null, protected int $direction = STR_PAD_RIGHT)
+    public function __construct(protected int $min, ?string $pad = null, protected int $direction = STR_PAD_RIGHT)
     {
         $this->pad = $pad ?? ' ';
     }
