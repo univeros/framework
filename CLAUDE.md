@@ -108,6 +108,26 @@ bin/altair worker:retry-failed             # re-dispatch from failure transport
 
 When adding a queue dispatch, write the spec's `queue:` block first and re-scaffold — don't hand-write the DTO + handler + test trio. Keep `Symfony\Component\Messenger\*` imports out of HTTP/domain code; type against `Altair\Messaging\Contracts\MessageBusInterface` instead.
 
+### Event log (session memory)
+
+The `univeros/events` sub-package owns the append-only mutation event log at `.altair/events.jsonl`. Every mutating framework operation (scaffold, migration, rewind, replay, cs:fix, rector, worker consume, manifest generate, eval-with-writes) should call `RecorderInterface::record(Event::create(...))` so the agent has a chronological "what just changed?" record across sessions. Recording is best-effort — the Recorder swallows storage failures, so commands stay correct even when the log can't be written.
+
+`EventsConfiguration` wires `RecorderInterface`, `Reader`, `JsonlStorage`, `SnapshotStorage`, `CheckpointStorage`, and `Scrubber` from `ALTAIR_EVENTS_*` env vars. The Scrubber redacts a default list of secret flags (`--password`, `--token`, `--api-key`, ...) before persistence; add more via `ALTAIR_EVENTS_EXTRA_SECRET_FLAGS`.
+
+```bash
+bin/altair events:tail -n 50                      # newest 50 events (human or --format=json)
+bin/altair events:show <id>                       # full detail + snapshot if attached
+bin/altair events:since <ulid|timestamp>          # everything after a point
+bin/altair events:since-last-success              # what happened since the last OK event
+bin/altair events:filter --kind=scaffold,migration --status=fail
+bin/altair events:stats                           # counts by kind/status + total duration
+bin/altair events:checkpoint:create feat/posts    # bookmark current head
+bin/altair events:checkpoint:diff feat/posts      # events since the bookmark
+bin/altair events:compact --before=2026-04-01     # archive old events to .altair/events.archive/
+```
+
+When adding a new mutating command anywhere in the framework, type-hint `RecorderInterface` in the constructor and call `record(Event::create(...))` after success/failure — don't hand-write the event JSON. Use the named-constructor `Event::create()` so the ULID + timestamp stamping stays consistent. Keep `.altair/` in the host app's `.gitignore` (events are local).
+
 ### Plan/Skill choices for the open work
 
 - **Phase 2 (Rector):** Don't `Plan` it — just run `composer rector:fix`, then `composer cs:fix && composer test`. Triage failures one at a time.
