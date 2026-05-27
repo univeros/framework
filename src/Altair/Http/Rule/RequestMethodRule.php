@@ -23,10 +23,8 @@ class RequestMethodRule implements HttpAuthRuleInterface
 
     /**
      * RequestMethodRule constructor.
-     *
-     * @param array|null $options
      */
-    public function __construct(array $options = null)
+    public function __construct(?array $options = null)
     {
         $this->options = array_merge($this->options, $options ?? []);
     }

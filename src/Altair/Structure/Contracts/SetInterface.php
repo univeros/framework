@@ -71,7 +71,7 @@ interface SetInterface extends CollectionInterface
      * @param callable|null $callback Accepts a value, returns a boolean: true : include the value, false: skip the
      * value.
      */
-    public function filter(callable $callback = null): SetInterface;
+    public function filter(?callable $callback = null): SetInterface;
 
     /**
      * Returns the first value in the set.
@@ -116,7 +116,7 @@ interface SetInterface extends CollectionInterface
      *
      *
      */
-    public function join(string $glue = null): string;
+    public function join(?string $glue = null): string;
 
     /**
      * Iteratively reduces the set to a single value using a callback.
@@ -148,14 +148,14 @@ interface SetInterface extends CollectionInterface
      * If a length is given and is negative, the set will stop that many values from the end. If a length is not
      * provided, the resulting set will contains all values between the offset and the end of the set.
      */
-    public function slice(int $offset, int $length = null): SetInterface;
+    public function slice(int $offset, ?int $length = null): SetInterface;
 
     /**
      * Sorts the set in-place, based on an optional callable comparator.
      *
      * @param callable|null $comparator Accepts two values to be compared. Should return the result of a <=> b.
      */
-    public function sort(callable $comparator = null): SetInterface;
+    public function sort(?callable $comparator = null): SetInterface;
 
     /**
      * Returns the result of adding all given values to the set.

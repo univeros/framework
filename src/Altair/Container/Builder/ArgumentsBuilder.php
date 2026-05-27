@@ -28,14 +28,13 @@ class ArgumentsBuilder implements BuilderInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @param array|null $reflectionParameters
      * @throws InjectionException
      * @throws ReflectionException
      */
     public function build(
         ReflectionFunctionAbstract $reflectionFunction,
         Definition $definition,
-        array $reflectionParameters = null
+        ?array $reflectionParameters = null
     ): array {
         $arguments = [];
 

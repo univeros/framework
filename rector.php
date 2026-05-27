@@ -10,8 +10,11 @@ declare(strict_types=1);
  */
 
 use Rector\Config\RectorConfig;
+use Rector\Php81\Rector\ClassMethod\NewInInitializerRector;
+use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+use Rector\ValueObject\PhpVersion;
 
 return RectorConfig::configure()
     ->withPaths([
@@ -20,6 +23,12 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         __DIR__ . '/tests/bootstrap.php',
+        // Scope boundary for #93: making params explicitly `?Type` lets Rector
+        // collapse `?? new X()` bodies into promoted `= new X()` defaults. That
+        // narrows the constructor contract (an explicit `null` arg becomes a
+        // TypeError) — a behaviour change that belongs in its own PR, not the
+        // nullable-deprecation fix. Remove this skip to adopt it deliberately.
+        NewInInitializerRector::class,
         // Container test fixtures declare classes used as container-reflection inputs.
         // "Empty" constructors / unused private methods are not actually unused —
         // they're inspected at runtime via Reflection.
@@ -72,6 +81,15 @@ return RectorConfig::configure()
         SetList::TYPE_DECLARATION,
         SetList::PRIVATIZATION,
         SetList::INSTANCEOF,
+    ])
+    // PHP 8.4 deprecates implicit-nullable params (`Type $x = null`). The
+    // explicit `?Type` form is valid back to 7.1, so this single rule is a
+    // forward-compat fix that does not raise the PHP 8.3 floor. The rule is
+    // version-bonded to 8.4, so the target is lifted to 8.4 purely to arm it.
+    // See issue #93.
+    ->withPhpVersion(PhpVersion::PHP_84)
+    ->withRules([
+        ExplicitNullableParamTypeRector::class,
     ])
     ->withImportNames(
         importNames: true,

@@ -60,27 +60,17 @@ class Container implements ContainerInterface
 
     /**
      * Container constructor.
-     *
-     * @param ReflectionInterface|null $reflector
-     * @param AliasesCollection|null $aliasesCollection
-     * @param ClassDefinitionsCollection|null $classDefinitionsCollection
-     * @param ParameterDefinitionsCollection|null $parameterDefinitionsCollection
-     * @param SharesCollection|null $sharesCollection
-     * @param PreparesCollection|null $preparesCollection
-     * @param DelegatesCollection|null $delegatesCollection
-     * @param ExecutableBuilder|null $executableBuilder
-     * @param ArgumentsBuilder|null $argumentsBuilder
      */
     public function __construct(
-        ReflectionInterface $reflector = null,
-        AliasesCollection $aliasesCollection = null,
-        ClassDefinitionsCollection $classDefinitionsCollection = null,
-        ParameterDefinitionsCollection $parameterDefinitionsCollection = null,
-        SharesCollection $sharesCollection = null,
-        PreparesCollection $preparesCollection = null,
-        DelegatesCollection $delegatesCollection = null,
-        ExecutableBuilder $executableBuilder = null,
-        ArgumentsBuilder $argumentsBuilder = null
+        ?ReflectionInterface $reflector = null,
+        ?AliasesCollection $aliasesCollection = null,
+        ?ClassDefinitionsCollection $classDefinitionsCollection = null,
+        ?ParameterDefinitionsCollection $parameterDefinitionsCollection = null,
+        ?SharesCollection $sharesCollection = null,
+        ?PreparesCollection $preparesCollection = null,
+        ?DelegatesCollection $delegatesCollection = null,
+        ?ExecutableBuilder $executableBuilder = null,
+        ?ArgumentsBuilder $argumentsBuilder = null
     ) {
         $this->reflector = $reflector ?? new CachedReflection();
         $this->aliases = $aliasesCollection ?? new AliasesCollection();
@@ -252,12 +242,11 @@ class Container implements ContainerInterface
 
     /**
      * Instantiate/provision a class instance
-     * @param Definition|null $definition
      * @throws InjectionException
      * @throws ReflectionException
      * @return mixed|object|null
      */
-    public function make(string $name, Definition $definition = null)
+    public function make(string $name, ?Definition $definition = null)
     {
         [$className, $normalizedClass] = $this->aliases->resolve($name);
 
@@ -305,11 +294,10 @@ class Container implements ContainerInterface
      * Invoke the specified callable or class::method string, provisioning dependencies along the way
      *
      * @param $callableOrMethodString
-     * @param Definition|null $definition
      * @throws InjectionException
      * @throws ReflectionException
      */
-    public function execute($callableOrMethodString, Definition $definition = null): mixed
+    public function execute($callableOrMethodString, ?Definition $definition = null): mixed
     {
         $executable = $this->executableBuilder->build($callableOrMethodString);
         $definition ??= new Definition([]);

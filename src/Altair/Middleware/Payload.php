@@ -21,10 +21,8 @@ class Payload implements PayloadInterface, JsonSerializable
 
     /**
      * Payload constructor.
-     *
-     * @param array|null $attributes
      */
-    public function __construct(array $attributes = null)
+    public function __construct(?array $attributes = null)
     {
         $this->attributes = $attributes ?? [];
     }

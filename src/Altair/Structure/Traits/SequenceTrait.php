@@ -74,7 +74,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function filter(callable $callback = null): SequenceInterface
+    public function filter(?callable $callback = null): SequenceInterface
     {
         return new static(array_filter($this->internal, $callback ?: 'boolval'));
     }
@@ -259,7 +259,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function slice(int $offset, int $length = null): SequenceInterface
+    public function slice(int $offset, ?int $length = null): SequenceInterface
     {
         if (\func_num_args() === 1) {
             $length = \count($this);
@@ -271,7 +271,7 @@ trait SequenceTrait
     /**
      * {@inheritDoc}
      */
-    public function sort(callable $comparator = null): SequenceInterface
+    public function sort(?callable $comparator = null): SequenceInterface
     {
         $internal = $this->internal;
 

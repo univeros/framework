@@ -23,10 +23,8 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
 
     /**
      * InMemoryCommandLocatorService constructor.
-     *
-     * @param MessageCommandMap|null $map
      */
-    public function __construct(MessageCommandMap $map = null)
+    public function __construct(?MessageCommandMap $map = null)
     {
         $this->map = $map ?? new MessageCommandMap();
     }

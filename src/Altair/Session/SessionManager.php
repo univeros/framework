@@ -55,13 +55,11 @@ class SessionManager implements SessionManagerInterface
 
     /**
      * SessionManager constructor.
-     *
-     * @param callable|null $deleteCookieCallable
      */
     public function __construct(
         ServerRequestInterface $request,
         protected ?SessionHandlerInterface $sessionHandler = null,
-        callable $deleteCookieCallable = null
+        ?callable $deleteCookieCallable = null
     ) {
         $this->cookies = $request->getCookieParams();
         $this->cookieParams = session_get_cookie_params();
@@ -92,7 +90,7 @@ class SessionManager implements SessionManagerInterface
      * @inheritDoc
      */
     #[Override]
-    public function setDeleteCookieCallable(callable $callable = null): void
+    public function setDeleteCookieCallable(?callable $callable = null): void
     {
         $this->deleteCookieCallable = $callable ?? function ($name, $params): void {
             $path = $params['path'] ?? null;

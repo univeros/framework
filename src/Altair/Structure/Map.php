@@ -112,7 +112,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function filter(callable $callback = null): MapInterface
+    public function filter(?callable $callback = null): MapInterface
     {
         $filtered = new static();
 
@@ -186,7 +186,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function slice(int $offset, int $length = null): MapInterface
+    public function slice(int $offset, ?int $length = null): MapInterface
     {
         $slice = \func_num_args() === 1 ? \array_slice($this->internal, $offset) : \array_slice($this->internal, $offset, $length);
 
@@ -197,7 +197,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function sort(callable $comparator = null): MapInterface
+    public function sort(?callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 
@@ -220,7 +220,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      * {@inheritDoc}
      */
     #[Override]
-    public function ksort(callable $comparator = null): MapInterface
+    public function ksort(?callable $comparator = null): MapInterface
     {
         $pairs = array_merge([], $this->internal);
 

@@ -37,7 +37,7 @@ class Token implements TokenInterface
      * @inheritDoc
      */
     #[Override]
-    public function getMetadata(string $key = null)
+    public function getMetadata(?string $key = null)
     {
         return null !== $key
             ? $this->metadata[$key] ?? null

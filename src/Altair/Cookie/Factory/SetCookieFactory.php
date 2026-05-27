@@ -20,20 +20,15 @@ use Psr\Http\Message\ResponseInterface;
 
 class SetCookieFactory
 {
-    /**
-     * @param string|null $value
-     *
-     */
-    public static function create(string $name, string $value = null): SetCookie
+    public static function create(string $name, ?string $value = null): SetCookie
     {
         return new SetCookie($name, $value);
     }
 
     /**
-     * @param string|null $value
      *@throws Exception
      */
-    public static function createRemembered(string $name, string $value = null): SetCookie
+    public static function createRemembered(string $name, ?string $value = null): SetCookie
     {
         return (new SetCookie($name, $value))->remember();
     }

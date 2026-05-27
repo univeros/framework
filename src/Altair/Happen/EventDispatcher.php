@@ -83,7 +83,7 @@ class EventDispatcher implements EventDispatcherInterface
      * @inheritDoc
      */
     #[Override]
-    public function dispatch(string $name, EventInterface $event = null): EventInterface
+    public function dispatch(string $name, ?EventInterface $event = null): EventInterface
     {
         $event ??= new Event($name);
 

@@ -42,14 +42,12 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 
     /**
      * CacheItemPool constructor.
-     *
-     * @param CacheItemKeyValidatorInterface|null $cacheItemKeyValidator
      */
     public function __construct(
         protected CacheItemStorageInterface $store,
         string $namespace = '',
         int $defaultLifespan = 0,
-        CacheItemKeyValidatorInterface $cacheItemKeyValidator = null
+        ?CacheItemKeyValidatorInterface $cacheItemKeyValidator = null
     ) {
         if ($this->store instanceof PredisCacheItemStorage) {
             $this->store->useNamespace($namespace);
@@ -335,10 +333,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Creates the cache item factory closure by using the Closure Bind Override. It uses the bind static method of
      * Closure to access the protected properties of the object.
-     *
-     * @param int|null $defaultLifespan
      */
-    protected function createCacheItemFactoryClosure(int $defaultLifespan = null): Closure
+    protected function createCacheItemFactoryClosure(?int $defaultLifespan = null): Closure
     {
         return Closure::bind(
             static function (string $key, $value, bool $isHit) use ($defaultLifespan): CacheItem {

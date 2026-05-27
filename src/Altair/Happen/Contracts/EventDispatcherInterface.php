@@ -52,7 +52,7 @@ interface EventDispatcherInterface
      *
      *
      */
-    public function dispatch(string $name, EventInterface $event = null): EventInterface;
+    public function dispatch(string $name, ?EventInterface $event = null): EventInterface;
 
     /**
      * Dispatches a stack of events. The result is an array of EventInterface objects.

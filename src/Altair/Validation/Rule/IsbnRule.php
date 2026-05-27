@@ -20,10 +20,8 @@ class IsbnRule extends AbstractRule
 
     /**
      * IsbnRule constructor.
-     *
-     * @param int|null $type
      */
-    public function __construct(int $type = null)
+    public function __construct(?int $type = null)
     {
         if (null !== $type && !\in_array($type, [10, 13], false)) {
             throw new InvalidArgumentException(\sprintf('ISBN type must be 10 or 13, "%d" given.', $type));

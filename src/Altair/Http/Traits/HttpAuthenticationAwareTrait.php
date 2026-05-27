@@ -60,7 +60,7 @@ trait HttpAuthenticationAwareTrait
      *
      * @param HttpAuthRuleInterface[] $rules
      */
-    public function __construct(IdentityValidatorInterface $identityValidator, array $rules = null, array $options = null)
+    public function __construct(IdentityValidatorInterface $identityValidator, ?array $rules = null, ?array $options = null)
     {
         $this->identityValidator = $identityValidator;
         $this->rules = $rules ?? [];
