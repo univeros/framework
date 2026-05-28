@@ -16,17 +16,25 @@ use Altair\Structure\Contracts\SequenceInterface;
 use Generator;
 use OutOfRangeException;
 use ReturnTypeWillChange;
+use Traversable;
 use UnderflowException;
 
 /**
  * Common functionality of all structures that implement 'Sequence'.
+ *
+ * @template TValue
+ *
+ * @use CollectionTrait<int, TValue>
  */
 trait SequenceTrait
 {
+    /** @use CollectionTrait<int, TValue> */
     use CollectionTrait;
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, TValue>
      */
     public function toArray(): array
     {
@@ -35,6 +43,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function apply(callable $callback): SequenceInterface
     {
@@ -47,6 +57,10 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param array<array-key, TValue>|Traversable<array-key, TValue> $values
+     *
+     * @return SequenceInterface<TValue>
      */
     public function merge($values): SequenceInterface
     {
@@ -59,8 +73,10 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
      */
-    public function contains(...$values): bool
+    public function contains(mixed ...$values): bool
     {
         foreach ($values as $value) {
             if ($this->find($value) === false) {
@@ -73,6 +89,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function filter(?callable $callback = null): SequenceInterface
     {
@@ -81,14 +99,18 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue $value
      */
-    public function find($value): int|string|false
+    public function find(mixed $value): int|string|false
     {
         return array_search($value, $this->internal, true);
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function first()
     {
@@ -101,6 +123,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function get(int $index)
     {
@@ -111,8 +135,12 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
+     *
+     * @return SequenceInterface<TValue>
      */
-    public function insert(int $index, ...$values): SequenceInterface
+    public function insert(int $index, mixed ...$values): SequenceInterface
     {
         if ($index < 0 || $index > \count($this->internal)) {
             throw new OutOfRangeException('Out of bounds');
@@ -133,6 +161,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function last(): mixed
     {
@@ -145,6 +175,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function map(callable $callback): SequenceInterface
     {
@@ -153,6 +185,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function pop()
     {
@@ -170,8 +204,12 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
+     *
+     * @return SequenceInterface<TValue>
      */
-    public function push(...$values): SequenceInterface
+    public function push(mixed ...$values): SequenceInterface
     {
         $this->pushAll($values);
 
@@ -188,6 +226,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function remove(int $index)
     {
@@ -203,6 +243,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function reverse(): SequenceInterface
     {
@@ -211,6 +253,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function rotate(int $rotations): SequenceInterface
     {
@@ -230,8 +274,12 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue $value
+     *
+     * @return SequenceInterface<TValue>
      */
-    public function set(int $index, $value): SequenceInterface
+    public function set(int $index, mixed $value): SequenceInterface
     {
         $this->checkRange($index);
         $this->internal[$index] = $value;
@@ -241,6 +289,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     public function shift()
     {
@@ -258,6 +308,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function slice(int $offset, ?int $length = null): SequenceInterface
     {
@@ -270,6 +322,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return SequenceInterface<TValue>
      */
     public function sort(?callable $comparator = null): SequenceInterface
     {
@@ -294,8 +348,12 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
+     *
+     * @return SequenceInterface<TValue>
      */
-    public function unshift(...$values): SequenceInterface
+    public function unshift(mixed ...$values): SequenceInterface
     {
         if ($values !== []) {
             array_unshift($this->internal, ...$values);
@@ -308,7 +366,7 @@ trait SequenceTrait
     }
 
     /**
-     * @return Generator
+     * @return Generator<int, TValue>
      */
     #[ReturnTypeWillChange]
     public function getIterator()
@@ -320,9 +378,11 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue $value
      */
     #[ReturnTypeWillChange]
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, mixed $value): void
     {
         if ($offset === null) {
             $this->push($value);
@@ -333,6 +393,8 @@ trait SequenceTrait
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     #[ReturnTypeWillChange]
     public function &offsetGet($offset)

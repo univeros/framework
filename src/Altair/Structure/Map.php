@@ -19,6 +19,7 @@ use Altair\Structure\Contracts\VectorInterface;
 use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Traits\SquaredCapacityTrait;
 use ArrayAccess;
+use Generator;
 use IteratorAggregate;
 use OutOfBoundsException;
 use OutOfRangeException;
@@ -35,16 +36,34 @@ use UnderflowException;
  * insertion order is preserved.
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
+ *
+ * @template TKey
+ * @template TValue
+ *
+ * @implements MapInterface<TKey, TValue>
+ * @implements IteratorAggregate<TKey, TValue>
+ * @implements ArrayAccess<TKey, TValue>
  */
 class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInterface
 {
+    /** @use CollectionTrait<TKey, TValue> */
     use CollectionTrait;
     use SquaredCapacityTrait;
 
     /**
+     * Internal storage of key/value associations as a list of pairs.
+     *
+     * Typed against the concrete Pair (not PairInterface) so the public
+     * $key/$value properties resolve; the Map only ever stores Pair instances.
+     *
+     * @var array<int, Pair<TKey, TValue>>
+     */
+    protected $internal = [];
+
+    /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|Traversable|MapInterface|null $values
+     * @param array<array-key, TValue>|Traversable<TKey, TValue>|MapInterface<TKey, TValue>|null $values
      */
     public function __construct($values = [])
     {
@@ -55,6 +74,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * Debug Info.
+     *
+     * @return array<int, PairInterface<TKey, TValue>>
      */
     public function __debugInfo()
     {
@@ -63,6 +84,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function apply(callable $callback): MapInterface
@@ -76,6 +99,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param array<array-key, TValue>|Traversable<TKey, TValue> $values
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function merge($values): MapInterface
@@ -88,6 +115,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param MapInterface<TKey, TValue> $map
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function intersect(MapInterface $map): MapInterface
@@ -99,6 +130,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param MapInterface<TKey, TValue> $map
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function diff(MapInterface $map): MapInterface
@@ -110,6 +145,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function filter(?callable $callback = null): MapInterface
@@ -127,6 +164,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function map(callable $callback): MapInterface
@@ -142,6 +181,11 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $key
+     * @param TValue $value
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function put($key, $value): MapInterface
@@ -160,6 +204,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param array<array-key, TValue>|Traversable<TKey, TValue> $values
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function putAll($values): MapInterface
@@ -173,6 +221,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function reverse(): MapInterface
@@ -184,6 +234,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function slice(int $offset, ?int $length = null): MapInterface
@@ -195,6 +247,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function sort(?callable $comparator = null): MapInterface
@@ -218,6 +272,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function ksort(?callable $comparator = null): MapInterface
@@ -241,6 +297,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param MapInterface<TKey, TValue> $map
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function union(MapInterface $map): MapInterface
@@ -250,6 +310,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param MapInterface<TKey, TValue> $map
+     *
+     * @return MapInterface<TKey, TValue>
      */
     #[Override]
     public function xor(MapInterface $map): MapInterface
@@ -261,13 +325,14 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return VectorInterface<PairInterface<TKey, TValue>>
      */
     #[Override]
     public function pairs(): VectorInterface
     {
         $sequence = new Vector();
 
-        /** @var Pair $pair */
         foreach ($this->internal as $pair) {
             $sequence[] = $pair->copy();
         }
@@ -277,6 +342,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return VectorInterface<TValue>
      */
     #[Override]
     public function values(): VectorInterface
@@ -295,7 +362,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
      *
      * @throws UnderflowException
      *
-     *
+     * @return Pair<TKey, TValue>
      */
     #[Override]
     public function first(): PairInterface
@@ -309,6 +376,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return Pair<TKey, TValue>
      */
     #[Override]
     public function last(): PairInterface
@@ -322,6 +391,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return Pair<TKey, TValue>
      */
     #[Override]
     public function skip(int $position): PairInterface
@@ -330,7 +401,6 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
             throw new OutOfRangeException('Out of range');
         }
 
-        /** @var PairInterface $pair */
         $pair = $this->internal[$position];
 
         return $pair->copy();
@@ -338,6 +408,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return SetInterface<TKey>
      */
     #[Override]
     public function keys(): SetInterface
@@ -353,6 +425,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $key
      */
     #[Override]
     public function hasKey($key): bool
@@ -362,6 +436,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue $value
      */
     #[Override]
     public function hasValue($value): bool
@@ -371,6 +447,11 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $key
+     * @param TValue|null $default
+     *
+     * @return TValue
      */
     #[Override]
     public function get($key, $default = null)
@@ -408,6 +489,11 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $key
+     * @param TValue|null $default
+     *
+     * @return TValue
      */
     #[Override]
     public function remove($key, $default = null)
@@ -423,6 +509,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<array-key, TValue>
      */
     #[Override]
     public function toArray(): array
@@ -432,6 +520,8 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * Get iterator.
+     *
+     * @return Generator<TKey, TValue>
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -444,10 +534,13 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $offset
+     * @param TValue $value
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->put($offset, $value);
     }
@@ -455,11 +548,15 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      *
+     * @param TKey $offset
+     *
      * @throws OutOfBoundsException
+     *
+     * @return TValue
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function &offsetGet($offset)
+    public function &offsetGet(mixed $offset)
     {
         $pair = $this->lookupKey($offset);
 
@@ -493,11 +590,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Returns item if a key is found.
      *
+     * @param TKey $key
      *
+     * @return Pair<TKey, TValue>|null
      */
     protected function lookupKey(mixed $key): ?PairInterface
     {
-        /** @var PairInterface $pair */
         foreach ($this->internal as $pair) {
             if ($pair->equalsKey($key)) {
                 return $pair;
@@ -510,7 +608,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Returns item if a value is found.
      *
+     * @param TValue $value
      *
+     * @return Pair<TKey, TValue>|null
      */
     protected function lookupValue(mixed $value): ?PairInterface
     {
@@ -526,12 +626,10 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Removes an Map item at specified position.
      *
-     *
-     * @return mixed
+     * @return TValue
      */
     protected function delete(int $position)
     {
-        /** @var PairInterface $pair */
         $pair = $this->internal[$position];
         $value = $pair->value;
 
@@ -545,7 +643,9 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * Converts pairs to array.
      *
-     * @param $pairs
+     * @param iterable<int, Pair<TKey, TValue>> $pairs
+     *
+     * @return array<array-key, TValue>
      */
     protected function pairsToArray($pairs): array
     {

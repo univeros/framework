@@ -16,33 +16,47 @@ use OutOfRangeException;
 use Traversable;
 use UnderflowException;
 
+/**
+ * @template TKey
+ * @template TValue
+ *
+ * @extends CollectionInterface<TKey, TValue>
+ */
 interface MapInterface extends CollectionInterface
 {
     /**
      * Updates all values by applying a callback function to each value.
      *
      * @param callable $callback Accepts two arguments: key and value, should return what the updated value will be.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function apply(callable $callback): MapInterface;
 
     /**
      * Merge an array of values with the current Map.
      *
-     * @param array|Traversable $values
+     * @param array<array-key, TValue>|Traversable<TKey, TValue> $values
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function merge($values): MapInterface;
 
     /**
      * Intersect.
      *
+     * @param MapInterface<TKey, TValue> $map
      *
+     * @return MapInterface<TKey, TValue>
      */
     public function intersect(MapInterface $map): MapInterface;
 
     /**
      * Diff.
      *
+     * @param MapInterface<TKey, TValue> $map
      *
+     * @return MapInterface<TKey, TValue>
      */
     public function diff(MapInterface $map): MapInterface;
 
@@ -52,6 +66,8 @@ interface MapInterface extends CollectionInterface
      *
      * @param callable $callback Accepts a key and a value, and returns: true : include the value, false: skip the
      * value.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function filter(callable $callback): MapInterface;
 
@@ -61,6 +77,8 @@ interface MapInterface extends CollectionInterface
      * The keys will be equal in both maps.
      *
      * @param callable $callback Accepts two arguments: key and value, should return what the updated value will be.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function map(callable $callback): MapInterface;
 
@@ -68,19 +86,26 @@ interface MapInterface extends CollectionInterface
      * Associates a key with a value, replacing a previous association if there
      * was one.
      *
+     * @param TKey $key
+     * @param TValue $value
      *
+     * @return MapInterface<TKey, TValue>
      */
     public function put(mixed $key, mixed $value): MapInterface;
 
     /**
      * Creates associations for all keys and corresponding values of either an array or iterable object.
      *
-     * @param Traversable|array $values
+     * @param Traversable<TKey, TValue>|array<array-key, TValue> $values
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function putAll($values): MapInterface;
 
     /**
      * Returns a reversed copy of the map.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function reverse(): MapInterface;
 
@@ -95,6 +120,8 @@ interface MapInterface extends CollectionInterface
      * If a length is given and is negative, the map will stop that many pairs from the end.
      *
      * If a length is not provided, the resulting map will contains all pairs between the offset and the end of the map.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function slice(int $offset, ?int $length = null): MapInterface;
 
@@ -103,6 +130,8 @@ interface MapInterface extends CollectionInterface
      * comparator. The map will be sorted by value.
      *
      * @param callable|null $comparator Accepts two values to be compared.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function sort(?callable $comparator = null): MapInterface;
 
@@ -111,30 +140,40 @@ interface MapInterface extends CollectionInterface
      * comparator. The map will be sorted by key.
      *
      * @param callable|null $comparator Accepts two keys to be compared.
+     *
+     * @return MapInterface<TKey, TValue>
      */
     public function ksort(?callable $comparator = null): MapInterface;
 
     /**
      * Merges two maps.
      *
+     * @param MapInterface<TKey, TValue> $map
      *
+     * @return MapInterface<TKey, TValue>
      */
     public function union(MapInterface $map): MapInterface;
 
     /**
      * XOR two maps.
      *
+     * @param MapInterface<TKey, TValue> $map
      *
+     * @return MapInterface<TKey, TValue>
      */
     public function xor(MapInterface $map): MapInterface;
 
     /**
      * Returns a sequence of pairs representing all associations.
+     *
+     * @return VectorInterface<PairInterface<TKey, TValue>>
      */
     public function pairs(): VectorInterface;
 
     /**
      * Returns a sequence of all the associated values in the Map.
+     *
+     * @return VectorInterface<TValue>
      */
     public function values(): VectorInterface;
 
@@ -143,7 +182,7 @@ interface MapInterface extends CollectionInterface
      *
      * @throws UnderflowException
      *
-     *
+     * @return PairInterface<TKey, TValue>
      */
     public function first(): PairInterface;
 
@@ -152,7 +191,7 @@ interface MapInterface extends CollectionInterface
      *
      * @throws UnderflowException
      *
-     *
+     * @return PairInterface<TKey, TValue>
      */
     public function last(): PairInterface;
 
@@ -162,25 +201,28 @@ interface MapInterface extends CollectionInterface
      *
      * @throws OutOfRangeException
      *
+     * @return PairInterface<TKey, TValue>
      */
     public function skip(int $position): PairInterface;
 
     /**
      * Returns a set of all the keys in the map.
+     *
+     * @return SetInterface<TKey>
      */
     public function keys(): SetInterface;
 
     /**
      * Returns whether an association a given key exists.
      *
-     *
+     * @param TKey $key
      */
     public function hasKey(mixed $key): bool;
 
     /**
      * Returns whether an association for a given value exists.
      *
-     *
+     * @param TValue $value
      */
     public function hasValue(mixed $value): bool;
 
@@ -188,9 +230,11 @@ interface MapInterface extends CollectionInterface
      * Returns the value associated with a key, or an optional default if the
      * key is not associated with a value.
      *
+     * @param TKey $key
+     * @param TValue|null $default
      *
      * @throws OutOfBoundsException if no default was provided and the key isnot associated with a value.
-     * @return mixed The associated value or fallback default if provided.
+     * @return TValue The associated value or fallback default if provided.
      *
      */
     public function get(mixed $key, mixed $default = null);
@@ -215,9 +259,11 @@ interface MapInterface extends CollectionInterface
     /**
      * Removes a key's association from the map and returns the associated value or a provided default if provided.
      *
+     * @param TKey $key
+     * @param TValue|null $default
      *
      * @throws OutOfBoundsException if no default was provided and the key is not associated with a value.
-     * @return mixed The associated value or fallback default if provided.
+     * @return TValue The associated value or fallback default if provided.
      *
      */
     public function remove(mixed $key, mixed $default = null);

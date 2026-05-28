@@ -1,0 +1,13 @@
+[
+  { "arm": "altair", "run": 1, "model": "claude-opus-4-7", "input_tokens": 8200, "output_tokens": 1400, "cache_read_tokens": 0, "turns": 6, "tool_calls": 9, "file_reads": 2, "wallclock_ms": 41000, "acceptance_pass": true },
+  { "arm": "altair", "run": 2, "model": "claude-opus-4-7", "input_tokens": 7900, "output_tokens": 1250, "cache_read_tokens": 0, "turns": 5, "tool_calls": 8, "file_reads": 1, "wallclock_ms": 38500, "acceptance_pass": true },
+  { "arm": "altair", "run": 3, "model": "claude-opus-4-7", "input_tokens": 9100, "output_tokens": 1600, "cache_read_tokens": 0, "turns": 7, "tool_calls": 11, "file_reads": 3, "wallclock_ms": 47000, "acceptance_pass": true },
+  { "arm": "altair", "run": 4, "model": "claude-opus-4-7", "input_tokens": 8400, "output_tokens": 1350, "cache_read_tokens": 0, "turns": 6, "tool_calls": 9, "file_reads": 2, "wallclock_ms": 42500, "acceptance_pass": true },
+  { "arm": "altair", "run": 5, "model": "claude-opus-4-7", "input_tokens": 8000, "output_tokens": 1300, "cache_read_tokens": 0, "turns": 6, "tool_calls": 8, "file_reads": 2, "wallclock_ms": 40000, "acceptance_pass": true },
+
+  { "arm": "baseline", "run": 1, "model": "claude-opus-4-7", "input_tokens": 71000, "output_tokens": 9800, "cache_read_tokens": 0, "turns": 24, "tool_calls": 48, "file_reads": 21, "wallclock_ms": 312000, "acceptance_pass": true },
+  { "arm": "baseline", "run": 2, "model": "claude-opus-4-7", "input_tokens": 82000, "output_tokens": 11200, "cache_read_tokens": 0, "turns": 28, "tool_calls": 57, "file_reads": 26, "wallclock_ms": 351000, "acceptance_pass": true },
+  { "arm": "baseline", "run": 3, "model": "claude-opus-4-7", "input_tokens": 68000, "output_tokens": 9100, "cache_read_tokens": 0, "turns": 22, "tool_calls": 44, "file_reads": 19, "wallclock_ms": 289000, "acceptance_pass": false },
+  { "arm": "baseline", "run": 4, "model": "claude-opus-4-7", "input_tokens": 90000, "output_tokens": 12500, "cache_read_tokens": 0, "turns": 31, "tool_calls": 62, "file_reads": 29, "wallclock_ms": 378000, "acceptance_pass": true },
+  { "arm": "baseline", "run": 5, "model": "claude-opus-4-7", "input_tokens": 76000, "output_tokens": 10400, "cache_read_tokens": 0, "turns": 26, "tool_calls": 52, "file_reads": 24, "wallclock_ms": 333000, "acceptance_pass": true }
+]
