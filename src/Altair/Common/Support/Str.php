@@ -63,6 +63,9 @@ class Str
     public function truncateWords(string $value, int $count, string $suffix = '...'): string
     {
         $words = preg_split('/(\s+)/u', trim($value), -1, PREG_SPLIT_DELIM_CAPTURE);
+        if ($words === false) {
+            return $value;
+        }
 
         return \count($words) / 2 > $count
             ? implode('', \array_slice($words, 0, ($count * 2) - 1)) . $suffix
@@ -123,7 +126,9 @@ class Str
      */
     public function countWords(string $value): int
     {
-        return \count(preg_split('/\s+/u', $value, -1, PREG_SPLIT_NO_EMPTY));
+        $words = preg_split('/\s+/u', $value, -1, PREG_SPLIT_NO_EMPTY);
+
+        return $words === false ? 0 : \count($words);
     }
 
     /**

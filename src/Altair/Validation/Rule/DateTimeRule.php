@@ -26,7 +26,13 @@ class DateTimeRule extends AbstractRule
             return (bool) $value;
         }
 
-        if (!\is_scalar($value) || trim($value) === '') {
+        if (!\is_scalar($value)) {
+            return false;
+        }
+
+        $value = (string) $value;
+
+        if (trim($value) === '') {
             return false;
         }
 

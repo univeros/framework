@@ -358,7 +358,7 @@ final readonly class OpenApiParser
     }
 
     /**
-     * @param list<mixed> $types
+     * @param array<mixed> $types
      */
     private function firstNonNull(array $types): ?string
     {

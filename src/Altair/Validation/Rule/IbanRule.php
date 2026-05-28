@@ -97,7 +97,7 @@ class IbanRule extends AbstractRule
             return false;
         }
 
-        $value = $this->sanitize($value);
+        $value = $this->sanitize((string) $value);
 
         if (mb_strlen($value) < 15) {
             return false;

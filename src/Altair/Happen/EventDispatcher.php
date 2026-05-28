@@ -21,7 +21,7 @@ use Override;
 class EventDispatcher implements EventDispatcherInterface
 {
     /**
-     * @var array<string, array<int, list<callable>>> keeps reference of the registered listeners.
+     * @var array<string, array<int, array<int, callable>>> keeps reference of the registered listeners.
      */
     protected $listeners = [];
 
@@ -63,15 +63,10 @@ class EventDispatcher implements EventDispatcherInterface
     public function addSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
-            if (\is_string($params)) {
-                $this->addListener($name, [$subscriber, $params]);
-            } elseif (\is_string($params[0])) {
-                [$method, $priority] = $params + [null, 0];
-                $this->addListener($name, [$subscriber, $method], $priority ?? 0);
-            } else {
-                foreach ($params as $listener) {
-                    [$method, $priority] = $listener + [null, 0];
-                    $this->addListener($name, [$subscriber, $method], $priority ?? 0);
+            foreach ($this->normalizeSubscribedEvent($params) as [$method, $priority]) {
+                $listener = [$subscriber, $method];
+                if (\is_callable($listener)) {
+                    $this->addListener($name, $listener, $priority);
                 }
             }
         }
@@ -208,16 +203,50 @@ class EventDispatcher implements EventDispatcherInterface
     public function removeSubscriber(EventSubscriberInterface $subscriber): EventDispatcherInterface
     {
         foreach ($subscriber->getSubscribedEvents() as $name => $params) {
-            if (\is_array($params) && \is_array($params[0])) {
-                foreach ($params as $listener) {
-                    $this->removeListener($name, [$subscriber, $listener[0]]);
+            foreach ($this->normalizeSubscribedEvent($params) as [$method]) {
+                $listener = [$subscriber, $method];
+                if (\is_callable($listener)) {
+                    $this->removeListener($name, $listener);
                 }
-            } else {
-                $this->removeListener($name, [$subscriber, \is_string($params) ? $params : $params[0]]);
             }
         }
 
         return $this;
+    }
+
+    /**
+     * Normalizes a single entry of {@see EventSubscriberInterface::getSubscribedEvents()}
+     * into a list of method/priority pairs.
+     *
+     * @param string|array{0: string, 1?: int}|list<array{0: string, 1?: int}> $params
+     *
+     * @return list<array{0: string, 1: int}>
+     */
+    protected function normalizeSubscribedEvent(string|array $params): array
+    {
+        if (\is_string($params)) {
+            return [[$params, EventDispatcherInterface::NORMAL_PRIORITY]];
+        }
+
+        $first = $params[0];
+
+        if (\is_string($first)) {
+            $priority = $params[1] ?? EventDispatcherInterface::NORMAL_PRIORITY;
+
+            return [[$first, \is_int($priority) ? $priority : EventDispatcherInterface::NORMAL_PRIORITY]];
+        }
+
+        $normalized = [];
+        foreach ($params as $listener) {
+            if (!\is_array($listener)) {
+                continue;
+            }
+
+            $priority = $listener[1] ?? EventDispatcherInterface::NORMAL_PRIORITY;
+            $normalized[] = [$listener[0], \is_int($priority) ? $priority : EventDispatcherInterface::NORMAL_PRIORITY];
+        }
+
+        return $normalized;
     }
 
     /**

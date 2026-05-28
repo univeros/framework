@@ -31,7 +31,7 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $prevName = session_name();
-        $prevCookie = $this->cookieManager->getFromRequest($request, $prevName);
+        $prevCookie = $this->cookieManager->getFromRequest($request, $prevName === false ? '' : $prevName);
         $prevId = $prevCookie->getValue();
         if ($prevId !== null) {
             session_id($prevId);

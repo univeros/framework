@@ -28,8 +28,7 @@ class RequestPathRule implements HttpAuthRuleInterface
     /**
      * Create a new rule instance
      *
-     * @param string[] $options
-     *
+     * @param array<string, list<string>> $options
      */
     public function __construct(array $options = [])
     {

@@ -51,9 +51,21 @@ class InputParser implements InputInterface
             return [];
         }
 
-        return $body instanceof JsonSerializable
-            ? $body->jsonSerialize()
-            // if parsed body is an object but doesn't implements JsonSerializable use json parsing instead
-            : (\is_object($body) ? json_decode(json_encode($body), true) : $body);
+        if ($body instanceof JsonSerializable) {
+            return (array) $body->jsonSerialize();
+        }
+
+        // if parsed body is an object but doesn't implement JsonSerializable use json parsing instead
+        if (\is_object($body)) {
+            $encoded = json_encode($body);
+
+            if ($encoded === false) {
+                return [];
+            }
+
+            return (array) json_decode($encoded, true);
+        }
+
+        return $body;
     }
 }

@@ -37,9 +37,11 @@ class InRule extends AbstractRule
         }
 
         $value = (string) $value;
+        $encoding = mb_detect_encoding($value) ?: null;
+
         return $this->strict
-            ? false !== mb_strpos((string) $this->haystack, $value, 0, mb_detect_encoding($value))
-            : false !== mb_stripos((string) $this->haystack, $value, 0, mb_detect_encoding($value));
+            ? false !== mb_strpos((string) $this->haystack, $value, 0, $encoding)
+            : false !== mb_stripos((string) $this->haystack, $value, 0, $encoding);
     }
 
     #[Override]

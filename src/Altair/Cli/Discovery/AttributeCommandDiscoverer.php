@@ -97,7 +97,7 @@ class AttributeCommandDiscoverer implements CommandLocatorInterface
             return [];
         }
 
-        $tokens = PhpToken::tokenize($code);
+        $tokens = array_values(PhpToken::tokenize($code));
 
         $namespace = '';
         $classes = [];

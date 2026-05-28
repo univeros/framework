@@ -59,6 +59,7 @@ class AttributeScanner
     }
 
     /**
+     * @param  class-string             $fqcn
      * @return list<AttributeConvention>
      */
     private function collect(string $fqcn): array

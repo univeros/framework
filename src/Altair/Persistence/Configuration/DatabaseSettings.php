@@ -37,7 +37,8 @@ final readonly class DatabaseSettings
     ];
 
     /**
-     * @param array<string, scalar|null> $options Driver-specific PDO options.
+     * @param non-empty-string            $database
+     * @param array<string, scalar|null>  $options  Driver-specific PDO options.
      */
     public function __construct(
         public string $driver,
@@ -60,6 +61,16 @@ final readonly class DatabaseSettings
         if ($database === '') {
             throw new InvalidConfigurationException('DB_DATABASE must not be empty.');
         }
+
+        if ($driver !== self::DRIVER_SQLITE) {
+            if ($host === '') {
+                throw new InvalidConfigurationException('DB_HOST must not be empty.');
+            }
+
+            if ($port < 1) {
+                throw new InvalidConfigurationException('DB_PORT must be a positive integer.');
+            }
+        }
     }
 
     /**
@@ -75,6 +86,9 @@ final readonly class DatabaseSettings
         }
 
         $database = (string) ($env['DB_DATABASE'] ?? '');
+        if ($database === '') {
+            throw new InvalidConfigurationException('DB_DATABASE must not be empty.');
+        }
 
         return new self(
             driver: $driver,
@@ -90,6 +104,58 @@ final readonly class DatabaseSettings
     public function isSqlite(): bool
     {
         return $this->driver === self::DRIVER_SQLITE;
+    }
+
+    /**
+     * Host narrowed for TCP drivers (validated non-empty in the constructor).
+     *
+     * @return non-empty-string
+     */
+    public function tcpHost(): string
+    {
+        if ($this->host === '') {
+            throw new InvalidConfigurationException('DB_HOST must not be empty.');
+        }
+
+        return $this->host;
+    }
+
+    /**
+     * Port narrowed for TCP drivers (validated positive in the constructor).
+     *
+     * @return int<1, max>
+     */
+    public function tcpPort(): int
+    {
+        if ($this->port < 1) {
+            throw new InvalidConfigurationException('DB_PORT must be a positive integer.');
+        }
+
+        return $this->port;
+    }
+
+    /**
+     * @return non-empty-string|null
+     */
+    public function tcpUser(): ?string
+    {
+        return $this->user === '' ? null : $this->user;
+    }
+
+    /**
+     * @return non-empty-string|null
+     */
+    public function tcpPassword(): ?string
+    {
+        return $this->password === '' ? null : $this->password;
+    }
+
+    /**
+     * @return non-empty-string|null
+     */
+    public function tcpCharset(): ?string
+    {
+        return $this->charset === '' ? null : $this->charset;
     }
 
     private static function defaultPort(string $driver): int

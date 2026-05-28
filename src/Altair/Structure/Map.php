@@ -207,7 +207,7 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      *
-     * @param array<array-key, TValue>|Traversable<TKey, TValue> $values
+     * @param array<TKey&array-key, TValue>|Traversable<TKey, TValue> $values
      *
      * @return MapInterface<TKey, TValue>
      */
@@ -384,11 +384,11 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     #[Override]
     public function last(): PairInterface
     {
-        if ($this->isEmpty()) {
+        if ($this->internal === []) {
             throw new UnderflowException('Map is empty');
         }
 
-        return end($this->internal);
+        return $this->internal[array_key_last($this->internal)];
     }
 
     /**

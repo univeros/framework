@@ -56,7 +56,7 @@ class DispatcherMiddleware implements MiddlewareInterface
         $status = array_shift($route);
 
         return match ($status) {
-            Dispatcher::FOUND => $route,
+            Dispatcher::FOUND => $this->resolveFoundRoute($route),
             Dispatcher::METHOD_NOT_ALLOWED => throw new HttpMethodNotAllowedException(
                 array_shift($route),
                 \sprintf("Cannot access resource '%s' using method '%s'", $path, $method),
@@ -64,5 +64,28 @@ class DispatcherMiddleware implements MiddlewareInterface
             ),
             default => throw new HttpNotFoundException($path),
         };
+    }
+
+    /**
+     * @param array<mixed> $route the dispatch result with the leading status already shifted off
+     *
+     * @return array{0: Action, 1: array<string, mixed>}
+     */
+    private function resolveFoundRoute(array $route): array
+    {
+        [$action, $arguments] = $route;
+
+        if (!$action instanceof Action) {
+            throw new HttpNotFoundException('The matched route handler is not a valid action.');
+        }
+
+        $variables = [];
+        if (\is_array($arguments)) {
+            foreach ($arguments as $key => $value) {
+                $variables[(string) $key] = $value;
+            }
+        }
+
+        return [$action, $variables];
     }
 }

@@ -13,6 +13,10 @@ namespace Altair\Structure\Traits;
 
 use Altair\Structure\Contracts\CapacityInterface;
 use Altair\Structure\Contracts\CollectionInterface;
+
+use const JSON_THROW_ON_ERROR;
+
+use JsonException;
 use JsonSerializable;
 use ReturnTypeWillChange;
 use Traversable;
@@ -36,8 +40,6 @@ trait CollectionTrait
      * evaluates the default per using-class, so the check is suppressed here.
      *
      * @var array<int, TValue>
-     *
-     * @phpstan-ignore property.defaultValue
      */
     protected $internal = [];
 
@@ -129,11 +131,13 @@ trait CollectionTrait
      * @param int $options Bitmask of the different options of the json_encode function.
      * @param int $depth Sets the maximum depth. Must be greater than 0.
      *
-     * @return string a JSON encoded string of the items or false on failure
+     * @throws JsonException when the items cannot be encoded to JSON
+     *
+     * @return string a JSON encoded string of the items
      */
     public function toJson(int $options = 0, $depth = 512): string
     {
-        return json_encode($this->toArray(), $options, $depth);
+        return json_encode($this->toArray(), $options | JSON_THROW_ON_ERROR, max(1, $depth));
     }
 
     /**
@@ -153,16 +157,14 @@ trait CollectionTrait
      */
     protected function pushAll(mixed $values): void
     {
+        // Adapter collections (Set, Stack, Queue) narrow $internal to a delegate
+        // object and override the entry points, so this array-backed pushAll is
+        // only ever reached on the array-backed collections (Map, Vector, Deque).
         foreach ($values as $value) {
-            // Adapter collections (Set, Stack, Queue) narrow $internal to a
-            // delegate object and never call pushAll, so the array-append and
-            // adjustCapacity() call below are unreachable in those contexts.
-            // @phpstan-ignore offsetAssign.dimType
             $this->internal[] = $value;
         }
 
         if ($this instanceof CapacityInterface) {
-            // @phpstan-ignore method.notFound
             $this->adjustCapacity();
         }
     }

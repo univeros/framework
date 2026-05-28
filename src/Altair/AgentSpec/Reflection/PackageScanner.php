@@ -16,6 +16,7 @@ use Altair\AgentSpec\Exception\AgentSpecException;
 use Altair\AgentSpec\Model\PackageDescriptor;
 use FilesystemIterator;
 use Override;
+use SplFileInfo;
 
 /**
  * Discovers sub-packages by looking for composer.json files inside the
@@ -32,6 +33,10 @@ class PackageScanner implements PackageScannerInterface
 
         $descriptors = [];
         foreach (new FilesystemIterator($sourceRoot, FilesystemIterator::SKIP_DOTS) as $entry) {
+            if (!$entry instanceof SplFileInfo) {
+                continue;
+            }
+
             if (!$entry->isDir()) {
                 continue;
             }

@@ -67,6 +67,9 @@ class ConcreteClassScanner
         return \in_array($segment, self::SKIP_DIRECTORIES, true);
     }
 
+    /**
+     * @param class-string $fqcn
+     */
     private function describeClass(string $fqcn, string $file, PackageDescriptor $package): ClassEntry
     {
         $reflection = new ReflectionClass($fqcn);

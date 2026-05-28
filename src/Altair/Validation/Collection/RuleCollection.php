@@ -71,7 +71,7 @@ class RuleCollection extends Map
     protected function filterRules(mixed $rules): void
     {
         if (\is_string($rules)) {
-            if (!\in_array(RuleInterface::class, class_implements($rules), false)) {
+            if (!$this->implementsRuleInterface($rules)) {
                 throw new InvalidArgumentException(
                     \sprintf(
                         '"%s" does not implement %s.',
@@ -87,7 +87,7 @@ class RuleCollection extends Map
                 }
 
                 $class = $rule['class'] ?? null;
-                if ($class === null || !\in_array(RuleInterface::class, class_implements($class), false)) {
+                if (!\is_string($class) || !$this->implementsRuleInterface($class)) {
                     throw new InvalidArgumentException(
                         \sprintf(
                             'A definition of a rule as array must have a "class" key and must implement %s.',
@@ -97,5 +97,15 @@ class RuleCollection extends Map
                 }
             }
         }
+    }
+
+    /**
+     * Resolves whether the given class name implements the rule contract.
+     */
+    private function implementsRuleInterface(string $class): bool
+    {
+        $implemented = class_implements($class);
+
+        return $implemented !== false && \in_array(RuleInterface::class, $implemented, false);
     }
 }

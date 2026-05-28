@@ -62,8 +62,11 @@ final readonly class ShowCommand
 
         echo $this->renderer->eventDetailHuman($event);
         if ($snapshot !== null) {
-            echo "snapshot:\n";
-            echo "  " . str_replace("\n", "\n  ", json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)), "\n";
+            $encoded = json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+            if ($encoded !== false) {
+                echo "snapshot:\n";
+                echo "  " . str_replace("\n", "\n  ", $encoded), "\n";
+            }
         }
 
         return 0;
