@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Altair\Structure\Contracts;
 
-use OutOfBoundsException;
 use OutOfRangeException;
 use Traversable;
 use UnderflowException;
@@ -227,14 +226,15 @@ interface MapInterface extends CollectionInterface
     public function hasValue(mixed $value): bool;
 
     /**
-     * Returns the value associated with a key, or an optional default if the
-     * key is not associated with a value.
+     * Returns the value associated with a key, or an optional default (null by
+     * default) if the key is not associated with a value.
+     *
+     * @template TDefault
      *
      * @param TKey $key
-     * @param TValue|null $default
+     * @param TDefault $default
      *
-     * @throws OutOfBoundsException if no default was provided and the key isnot associated with a value.
-     * @return TValue The associated value or fallback default if provided.
+     * @return TValue|TDefault The associated value, or the fallback default if the key is not present.
      *
      */
     public function get(mixed $key, mixed $default = null);
@@ -257,13 +257,15 @@ interface MapInterface extends CollectionInterface
     public function sum();
 
     /**
-     * Removes a key's association from the map and returns the associated value or a provided default if provided.
+     * Removes a key's association from the map and returns the associated value,
+     * or the provided default (null by default) if the key is not present.
+     *
+     * @template TDefault
      *
      * @param TKey $key
-     * @param TValue|null $default
+     * @param TDefault $default
      *
-     * @throws OutOfBoundsException if no default was provided and the key is not associated with a value.
-     * @return TValue The associated value or fallback default if provided.
+     * @return TValue|TDefault The associated value, or the fallback default if the key is not present.
      *
      */
     public function remove(mixed $key, mixed $default = null);

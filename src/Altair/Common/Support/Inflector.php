@@ -76,7 +76,7 @@ class Inflector
         return '_' === $separator
             ? strtolower(trim((string) preg_replace($regex, '_\0', $name), '_'))
             : trim(
-                strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name))),
+                strtolower(str_replace('_', $separator, preg_replace($regex, $separator . '\0', $name) ?? $name)),
                 $separator
             );
     }
@@ -90,7 +90,7 @@ class Inflector
             '-',
             '_',
             '.',
-        ], ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name))));
+        ], ' ', preg_replace('/(?<![A-Z])[A-Z]/', ' \0', $name) ?? $name)));
         return $uppercase ? ucwords($label) : $label;
     }
 
@@ -102,7 +102,7 @@ class Inflector
      */
     public function humanize(string $value, bool $upper = false): string
     {
-        $value = str_replace('_', ' ', preg_replace('/_id$/', '', $value));
+        $value = str_replace('_', ' ', preg_replace('/_id$/', '', $value) ?? $value);
         return $upper ? ucwords($value) : ucfirst($value);
     }
 

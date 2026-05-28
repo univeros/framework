@@ -166,8 +166,8 @@ class IbanRule extends AbstractRule
     protected function sanitize(string $value): string
     {
         $value = strtoupper(ltrim($value));
-        $value = preg_replace('/^I?IBAN/', '', $value);
+        $value = preg_replace('/^I?IBAN/', '', $value) ?? $value;
 
-        return preg_replace('/[^a-zA-Z0-9]/', '', (string) $value);
+        return preg_replace('/[^a-zA-Z0-9]/', '', $value) ?? $value;
     }
 }

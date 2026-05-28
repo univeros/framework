@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Http\Validator;
 
+use Altair\Data\Contracts\EntityInterface;
 use Altair\Data\Contracts\QueryRepositoryInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Override;
@@ -45,6 +46,10 @@ class DigestSignatureValidator implements IdentityValidatorInterface
         $realm = $arguments['realm'];
         $method = $arguments['method'];
         $user = $this->repository->findOneBy([$this->options['username'] => $authorization['username']]);
+        if (!$user instanceof EntityInterface) {
+            return false;
+        }
+
         $data = [
             md5(\sprintf('%s:%s:%s', $authorization['username'], $realm, $user->get($this->options['password']))),
             $authorization['nonce'],

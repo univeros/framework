@@ -111,7 +111,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      */
     public function pop()
     {
-        if ($this->isEmpty()) {
+        if ($this->heap === []) {
             throw new UnderflowException('Queue is empty');
         }
 

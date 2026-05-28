@@ -227,7 +227,7 @@ class Pluralizer
 
         foreach ($this->singulars as $rule => $replacement) {
             if (preg_match($rule, $value)) {
-                return preg_replace($rule, (string) $replacement, $value);
+                return preg_replace($rule, (string) $replacement, $value) ?? $value;
             }
         }
 
@@ -245,7 +245,7 @@ class Pluralizer
 
         foreach ($this->plurals as $rule => $replacement) {
             if (preg_match($rule, $value)) {
-                return preg_replace($rule, (string) $replacement, $value);
+                return preg_replace($rule, (string) $replacement, $value) ?? $value;
             }
         }
 
