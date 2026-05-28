@@ -13,42 +13,61 @@ namespace Altair\Http\Jwt;
 
 use Altair\Http\Contracts\TokenConfigurationInterface;
 use Altair\Http\Contracts\TokenGeneratorInterface;
+use Altair\Http\Exception\InvalidTokenException;
 use DateTimeImmutable;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Signer\Key;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Signer\Key\InMemory;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Generates signed JWTs using lcobucci/jwt v5.
+ *
+ * Each call mints a fresh, immutable builder from a {@see Configuration} derived from the
+ * framework {@see TokenConfigurationInterface}. Asymmetric signing is assumed (RSA/ECDSA),
+ * so a private key must be configured.
+ */
 class LcobucciTokenGenerator implements TokenGeneratorInterface
 {
-    /**
-     * LcobucciTokenGenerator constructor.
-     */
-    public function __construct(protected ServerRequestInterface $request, protected Builder $builder, protected TokenConfigurationInterface $config) {}
+    public function __construct(
+        protected ServerRequestInterface $request,
+        protected TokenConfigurationInterface $config
+    ) {}
 
     /**
      * @inheritDoc
+     *
      * @param array<string, mixed> $claims
+     *
+     * @throws InvalidTokenException when no private key is configured for signing
      */
     #[Override]
     public function generate(array $claims = []): string
     {
-        $issuer = (string) $this->request->getUri();
-        $issued_at = (new DateTimeImmutable())->setTimestamp($this->config->getTimestamp());
-        $expiration = (new DateTimeImmutable())->setTimestamp($this->config->getExpirationTimestamp());
-        // Assumed RSA or ECDSA signatures (highly recommended)
-        // Signatures are based on public and private keys so you have to generate using the private key and verify
-        // using the public key
-        $key = new Key($this->config->getPrivateKey());
-        foreach ($claims as $name => $value) {
-            $this->builder->withClaim($name, $value);
+        $privateKey = $this->config->getPrivateKey();
+
+        if ($privateKey === null || $privateKey === '') {
+            throw new InvalidTokenException('A private key is required to generate a token.');
         }
 
-        return (string) $this
-            ->builder
-            ->issuedBy($issuer)
-            ->issuedAt($issued_at)
-            ->expiresAt($expiration)
-            ->getToken($this->config->getSigner(), $key);
+        $configuration = Configuration::forAsymmetricSigner(
+            $this->config->getSigner(),
+            InMemory::plainText($privateKey),
+            InMemory::plainText($this->config->getPublicKey()),
+        );
+
+        $builder = $configuration->builder()
+            ->issuedBy((string) $this->request->getUri())
+            ->issuedAt((new DateTimeImmutable())->setTimestamp($this->config->getTimestamp()))
+            ->expiresAt((new DateTimeImmutable())->setTimestamp($this->config->getExpirationTimestamp()));
+
+        foreach ($claims as $name => $value) {
+            // Builder is immutable in v5: each withClaim() returns a new instance.
+            $builder = $builder->withClaim($name, $value);
+        }
+
+        return $builder
+            ->getToken($configuration->signer(), $configuration->signingKey())
+            ->toString();
     }
 }

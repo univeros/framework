@@ -16,27 +16,41 @@ use Altair\Http\Contracts\TokenInterface;
 use Altair\Http\Contracts\TokenParserInterface;
 use Altair\Http\Exception\InvalidTokenException;
 use Altair\Http\Support\Token;
-use InvalidArgumentException;
-use Lcobucci\Clock\SystemClock;
-use Lcobucci\JWT\Parser;
-use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Token as LcobucciToken;
-use Lcobucci\JWT\Token\Plain;
+use Lcobucci\JWT\Configuration;
+use Lcobucci\JWT\Encoding\CannotDecodeContent;
+use Lcobucci\JWT\Signer\Key\InMemory;
+use Lcobucci\JWT\Token\InvalidTokenStructure;
+use Lcobucci\JWT\Token\UnsupportedHeaderFound;
+use Lcobucci\JWT\UnencryptedToken;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
-use Lcobucci\JWT\Validation\Constraint\ValidAt;
-use Lcobucci\JWT\Validation\InvalidTokenException as LcobucciInvalidTokenException;
-use Lcobucci\JWT\Validator;
+use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\SignedWith;
+use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Override;
+use Psr\Clock\ClockInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+/**
+ * Parses and fully validates JWTs using lcobucci/jwt v5.
+ *
+ * Validation asserts the signature, the issuer (the requesting URI) and the token's
+ * time window (expiry / not-before / issued-at) against an injectable PSR-20 clock.
+ *
+ * The verification algorithm is fixed to the framework-configured signer; lcobucci's
+ * SignedWith rejects any token whose `alg` header does not match that signer, so
+ * algorithm-confusion and `alg=none` tokens are rejected before signature verification.
+ */
 class LcobucciTokenParser implements TokenParserInterface
 {
-    /**
-     * @var Validator
-     */
-    protected $validator;
+    private readonly ClockInterface $clock;
 
-    public function __construct(protected ServerRequestInterface $request, protected Parser $parser, protected TokenConfigurationInterface $config) {}
+    public function __construct(
+        protected ServerRequestInterface $request,
+        protected TokenConfigurationInterface $config,
+        ?ClockInterface $clock = null
+    ) {
+        $this->clock = $clock ?? new SystemClock();
+    }
 
     /**
      * @inheritDoc
@@ -44,49 +58,49 @@ class LcobucciTokenParser implements TokenParserInterface
     #[Override]
     public function parse(string $token): TokenInterface
     {
-        /** @var Plain $parsed */
-        $parsed = $this->parseToken($token);
-        $this->verifySignature($parsed, $token);
+        $configuration = $this->buildConfiguration();
+        $parsed = $this->parseToken($configuration, $token);
+
+        try {
+            $configuration->validator()->assert(
+                $parsed,
+                new SignedWith($this->config->getSigner(), $configuration->verificationKey()),
+                new IssuedBy((string) $this->request->getUri()),
+                new LooseValidAt($this->clock),
+            );
+        } catch (RequiredConstraintsViolated $requiredConstraintsViolated) {
+            throw new InvalidTokenException($requiredConstraintsViolated->getMessage(), $requiredConstraintsViolated);
+        }
 
         return new Token($token, $parsed->claims()->all());
     }
 
-    /**
-     * @throws InvalidTokenException
-     */
-    protected function parseToken(string $token): LcobucciToken
+    private function buildConfiguration(): Configuration
     {
-        try {
-            return $this->parser->parse($token);
-        } catch (InvalidArgumentException) {
-            throw new InvalidTokenException(\sprintf('Count not parse authorization token "%s"', $token));
-        }
-    }
+        // The signing (private) key is never used when parsing; the public key satisfies
+        // the asymmetric factory and is the key actually used for signature verification.
+        $verificationKey = InMemory::plainText($this->config->getPublicKey());
 
-    /**
-     *
-     * @throws InvalidTokenException
-     */
-    protected function verifySignature(Plain $token, string $jwt): void
-    {
-        $key = new Key($this->config->getPublicKey());
-
-        if (!$this->config->getSigner()->verify($token->signature()->hash(), $token->payload(), $key)) {
-            throw new InvalidTokenException(
-                \sprintf('Provided authorization token %s is invalid.', $jwt)
-            );
-        }
+        return Configuration::forAsymmetricSigner($this->config->getSigner(), $verificationKey, $verificationKey);
     }
 
     /**
      * @throws InvalidTokenException
      */
-    protected function validateToken(Plain $token): void
+    private function parseToken(Configuration $configuration, string $token): UnencryptedToken
     {
+        // The raw token is intentionally omitted from the message to avoid leaking it into
+        // logs/responses and to prevent log injection via crafted token bytes.
         try {
-            $this->validator->assert($token, new IssuedBy($this->request->getUri()), new ValidAt(new SystemClock()));
-        } catch (LcobucciInvalidTokenException $lcobucciInvalidTokenException) {
-            throw new InvalidTokenException($lcobucciInvalidTokenException->getMessage());
+            $parsed = $configuration->parser()->parse($token);
+        } catch (CannotDecodeContent | InvalidTokenStructure | UnsupportedHeaderFound $exception) {
+            throw new InvalidTokenException('Could not parse the authorization token.', $exception);
         }
+
+        if (!$parsed instanceof UnencryptedToken) {
+            throw new InvalidTokenException('Could not parse the authorization token.');
+        }
+
+        return $parsed;
     }
 }

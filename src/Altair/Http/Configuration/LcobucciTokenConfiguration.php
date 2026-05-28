@@ -15,18 +15,27 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
 use Altair\Http\Contracts\TokenConfigurationInterface;
+use Altair\Http\Exception\RuntimeException;
 use Altair\Http\Support\TokenConfiguration;
-use Lcobucci\Jose\Parsing\Decoder;
-use Lcobucci\Jose\Parsing\Encoder;
-use Lcobucci\JWT\Builder;
-use Lcobucci\JWT\Parser;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Validator;
 use Override;
 
+/**
+ * Wires the framework {@see TokenConfigurationInterface} from environment variables.
+ *
+ * The lcobucci/jwt v5 builder, parser and validator are derived on demand from this
+ * configuration inside {@see \Altair\Http\Jwt\LcobucciTokenGenerator} and
+ * {@see \Altair\Http\Jwt\LcobucciTokenParser}, so no library primitives are bound here.
+ */
 class LcobucciTokenConfiguration implements ConfigurationInterface
 {
     use EnvAwareTrait;
+
+    /**
+     * Legacy placeholder default; rejected at runtime so a misconfigured deployment fails fast
+     * instead of silently issuing tokens that can never be verified.
+     */
+    private const string UNCONFIGURED_KEY = 'YOU_SHOULD_CHANGE_THIS';
 
     /**
      * @inheritDoc
@@ -34,21 +43,26 @@ class LcobucciTokenConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $tokenGeneratorConfigurationFactory = fn(): TokenConfiguration => new TokenConfiguration(
-            $this->env->get('TOKEN_PUBLIC_KEY', 'YOU_SHOULD_CHANGE_THIS'),
-            (int) $this->env->get('TOKEN_TTL', \ini_get('session.gc_maxlifetime')),
-            new Sha256(),
-            null,
-            $this->env->get('TOKEN_PRIVATE_KEY')
-        );
+        $tokenConfigurationFactory = function (): TokenConfiguration {
+            $publicKey = (string) $this->env->get('TOKEN_PUBLIC_KEY', '');
+
+            if ($publicKey === '' || $publicKey === self::UNCONFIGURED_KEY) {
+                throw new RuntimeException(
+                    'TOKEN_PUBLIC_KEY must be set to a valid token verification key.'
+                );
+            }
+
+            return new TokenConfiguration(
+                $publicKey,
+                (int) $this->env->get('TOKEN_TTL', \ini_get('session.gc_maxlifetime')),
+                new Sha256(),
+                null,
+                $this->env->get('TOKEN_PRIVATE_KEY')
+            );
+        };
 
         $container
             ->alias(TokenConfigurationInterface::class, TokenConfiguration::class)
-            ->alias(Validator::class, \Lcobucci\JWT\Validation\Validator::class)
-            ->alias(Encoder::class, \Lcobucci\Jose\Parsing\Parser::class)
-            ->alias(Decoder::class, \Lcobucci\Jose\Parsing\Parser::class)
-            ->alias(Builder::class, \Lcobucci\JWT\Token\Builder::class)
-            ->alias(Parser::class, \Lcobucci\JWT\Token\Parser::class)
-            ->delegate(TokenConfiguration::class, $tokenGeneratorConfigurationFactory);
+            ->delegate(TokenConfiguration::class, $tokenConfigurationFactory);
     }
 }

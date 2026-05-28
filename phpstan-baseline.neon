@@ -141,66 +141,6 @@ parameters:
 			path: src/Altair/Http/Collection/HttpStatusCollection.php
 
 		-
-			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Decoder not found\\.$#"
-			count: 1
-			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
-
-		-
-			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Encoder not found\\.$#"
-			count: 1
-			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
-
-		-
-			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Parser not found\\.$#"
-			count: 2
-			path: src/Altair/Http/Configuration/LcobucciTokenConfiguration.php
-
-		-
-			message: "#^Cannot cast Lcobucci\\\\JWT\\\\UnencryptedToken to string\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenGenerator.php
-
-		-
-			message: "#^Cannot instantiate interface Lcobucci\\\\JWT\\\\Signer\\\\Key\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenGenerator.php
-
-		-
-			message: "#^Call to method getMessage\\(\\) on an unknown class Lcobucci\\\\JWT\\\\Validation\\\\InvalidTokenException\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Cannot instantiate interface Lcobucci\\\\JWT\\\\Signer\\\\Key\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Caught class Lcobucci\\\\JWT\\\\Validation\\\\InvalidTokenException not found\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Instantiated class Lcobucci\\\\Clock\\\\SystemClock not found\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Instantiated class Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\ValidAt not found\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Parameter \\#1 \\.\\.\\.\\$issuers of class Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\IssuedBy constructor expects non\\-empty\\-string, Psr\\\\Http\\\\Message\\\\UriInterface given\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
-			message: "#^Parameter \\#3 \\.\\.\\.\\$constraints of method Lcobucci\\\\JWT\\\\Validator\\:\\:assert\\(\\) expects Lcobucci\\\\JWT\\\\Validation\\\\Constraint, Lcobucci\\\\JWT\\\\Validation\\\\Constraint\\\\ValidAt given\\.$#"
-			count: 1
-			path: src/Altair/Http/Jwt/LcobucciTokenParser.php
-
-		-
 			message: "#^Offset 'domain' on array\\{lifetime\\: int\\<0, max\\>, path\\: non\\-falsy\\-string, domain\\: string, secure\\: bool, httponly\\: bool, samesite\\: string\\} on left side of \\?\\? always exists and is not nullable\\.$#"
 			count: 1
 			path: src/Altair/Http/Middleware/SessionHeadersMiddleware.php
@@ -229,11 +169,6 @@ parameters:
 			message: "#^PHPDoc tag @return with type resource is incompatible with native type GdImage\\|false\\.$#"
 			count: 1
 			path: src/Altair/Http/Support/DefaultErrorHandler.php
-
-		-
-			message: "#^Call to an undefined method Negotiation\\\\AcceptHeader\\:\\:getValue\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Http/Support/FormatNegotiator.php
 
 		-
 			message: "#^Unable to resolve the template type TEntity in call to method Cycle\\\\ORM\\\\ORMInterface\\:\\:getRepository\\(\\)$#"
