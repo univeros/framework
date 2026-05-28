@@ -22,13 +22,25 @@ use Stringable;
 /**
  * A pair which represents a key, and an associated value.
  *
+ * @template TKey
+ * @template TValue
+ *
+ * @implements PairInterface<TKey, TValue>
  */
 class Pair implements PairInterface, JsonSerializable, Stringable
 {
     /**
      * Constructor.
+     *
+     * @param TKey $key
+     * @param TValue $value
      */
-    public function __construct(public mixed $key = null, public mixed $value = null) {}
+    public function __construct(
+        /** @var TKey */
+        public mixed $key = null,
+        /** @var TValue */
+        public mixed $value = null,
+    ) {}
 
     /**
      * This allows unset($pair->key) to not completely remove the property,
@@ -51,7 +63,7 @@ class Pair implements PairInterface, JsonSerializable, Stringable
     /**
      * Debug Info.
      *
-     * @return array
+     * @return array{key: TKey, value: TValue}
      */
     public function __debugInfo()
     {
@@ -69,6 +81,8 @@ class Pair implements PairInterface, JsonSerializable, Stringable
 
     /**
      * {@inheritDoc}
+     *
+     * @param TKey $key
      */
     #[Override]
     public function equalsKey($key): bool
@@ -82,6 +96,8 @@ class Pair implements PairInterface, JsonSerializable, Stringable
 
     /**
      * Returns a copy of the Pair.
+     *
+     * @return static
      */
     #[Override]
     public function copy(): PairInterface
@@ -91,6 +107,8 @@ class Pair implements PairInterface, JsonSerializable, Stringable
 
     /**
      * {@inheritDoc}
+     *
+     * @return array{key: TKey, value: TValue}
      */
     #[Override]
     public function toArray(): array
@@ -100,6 +118,8 @@ class Pair implements PairInterface, JsonSerializable, Stringable
 
     /**
      * {@inheritDoc}
+     *
+     * @return array{key: TKey, value: TValue}
      */
     #[ReturnTypeWillChange]
     #[Override]

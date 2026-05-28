@@ -29,16 +29,22 @@ use Traversable;
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
  *
+ * @template TValue
+ *
+ * @implements VectorInterface<TValue>
+ * @implements IteratorAggregate<int, TValue>
+ * @implements ArrayAccess<int, TValue>
  */
 class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, CapacityInterface
 {
+    /** @use SequenceTrait<TValue> */
     use SequenceTrait;
     use CapacityTrait;
 
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|Traversable|Contracts\CollectionInterface|null $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue>|Contracts\CollectionInterface<int, TValue>|null $values
      */
     public function __construct($values = null)
     {

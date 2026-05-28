@@ -15,6 +15,7 @@ use Altair\Structure\Contracts\CollectionInterface;
 use Altair\Structure\Contracts\PriorityNodeInterface;
 use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Traits\SquaredCapacityTrait;
+use Generator;
 use IteratorAggregate;
 use Override;
 use ReturnTypeWillChange;
@@ -29,23 +30,36 @@ use UnderflowException;
  * destructive, equivalent to successive pop operations until the queue is empty. Implemented using a max heap.
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
+ *
+ * @template TValue
+ *
+ * @implements CollectionInterface<int, TValue>
+ * @implements IteratorAggregate<int, TValue>
  */
 class PriorityQueue implements IteratorAggregate, CollectionInterface
 {
+    /** @use CollectionTrait<int, TValue> */
     use CollectionTrait;
     use SquaredCapacityTrait;
 
     /**
-     * @var PriorityNodeInterface[]
+     * Typed against the concrete PriorityNode (not the interface) so its public
+     * $value/$priority/$stamp properties resolve; the queue only ever stores
+     * PriorityNode instances.
+     *
+     * @var array<int, PriorityNode<TValue>>
      */
     protected $heap = [];
 
+    /**
+     * @var int
+     */
     protected $stamp = 0;
 
     /**
      * Initializes a new priority queue.
      *
-     * @param array|null $heap
+     * @param array<int, PriorityNode<TValue>>|null $heap
      * @param int|null $stamp
      */
     public function __construct($heap = [], $stamp = 0)
@@ -56,6 +70,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return self<TValue>
      */
     #[Override]
     public function copy(): \Altair\Structure\PriorityQueue
@@ -74,7 +90,9 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     }
 
     /**
-     * {@inheritDoc}
+     * Returns the value with the highest priority without removing it.
+     *
+     * @return TValue
      */
     public function peek()
     {
@@ -88,7 +106,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Returns and removes the value with the highest priority in the queue.
      *
-     * @return mixed
+     * @return TValue
      */
     public function pop()
     {
@@ -116,6 +134,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Pushes a value into the queue, with a specified priority.
+     *
+     * @param TValue $value
      */
     public function push(mixed $value, int $priority): void
     {
@@ -128,6 +148,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<int, TValue>
      */
     #[Override]
     public function toArray(): array
@@ -146,6 +168,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Get iterator.
+     *
+     * @return Generator<int, TValue>
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -246,6 +270,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Set Root.
+     *
+     * @param PriorityNodeInterface<TValue> $node
      */
     protected function setRoot(PriorityNodeInterface $node): void
     {
@@ -254,6 +280,8 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
 
     /**
      * Get Root.
+     *
+     * @return PriorityNode<TValue>
      */
     protected function getRoot(): PriorityNodeInterface
     {

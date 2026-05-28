@@ -11,6 +11,11 @@ declare(strict_types=1);
 
 namespace Altair\Structure\Contracts;
 
+/**
+ * @template TValue
+ *
+ * @extends SequenceInterface<TValue>
+ */
 interface VectorInterface extends SequenceInterface
 {
     public const MIN_VECTOR_CAPACITY = 10;

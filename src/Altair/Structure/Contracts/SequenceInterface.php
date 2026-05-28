@@ -15,12 +15,17 @@ use OutOfRangeException;
 use Traversable;
 use UnderflowException;
 
+/**
+ * @template TValue
+ *
+ * @extends CollectionInterface<int, TValue>
+ */
 interface SequenceInterface extends CollectionInterface
 {
     /**
      * Creates a new sequence using the values of either an array or iterable object as initial values.
      *
-     * @param array|Traversable|null $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue>|null $values
      */
     public function __construct($values = null);
 
@@ -28,12 +33,15 @@ interface SequenceInterface extends CollectionInterface
      * Updates every value in the sequence by applying a callback, using the return value as the new value.
      *
      * @param callable $callback Accepts the value, returns the new value.
+     *
+     * @return SequenceInterface<TValue>
      */
     public function apply(callable $callback): SequenceInterface;
 
     /**
      * Determines whether the sequence contains all of zero or more values.
      *
+     * @param TValue ...$values
      *
      * @return bool true if at least one value was provided and the sequence contains all given values, false otherwise.
      */
@@ -45,12 +53,15 @@ interface SequenceInterface extends CollectionInterface
      *
      * @param callable|null $callback Accepts a value, returns a boolean result: true : include the value, false: skip
      * the value.
+     *
+     * @return SequenceInterface<TValue>
      */
     public function filter(?callable $callback = null): SequenceInterface;
 
     /**
      * Returns the index of a given value, or false if it could not be found.
      *
+     * @param TValue $value
      *
      * @return int|bool
      */
@@ -61,7 +72,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws UnderflowException if the sequence is empty.
      *
-     * @return mixed
+     * @return TValue
      *
      */
     public function first();
@@ -72,7 +83,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
-     * @return mixed
+     * @return TValue
      *
      */
     public function get(int $index);
@@ -83,9 +94,11 @@ interface SequenceInterface extends CollectionInterface
      * Each value after the index will be moved one position to the right.
      * Values may be inserted at an index equal to the size of the sequence.
      *
+     * @param TValue ...$values
      *
      * @throws OutOfRangeException if the index is not in the range [0, n]
      *
+     * @return SequenceInterface<TValue>
      */
     public function insert(int $index, mixed ...$values): SequenceInterface;
 
@@ -102,7 +115,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws UnderflowException if the sequence is empty.
      *
-     * @return mixed
+     * @return TValue
      *
      */
     public function last();
@@ -110,14 +123,16 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Returns a new sequence using the results of applying a callback to each value.
      *
-     *
+     * @return SequenceInterface<TValue>
      */
     public function map(callable $callback): SequenceInterface;
 
     /**
      * Returns the result of adding all given values to the sequence.
      *
-     * @param array|Traversable $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue> $values
+     *
+     * @return SequenceInterface<TValue>
      */
     public function merge($values): SequenceInterface;
 
@@ -126,7 +141,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws UnderflowException if the sequence is empty.
      *
-     * @return mixed what was the last value in the sequence.
+     * @return TValue what was the last value in the sequence.
      *
      */
     public function pop();
@@ -134,7 +149,9 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Adds zero or more values to the end of the sequence.
      *
+     * @param TValue ...$values
      *
+     * @return SequenceInterface<TValue>
      */
     public function push(mixed ...$values): SequenceInterface;
 
@@ -155,13 +172,15 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
-     * @return mixed the removed value.
+     * @return TValue the removed value.
      *
      */
     public function remove(int $index);
 
     /**
      * Reverses the sequence in-place.
+     *
+     * @return SequenceInterface<TValue>
      */
     public function reverse(): SequenceInterface;
 
@@ -171,15 +190,19 @@ interface SequenceInterface extends CollectionInterface
      * positive, or 'pop' and 'unshift' if negative.
      *
      * @param int $rotations The number of rotations (can be negative).
+     *
+     * @return SequenceInterface<TValue>
      */
     public function rotate(int $rotations): SequenceInterface;
 
     /**
      * Replaces the value at a given index in the sequence with a new value.
      *
+     * @param TValue $value
      *
      * @throws OutOfRangeException if the index is not in the range [0, size-1]
      *
+     * @return SequenceInterface<TValue>
      */
     public function set(int $index, mixed $value): SequenceInterface;
 
@@ -188,7 +211,7 @@ interface SequenceInterface extends CollectionInterface
      *
      * @throws UnderflowException if the sequence was empty.
      *
-     * @return mixed what was the first value in the sequence.
+     * @return TValue what was the first value in the sequence.
      *
      */
     public function shift();
@@ -205,6 +228,8 @@ interface SequenceInterface extends CollectionInterface
      *
      * If a length is not provided, the resulting sequence will contain all values between the index and the end of the
      * sequence.
+     *
+     * @return SequenceInterface<TValue>
      */
     public function slice(int $index, ?int $length = null): SequenceInterface;
 
@@ -213,6 +238,8 @@ interface SequenceInterface extends CollectionInterface
      * comparator. Natural ordering will be used if a comparator is not given.
      *
      * @param callable|null $comparator Accepts two values to be compared. Should return the result of a <=> b.
+     *
+     * @return SequenceInterface<TValue>
      */
     public function sort(?callable $comparator = null): SequenceInterface;
 
@@ -226,7 +253,9 @@ interface SequenceInterface extends CollectionInterface
     /**
      * Adds zero or more values to the front of the sequence.
      *
+     * @param TValue ...$values
      *
+     * @return SequenceInterface<TValue>
      */
     public function unshift(mixed ...$values): SequenceInterface;
 }

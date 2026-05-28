@@ -17,6 +17,7 @@ use Altair\Structure\Contracts\SetInterface;
 use Altair\Structure\Traits\CollectionTrait;
 use ArrayAccess;
 use Error;
+use Generator;
 use IteratorAggregate;
 use OutOfBoundsException;
 use Override;
@@ -35,28 +36,52 @@ use Traversable;
  * Set can be sorted in O(n * log(n)) time whenever it needs to be, just like a Map and an array.
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
+ *
+ * @template TValue
+ *
+ * @implements SetInterface<TValue>
+ * @implements IteratorAggregate<int, TValue>
+ * @implements ArrayAccess<int, TValue>
  */
 class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInterface
 {
+    /** @use CollectionTrait<int, TValue> */
     use CollectionTrait;
+
+    /**
+     * Set values are stored as the keys of an internal Map; the associated
+     * value is always null. Typed against the concrete Map so its capacity API
+     * and pair access resolve. The empty-array default is required for trait
+     * property compatibility (CollectionTrait declares `$internal = []`) and is
+     * replaced with a Map in the constructor before any method is invoked.
+     *
+     * @var Map<TValue, null>
+     *
+     * @phpstan-ignore property.defaultValue
+     */
+    protected $internal = [];
 
     /**
      * Creates a new set using the values of an array or Traversable object.
      * The keys of either will not be preserved.
      *
-     * @param array|Traversable|null $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue>|null $values
      */
     public function __construct($values = null)
     {
         $this->internal = new Map();
 
         if (\func_num_args() !== 0) {
-            $this->add(...$values);
+            $this->add(...$this->normalizeItems($values ?? []));
         }
     }
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function add(...$values): SetInterface
@@ -70,6 +95,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function allocate(int $capacity): SetInterface
@@ -81,6 +108,10 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param SetInterface<TValue> $set
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function diff(SetInterface $set): SetInterface
@@ -90,6 +121,10 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param SetInterface<TValue> $set
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function xor(SetInterface $set): SetInterface
@@ -108,6 +143,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
      */
     #[Override]
     public function contains(...$values): bool
@@ -123,6 +160,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function filter(?callable $callback = null): SetInterface
@@ -133,7 +172,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Returns the first value in the set.
      *
-     * @return mixed the first value in the set.
+     * @return TValue the first value in the set.
      */
     #[Override]
     public function first()
@@ -144,7 +183,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Returns the last value in the set.
      *
-     * @return mixed the last value in the set.
+     * @return TValue the last value in the set.
      */
     #[Override]
     public function last()
@@ -154,6 +193,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     #[Override]
     public function get(int $position)
@@ -163,6 +204,10 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param SetInterface<TValue> $set
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function intersect(SetInterface $set): SetInterface
@@ -196,6 +241,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
      */
     #[Override]
     public function remove(...$values): void
@@ -207,6 +254,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * Returns a reversed copy of the set.
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function reverse(): SetInterface
@@ -218,6 +267,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function slice(int $offset, ?int $length = null): SetInterface
@@ -227,6 +278,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function sort(?callable $comparator = null): SetInterface
@@ -237,7 +290,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * Returns the result of adding all given values to the set.
      *
-     * @param array|Traversable $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue> $values
+     *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function merge($values): SetInterface
@@ -268,7 +323,9 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      *
      * Formally: A ∪ B = {x: x ∈ A ∨ x ∈ B}
      *
+     * @param SetInterface<TValue> $set
      *
+     * @return SetInterface<TValue>
      */
     #[Override]
     public function union(SetInterface $set): SetInterface
@@ -288,6 +345,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<TValue, null>
      */
     #[Override]
     public function getMap(): MapInterface
@@ -306,6 +365,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<array-key, TValue>
      */
     #[Override]
     public function toArray(): array
@@ -315,6 +376,8 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
 
     /**
      * Get iterator.
+     *
+     * @return Generator<int, TValue>
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -328,11 +391,13 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     /**
      * {@inheritDoc}
      *
+     * @param TValue $value
+     *
      * @throws OutOfBoundsException
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, mixed $value): void
     {
         if ($offset === null) {
             $this->add($value);

@@ -13,6 +13,11 @@ namespace Altair\Structure\Contracts;
 
 use UnderflowException;
 
+/**
+ * @template TValue
+ *
+ * @extends CollectionInterface<int, TValue>
+ */
 interface StackInterface extends CollectionInterface
 {
     /**
@@ -20,7 +25,7 @@ interface StackInterface extends CollectionInterface
      *
      * @throws UnderflowException if the stack is empty.
      *
-     * @return mixed
+     * @return TValue
      *
      */
     public function peek();
@@ -30,7 +35,7 @@ interface StackInterface extends CollectionInterface
      *
      * @throws UnderflowException if the stack is empty.
      *
-     * @return mixed
+     * @return TValue
      *
      */
     public function pop();
@@ -38,7 +43,9 @@ interface StackInterface extends CollectionInterface
     /**
      * Pushes zero or more values into the front of the queue.
      *
+     * @param TValue ...$values
      *
+     * @return StackInterface<TValue>
      */
     public function push(mixed ...$values): StackInterface;
 }

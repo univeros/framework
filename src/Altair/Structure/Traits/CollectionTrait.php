@@ -19,15 +19,32 @@ use Traversable;
 
 /**
  * Common to structures that implement the base collection interface.
+ *
+ * @template TKey
+ * @template TValue
  */
 trait CollectionTrait
 {
+    /**
+     * Internal storage for sequence-backed collections, keyed by position.
+     *
+     * Key-backed (Map) and adapter (Set, Stack, Queue) collections redeclare
+     * this property with a narrower @var in their own class because they store
+     * PairInterface instances or a delegate collection object instead. For the
+     * adapters the empty-array default cannot match their narrowed delegate
+     * type, but it is always overwritten in the constructor before use; PHPStan
+     * evaluates the default per using-class, so the check is suppressed here.
+     *
+     * @var array<int, TValue>
+     *
+     * @phpstan-ignore property.defaultValue
+     */
     protected $internal = [];
 
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|Traversable|CollectionInterface|null $values
+     * @param array<array-key, TValue>|Traversable<TKey, TValue>|CollectionInterface<TKey, TValue>|null $values
      */
     public function __construct($values = [])
     {
@@ -39,7 +56,7 @@ trait CollectionTrait
     /**
      * Invoked when calling var_dump.
      *
-     * @return array
+     * @return array<array-key, TValue>
      */
     public function __debugInfo()
     {
@@ -124,19 +141,28 @@ trait CollectionTrait
      *
      * The format of the returned array is implementation-dependent. Some implementations may throw an exception if an
      * array representation could not be created (for example when object are used as keys).
+     *
+     * @return array<array-key, TValue>
      */
     abstract public function toArray(): array;
 
     /**
      * Pushes all values of either an array or traversable object.
+     *
+     * @param iterable<array-key, TValue> $values
      */
     protected function pushAll(mixed $values): void
     {
         foreach ($values as $value) {
+            // Adapter collections (Set, Stack, Queue) narrow $internal to a
+            // delegate object and never call pushAll, so the array-append and
+            // adjustCapacity() call below are unreachable in those contexts.
+            // @phpstan-ignore offsetAssign.dimType
             $this->internal[] = $value;
         }
 
         if ($this instanceof CapacityInterface) {
+            // @phpstan-ignore method.notFound
             $this->adjustCapacity();
         }
     }
@@ -144,7 +170,7 @@ trait CollectionTrait
     /**
      * Results array of items from Collections or array.
      *
-     *
+     * @return array<array-key, TValue>
      */
     protected function normalizeItems(mixed $items): array
     {

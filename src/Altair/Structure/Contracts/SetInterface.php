@@ -14,12 +14,19 @@ namespace Altair\Structure\Contracts;
 use OutOfRangeException;
 use Traversable;
 
+/**
+ * @template TValue
+ *
+ * @extends CollectionInterface<int, TValue>
+ */
 interface SetInterface extends CollectionInterface
 {
     /**
      * Adds zero or more values to the set.
      *
+     * @param TValue ...$values
      *
+     * @return SetInterface<TValue>
      */
     public function add(mixed ...$values): SetInterface;
 
@@ -29,6 +36,8 @@ interface SetInterface extends CollectionInterface
      *
      * @param int $capacity The number of values for which capacity should be allocated. Capacity will stay the same if
      * this value is less than or equal to the current capacity.
+     *
+     * @return SetInterface<TValue>
      */
     public function allocate(int $capacity): SetInterface;
 
@@ -37,7 +46,9 @@ interface SetInterface extends CollectionInterface
      *
      * Formally: A \ B = {x ∈ A | x ∉ B}
      *
+     * @param SetInterface<TValue> $set
      *
+     * @return SetInterface<TValue>
      */
     public function diff(SetInterface $set): SetInterface;
 
@@ -47,7 +58,9 @@ interface SetInterface extends CollectionInterface
      *
      * Formally: A ⊖ B = {x : x ∈ (A \ B) ∪ (B \ A)}
      *
+     * @param SetInterface<TValue> $set
      *
+     * @return SetInterface<TValue>
      */
     public function xor(SetInterface $set): SetInterface;
 
@@ -59,6 +72,7 @@ interface SetInterface extends CollectionInterface
     /**
      * Determines whether the set contains all of zero or more values.
      *
+     * @param TValue ...$values
      *
      * @return bool true if at least one value was provided and the set contains all given values, false otherwise.
      */
@@ -70,20 +84,22 @@ interface SetInterface extends CollectionInterface
      *
      * @param callable|null $callback Accepts a value, returns a boolean: true : include the value, false: skip the
      * value.
+     *
+     * @return SetInterface<TValue>
      */
     public function filter(?callable $callback = null): SetInterface;
 
     /**
      * Returns the first value in the set.
      *
-     * @return mixed the first value in the set.
+     * @return TValue the first value in the set.
      */
     public function first();
 
     /**
      * Returns the last value in the set.
      *
-     * @return mixed the last value in the set.
+     * @return TValue the last value in the set.
      */
     public function last();
 
@@ -93,7 +109,7 @@ interface SetInterface extends CollectionInterface
      *
      * @throws OutOfRangeException
      *
-     * @return mixed|null
+     * @return TValue|null
      *
      */
     public function get(int $position);
@@ -106,7 +122,9 @@ interface SetInterface extends CollectionInterface
      *
      * Formally: A ∩ B = {x : x ∈ A ∧ x ∈ B}
      *
+     * @param SetInterface<TValue> $set
      *
+     * @return SetInterface<TValue>
      */
     public function intersect(SetInterface $set): SetInterface;
 
@@ -130,11 +148,15 @@ interface SetInterface extends CollectionInterface
 
     /**
      * Removes zero or more values from the set.
+     *
+     * @param TValue ...$values
      */
-    public function remove(mixed ...$values);
+    public function remove(mixed ...$values): void;
 
     /**
      * Returns a reversed copy of the set.
+     *
+     * @return SetInterface<TValue>
      */
     public function reverse(): SetInterface;
 
@@ -147,6 +169,8 @@ interface SetInterface extends CollectionInterface
      * it. If the requested length results in an overflow, only values up to the end of the set will be included.
      * If a length is given and is negative, the set will stop that many values from the end. If a length is not
      * provided, the resulting set will contains all values between the offset and the end of the set.
+     *
+     * @return SetInterface<TValue>
      */
     public function slice(int $offset, ?int $length = null): SetInterface;
 
@@ -154,13 +178,17 @@ interface SetInterface extends CollectionInterface
      * Sorts the set in-place, based on an optional callable comparator.
      *
      * @param callable|null $comparator Accepts two values to be compared. Should return the result of a <=> b.
+     *
+     * @return SetInterface<TValue>
      */
     public function sort(?callable $comparator = null): SetInterface;
 
     /**
      * Returns the result of adding all given values to the set.
      *
-     * @param array|Traversable $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue> $values
+     *
+     * @return SetInterface<TValue>
      */
     public function merge($values): SetInterface;
 
@@ -177,12 +205,16 @@ interface SetInterface extends CollectionInterface
      *
      * Formally: A ∪ B = {x: x ∈ A ∨ x ∈ B}
      *
+     * @param SetInterface<TValue> $set
      *
+     * @return SetInterface<TValue>
      */
     public function union(SetInterface $set): SetInterface;
 
     /**
      * Returns the MapInterface used internally to keep its values.
+     *
+     * @return MapInterface<TValue, null>
      */
     public function getMap(): MapInterface;
 }
