@@ -38,7 +38,7 @@ interface PayloadInterface
      * The request "attributes" may be used to allow injection of any
      * parameters derived from the process and CAN be mutable.
      *
-     * @return array Attributes derived from the request.
+     * @return array<string, mixed> Attributes derived from the request.
      */
     public function getAttributes(): array;
 
@@ -71,7 +71,7 @@ interface PayloadInterface
      *
      * @see getAttributes()
      *
-     *
+     * @param array<string, mixed> $attributes
      */
     public function withAttributes(array $attributes): PayloadInterface;
 

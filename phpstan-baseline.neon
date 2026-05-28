@@ -1006,76 +1006,6 @@ parameters:
 			path: src/Altair/Data/Contracts/UpdateRepositoryInterface.php
 
 		-
-			message: "#^Method Altair\\\\Events\\\\Event\\:\\:create\\(\\) has parameter \\$extra with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Events/Event.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:checksum\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:copy\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:createDirectory\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:move\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:publicUrl\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:temporaryUrl\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:write\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Adapter\\\\FlysystemAdapter\\:\\:writeStream\\(\\) has parameter \\$config with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Adapter/FlysystemAdapter.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Filesystem\\:\\:delete\\(\\) has parameter \\$paths with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Filesystem.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Filesystem\\:\\:glob\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Filesystem.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Filesystem\\:\\:listDirectories\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Filesystem.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Filesystem\\:\\:listFiles\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Filesystem.php
-
-		-
-			message: "#^Method Altair\\\\Filesystem\\\\Filesystem\\:\\:readLines\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Filesystem/Filesystem.php
-
-		-
 			message: "#^Method Altair\\\\Happen\\\\Contracts\\\\EventDispatcherInterface\\:\\:dispatchStack\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Altair/Happen/Contracts/EventDispatcherInterface.php
@@ -1656,36 +1586,6 @@ parameters:
 			path: src/Altair/Messaging/Transport/TransportRegistry.php
 
 		-
-			message: "#^Method Altair\\\\Middleware\\\\Contracts\\\\PayloadInterface\\:\\:getAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Contracts/PayloadInterface.php
-
-		-
-			message: "#^Method Altair\\\\Middleware\\\\Contracts\\\\PayloadInterface\\:\\:withAttributes\\(\\) has parameter \\$attributes with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Contracts/PayloadInterface.php
-
-		-
-			message: "#^Method Altair\\\\Middleware\\\\Payload\\:\\:__construct\\(\\) has parameter \\$attributes with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Payload.php
-
-		-
-			message: "#^Method Altair\\\\Middleware\\\\Payload\\:\\:getAttributes\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Payload.php
-
-		-
-			message: "#^Method Altair\\\\Middleware\\\\Payload\\:\\:withAttributes\\(\\) has parameter \\$attributes with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Payload.php
-
-		-
-			message: "#^Property Altair\\\\Middleware\\\\Payload\\:\\:\\$attributes type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Middleware/Payload.php
-
-		-
 			message: "#^Property Altair\\\\Persistence\\\\Cycle\\\\CycleRepository\\:\\:\\$repository with generic interface Cycle\\\\ORM\\\\RepositoryInterface does not specify its types\\: TEntity$#"
 			count: 1
 			path: src/Altair/Persistence/Cycle/CycleRepository.php
@@ -1831,24 +1731,9 @@ parameters:
 			path: src/Altair/Sanitation/Sanitizer.php
 
 		-
-			message: "#^Method Altair\\\\Security\\\\Encrypter\\:\\:encrypt\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Security/Encrypter.php
-
-		-
-			message: "#^Method Altair\\\\Security\\\\Encrypter\\:\\:getPayload\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Security/Encrypter.php
-
-		-
 			message: "#^Strict comparison using \\=\\=\\= between non\\-falsy\\-string and false will always evaluate to false\\.$#"
 			count: 1
 			path: src/Altair/Security/Support/Pbkdf2Key.php
-
-		-
-			message: "#^Method Altair\\\\Security\\\\Validator\\\\PayloadValidator\\:\\:__construct\\(\\) has parameter \\$payload with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Security/Validator/PayloadValidator.php
 
 		-
 			message: "#^Method Altair\\\\Session\\\\Adapter\\\\MySqlPdoSessionAdapter\\:\\:__construct\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#"
@@ -3259,26 +3144,6 @@ parameters:
 			message: "#^Property Altair\\\\Structure\\\\Vector\\:\\:\\$internal has no type specified\\.$#"
 			count: 1
 			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\TestReporter\\\\Resolver\\\\SourceUnderTestResolver\\:\\:findMethod\\(\\) has parameter \\$reflection with generic class ReflectionClass but does not specify its types\\: T$#"
-			count: 1
-			path: src/Altair/TestReporter/Resolver/SourceUnderTestResolver.php
-
-		-
-			message: "#^Method Altair\\\\TestReporter\\\\Resolver\\\\SourceUnderTestResolver\\:\\:fromAttributes\\(\\) has parameter \\$reflection with generic class ReflectionClass but does not specify its types\\: T$#"
-			count: 1
-			path: src/Altair/TestReporter/Resolver/SourceUnderTestResolver.php
-
-		-
-			message: "#^Method Altair\\\\TestReporter\\\\Resolver\\\\SourceUnderTestResolver\\:\\:fromCoversAnnotation\\(\\) has parameter \\$reflection with generic class ReflectionClass but does not specify its types\\: T$#"
-			count: 1
-			path: src/Altair/TestReporter/Resolver/SourceUnderTestResolver.php
-
-		-
-			message: "#^Method Altair\\\\TestReporter\\\\Resolver\\\\SourceUnderTestResolver\\:\\:fromNamespaceHeuristic\\(\\) has parameter \\$reflection with generic class ReflectionClass but does not specify its types\\: T$#"
-			count: 1
-			path: src/Altair/TestReporter/Resolver/SourceUnderTestResolver.php
 
 		-
 			message: "#^Method Altair\\\\Validation\\\\Collection\\\\RuleCollection\\:\\:put\\(\\) has parameter \\$key with no type specified\\.$#"

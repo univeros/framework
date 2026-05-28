@@ -67,6 +67,8 @@ final readonly class SourceUnderTestResolver
     }
 
     /**
+     * @param ReflectionClass<object> $reflection
+     *
      * @return list<SourceLocation>
      */
     private function fromAttributes(ReflectionClass $reflection, string $testMethod): array
@@ -107,6 +109,8 @@ final readonly class SourceUnderTestResolver
     }
 
     /**
+     * @param ReflectionClass<object> $reflection
+     *
      * @return list<SourceLocation>
      */
     private function fromCoversAnnotation(ReflectionClass $reflection, string $testMethod): array
@@ -149,6 +153,8 @@ final readonly class SourceUnderTestResolver
     }
 
     /**
+     * @param ReflectionClass<object> $reflection
+     *
      * @return list<SourceLocation>
      */
     private function fromNamespaceHeuristic(ReflectionClass $reflection, string $testMethod): array
@@ -236,6 +242,9 @@ final readonly class SourceUnderTestResolver
         );
     }
 
+    /**
+     * @param ReflectionClass<object> $reflection
+     */
     private function findMethod(ReflectionClass $reflection, string $preferred): ?ReflectionMethod
     {
         if ($reflection->hasMethod($preferred)) {
