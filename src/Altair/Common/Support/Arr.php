@@ -85,7 +85,7 @@ class Arr // - Thanks @yii
      * $value = Arr::getValue($versions, ['1.0', 'date']);
      * ```
      *
-     * @param array|object $array array or object to extract value from
+     * @param mixed $array array or object to extract the value from; any other type yields the default
      * @param string|Closure|array<array-key, string|Closure> $key key name of the array element, an array of keys or property name of the object,
      * or an anonymous function returning the value. The anonymous function signature should be:
      * `function($array, $defaultValue)`.
@@ -94,7 +94,7 @@ class Arr // - Thanks @yii
      *
      * @return mixed the value of the element if found, default value otherwise
      */
-    public static function getValue(array $array, $key, mixed $default = null)
+    public static function getValue(mixed $array, $key, mixed $default = null)
     {
         if ($key instanceof Closure) {
             return $key($array, $default);
@@ -636,10 +636,6 @@ class Arr // - Thanks @yii
      */
     public static function isIndexed(array $array, bool $consecutive = false): bool
     {
-        if (!\is_array($array)) {
-            return false;
-        }
-
         if ($array === []) {
             return true;
         }

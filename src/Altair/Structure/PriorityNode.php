@@ -26,37 +26,24 @@ use OutOfBoundsException;
 class PriorityNode implements PriorityNodeInterface
 {
     /**
-     * @var int
-     */
-    public $priority;
-
-    /**
-     * @var int
-     */
-    public $stamp;
-
-    /**
      * PriorityNode constructor.
      *
      * @param TValue $value
      */
-    public function __construct(public mixed $value, int $priority, int $stamp)
+    public function __construct(public mixed $value, public int $priority, public int $stamp)
     {
-        $this->priority = $priority;
-        $this->stamp = $stamp;
     }
 
     /**
-     * This allows unset($pair->key) to not completely remove the property,
-     * but be set to null instead.
+     * Allows unset($node->value) to soft-null the payload rather than remove it.
      *
-     *
-     * @return mixed|null
+     * priority and stamp are required ordering keys (always int) and are not
+     * accessible through this magic getter.
      */
-    public function __get(mixed $name): mixed
+    public function __get(string $name): mixed
     {
-        if (\in_array($name, ['value', 'priority', 'stamp'], true)) {
-            $this->$name = null;
+        if ($name === 'value') {
+            $this->value = null;
 
             return null;
         }

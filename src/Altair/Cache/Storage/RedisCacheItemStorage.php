@@ -155,12 +155,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
         $this->client->multi(Redis::PIPELINE);
         $ids = [];
         foreach ($serialized as $id => $value) {
-            if (0 >= $lifespan) {
-                $this->client->set($id, $value);
-            } else {
-                $this->client->setex($id, $lifespan, $value);
-            }
-
+            $this->client->setex($id, $lifespan, $value);
             $ids[] = $id;
         }
 

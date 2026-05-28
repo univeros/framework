@@ -147,7 +147,7 @@ final readonly class DoctorConfiguration implements ConfigurationInterface
 
         sort($extensions, SORT_STRING);
 
-        return [$floor, array_values($extensions)];
+        return [$floor, $extensions];
     }
 
     private function normalizeVersion(string $constraint, string $fallback): string

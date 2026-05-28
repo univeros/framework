@@ -113,7 +113,6 @@ class SimpleCache implements CacheInterface
                 $items = $this->pool->getItems($keys);
             } else {
                 foreach ($values as $key => $value) {
-                    $key = \is_int($key) ? (string) $key : $key;
                     $items[$key] = $this->pool->getItem($key)->set($value);
                 }
             }

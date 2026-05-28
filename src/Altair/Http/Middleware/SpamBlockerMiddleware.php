@@ -39,7 +39,7 @@ class SpamBlockerMiddleware implements MiddlewareInterface
         }
 
         $entries = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        $this->list = $entries === false ? [] : array_values($entries);
+        $this->list = $entries === false ? [] : $entries;
     }
 
     #[Override]

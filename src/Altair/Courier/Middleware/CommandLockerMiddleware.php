@@ -19,14 +19,11 @@ use Override;
 class CommandLockerMiddleware implements CommandMiddlewareInterface
 {
     /**
-     * @var array
+     * @var array<int, CommandMessageInterface>
      */
     protected $queue = [];
 
-    /**
-     * @var bool
-     */
-    protected $running = false;
+    protected bool $running = false;
 
     /**
      * @inheritDoc
