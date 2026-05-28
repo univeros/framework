@@ -30,9 +30,7 @@ class PriorityNode implements PriorityNodeInterface
      *
      * @param TValue $value
      */
-    public function __construct(public mixed $value, public int $priority, public int $stamp)
-    {
-    }
+    public function __construct(public mixed $value, public int $priority, public int $stamp) {}
 
     /**
      * Allows unset($node->value) to soft-null the payload rather than remove it.
