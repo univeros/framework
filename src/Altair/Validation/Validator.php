@@ -21,10 +21,7 @@ use Override;
 
 class Validator implements ValidatorInterface
 {
-    /**
-     * @var Payload
-     */
-    protected $payload;
+    protected MiddlewarePayloadInterface $payload;
 
     /**
      * Validator constructor.

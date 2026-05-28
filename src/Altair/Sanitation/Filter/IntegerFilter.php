@@ -15,13 +15,8 @@ use Override;
 
 class IntegerFilter extends AbstractFilter
 {
-    /**
-     * @param mixed $value
-     *
-     * @return int|mixed|null
-     */
     #[Override]
-    public function parse($value): ?int
+    public function parse(mixed $value): ?int
     {
         if (!\is_scalar($value)) {
             return null;

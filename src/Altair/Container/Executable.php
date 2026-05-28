@@ -19,10 +19,7 @@ use ReflectionMethod;
 
 class Executable
 {
-    /**
-     * @var ReflectionFunctionAbstract|ReflectionFunction
-     */
-    protected $callableReflection;
+    protected ReflectionFunction|ReflectionMethod $callableReflection;
 
     /**
      * @var mixed|null The object to invoke the method on if $reflectionFunction is a ReflectionMethod. In
@@ -41,8 +38,10 @@ class Executable
     {
         if ($reflectionFunction instanceof ReflectionMethod) {
             $this->setMethodCallable($reflectionFunction, $object);
-        } else {
+        } elseif ($reflectionFunction instanceof ReflectionFunction) {
             $this->callableReflection = $reflectionFunction;
+        } else {
+            throw new InvalidArgumentException(\sprintf('Unsupported reflection type "%s".', $reflectionFunction::class));
         }
     }
 
@@ -87,7 +86,6 @@ class Executable
     }
 
     /**
-     * @param ReflectionFunction|ReflectionFunctionAbstract $reflection
      * @param array<int, mixed> $args
      */
     protected function invokeClosure(ReflectionFunction $reflection, array $args): mixed

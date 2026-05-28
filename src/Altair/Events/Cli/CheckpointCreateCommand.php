@@ -41,7 +41,7 @@ final readonly class CheckpointCreateCommand
             $head = $event;
         }
 
-        $eventId = $head?->id ?? '';
+        $eventId = $head->id ?? '';
 
         $this->storage->create($name, $eventId);
 

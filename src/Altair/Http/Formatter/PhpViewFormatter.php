@@ -14,7 +14,6 @@ namespace Altair\Http\Formatter;
 use Altair\Http\Contracts\PayloadInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Altair\Http\Exception\RuntimeException;
-use Exception;
 use Override;
 use Throwable;
 
@@ -94,7 +93,6 @@ class PhpViewFormatter extends AbstractHtmlFormatter
      *
      * @param array<string, mixed> $params
      *
-     * @throws Exception
      * @throws Throwable
      */
     protected function renderPhpFile(string $file, array $params = []): string
@@ -108,14 +106,14 @@ class PhpViewFormatter extends AbstractHtmlFormatter
             require($file);
 
             return ob_get_clean();
-        } catch (Exception|Throwable $e) {
+        } catch (Throwable $throwable) {
             while (ob_get_level() > $level) {
                 if (!@ob_end_clean()) {
                     ob_clean();
                 }
             }
 
-            throw $e;
+            throw $throwable;
         }
     }
 

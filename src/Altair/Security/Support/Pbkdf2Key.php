@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace Altair\Security\Support;
 
-use Altair\Security\Exception\InvalidConfigException;
 use Override;
 
 class Pbkdf2Key extends AbstractKey
@@ -30,18 +29,10 @@ class Pbkdf2Key extends AbstractKey
 
     /**
      * @inheritDoc
-     *
-     * @throws InvalidConfigException
      */
     #[Override]
     public function derive(): string
     {
-        $outputKey = hash_pbkdf2($this->algorithm, $this->key, (string) $this->salt, $this->iterations, $this->length, true);
-
-        if ($outputKey === false) {
-            throw new InvalidConfigException('Invalid parameters to hash_pbkdf2().');
-        }
-
-        return $outputKey;
+        return hash_pbkdf2($this->algorithm, $this->key, (string) $this->salt, $this->iterations, $this->length, true);
     }
 }

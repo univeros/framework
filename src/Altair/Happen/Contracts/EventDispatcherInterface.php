@@ -87,8 +87,6 @@ interface EventDispatcherInterface
      * The first parameter should be the event name. All event listeners will
      * be removed.
      *
-     *
-     * @return EventDispatcherInterface;
      */
     public function removeAllListeners(string $event): EventDispatcherInterface;
 

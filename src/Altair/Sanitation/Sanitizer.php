@@ -21,10 +21,7 @@ use Override;
 
 class Sanitizer implements SanitizerInterface
 {
-    /**
-     * @var Payload
-     */
-    protected $payload;
+    protected MiddlewarePayloadInterface $payload;
 
     /**
      * Validator constructor.

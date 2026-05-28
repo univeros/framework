@@ -32,7 +32,7 @@ class SessionHeadersMiddleware implements MiddlewareInterface
     {
         $prevName = session_name();
         $prevCookie = $this->cookieManager->getFromRequest($request, $prevName);
-        $prevId = $prevCookie?->getValue();
+        $prevId = $prevCookie->getValue();
         if ($prevId !== null) {
             session_id($prevId);
         }
@@ -57,9 +57,9 @@ class SessionHeadersMiddleware implements MiddlewareInterface
         $params = session_get_cookie_params();
 
         return (new SetCookie((string) session_name(), $sessionId))
-            ->withDomain($params['domain'] ?? null)
-            ->withPath($params['path'] ?? null)
-            ->withExpires($params['lifetime'] ?? null)
+            ->withDomain($params['domain'])
+            ->withPath($params['path'])
+            ->withExpires($params['lifetime'])
             ->withSecure(!empty($params['secure']))
             ->withHttpOnly(!empty($params['httponly']));
     }

@@ -272,7 +272,7 @@ final readonly class OpenApiParser
     {
         preg_match_all('/\{([A-Za-z_]\w*)\}/', $path, $matches);
 
-        return array_values($matches[1]);
+        return $matches[1];
     }
 
     /**
