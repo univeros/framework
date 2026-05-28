@@ -9,8 +9,14 @@
     },
     "require": {
         "php": ">=8.3",
+        "psr/http-factory": "^1.0",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0",
         "univeros/configuration": "^2.0",
-        "univeros/container": "^2.0"
+        "univeros/container": "^2.0",
+        "univeros/doctor": "^2.0",
+        "univeros/events": "^2.0",
+        "univeros/introspection": "^2.0"
     },
     "autoload": {
         "psr-4": {
