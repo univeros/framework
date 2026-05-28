@@ -102,7 +102,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
         $expected = array_flip($parts);
 
         foreach ($matches as $match) {
-            $data[$match[1]] = $match[3] ?? $match[4];
+            $data[$match[1]] = $match[3] ?? $match[4] ?? '';
             unset($expected[$match[1]]);
         }
 

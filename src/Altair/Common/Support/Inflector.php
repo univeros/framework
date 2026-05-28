@@ -35,10 +35,14 @@ class Inflector
     public function slug(string $value, ?string $replacement = null, $lowercase = true): string
     {
         $replacement ??= '-';
-        $value = $this->transliterator->transliterate($value);
-        $value = preg_replace('/[^a-zA-Z0-9=\s—–-]+/u', '', $value);
-        $value = preg_replace('/[=\s—–-]+/u', $replacement, (string) $value);
-        $value = trim((string) $value, $replacement);
+        $transliterated = $this->transliterator->transliterate($value);
+        if ($transliterated !== false) {
+            $value = $transliterated;
+        }
+
+        $value = (string) preg_replace('/[^a-zA-Z0-9=\s—–-]+/u', '', $value);
+        $value = (string) preg_replace('/[=\s—–-]+/u', $replacement, $value);
+        $value = trim($value, $replacement);
 
         return $lowercase ? strtolower($value) : $value;
     }
@@ -49,7 +53,7 @@ class Inflector
      * For example, 'post-tag' is converted to 'PostTag'.
      *
      * @param string $id the id to be converted
-     * @param string $separator the character used to separate the words in the id
+     * @param non-empty-string $separator the character used to separate the words in the id
      */
     public function idToCamel(string $id, string $separator = '-'): string
     {

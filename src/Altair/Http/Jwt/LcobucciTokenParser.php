@@ -59,6 +59,10 @@ class LcobucciTokenParser implements TokenParserInterface
     #[Override]
     public function parse(string $token): TokenInterface
     {
+        if ($token === '') {
+            throw new InvalidTokenException('Could not parse the authorization token.');
+        }
+
         $configuration = $this->buildConfiguration();
         $parsed = $this->parseToken($configuration, $token);
 
@@ -101,6 +105,8 @@ class LcobucciTokenParser implements TokenParserInterface
     }
 
     /**
+     * @param non-empty-string $token
+     *
      * @throws InvalidTokenException
      */
     private function parseToken(Configuration $configuration, string $token): UnencryptedToken

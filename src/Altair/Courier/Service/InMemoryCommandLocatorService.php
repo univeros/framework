@@ -43,6 +43,8 @@ class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInte
 
     /**
      * @inheritDoc
+     *
+     * @param class-string<CommandInterface> $commandName
      */
     #[Override]
     public function add(string $messageName, string $commandName): InMemoryCommandLocatorServiceInterface

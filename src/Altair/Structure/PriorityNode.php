@@ -33,7 +33,10 @@ class PriorityNode implements PriorityNodeInterface
     public function __construct(public mixed $value, public int $priority, public int $stamp) {}
 
     /**
-     * Allows unset($node->value) to soft-null the payload rather than remove it.
+     * Resolves reads of $value after it has been unset, returning null rather
+     * than triggering an "undefined property" error. The property is not
+     * re-initialised, so its declared TValue type is never violated; every
+     * subsequent read routes back through this accessor and yields null.
      *
      * priority and stamp are required ordering keys (always int) and are not
      * accessible through this magic getter.
@@ -41,8 +44,6 @@ class PriorityNode implements PriorityNodeInterface
     public function __get(string $name): mixed
     {
         if ($name === 'value') {
-            $this->value = null;
-
             return null;
         }
 

@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Altair\Structure;
 
 use Altair\Structure\Contracts\CollectionInterface;
-use Altair\Structure\Contracts\PriorityNodeInterface;
 use Altair\Structure\Traits\CollectionTrait;
 use Altair\Structure\Traits\SquaredCapacityTrait;
 use Generator;
@@ -273,9 +272,9 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
     /**
      * Set Root.
      *
-     * @param PriorityNodeInterface<TValue> $node
+     * @param PriorityNode<TValue> $node
      */
-    protected function setRoot(PriorityNodeInterface $node): void
+    protected function setRoot(PriorityNode $node): void
     {
         $this->heap[0] = $node;
     }
@@ -285,7 +284,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      *
      * @return PriorityNode<TValue>
      */
-    protected function getRoot(): PriorityNodeInterface
+    protected function getRoot(): PriorityNode
     {
         return $this->heap[0];
     }

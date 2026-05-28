@@ -19,9 +19,9 @@ use Stringable;
 abstract class AbstractKey implements KeyInterface, Stringable
 {
     /**
-     * @var string
+     * @var non-falsy-string
      */
-    protected $algorithm = EncrypterInterface::HASH_SHA256_ALGORITHM;
+    protected string $algorithm = EncrypterInterface::HASH_SHA256_ALGORITHM;
 
     /**
      * AbstractKey constructor.

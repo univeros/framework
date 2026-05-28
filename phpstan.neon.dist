@@ -1,5 +1,5 @@
 parameters:
-    level: 6
+    level: 7
     phpVersion: 80300
     paths:
         - src
@@ -42,3 +42,22 @@ parameters:
         - identifier: argument.templateType
           paths:
               - src/Altair/Persistence/Cycle/CycleRepository.php
+
+        # CollectionTrait is shared by array-backed collections (Map, Vector, Deque) and
+        # delegate-backed adapters (Set->Map, Stack->Vector, Queue->Deque). The adapters
+        # narrow $internal to a delegate object and override the entry points, but PHP's
+        # trait rules force them to keep the trait's `$internal = []` default, and PHPStan
+        # analyses the trait's array-backed storage per using-class. These are artefacts of
+        # that intentional shared-trait design, not reachable bugs.
+        - identifier: property.defaultValue
+          paths:
+              - src/Altair/Structure/Traits/CollectionTrait.php
+              - src/Altair/Structure/Set.php
+              - src/Altair/Structure/Stack.php
+              - src/Altair/Structure/Queue.php
+        - identifier: offsetAssign.dimType
+          paths:
+              - src/Altair/Structure/Traits/CollectionTrait.php
+        -
+            message: '#^Call to an undefined method [^:]+::adjustCapacity\(\)\.$#'
+            path: src/Altair/Structure/Traits/CollectionTrait.php

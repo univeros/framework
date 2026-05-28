@@ -15,6 +15,7 @@ use Altair\Container\Container;
 use Altair\Container\Exception\InjectionException;
 use Altair\Middleware\Contracts\MiddlewareInterface;
 use Altair\Middleware\Contracts\MiddlewareResolverInterface;
+use InvalidArgumentException;
 use Override;
 use ReflectionException;
 
@@ -26,17 +27,26 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @param mixed $entry
      * @throws InjectionException
      * @throws ReflectionException
+     * @throws InvalidArgumentException
      */
     #[Override]
-    public function __invoke($entry): MiddlewareInterface
+    public function __invoke(mixed $entry): MiddlewareInterface
     {
-        if (\is_object($entry)) {
+        if ($entry instanceof MiddlewareInterface) {
             return $entry;
         }
 
-        return $this->container->make($entry);
+        if (\is_string($entry)) {
+            $resolved = $this->container->make($entry);
+            if ($resolved instanceof MiddlewareInterface) {
+                return $resolved;
+            }
+        }
+
+        throw new InvalidArgumentException(
+            \sprintf('Unable to resolve middleware entry to an instance of %s.', MiddlewareInterface::class)
+        );
     }
 }

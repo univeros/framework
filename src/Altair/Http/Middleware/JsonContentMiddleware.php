@@ -12,16 +12,31 @@ declare(strict_types=1);
 namespace Altair\Http\Middleware;
 
 use Altair\Http\Exception\HttpBadRequestException;
+use Altair\Http\Exception\InvalidArgumentException;
 use JsonException;
 use Override;
 
 class JsonContentMiddleware extends AbstractContentHandlerMiddleware
 {
+    /**
+     * @var int<1, max>
+     */
+    private readonly int $maxDepth;
+
+    /**
+     * @param int<1, max> $maxDepth
+     */
     public function __construct(
         private readonly bool $associative = true,
-        private readonly int $maxDepth = 512,
+        int $maxDepth = 512,
         private readonly int $flags = 0,
-    ) {}
+    ) {
+        if ($maxDepth < 1) {
+            throw new InvalidArgumentException('The maximum decoding depth must be at least 1.');
+        }
+
+        $this->maxDepth = $maxDepth;
+    }
 
     #[Override]
     protected function contentTypes(): array

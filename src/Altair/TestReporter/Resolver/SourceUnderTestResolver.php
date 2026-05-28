@@ -193,13 +193,12 @@ final readonly class SourceUnderTestResolver
         return [];
     }
 
+    /**
+     * @param class-string $className
+     */
     private function locateClass(string $className, string $preferredMethod): ?SourceLocation
     {
-        try {
-            $reflection = new ReflectionClass($className);
-        } catch (Throwable) {
-            return null;
-        }
+        $reflection = new ReflectionClass($className);
 
         $file = $reflection->getFileName();
         if ($file === false) {

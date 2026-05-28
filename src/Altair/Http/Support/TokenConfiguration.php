@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\TokenConfigurationInterface;
+use Altair\Http\Exception\InvalidArgumentException;
 use Lcobucci\JWT\Signer;
 use Override;
 
@@ -21,6 +22,9 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
 
     /**
      * TokenGeneratorConfiguration constructor.
+     *
+     * @param non-empty-string $publicKey
+     * @param non-empty-string $issuer
      */
     public function __construct(
         private string $publicKey,
@@ -31,6 +35,14 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
         private ?string $privateKey = null,
         private ?string $audience = null
     ) {
+        if ($publicKey === '') {
+            throw new InvalidArgumentException('The public key must be a non-empty string.');
+        }
+
+        if ($issuer === '') {
+            throw new InvalidArgumentException('The issuer must be a non-empty string.');
+        }
+
         $this->timestamp = $timestamp ?: time();
     }
 

@@ -25,7 +25,7 @@ interface InMemoryCommandLocatorServiceInterface extends CommandLocatorServiceIn
     /**
      * Adds a new message to command mapping.
      *
-     *
+     * @param class-string<CommandInterface> $commandName
      */
     public function add(string $messageName, string $commandName): InMemoryCommandLocatorServiceInterface;
 }

@@ -13,6 +13,7 @@ namespace Altair\Http\Support;
 
 use Altair\Http\Contracts\ErrorHandlerInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
+use Altair\Http\Exception\RuntimeException;
 use GdImage;
 use Laminas\Diactoros\Response;
 use Override;
@@ -61,10 +62,10 @@ class DefaultErrorHandler implements ErrorHandlerInterface
         $message = $error !== null ? $error->getMessage() : '';
         $response = (new Response('php://memory', $response->getStatusCode()));
 
-        foreach ($this->handlers as $types) {
+        foreach ($this->handlers as $handler => $types) {
             foreach ($types as $type) {
-                if (stripos($accept, (string) $type) !== false) {
-                    \call_user_func([$this, $type], $response->getStatusCode(), $message);
+                if (stripos($accept, $type) !== false) {
+                    $this->{$handler}($response->getStatusCode(), $message);
 
                     return $response->withHeader('Content-Type', $type);
                 }
@@ -77,12 +78,21 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     }
 
     /**
-     * Output the error as svg image.
-     *
-     * @param int $statusCode
-     * @param string $message
+     * Output the error as plain text.
      */
-    protected function svg($statusCode, $message): void
+    protected function plain(int $statusCode, string $message): void
+    {
+        echo \sprintf('Error %d', $statusCode);
+
+        if ($message !== '') {
+            echo "\n" . $message;
+        }
+    }
+
+    /**
+     * Output the error as svg image.
+     */
+    protected function svg(int $statusCode, string $message): void
     {
         echo <<<EOT
             <svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
@@ -95,11 +105,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as html.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function html($statusCode, $message): void
+    protected function html(int $statusCode, string $message): void
     {
         echo <<<EOT
             <!DOCTYPE html>
@@ -120,14 +127,11 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as json.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function json($statusCode, $message): void
+    protected function json(int $statusCode, string $message): void
     {
         $output = ['error' => $statusCode];
-        if (!empty($message)) {
+        if ($message !== '' && $message !== '0') {
             $output['message'] = $message;
         }
 
@@ -136,11 +140,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as xml.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function xml($statusCode, $message): void
+    protected function xml(int $statusCode, string $message): void
     {
         echo <<<EOT
             <?xml version="1.0" encoding="UTF-8"?>
@@ -153,11 +154,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as jpeg.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function jpeg($statusCode, $message): void
+    protected function jpeg(int $statusCode, string $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagejpeg($image);
@@ -165,11 +163,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as gif.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function gif($statusCode, $message): void
+    protected function gif(int $statusCode, string $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagegif($image);
@@ -177,11 +172,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
 
     /**
      * Output the error as png.
-     *
-     * @param int $statusCode
-     * @param string $message
      */
-    protected function png($statusCode, $message): void
+    protected function png(int $statusCode, string $message): void
     {
         $image = $this->createImage($statusCode, $message);
         imagepng($image);
@@ -190,16 +182,23 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     /**
      * Creates a image resource with the error text.
      *
-     * @param int $statusCode
-     * @param string $message
-     *
-     * @return GdImage|false
+     * @throws RuntimeException when the GD image cannot be allocated
      */
-    protected function createImage($statusCode, $message): GdImage|false
+    protected function createImage(int $statusCode, string $message): GdImage
     {
         $size = 200;
         $image = imagecreatetruecolor($size, $size);
+
+        if ($image === false) {
+            throw new RuntimeException('Unable to allocate a GD image for the error output.');
+        }
+
         $textColor = imagecolorallocate($image, 255, 255, 255);
+
+        if ($textColor === false) {
+            throw new RuntimeException('Unable to allocate a color for the error image.');
+        }
+
         imagestring($image, 5, 10, 10, 'Error ' . $statusCode, $textColor);
         foreach (str_split($message, \intval($size / 10)) as $line => $text) {
             imagestring($image, 5, 10, ($line * 18) + 28, $text, $textColor);

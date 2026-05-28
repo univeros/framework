@@ -170,7 +170,7 @@ class Parser
     }
 
     /**
-     * @param  array<string, mixed>  $data
+     * @param  array<int|string, mixed>  $data
      * @return list<InputFieldSpec>
      */
     private function parseInputs(array $data): array

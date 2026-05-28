@@ -30,6 +30,8 @@ class UpperCaseFilter extends AbstractFilter
             return null;
         }
 
+        $value = (string) $value;
+
         return $this->firstOnly ? $this->getFirstToUpper($value) : strtoupper($value);
     }
 

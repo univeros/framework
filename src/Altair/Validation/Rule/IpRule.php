@@ -113,7 +113,8 @@ class IpRule extends AbstractRule
             throw new InvalidArgumentException('Invalid network mask.');
         }
 
-        $range['mask'] = \sprintf('%032b', ip2long(long2ip(~((2 ** (32 - $prefix)) - 1))));
+        $netmask = ~((1 << (32 - $prefix)) - 1) & 0xFFFFFFFF;
+        $range['mask'] = \sprintf('%032b', $netmask);
 
         return $range;
     }
@@ -154,9 +155,15 @@ class IpRule extends AbstractRule
      */
     protected function assertSubnet(string $value): bool
     {
-        $range = $this->range;
-        $min = \sprintf('%032b', ip2long($range['min']));
+        $rangeMin = $this->range['min'] ?? null;
+        $mask = $this->range['mask'] ?? null;
+        if ($rangeMin === null || $mask === null) {
+            return false;
+        }
+
+        $min = \sprintf('%032b', ip2long($rangeMin));
         $value = \sprintf('%032b', ip2long($value));
-        return ($value & $range['mask']) === ($min & $range['mask']);
+
+        return ($value & $mask) === ($min & $mask);
     }
 }
