@@ -214,7 +214,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         }
 
         $path .= '/';
-        if ('\\' === '/' && \strlen($path) > 234) { // windows allows max of 258
+        if (DIRECTORY_SEPARATOR === '\\' && \strlen($path) > 234) { // windows allows max of 258
             throw new InvalidArgumentException(\sprintf('Cache directory path is too long "%s"', $path));
         }
 

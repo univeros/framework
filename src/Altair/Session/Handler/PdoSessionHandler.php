@@ -103,11 +103,14 @@ class PdoSessionHandler implements PdoSessionHandlerInterface
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         // We delay gc() to close() so that it is executed outside the transactional and blocking read-write process.
         // This way, pruning expired sessions does not block them from being started while the current session is used.
-        return $this->gcCalled = true;
+        // The actual pruning (and its count) happens in close(); at this point nothing has been deleted yet.
+        $this->gcCalled = true;
+
+        return 0;
     }
 
     /**

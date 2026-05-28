@@ -195,9 +195,7 @@ trait SequenceTrait
         }
 
         $value = array_pop($this->internal);
-        if (method_exists($this, 'adjustCapacity')) {
-            $this->adjustCapacity();
-        }
+        $this->adjustCapacity();
 
         return $value;
     }
@@ -234,9 +232,7 @@ trait SequenceTrait
         $this->checkRange($index);
 
         $value = array_splice($this->internal, $index, 1, null)[0];
-        if (method_exists($this, 'adjustCapacity')) {
-            $this->adjustCapacity();
-        }
+        $this->adjustCapacity();
 
         return $value;
     }
@@ -299,9 +295,7 @@ trait SequenceTrait
         }
 
         $value = array_shift($this->internal);
-        if (method_exists($this, 'adjustCapacity')) {
-            $this->adjustCapacity();
-        }
+        $this->adjustCapacity();
 
         return $value;
     }
@@ -428,6 +422,14 @@ trait SequenceTrait
 
         return $this->get($offset) !== null;
     }
+
+    /**
+     * Rebalances the backing storage capacity after a mutation.
+     *
+     * Provided by the capacity trait the consuming collection composes
+     * (CapacityTrait / SquaredCapacityTrait).
+     */
+    abstract protected function adjustCapacity(): void;
 
     protected function checkRange(int $index): void
     {

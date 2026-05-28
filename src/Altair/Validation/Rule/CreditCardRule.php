@@ -167,7 +167,7 @@ class CreditCardRule extends AbstractRule
         $checksum = 0;
         $length = \strlen($cardNumber);
         for ($i = 0; $i < $length; $i++) {
-            $currentNum = $cardNumber[$i];
+            $currentNum = (int) $cardNumber[$i];
             if ($i % 2 === 1) {
                 $currentNum *= 2;
             }

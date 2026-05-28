@@ -193,7 +193,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
      * @param int $statusCode
      * @param string $message
      *
-     * @return resource
+     * @return GdImage|false
      */
     protected function createImage($statusCode, $message): GdImage|false
     {

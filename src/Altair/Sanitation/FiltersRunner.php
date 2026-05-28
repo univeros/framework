@@ -33,8 +33,7 @@ class FiltersRunner implements FiltersRunnerInterface
      *
      * Constructor.
      *
-     * @param callable|ResolverInterface $resolver Converts queue entries to callables.
-     * @param Queue<mixed> $queue The middleware queue.
+     * @param Queue<mixed>|null $queue The middleware queue.
      */
     public function __construct(?ResolverInterface $resolver = null, protected ?Queue $queue = null)
     {

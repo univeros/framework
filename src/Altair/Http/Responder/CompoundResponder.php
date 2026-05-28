@@ -53,7 +53,7 @@ class CompoundResponder implements ResponderInterface
         PayloadInterface $payload
     ): ResponseInterface {
         foreach ($this->responders as $responder) {
-            /** @var callable $responder */
+            /** @var ResponderInterface $responder */
             $responder = $this->resolve($responder);
             $response = $responder($request, $response, $payload);
         }

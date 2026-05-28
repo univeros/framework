@@ -14,7 +14,6 @@ namespace Altair\Http\Base;
 use Altair\Http\Collection\InputCollection;
 use Altair\Http\Collection\SettingsCollection;
 use Altair\Http\Contracts\PayloadInterface;
-use Altair\Structure\Map;
 use Override;
 
 class Payload implements PayloadInterface
@@ -36,9 +35,6 @@ class Payload implements PayloadInterface
      */
     protected $messages = [];
 
-    /**
-     * @var Map|null
-     */
     protected SettingsCollection $settingsCollection;
 
     /**

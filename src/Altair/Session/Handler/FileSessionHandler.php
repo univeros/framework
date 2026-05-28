@@ -59,15 +59,18 @@ class FileSessionHandler implements SessionHandlerInterface
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function gc($maxlifetime): void
+    public function gc($maxlifetime): int|false
     {
         $files = $this->filesystem->listAllFiles($this->path);
         $now = time();
+        $deleted = 0;
         foreach ($files as $file) {
-            if (filemtime($file->getPathname()) + $maxlifetime <= $now) {
-                $this->filesystem->delete($file->getPathname());
+            if (filemtime($file->getPathname()) + $maxlifetime <= $now && $this->filesystem->delete($file->getPathname())) {
+                ++$deleted;
             }
         }
+
+        return $deleted;
     }
 
     /**
