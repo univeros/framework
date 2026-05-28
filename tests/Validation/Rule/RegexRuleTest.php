@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Altair\Tests\Validation\Rule;
 
 use Altair\Validation\Rule\RegexRule;

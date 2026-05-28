@@ -28,7 +28,6 @@ use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Throwable;
 
 class TokenAuthenticationMiddleware implements MiddlewareInterface
 {
@@ -84,8 +83,6 @@ class TokenAuthenticationMiddleware implements MiddlewareInterface
         } catch (AuthorizationException $e) {
             $exception = $e;
             $statusCode = HttpStatusCodeInterface::HTTP_FORBIDDEN;
-        } catch (Throwable $e) {
-            throw $e;
         }
 
         if ($statusCode !== null) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Doctor\Configuration;
 
+use Altair\Doctor\Contracts\CheckInterface;
 use Altair\Container\Container;
 use Altair\Doctor\CheckRegistry;
 use Altair\Doctor\Configuration\DoctorConfiguration;
@@ -49,7 +50,7 @@ class DoctorConfigurationTest extends TestCase
 
         $registry = $container->make(CheckRegistry::class);
         $this->assertInstanceOf(CheckRegistry::class, $registry);
-        $names = array_map(static fn($c): string => $c->name(), $registry->all());
+        $names = array_map(static fn(CheckInterface $c): string => $c->name(), $registry->all());
 
         // All 13 issue checks plus determinism_check (#74).
         foreach ([

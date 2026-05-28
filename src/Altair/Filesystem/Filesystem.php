@@ -516,7 +516,7 @@ class Filesystem
         // directories in our list, but only true files within the directory.
         return array_filter(
             $glob,
-            fn($file): bool => filetype($file) === 'file'
+            fn(string $file): bool => filetype($file) === 'file'
         );
     }
 

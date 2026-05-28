@@ -51,12 +51,12 @@ class Pair implements PairInterface, JsonSerializable, Stringable
      *
      * @return mixed|null
      */
-    public function __get(mixed $name)
+    public function __get(mixed $name): mixed
     {
         if ($name === 'key' || $name === 'value') {
             $this->$name = null;
 
-            return;
+            return null;
         }
 
         throw new OutOfBoundsException('Out of bounds');

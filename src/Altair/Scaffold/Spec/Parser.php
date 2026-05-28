@@ -165,7 +165,7 @@ class Parser
             method: strtoupper((string) ($data['method'] ?? '')),
             path: (string) ($data['path'] ?? ''),
             summary: (string) ($data['summary'] ?? ''),
-            tags: array_values(array_map('strval', $tags)),
+            tags: array_values(array_map(strval(...), $tags)),
         );
     }
 
@@ -189,7 +189,7 @@ class Parser
             $inputs[] = new InputFieldSpec(
                 name: (string) $name,
                 type: (string) ($raw['type'] ?? 'string'),
-                rules: array_values(array_map('strval', $rules)),
+                rules: array_values(array_map(strval(...), $rules)),
                 sensitive: (bool) ($raw['sensitive'] ?? false),
                 of: isset($raw['of']) ? (string) $raw['of'] : null,
                 default: $raw['default'] ?? null,

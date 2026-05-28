@@ -46,7 +46,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
         }
 
         if (preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', (string) $password) && (\strlen((string) $password) >= 60)) {
-            return password_verify((string) $password, (string) $this->users[$user]);
+            return password_verify((string) $password, $this->users[$user]);
         }
 
         return $password === $this->users[$user];

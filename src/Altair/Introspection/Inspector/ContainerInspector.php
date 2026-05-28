@@ -354,7 +354,7 @@ final readonly class ContainerInspector
         }
 
         try {
-            return (string) json_encode($value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
+            return json_encode($value, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR);
         } catch (Throwable) {
             return '(unserialisable)';
         }

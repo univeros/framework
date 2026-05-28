@@ -97,7 +97,7 @@ final readonly class EventsSettings
             return [];
         }
 
-        $items = array_filter(array_map('trim', explode(',', $raw)), static fn(string $v): bool => $v !== '');
+        $items = array_filter(array_map(trim(...), explode(',', $raw)), static fn(string $v): bool => $v !== '');
 
         return array_values($items);
     }

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Altair\Tests\Sanitation\Resolver;
 
 use Altair\Container\Container;

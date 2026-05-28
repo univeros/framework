@@ -85,7 +85,7 @@ final class LcobucciTokenGeneratorTest extends TestCase
 
     public function testGenerateThrowsWhenPrivateKeyIsMissing(): void
     {
-        $config = new TokenConfiguration(self::$publicKey, self::TTL, new Sha256(), self::ISSUER, self::ISSUED_AT, null);
+        $config = new TokenConfiguration(self::$publicKey, self::TTL, new Sha256(), self::ISSUER, self::ISSUED_AT);
 
         $this->expectException(InvalidTokenException::class);
 

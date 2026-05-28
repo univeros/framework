@@ -394,7 +394,7 @@ class Container implements ContainerInterface
             return $object;
         }
 
-        $interfaces = array_flip(array_map([$this, 'normalizeName'], $interfaces));
+        $interfaces = array_flip(array_map($this->normalizeName(...), $interfaces));
         $prepares = $this->prepares->intersect(new Map($interfaces));
 
         foreach ($prepares as $callableOrMethodString) {

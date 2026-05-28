@@ -129,7 +129,7 @@ class EventDispatcher implements EventDispatcherInterface
     #[Override]
     public function hasListeners(string $name): bool
     {
-        return isset($this->listeners[$name]) && \count($this->listeners[$name]) !== 0;
+        return isset($this->listeners[$name]) && $this->listeners[$name] !== [];
     }
 
     /**

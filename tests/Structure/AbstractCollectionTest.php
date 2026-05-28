@@ -54,7 +54,7 @@ abstract class AbstractCollectionTest extends TestCase
         ];
 
         return array_map(
-            fn($a): array => [$a, $a],
+            fn(array $a): array => [$a, $a],
             $values
         );
     }

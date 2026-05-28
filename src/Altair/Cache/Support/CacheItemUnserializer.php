@@ -41,7 +41,7 @@ class CacheItemUnserializer
 
             throw new UnserializeException('Failed to unserialize cached value.');
         } catch (Error $error) { // ensure error is an instance of \Exception
-            throw new ErrorException($error->getMessage(), $error->getCode(), E_ERROR, $error->getFile(), $error->getLine());
+            throw new ErrorException($error->getMessage(), $error->getCode(), E_ERROR, $error->getFile(), $error->getLine(), $error);
         } finally { // reset
             ini_set('unserialize_callback_func', $handler);
         }

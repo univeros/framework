@@ -451,7 +451,7 @@ class Arr // - Thanks @yii
         }
 
         foreach (array_keys($array) as $k) {
-            if (strcasecmp($key, $k) === 0) {
+            if (strcasecmp($key, (string) $k) === 0) {
                 return true;
             }
         }

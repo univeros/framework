@@ -52,7 +52,7 @@ final readonly class SchemaSyncCommand
         #[Option(description: 'Print diff without applying.', name: 'dry-run')]
         bool $dryRun = false,
     ): int {
-        $directories = array_values(array_filter(array_map('trim', explode(',', $entityDirs))));
+        $directories = array_values(array_filter(array_map(trim(...), explode(',', $entityDirs))));
         if ($directories === []) {
             echo "Provide --entities=/abs/path,/abs/path2 with at least one directory.\n";
 

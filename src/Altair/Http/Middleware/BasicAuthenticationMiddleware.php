@@ -52,7 +52,7 @@ class BasicAuthenticationMiddleware implements MiddlewareInterface
 
         [$user, $password] = $this->getAuthDataFromServerParams($request->getServerParams());
 
-        if (\call_user_func($this->identityValidator, ['user' => $user, 'password' => $password]) !== false) {
+        if (\call_user_func($this->identityValidator, ['user' => $user, 'password' => $password])) {
             return $handler->handle($request);
         }
 

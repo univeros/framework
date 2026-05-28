@@ -44,7 +44,6 @@ class CacheItemTest extends TestCase
         $item->expiresAfter($di);
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
-        $property->setAccessible(true);
 
         $value = $property->getValue($item);
         $this->assertNotNull($value);
@@ -57,7 +56,6 @@ class CacheItemTest extends TestCase
         $item = call_user_func($this->fn, 'somekey', null, false);
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
-        $property->setAccessible(true);
         $this->assertNull($property->getValue($item));
         $item->expiresAfter(3600);
         $this->assertNotNull($property->getValue($item));
@@ -70,7 +68,6 @@ class CacheItemTest extends TestCase
         $item = call_user_func($this->fn, 'somekey', null, false);
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
-        $property->setAccessible(true);
         $this->assertNull($property->getValue($item));
         $item->expiresAfter(null);
         $this->assertNull($property->getValue($item));
@@ -82,7 +79,6 @@ class CacheItemTest extends TestCase
         $item = call_user_func($this->fn, 'somekey', null, false);
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
-        $property->setAccessible(true);
         $this->assertNull($property->getValue($item));
         $item->expiresAt($dt = date_create());
         $this->assertNotNull($property->getValue($item));
@@ -95,7 +91,6 @@ class CacheItemTest extends TestCase
         $item = call_user_func($this->fn, 'somekey', null, false);
         $reflection = new \ReflectionObject($item);
         $property = $reflection->getProperty('expirationTime');
-        $property->setAccessible(true);
         $this->assertNull($property->getValue($item));
         $item->expiresAt(null);
         $this->assertNull($property->getValue($item));

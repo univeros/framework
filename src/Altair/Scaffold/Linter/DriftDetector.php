@@ -12,7 +12,9 @@ declare(strict_types=1);
 namespace Altair\Scaffold\Linter;
 
 use Altair\Scaffold\Emitter\Naming;
+use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use PhpParser\Node;
 use PhpParser\Node\Expr\Array_;
 use PhpParser\Node\Expr\Variable;
 use PhpParser\Node\Param;
@@ -76,7 +78,7 @@ class DriftDetector
             }
         }
 
-        $specFields = array_map(static fn($field): string => $field->name, $spec->inputs);
+        $specFields = array_map(static fn(InputFieldSpec $field): string => $field->name, $spec->inputs);
 
         foreach ($specFields as $name) {
             if (!\in_array($name, $found, true)) {
@@ -195,7 +197,7 @@ class DriftDetector
         $resolved = $traverser->traverse($ast);
 
         $node = $this->nodeFinder->findFirstInstanceOf($resolved, Class_::class);
-        \assert($node === null || $node instanceof Class_);
+        \assert(!$node instanceof Node || $node instanceof Class_);
 
         return $node;
     }
