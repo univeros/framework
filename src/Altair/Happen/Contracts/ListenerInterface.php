@@ -16,5 +16,5 @@ interface ListenerInterface
     /**
      * Handles an event.
      */
-    public function __invoke(EventInterface $event);
+    public function __invoke(EventInterface $event): void;
 }

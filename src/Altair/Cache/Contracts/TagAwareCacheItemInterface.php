@@ -28,9 +28,9 @@ interface TagAwareCacheItemInterface extends CacheItemInterface
     /**
      * Returns a cloned instance with new specified tags.
      *
+     * @param array<int, string> $tags
      *
      * @throws InvalidArgumentException if any is not valid
-     *
      */
     public function withTags(array $tags): TagAwareCacheItemInterface;
 }

@@ -16,6 +16,9 @@ use Override;
 
 class IpRule extends AbstractRule
 {
+    /**
+     * @var array{min: ?string, max: ?string, mask: ?string}|null
+     */
     protected ?array $range;
 
     /**
@@ -30,7 +33,7 @@ class IpRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         return $this->assertAddress($value) && $this->assertNetwork($value);
     }
@@ -39,11 +42,14 @@ class IpRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid IP address.', $value);
     }
 
+    /**
+     * @return array{min: ?string, max: ?string, mask: ?string}|null
+     */
     protected function parseRange(string $value): ?array
     {
         if ($value === '*' || $value === '*.*.*.*' || $value === '0.0.0.0-255.255.255.255') {
@@ -73,6 +79,11 @@ class IpRule extends AbstractRule
         return $range;
     }
 
+    /**
+     * @param array{min: ?string, max: ?string, mask: ?string} $range
+     *
+     * @return array{min: ?string, max: ?string, mask: ?string}
+     */
     protected function parseRangeUsingWildcards(string $value, array $range): array
     {
         $value = $this->fillAddress($value);
@@ -82,6 +93,11 @@ class IpRule extends AbstractRule
         return $range;
     }
 
+    /**
+     * @param array{min: ?string, max: ?string, mask: ?string} $range
+     *
+     * @return array{min: ?string, max: ?string, mask: ?string}
+     */
     protected function parseRangeUsingCidr(string $value, array $range): array
     {
         [$min, $max] = explode('/', $value);

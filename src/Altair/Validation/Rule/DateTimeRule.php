@@ -20,7 +20,7 @@ class DateTimeRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         if ($value instanceof DateTime) {
             return (bool) $value;
@@ -49,7 +49,7 @@ class DateTimeRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid date time value.', $value);
     }

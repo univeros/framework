@@ -35,6 +35,8 @@ class ZipCodeRule extends AbstractRule
      * @author  petitchevalroux
      *
      * @license https://github.com/ronanguilloux/IsoCodes/blob/master/LICENSE
+     *
+     * @var array<string, string>
      */
     protected static $patterns = [
         'AC' => 'ASCN 1ZZ',
@@ -241,7 +243,7 @@ class ZipCodeRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         $value = trim((string) $value);
         if ($value === '' || $value === '0') {
@@ -256,7 +258,7 @@ class ZipCodeRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid %s zip code .', $value, $this->country);
     }

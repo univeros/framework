@@ -23,16 +23,19 @@ final class CacheItem implements CacheItemInterface
     // The following properties are accessed via Closure::bind reflection from
     // CacheItemPool (see createCacheItemFactoryClosure / createDeferredMergerClosure).
     // Static analysers cannot see those references — do not "clean up" as unused.
-    protected $key;
+    protected string $key;
 
-    protected $value;
+    protected mixed $value;
 
-    protected $isHit;
+    protected bool $isHit;
 
-    protected $expirationTime;
+    protected ?int $expirationTime = null;
 
-    protected $defaultLifespan;
+    protected ?int $defaultLifespan = null;
 
+    /**
+     * @var array<int, string>
+     */
     protected array $tags = [];
 
     protected ?CacheItemTagValidatorInterface $tagValidator = null;

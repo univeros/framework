@@ -17,10 +17,15 @@ use Override;
 
 class ArrayRegistry implements RegistryInterface
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $data;
 
     /**
      * ArrayRegistry constructor.
+     *
+     * @param array<string, mixed>|null $data
      */
     public function __construct(?array $data = null)
     {
@@ -40,7 +45,7 @@ class ArrayRegistry implements RegistryInterface
      * @inheritDoc
      */
     #[Override]
-    public function set(string $key, $value): static
+    public function set(string $key, mixed $value): static
     {
         $this->data[$key] = $value;
 

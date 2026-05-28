@@ -24,13 +24,14 @@ interface ScalarRepositoryInterface
     /**
      * Returns the value of a single field for multiple entities.
      *
-     *
+     * @return list<mixed>|null
      */
     public function findScalars(string $field): ?array;
 
     /**
      * Returns the value of a single field by variable criteria.
      *
+     * @param array<string, mixed> $criteria
      *
      * @return mixed
      */

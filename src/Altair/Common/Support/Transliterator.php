@@ -61,7 +61,7 @@ class Transliterator
     protected $transliterator = self::TRANSLITERATE_LOOSE;
 
     /**
-     * @var array fallback map for transliteration used by [[transliterate()]] when intl isn't available.
+     * @var array<string, string> fallback map for transliteration used by [[transliterate()]] when intl isn't available.
      */
     protected $transliteration = [
         'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
@@ -91,6 +91,7 @@ class Transliterator
      * Merges a transliteration map into the default one. The map is used when there is no
      * intl extension available.
      *
+     * @param array<string, string> $transliteration
      * @return Transliterator
      */
     public function merge(array $transliteration): Transliterator

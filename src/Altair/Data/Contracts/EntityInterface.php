@@ -36,6 +36,7 @@ interface EntityInterface extends ArrayableInterface, JsonSerializable, Serializ
     /**
      * Returns a copy of the instance with the new data.
      *
+     * @param array<string, mixed> $data
      *
      * @return mixed
      */

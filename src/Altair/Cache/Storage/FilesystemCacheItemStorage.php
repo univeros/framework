@@ -20,7 +20,7 @@ use stdClass;
 
 class FilesystemCacheItemStorage implements CacheItemStorageInterface
 {
-    protected $directory;
+    protected string $directory;
 
     protected Filesystem $filesystem;
 
@@ -49,6 +49,8 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
      * @inheritDoc
      *
      * @throws FileNotFoundException
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getItems(array $keys = []): array
@@ -121,6 +123,10 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $values
+     *
+     * @return bool|list<string>
      */
     #[Override]
     public function save(array $values, int $lifespan)
@@ -137,11 +143,8 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * Modified version to return a boolean when writing contents to the file
-     *
-     * @param $value
-     *
      */
-    protected function put(string $id, $value, ?int $expiresAt = null): bool
+    protected function put(string $id, mixed $value, ?int $expiresAt = null): bool
     {
         $file = $this->getFilePath($id, true);
 

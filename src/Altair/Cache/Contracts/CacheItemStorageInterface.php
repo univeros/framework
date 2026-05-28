@@ -25,7 +25,7 @@ interface CacheItemStorageInterface
      *
      * @param string[] $keys An indexed array of keys of items to retrieve.
      *
-     * @return array a collection of Cache Items keyed by the cache keys of each item. A Cache
+     * @return array<string, mixed> a collection of Cache Items keyed by the cache keys of each item. A Cache
      * item will be returned for each key, even if that key is not found. However, if no keys are specified then an
      * empty array MUST be returned instead.
      */
@@ -68,11 +68,11 @@ interface CacheItemStorageInterface
     /**
      * Persists a cache item immediately.
      *
-     * @param array $values The cache item to save.
+     * @param array<string, mixed> $values The cache item to save.
      * @param int $lifespan The time of the cached values or 0 for manual cleaning.
      *
-     * @return bool|array True if the items were successfully persisted, otherwise will return an array with failed
-     * items. Note: It will depend on the storage being used.
+     * @return bool|list<string> True if the items were successfully persisted, otherwise will return an array with
+     * failed items. Note: It will depend on the storage being used.
      */
     public function save(array $values, int $lifespan);
 }
