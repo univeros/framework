@@ -29,7 +29,7 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 
     protected Client $client;
 
-    protected $namespace;
+    protected string $namespace = '';
 
     /**
      * RedisCacheItemPoolStorage constructor.
@@ -58,6 +58,8 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      * @throws ErrorException
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getItems(array $keys = []): array
@@ -132,6 +134,10 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $values
+     *
+     * @return bool|list<string>
      */
     #[Override]
     public function save(array $values, int $lifespan)
@@ -172,6 +178,9 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
         return $failed === [] ? true : $failed;
     }
 
+    /**
+     * @return list<Client>|null
+     */
     protected function getHosts(Client $client): ?array
     {
         $connection = $client->getConnection();

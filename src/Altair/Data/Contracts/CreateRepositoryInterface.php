@@ -16,7 +16,7 @@ interface CreateRepositoryInterface
     /**
      * Create a new object and return it
      *
-     *
+     * @param array<string, mixed> $values
      */
     public function create(array $values): EntityInterface;
 }

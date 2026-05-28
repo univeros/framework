@@ -19,7 +19,7 @@ class EmailRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($input): bool
+    public function assert(mixed $input): bool
     {
         // This is a very basic way to test an email. It is highly recommended that you create a custom email validator
         // that makes use of https://github.com/egulias/EmailValidator
@@ -30,7 +30,7 @@ class EmailRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid email address.', $value);
     }

@@ -23,6 +23,9 @@ class Event implements EventInterface
      */
     protected $propagationStopped = false;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $arguments;
 
     /**
@@ -32,6 +35,8 @@ class Event implements EventInterface
 
     /**
      * Event constructor.
+     *
+     * @param array<string, mixed>|null $arguments
      */
     public function __construct(protected string $name, ?array $arguments = null)
     {
@@ -79,6 +84,8 @@ class Event implements EventInterface
 
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getArguments(): array
@@ -124,7 +131,7 @@ class Event implements EventInterface
      * @inheritDoc
      */
     #[Override]
-    public function withArgument(string $key, $content): EventInterface
+    public function withArgument(string $key, mixed $content): EventInterface
     {
         $cloned = clone $this;
         $cloned->arguments[strtolower($key)] = $content;
@@ -134,6 +141,8 @@ class Event implements EventInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $arguments
      */
     #[Override]
     public function withArguments(array $arguments): EventInterface

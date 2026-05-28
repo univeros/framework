@@ -14,7 +14,7 @@ namespace Altair\Common\Support;
 class Pluralizer
 {
     /**
-     * @var array the rules for converting a word into its plural form.
+     * @var array<string, string> the rules for converting a word into its plural form.
      * The keys are the regular expressions and the values are the corresponding replacements.
      */
     protected $plurals = [
@@ -50,7 +50,7 @@ class Pluralizer
     ];
 
     /**
-     * @var array the rules for converting a word into its singular form.
+     * @var array<string, string> the rules for converting a word into its singular form.
      * The keys are the regular expressions and the values are the corresponding replacements.
      */
     protected $singulars = [
@@ -96,7 +96,7 @@ class Pluralizer
     ];
 
     /**
-     * @var array the special rules for converting a word between its plural form and singular form.
+     * @var array<string, string> the special rules for converting a word between its plural form and singular form.
      * The keys are the special words in singular form, and the values are the corresponding plural form.
      */
     protected $specials = [

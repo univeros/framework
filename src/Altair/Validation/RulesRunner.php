@@ -55,6 +55,9 @@ class RulesRunner implements RulesRunnerInterface
         return $middleware($payload, $this);
     }
 
+    /**
+     * @param array<int, mixed> $rules
+     */
     #[Override]
     public function withRules(array $rules): RulesRunnerInterface
     {

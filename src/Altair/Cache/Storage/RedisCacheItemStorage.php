@@ -26,7 +26,7 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 
     protected Redis $client;
 
-    protected $namespace;
+    protected string $namespace = '';
 
     /**
      * RedisCacheItemPoolStorage constructor.
@@ -55,6 +55,8 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
     /**
      * @inheritDoc
      * @throws ErrorException
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getItems(array $keys = []): array
@@ -122,6 +124,10 @@ class RedisCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $values
+     *
+     * @return bool|list<string>
      */
     #[Override]
     public function save(array $values, int $lifespan)

@@ -27,6 +27,8 @@ class NullCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getItems(array $keys = []): array
@@ -63,6 +65,8 @@ class NullCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $values
      */
     #[Override]
     public function save(array $values, int $lifespan): bool

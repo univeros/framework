@@ -45,5 +45,5 @@ abstract class AbstractRule implements RuleInterface
         );
     }
 
-    abstract protected function buildErrorMessage($value): string;
+    abstract protected function buildErrorMessage(mixed $value): string;
 }
