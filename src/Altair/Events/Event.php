@@ -82,6 +82,8 @@ final readonly class Event
 
     /**
      * Common-case factory: stamp an event with a fresh ULID and the current UTC instant.
+     *
+     * @param array<string, mixed> $extra
      */
     public static function create(
         Actor $actor,

@@ -69,7 +69,7 @@ class Filesystem
     /**
      * Read the contents of a file as an array of lines.
      *
-     *
+     * @return list<string>
      */
     public function readLines(string $path): array
     {
@@ -181,7 +181,7 @@ class Filesystem
     /**
      * Delete the file at a given path.
      *
-     * @param  string|array $paths
+     * @param  string|list<string> $paths
      */
     public function delete($paths): bool
     {
@@ -492,8 +492,7 @@ class Filesystem
     /**
      * Find path names matching a given pattern.
      *
-     *
-     * @return array|false
+     * @return list<string>|false
      */
     public function glob(string $pattern, int $flags = 0): array|false
     {
@@ -503,7 +502,7 @@ class Filesystem
     /**
      * Get an array of all files in a directory.
      *
-     *
+     * @return array<int, string>
      */
     public function listFiles(string $directory): array
     {
@@ -555,6 +554,8 @@ class Filesystem
      *
      * @param string $directory
      * @param boolean $ignoreDotDirectories whether to ignore the dotted directories or not.
+     *
+     * @return array<string, string>
      */
     public function listDirectories($directory, $ignoreDotDirectories = true): array
     {

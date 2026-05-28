@@ -17,10 +17,15 @@ use Override;
 
 class Payload implements PayloadInterface, JsonSerializable
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $attributes;
 
     /**
      * Payload constructor.
+     *
+     * @param array<string, mixed>|null $attributes
      */
     public function __construct(?array $attributes = null)
     {
@@ -38,6 +43,8 @@ class Payload implements PayloadInterface, JsonSerializable
 
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getAttributes(): array
@@ -59,6 +66,8 @@ class Payload implements PayloadInterface, JsonSerializable
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $attributes
      */
     #[Override]
     public function withAttributes(array $attributes): PayloadInterface
