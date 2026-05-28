@@ -57,6 +57,7 @@ Developer experience and AI-agent ergonomics.
 - [TestReporter](./packages/test-reporter.md) — an AI-native PHPUnit 11 extension that emits a structured JSON report, mapping each failure back to the production source under test with structured diffs.
 - [Mcp](./packages/mcp.md) — a first-party Model Context Protocol server exposing the framework as 28 agent-callable tools over stdio/HTTP, so any MCP client can build, inspect, test, and ship an Altair API through tool calls.
 - [Bootstrap](./packages/bootstrap.md) — zero-to-running project bootstrap: `bin/altair new` materialises a complete, runnable Altair API (a working `/ping`, a passing test, the spec-driven toolchain wired) from the skeleton template, with minimal/standard/full presets.
+- [Observatory](./packages/observatory.md) — a dev-only, fail-closed web monitoring panel: health, activity (live SSE tail), queues, routes, container, config and migrations, as a thin presentation layer over the framework's own introspection / doctor / events data.
 
 ## How these docs are structured
 
