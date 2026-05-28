@@ -50,9 +50,51 @@ class DoctorConfigurationTest extends TestCase
         $registry = $container->make(CheckRegistry::class);
         $this->assertInstanceOf(CheckRegistry::class, $registry);
         $names = array_map(static fn($c): string => $c->name(), $registry->all());
-        $this->assertContains('php_version', $names);
-        $this->assertContains('extensions_loaded', $names);
-        $this->assertContains('determinism_check', $names);
+
+        // All 13 issue checks plus determinism_check (#74).
+        foreach ([
+            'php_version', 'extensions_loaded', 'composer_deps',
+            'container_boots', 'container_resolves', 'database_reachable',
+            'migrations_pending', 'spec_drift', 'openapi_valid', 'manifests_current',
+            'cs_clean', 'phpstan_clean', 'tests_passing', 'determinism_check',
+        ] as $expected) {
+            $this->assertContains($expected, $names, $expected . ' must be registered');
+        }
+    }
+
+    public function testHostAppHooksMakeTheirChecksRun(): void
+    {
+        $container = new Container();
+        $container->share(new \stdClass());
+
+        (new DoctorConfiguration(
+            projectRoot: $this->root,
+            appBooter: static fn(): bool => true,
+            criticalBindings: [\stdClass::class],
+            databaseProbe: static fn(): bool => true,
+        ))->apply($container);
+
+        $report = $container->make(Doctor::class)->run(
+            only: ['container_boots', 'container_resolves', 'database_reachable'],
+        );
+
+        foreach ($report->checks as $check) {
+            $this->assertSame(CheckStatus::Ok, $check->status, $check->name . ': ' . $check->detail);
+        }
+    }
+
+    public function testHostAppChecksSkipWithoutHooks(): void
+    {
+        $container = new Container();
+        (new DoctorConfiguration($this->root))->apply($container);
+
+        $report = $container->make(Doctor::class)->run(
+            only: ['container_boots', 'container_resolves', 'database_reachable'],
+        );
+
+        foreach ($report->checks as $check) {
+            $this->assertSame(CheckStatus::Skipped, $check->status, $check->name . ' must skip when unconfigured');
+        }
     }
 
     public function testReadsFloorAndExtensionsFromComposerJson(): void
