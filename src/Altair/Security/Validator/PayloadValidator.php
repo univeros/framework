@@ -22,7 +22,7 @@ class PayloadValidator
     public function __construct(
         protected EncrypterInterface $encrypter,
         /**
-         * @var array the payload to validate against
+         * @var array<string, mixed> the payload to validate against
          */
         protected array $payload
     ) {}

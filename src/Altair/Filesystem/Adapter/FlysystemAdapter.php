@@ -134,12 +134,18 @@ class FlysystemAdapter implements FilesystemAdapterInterface
         return $this->driver->visibility($path);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     #[Override]
     public function write(string $location, string $contents, array $config = []): void
     {
         $this->driver->write($location, $contents, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     #[Override]
     public function writeStream(string $location, $contents, array $config = []): void
     {
@@ -164,34 +170,52 @@ class FlysystemAdapter implements FilesystemAdapterInterface
         $this->driver->deleteDirectory($location);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     #[Override]
     public function createDirectory(string $location, array $config = []): void
     {
         $this->driver->createDirectory($location, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     #[Override]
     public function move(string $source, string $destination, array $config = []): void
     {
         $this->driver->move($source, $destination, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     #[Override]
     public function copy(string $source, string $destination, array $config = []): void
     {
         $this->driver->copy($source, $destination, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function publicUrl(string $path, array $config = []): string
     {
         return $this->driver->publicUrl($path, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function temporaryUrl(string $path, DateTimeInterface $expiresAt, array $config = []): string
     {
         return $this->driver->temporaryUrl($path, $expiresAt, $config);
     }
 
+    /**
+     * @param array<string, mixed> $config
+     */
     public function checksum(string $path, array $config = []): string
     {
         return $this->driver->checksum($path, $config);

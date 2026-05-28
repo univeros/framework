@@ -72,7 +72,7 @@ class Encrypter implements EncrypterInterface
      * @throws Exception
      */
     #[Override]
-    public function encrypt($value): string
+    public function encrypt(mixed $value): string
     {
         $iv = random_bytes(EncrypterInterface::BLOCK_SIZE);
         $value = openssl_encrypt(serialize($value), $this->cipher, $this->derivedKey, 0, $iv);
@@ -125,6 +125,7 @@ class Encrypter implements EncrypterInterface
      *
      * @throws DecryptException
      * @throws Exception
+     * @return array<string, mixed>
      */
     protected function getPayload(string $payload): array
     {
