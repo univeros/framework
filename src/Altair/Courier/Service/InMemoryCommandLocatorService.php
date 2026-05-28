@@ -17,6 +17,9 @@ use Altair\Courier\Exception\UnknownCommandMessageNameException;
 use Altair\Courier\Support\MessageCommandMap;
 use Override;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class InMemoryCommandLocatorService implements InMemoryCommandLocatorServiceInterface
 {
     protected MessageCommandMap $map;

@@ -81,17 +81,7 @@ parameters:
 			path: src/Altair/Cookie/Collection/CookieCollection.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
 			message: "#^Class Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Cookie/Collection/SetCookieCollection.php
 
@@ -106,11 +96,6 @@ parameters:
 			path: src/Altair/Courier/Middleware/CommandLockerMiddleware.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Courier/Service/InMemoryCommandLocatorService.php
-
-		-
 			message: "#^Method Altair\\\\Courier\\\\Strategy\\\\CommandRunnerMiddlewareStrategy\\:\\:__construct\\(\\) has parameter \\$middlewares with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
@@ -122,11 +107,6 @@ parameters:
 
 		-
 			message: "#^Property Altair\\\\Courier\\\\Strategy\\\\CommandRunnerMiddlewareStrategy\\:\\:\\$middlewares type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
 
@@ -296,16 +276,6 @@ parameters:
 			path: src/Altair/Session/Handler/PdoSessionHandler.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 10
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Pair.php
-
-		-
 			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\<TValue\\>\\:\\:\\$priority \\(int\\) does not accept null\\.$#"
 			count: 1
 			path: src/Altair/Structure/PriorityNode.php
@@ -314,26 +284,6 @@ parameters:
 			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\<TValue\\>\\:\\:\\$stamp \\(int\\) does not accept null\\.$#"
 			count: 1
 			path: src/Altair/Structure/PriorityNode.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 2
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 7
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
-			count: 2
-			path: src/Altair/Structure/Stack.php
 
 		-
 			message: "#^Binary operation \"\\*\\=\" between non\\-empty\\-string and 2 results in an error\\.$#"

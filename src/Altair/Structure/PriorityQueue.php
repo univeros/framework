@@ -35,6 +35,8 @@ use UnderflowException;
  *
  * @implements CollectionInterface<int, TValue>
  * @implements IteratorAggregate<int, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class PriorityQueue implements IteratorAggregate, CollectionInterface
 {
