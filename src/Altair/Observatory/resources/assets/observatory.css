@@ -151,6 +151,10 @@ a:hover { color: var(--o-accent-hover); }
 @media (prefers-reduced-motion: reduce) { .o-stream-row { animation: none; } }
 .o-stream-time { color: var(--o-text-muted); }
 
+/* filter input (detail views) */
+.o-filter { width: 100%; max-width: 360px; margin-bottom: 12px; padding: 8px 12px; border-radius: var(--o-radius-sm); border: 1px solid var(--o-border); background: var(--o-surface); color: var(--o-text); font-size: 13px; font-family: var(--o-font); }
+.o-filter:focus { outline: none; border-color: var(--o-accent); box-shadow: 0 0 0 3px var(--o-accent-bg); }
+
 /* framework footer */
 .o-footer { margin-top: auto; padding: 16px 24px; border-top: 1px solid var(--o-border); color: var(--o-text-muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
 .o-footer a { color: var(--o-text-muted); }

@@ -51,6 +51,27 @@ final class DashboardHandlerTest extends TestCase
         self::assertStringNotContainsString('PHP ' . PHP_VERSION, $body);
     }
 
+    public function testRendersPanelDetailWhenPanelQuerySet(): void
+    {
+        $request = (new ServerRequest())->withQueryParams(['panel' => 'runtime']);
+        $response = $this->handler(enabled: true)->handle($request);
+
+        self::assertSame(200, $response->getStatusCode());
+        $body = (string) $response->getBody();
+        self::assertStringContainsString('Runtime', $body);
+        self::assertStringContainsString('o-filter', $body);
+        self::assertStringContainsString('o-table', $body);
+    }
+
+    public function testReturns404ForUnknownPanel(): void
+    {
+        $request = (new ServerRequest())->withQueryParams(['panel' => 'does-not-exist']);
+        $response = $this->handler(enabled: true)->handle($request);
+
+        self::assertSame(404, $response->getStatusCode());
+        self::assertStringContainsString('not found', (string) $response->getBody());
+    }
+
     private function handler(bool $enabled): DashboardHandler
     {
         $observatory = new Observatory(
