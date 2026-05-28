@@ -30,7 +30,7 @@ class RegexFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value): null|string|array
+    public function parse(mixed $value): ?string
     {
         if (!\is_scalar($value)) {
             return null;

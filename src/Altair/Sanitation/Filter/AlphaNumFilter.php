@@ -16,7 +16,7 @@ use Override;
 class AlphaNumFilter extends AbstractFilter
 {
     #[Override]
-    public function parse($value): ?string
+    public function parse(mixed $value): ?string
     {
         return preg_replace('/[^\p{L}\p{Nd}]/u', '', (string) $value);
     }

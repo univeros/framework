@@ -59,7 +59,7 @@ interface PdoSessionAdapterInterface
     /**
      * Connects driver to the database.
      */
-    public function connect();
+    public function connect(): void;
 
     /**
      * Returns whether the PDO instance is connected or not.
@@ -88,17 +88,17 @@ interface PdoSessionAdapterInterface
      * due to http://www.mysqlperformanceblog.com/2013/12/12/one-more-innodb-gap-lock-to-avoid/ .
      * So we change it to READ COMMITTED.
      */
-    public function beginTransaction();
+    public function beginTransaction(): void;
 
     /**
      * Rollback a transaction (if any).
      */
-    public function rollback();
+    public function rollback(): void;
 
     /**
      * Commits a transaction (if any).
      */
-    public function commit();
+    public function commit(): void;
 
     /**
      * Reads the session data.

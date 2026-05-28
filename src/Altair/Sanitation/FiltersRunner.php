@@ -54,6 +54,9 @@ class FiltersRunner implements FiltersRunnerInterface
         return $middleware($payload, $this);
     }
 
+    /**
+     * @param array<int, mixed> $filters
+     */
     #[Override]
     public function withFilters(array $filters): FiltersRunnerInterface
     {

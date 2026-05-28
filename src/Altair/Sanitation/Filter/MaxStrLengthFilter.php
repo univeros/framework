@@ -24,7 +24,7 @@ class MaxStrLengthFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value): ?string
+    public function parse(mixed $value): ?string
     {
         if (!\is_string($value)) {
             return null;

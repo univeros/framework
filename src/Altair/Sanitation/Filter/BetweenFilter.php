@@ -24,7 +24,7 @@ class BetweenFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value)
+    public function parse(mixed $value)
     {
         if ($value < $this->min) {
             return $this->min;
