@@ -86,7 +86,7 @@ final class CacheItem implements CacheItemInterface
         }
 
         if ($time instanceof DateInterval) {
-            $this->expirationTime = (int) DateTime::createFromFormat('Y-m-d H:i:s', date('Y-m-d H:i:s'))
+            $this->expirationTime = (int) (new DateTime())
                 ->add($time)
                 ->format('U');
 

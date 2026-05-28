@@ -71,7 +71,7 @@ class FilterCollection extends Map
     protected function parseFilters(mixed $filters): void
     {
         if (\is_string($filters)) {
-            if (!\in_array(FilterInterface::class, class_implements($filters), false)) {
+            if (!$this->implementsFilterInterface($filters)) {
                 throw new InvalidArgumentException(
                     \sprintf(
                         '"%s" does not implement %s.',
@@ -87,7 +87,7 @@ class FilterCollection extends Map
                 }
 
                 $class = $filter['class'] ?? null;
-                if ($class === null || !\in_array(FilterInterface::class, class_implements($class), false)) {
+                if (!\is_string($class) || !$this->implementsFilterInterface($class)) {
                     throw new InvalidArgumentException(
                         \sprintf(
                             'A definition of a filter as array must have a "class" key and must implement %s.',
@@ -97,5 +97,15 @@ class FilterCollection extends Map
                 }
             }
         }
+    }
+
+    /**
+     * Resolves whether the given class name implements the filter contract.
+     */
+    private function implementsFilterInterface(string $class): bool
+    {
+        $implemented = class_implements($class);
+
+        return $implemented !== false && \in_array(FilterInterface::class, $implemented, false);
     }
 }

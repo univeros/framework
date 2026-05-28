@@ -74,7 +74,9 @@ class SessionManager implements SessionManagerInterface
     #[Override]
     public function getId(): string
     {
-        return session_id();
+        $id = session_id();
+
+        return $id === false ? '' : $id;
     }
 
     /**
@@ -114,7 +116,9 @@ class SessionManager implements SessionManagerInterface
     #[Override]
     public function getName(): string
     {
-        return session_name();
+        $name = session_name();
+
+        return $name === false ? '' : $name;
     }
 
     /**
@@ -132,7 +136,9 @@ class SessionManager implements SessionManagerInterface
     #[Override]
     public function getSavePath(): string
     {
-        return session_save_path();
+        $path = session_save_path();
+
+        return $path === false ? '' : $path;
     }
 
     /**

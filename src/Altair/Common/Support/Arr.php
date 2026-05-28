@@ -106,16 +106,24 @@ class Arr // - Thanks @yii
                 $array = static::getValue($array, $keyPart);
             }
 
+            if ($lastKey === null) {
+                return $array;
+            }
+
             $key = $lastKey;
+        }
+
+        if ($key instanceof Closure) {
+            return $key($array, $default);
         }
 
         if (\is_array($array) && (isset($array[$key]) || \array_key_exists($key, $array))) {
             return $array[$key];
         }
 
-        if (($pos = strrpos((string) $key, '.')) !== false) {
-            $array = static::getValue($array, substr((string) $key, 0, $pos), $default);
-            $key = substr((string) $key, $pos + 1);
+        if (($pos = strrpos($key, '.')) !== false) {
+            $array = static::getValue($array, substr($key, 0, $pos), $default);
+            $key = substr($key, $pos + 1);
         }
 
         if (\is_object($array)) {
@@ -497,21 +505,30 @@ class Arr // - Thanks @yii
             throw new InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
         }
 
-        $args = [];
+        // The first sort column is passed as the leading positional argument so the
+        // call statically satisfies array_multisort()'s "first argument is an array"
+        // contract; the remaining direction/flag/column triples are spread after it.
+        $firstColumn = null;
+        $rest = [];
         foreach ($keys as $i => $k) {
-            $flag = $sortFlag[$i];
-            $args[] = static::getColumn($array, $k);
-            $args[] = $direction[$i];
-            $args[] = $flag;
+            $column = static::getColumn($array, $k);
+            if ($firstColumn === null) {
+                $firstColumn = $column;
+            } else {
+                $rest[] = $column;
+            }
+
+            $rest[] = $direction[$i];
+            $rest[] = $sortFlag[$i];
         }
 
         // This fix is used for cases when main sorting specified by columns has equal values
         // Without it it will lead to Fatal Error: Nesting level too deep - recursive dependency?
-        $args[] = range(1, \count($array));
-        $args[] = SORT_ASC;
-        $args[] = SORT_NUMERIC;
-        $args[] = &$array;
-        array_multisort(...$args);
+        $rest[] = range(1, \count($array));
+        $rest[] = SORT_ASC;
+        $rest[] = SORT_NUMERIC;
+        $rest[] = &$array;
+        array_multisort($firstColumn, ...$rest);
     }
 
     /**

@@ -16,6 +16,7 @@ use Altair\Container\Definition;
 use Altair\Container\Exception\InjectionException;
 use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
+use Altair\Sanitation\Exception\InvalidArgumentException;
 use Override;
 use ReflectionException;
 
@@ -27,14 +28,13 @@ class FilterResolver implements ResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @param mixed $entry
      * @throws InjectionException
      * @throws ReflectionException
      */
     #[Override]
-    public function __invoke($entry): FilterInterface
+    public function __invoke(mixed $entry): FilterInterface
     {
-        if (\is_object($entry)) { // string
+        if ($entry instanceof FilterInterface) {
             return $entry;
         }
 
@@ -44,6 +44,20 @@ class FilterResolver implements ResolverInterface
             $entry = $entry['class']; // force error if key is not configured
         } // else is a string
 
-        return $this->container->make($entry, new Definition($arguments));
+        if (!\is_string($entry)) {
+            throw new InvalidArgumentException(
+                \sprintf('A filter entry must resolve to a class-string or %s instance.', FilterInterface::class)
+            );
+        }
+
+        $filter = $this->container->make($entry, new Definition($arguments));
+
+        if (!$filter instanceof FilterInterface) {
+            throw new InvalidArgumentException(
+                \sprintf('"%s" does not implement %s.', $entry, FilterInterface::class)
+            );
+        }
+
+        return $filter;
     }
 }

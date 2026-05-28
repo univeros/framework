@@ -31,6 +31,10 @@ class StandardReflection implements ReflectionInterface
     #[Override]
     public function getClass(string $class): ReflectionClass
     {
+        if (!class_exists($class) && !interface_exists($class)) {
+            throw new ReflectionException(\sprintf('Class "%s" does not exist.', $class));
+        }
+
         return new ReflectionClass($class);
     }
 

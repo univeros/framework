@@ -35,11 +35,20 @@ class Filesystem
      */
     public function get(string $path, bool $lock = false): string
     {
-        if ($this->isFile($path)) {
-            return $lock ? $this->getShared($path) : file_get_contents($path);
+        if (!$this->isFile($path)) {
+            throw new FileNotFoundException('File does not exist at path ' . $path);
         }
 
-        throw new FileNotFoundException('File does not exist at path ' . $path);
+        if ($lock) {
+            return $this->getShared($path);
+        }
+
+        $contents = file_get_contents($path);
+        if ($contents === false) {
+            throw new FileNotFoundException('Unable to read file at path ' . $path);
+        }
+
+        return $contents;
     }
 
     /**
@@ -55,7 +64,13 @@ class Filesystem
             try {
                 if (flock($handle, LOCK_SH)) {
                     clearstatcache(true, $path);
-                    $contents = fread($handle, $this->getFileSize($path) ?: 1);
+                    $size = $this->getFileSize($path);
+                    $length = $size === false ? 1 : max(1, $size);
+                    $read = fread($handle, $length);
+                    if ($read !== false) {
+                        $contents = $read;
+                    }
+
                     flock($handle, LOCK_UN);
                 }
             } finally {
@@ -75,7 +90,9 @@ class Filesystem
     {
         // auto_detect_line_endings was deprecated in PHP 8.1; PHP now handles CRLF/CR
         // line endings natively for file()/fgets() without configuration.
-        return file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        $lines = file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+        return $lines === false ? [] : $lines;
     }
 
     /**
@@ -285,6 +302,10 @@ class Filesystem
 
         $items = new FilesystemIterator($directory, $options);
         foreach ($items as $item) {
+            if (!$item instanceof SplFileInfo) {
+                continue;
+            }
+
             // As we spin through items, we will check to see if the current file is actually
             // a directory or a file. When it is actually a directory we will need to call
             // back into this function recursively to keep copying these nested folders.
@@ -318,6 +339,10 @@ class Filesystem
 
         $items = new FilesystemIterator($directory);
         foreach ($items as $item) {
+            if (!$item instanceof SplFileInfo) {
+                continue;
+            }
+
             // If the item is a directory, we can just recurse into the function and
             // delete that sub-directory otherwise we'll just delete the file and
             // keep iterating through each file until the directory is cleaned.
@@ -366,12 +391,15 @@ class Filesystem
 
     /**
      * Get the MD5 hash of the file at the given path.
-     *
-     * @param  string $path
      */
-    public function getFileHash($path): string
+    public function getFileHash(string $path): string
     {
-        return md5_file($path);
+        $hash = md5_file($path);
+        if ($hash === false) {
+            throw new FileNotFoundException('Unable to hash file at path ' . $path);
+        }
+
+        return $hash;
     }
 
     /**
@@ -403,7 +431,12 @@ class Filesystem
      */
     public function getType(string $path): string
     {
-        return filetype($path);
+        $type = filetype($path);
+        if ($type === false) {
+            throw new FileNotFoundException('Unable to determine type of path ' . $path);
+        }
+
+        return $type;
     }
 
     /**
@@ -414,7 +447,12 @@ class Filesystem
      */
     public function getFileMimeType(string $path): string|false
     {
-        return finfo_file(finfo_open(FILEINFO_MIME_TYPE), $path);
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo === false) {
+            return false;
+        }
+
+        return finfo_file($finfo, $path);
     }
 
     /**

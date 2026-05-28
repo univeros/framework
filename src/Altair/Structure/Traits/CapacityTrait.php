@@ -62,7 +62,7 @@ trait CapacityTrait
         // Automatically truncate the allocated buffer when the size of the
         // structure drops low enough.
         if ($size < $this->capacity / 4) {
-            $this->capacity = max(CapacityInterface::MIN_CAPACITY, $this->capacity / 2);
+            $this->capacity = max(CapacityInterface::MIN_CAPACITY, intdiv($this->capacity, 2));
         } elseif ($size >= $this->capacity) { // Also check if we should increase capacity when the size changes.
             $this->increaseCapacity();
         }

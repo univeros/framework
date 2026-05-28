@@ -20,7 +20,12 @@ class CookieStr
      */
     public function split(string $value): array
     {
-        return array_filter(preg_split('@\s*[;]\s*@', $value));
+        $parts = preg_split('@\s*[;]\s*@', $value);
+        if ($parts === false) {
+            return [];
+        }
+
+        return array_values(array_filter($parts));
     }
 
     /**

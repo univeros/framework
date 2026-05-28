@@ -105,7 +105,9 @@ class PhpViewFormatter extends AbstractHtmlFormatter
         try {
             require($file);
 
-            return ob_get_clean();
+            $content = ob_get_clean();
+
+            return $content === false ? '' : $content;
         } catch (Throwable $throwable) {
             while (ob_get_level() > $level) {
                 if (!@ob_end_clean()) {

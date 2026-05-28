@@ -108,7 +108,7 @@ class SessionBlock implements SessionBlockInterface
     #[Override]
     public function getAllFlashes($delete = false): array
     {
-        $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
+        $counters = $this->getFlashCounters();
         $flashes = [];
         foreach (array_keys($counters) as $key) {
             if ($this->has($key)) {
@@ -187,7 +187,7 @@ class SessionBlock implements SessionBlockInterface
     #[Override]
     public function removeAllFlashes(): void
     {
-        $counters = $this->get(SessionBlockInterface::FLASH_KEY, []);
+        $counters = $this->getFlashCounters();
         foreach (array_keys($counters) as $key) {
             $this->remove($key);
         }
@@ -202,6 +202,30 @@ class SessionBlock implements SessionBlockInterface
     public function hasFlash($key): bool
     {
         return $this->getFlash($key) !== null;
+    }
+
+    /**
+     * Reads the flash counter map from the session, normalizing it to a
+     * map of string flash keys to their integer counters. Non-conforming
+     * entries that may exist in raw session data are discarded.
+     *
+     * @return array<string, int>
+     */
+    protected function getFlashCounters(): array
+    {
+        $raw = $this->get(SessionBlockInterface::FLASH_KEY, []);
+        if (!\is_array($raw)) {
+            return [];
+        }
+
+        $counters = [];
+        foreach ($raw as $key => $count) {
+            if (\is_int($count)) {
+                $counters[(string) $key] = $count;
+            }
+        }
+
+        return $counters;
     }
 
     /**

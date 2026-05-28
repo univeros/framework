@@ -62,9 +62,13 @@ class MongoSessionHandler implements SessionHandlerInterface
             ['_id' => $sessionId, 'session_lifetime' => ['$gte' => $this->createUTCDateTime()]]
         );
 
-        return null === $data || !isset($data['content'])
-            ? ''
-            : $data['content']->getData();
+        if (!\is_array($data) || !isset($data['content'])) {
+            return '';
+        }
+
+        $content = $data['content'];
+
+        return $content instanceof Binary ? $content->getData() : '';
     }
 
     /**

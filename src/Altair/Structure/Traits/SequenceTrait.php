@@ -166,11 +166,11 @@ trait SequenceTrait
      */
     public function last(): mixed
     {
-        if ($this->isEmpty()) {
+        if ($this->internal === []) {
             throw new UnderflowException('Is empty');
         }
 
-        return end($this->internal);
+        return $this->internal[array_key_last($this->internal)];
     }
 
     /**

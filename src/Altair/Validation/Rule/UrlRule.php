@@ -25,6 +25,8 @@ class UrlRule extends AbstractRule
             return false;
         }
 
+        $value = (string) $value;
+
         // check whether there is any invalid char in the URL
         if (preg_match('/[^a-zA-Z0-9$-_.+!*\'(),{}|\^~\[\]`<>#%";\/?:@&=]/', $value)) {
             return false;

@@ -91,8 +91,12 @@ class OpenApiEmitter
     }
 
     /**
-     * @param  list<OutputResponseSpec> $outputs
-     * @return array<string, mixed>
+     * Keys are HTTP status codes (or the literal `default`). PHP coerces the
+     * numeric-string status keys back to integers, so the honest key type is
+     * `int|string`; the emitted YAML renders both forms identically.
+     *
+     * @param  list<OutputResponseSpec>  $outputs
+     * @return array<int|string, mixed>
      */
     private function renderResponses(array $outputs): array
     {

@@ -65,6 +65,10 @@ class LcobucciTokenGenerator implements TokenGeneratorInterface
         }
 
         foreach ($claims as $name => $value) {
+            if ($name === '') {
+                continue;
+            }
+
             // Builder is immutable in v5: each withClaim() returns a new instance.
             $builder = $builder->withClaim($name, $value);
         }

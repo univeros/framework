@@ -52,6 +52,8 @@ class DateTimeFilter extends AbstractFilter
             return null;
         }
 
+        $value = (string) $value;
+
         if (trim($value) === '') {
             return null;
         }

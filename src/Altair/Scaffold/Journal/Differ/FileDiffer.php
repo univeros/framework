@@ -45,9 +45,15 @@ final readonly class FileDiffer
     }
 
     /**
-     * @param list<string> $a
-     * @param list<string> $b
-     * @return list<list<int>>
+     * Builds the LCS length table. Cell `[i][j]` is the LCS length of the
+     * first `i` lines of `$a` and first `j` lines of `$b`; row/column 0 is the
+     * empty-prefix base case (all zeroes). The table is a dense `(m+1)x(n+1)`
+     * int grid, so it is modelled as an int-keyed 2D array (not a `list`) to
+     * reflect that arbitrary in-range integer offsets are valid reads.
+     *
+     * @param  list<string>                 $a
+     * @param  list<string>                 $b
+     * @return array<int, array<int, int>>
      */
     private function lcsTable(array $a, array $b): array
     {
@@ -67,9 +73,9 @@ final readonly class FileDiffer
     }
 
     /**
-     * @param list<list<int>> $t
-     * @param list<string>    $a
-     * @param list<string>    $b
+     * @param array<int, array<int, int>> $t
+     * @param list<string>                $a
+     * @param list<string>                $b
      *
      * @return list<array{op: '='|'-'|'+', a: int, b: int, line: string}>
      */
@@ -84,7 +90,7 @@ final readonly class FileDiffer
             } elseif ($j > 0 && ($i === 0 || $t[$i][$j - 1] >= $t[$i - 1][$j])) {
                 $ops[] = ['op' => '+', 'a' => $i, 'b' => $j, 'line' => $b[$j - 1]];
                 $j--;
-            } else {
+            } elseif ($i > 0) {
                 $ops[] = ['op' => '-', 'a' => $i, 'b' => $j, 'line' => $a[$i - 1]];
                 $i--;
             }

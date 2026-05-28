@@ -71,7 +71,7 @@ class FormattedResponder implements ResponderInterface
     }
 
     /**
-     * @param array<class-string<OutputFormatterInterface>, float> $formatters
+     * @param array<string, float> $formatters
      *
      * @return array<class-string<OutputFormatterInterface>, float>
      */
@@ -137,7 +137,7 @@ class FormattedResponder implements ResponderInterface
      *
      *
      */
-    protected function getFormatter(ServerRequestInterface $request): object
+    protected function getFormatter(ServerRequestInterface $request): OutputFormatterInterface
     {
         $accept = $request->getHeaderLine('Accept');
         $priorities = $this->priorities();
@@ -151,6 +151,18 @@ class FormattedResponder implements ResponderInterface
             $formatter = array_shift($priorities);
         }
 
-        return $this->resolve($formatter);
+        if ($formatter === null) {
+            throw new InvalidFormatterException('No output formatter is available to satisfy the request.');
+        }
+
+        $resolved = $this->resolve($formatter);
+
+        if (!$resolved instanceof OutputFormatterInterface) {
+            throw new InvalidFormatterException(
+                \sprintf("Resolved formatter '%s' is not a valid output formatter.", $formatter),
+            );
+        }
+
+        return $resolved;
     }
 }

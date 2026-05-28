@@ -55,6 +55,9 @@ class ContractScanner
         return $entries;
     }
 
+    /**
+     * @param class-string $fqcn
+     */
     private function describeInterface(string $fqcn): ContractEntry
     {
         $reflection = new ReflectionClass($fqcn);

@@ -30,6 +30,8 @@ class LowerCaseFilter extends AbstractFilter
             return null;
         }
 
+        $value = (string) $value;
+
         return $this->firstOnly ? $this->getFirstToLower($value) : strtolower($value);
     }
 

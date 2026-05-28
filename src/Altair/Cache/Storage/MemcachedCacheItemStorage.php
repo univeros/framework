@@ -27,7 +27,8 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
      */
     public function __construct(Memcached $memcached)
     {
-        if (!(\extension_loaded('memcached') && version_compare(phpversion('memcached'), '2.2.0', '>='))) {
+        $version = phpversion('memcached');
+        if (!\extension_loaded('memcached') || $version === false || !version_compare($version, '2.2.0', '>=')) {
             throw new CacheException('Memcached >= 2.2.0 is required.');
         }
 

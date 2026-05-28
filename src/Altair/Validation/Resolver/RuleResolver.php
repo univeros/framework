@@ -16,6 +16,7 @@ use Altair\Container\Definition;
 use Altair\Container\Exception\InjectionException;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RuleInterface;
+use Altair\Validation\Exception\InvalidArgumentException;
 use Override;
 use ReflectionException;
 
@@ -27,14 +28,13 @@ class RuleResolver implements ResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @param mixed $entry
      * @throws InjectionException
      * @throws ReflectionException
      */
     #[Override]
-    public function __invoke($entry): RuleInterface
+    public function __invoke(mixed $entry): RuleInterface
     {
-        if (\is_object($entry)) { // string
+        if ($entry instanceof RuleInterface) {
             return $entry;
         }
 
@@ -44,6 +44,20 @@ class RuleResolver implements ResolverInterface
             $entry = $entry['class']; // force error if key is not configured
         } // else is a string
 
-        return $this->container->make($entry, new Definition($arguments));
+        if (!\is_string($entry)) {
+            throw new InvalidArgumentException(
+                \sprintf('A rule entry must resolve to a class-string or %s instance.', RuleInterface::class)
+            );
+        }
+
+        $rule = $this->container->make($entry, new Definition($arguments));
+
+        if (!$rule instanceof RuleInterface) {
+            throw new InvalidArgumentException(
+                \sprintf('"%s" does not implement %s.', $entry, RuleInterface::class)
+            );
+        }
+
+        return $rule;
     }
 }

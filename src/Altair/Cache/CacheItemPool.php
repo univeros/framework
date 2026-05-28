@@ -239,7 +239,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
                 }
             } else { // retry
                 foreach (array_keys($values) as $id) {
-                    $retry[$lifespan][] = $id;
+                    $retry[$lifespan][] = (string) $id;
                 }
             }
         }
@@ -324,7 +324,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      *
      * @return Generator<string, CacheItemInterface>
      */
-    protected function createCacheItemsGenerator(array $items, array $keys): ?Generator
+    protected function createCacheItemsGenerator(array $items, array $keys): Generator
     {
         try {
             foreach ($items as $id => $value) {

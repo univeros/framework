@@ -1034,9 +1034,15 @@ class MimeType
         if (\function_exists('finfo_open') && $file->isFile()) {
             $path = $file->getPath();
             $fileInfo = finfo_open(FILEINFO_MIME);
+
+            if ($fileInfo === false) {
+                return static::DEFAULT_MIME_TYPE;
+            }
+
             $mimeType = finfo_file($fileInfo, $path);
             finfo_close($fileInfo);
-            return $mimeType;
+
+            return $mimeType === false ? static::DEFAULT_MIME_TYPE : $mimeType;
         }
 
         return static::DEFAULT_MIME_TYPE;

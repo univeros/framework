@@ -65,7 +65,7 @@ class Vector implements IteratorAggregate, ArrayAccess, VectorInterface, Capacit
         // Automatically truncate the allocated buffer when the size of the
         // structure drops low enough.
         if ($size < $this->capacity / 4) {
-            $this->capacity = max(VectorInterface::MIN_VECTOR_CAPACITY, $this->capacity / 2);
+            $this->capacity = max(VectorInterface::MIN_VECTOR_CAPACITY, intdiv($this->capacity, 2));
         } elseif ($size >= $this->capacity) {
             // Also check if we should increase capacity when the size changes.
             $this->increaseCapacity();
