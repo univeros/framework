@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["spec_path"],
+    "properties": {
+        "spec_path": {
+            "type": "string",
+            "description": "Path to the endpoint's YAML spec, relative to the project root or absolute."
+        }
+    }
+}
