@@ -24,10 +24,7 @@ use Override;
  */
 class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 {
-    /**
-     * @var array
-     */
-    protected $middlewares;
+    protected array $middlewares;
 
     /**
      * CommandRunnerMiddlewareStrategy constructor.

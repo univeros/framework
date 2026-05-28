@@ -91,7 +91,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     {
         $this->ensureCommitDeferred();
         $ids = array_map(
-            fn($key): string => $this->makeId($key),
+            $this->makeId(...),
             $keys
         );
         try {

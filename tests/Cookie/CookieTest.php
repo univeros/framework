@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Altair\Tests\Cookie;
 
 use Altair\Cookie\Cookie;

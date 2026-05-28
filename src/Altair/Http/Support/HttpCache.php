@@ -116,7 +116,7 @@ final class HttpCache
 
     private function etagMatches(string $ifNoneMatch, string $responseEtag): bool
     {
-        $tags = array_map('trim', explode(',', $ifNoneMatch));
+        $tags = array_map(trim(...), explode(',', $ifNoneMatch));
 
         return \in_array('*', $tags, true) || ($responseEtag !== '' && \in_array($responseEtag, $tags, true));
     }

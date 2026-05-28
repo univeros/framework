@@ -92,7 +92,7 @@ class SessionManager implements SessionManagerInterface
     #[Override]
     public function setDeleteCookieCallable(?callable $callable = null): void
     {
-        $this->deleteCookieCallable = $callable ?? function ($name, $params): void {
+        $this->deleteCookieCallable = $callable ?? function ($name, array $params): void {
             $path = $params['path'] ?? null;
             $domain = $params['domain'] ?? null;
             setcookie($name, '', ['expires' => time() - 42000, 'path' => $path, 'domain' => $domain]);

@@ -39,7 +39,7 @@ class CookieStr
         }
 
         return array_map(
-            fn($part): string => urldecode($part),
+            urldecode(...),
             $pairParts
         );
     }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Scaffold\Linter;
 
+use Altair\Scaffold\Linter\DriftFinding;
 use Altair\Scaffold\Emitter\EmissionPlan;
 use Altair\Scaffold\Linter\DriftDetector;
 use Altair\Scaffold\Linter\DriftKind;
@@ -40,7 +41,7 @@ final class DriftDetectorTest extends TestCase
     {
         $report = (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser());
 
-        self::assertFalse($report->hasDrift(), implode("\n", array_map(static fn ($f): string => $f->message, $report->findings)));
+        self::assertFalse($report->hasDrift(), implode("\n", array_map(static fn (DriftFinding $f): string => $f->message, $report->findings)));
     }
 
     public function testMissingFieldDetected(): void
@@ -51,7 +52,7 @@ final class DriftDetectorTest extends TestCase
         $report = (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser());
 
         self::assertTrue($report->hasDrift());
-        $kinds = array_map(static fn ($f): DriftKind => $f->kind, $report->findings);
+        $kinds = array_map(static fn (DriftFinding $f): DriftKind => $f->kind, $report->findings);
         self::assertContains(DriftKind::MissingInputField, $kinds);
     }
 
@@ -105,7 +106,7 @@ final class DriftDetectorTest extends TestCase
         file_put_contents($inputPath, $patched);
 
         $kinds = array_map(
-            static fn ($f): DriftKind => $f->kind,
+            static fn (DriftFinding $f): DriftKind => $f->kind,
             (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser())->findings,
         );
         self::assertContains(DriftKind::UnknownInputField, $kinds);
@@ -119,7 +120,7 @@ final class DriftDetectorTest extends TestCase
         file_put_contents($inputPath, $patched);
 
         $kinds = array_map(
-            static fn ($f): DriftKind => $f->kind,
+            static fn (DriftFinding $f): DriftKind => $f->kind,
             (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser())->findings,
         );
         self::assertContains(DriftKind::MissingValidationRule, $kinds);
@@ -133,7 +134,7 @@ final class DriftDetectorTest extends TestCase
         file_put_contents($responderPath, $patched);
 
         $kinds = array_map(
-            static fn ($f): DriftKind => $f->kind,
+            static fn (DriftFinding $f): DriftKind => $f->kind,
             (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser())->findings,
         );
         self::assertContains(DriftKind::ResponderMissingStatus, $kinds);
@@ -144,7 +145,7 @@ final class DriftDetectorTest extends TestCase
         unlink($this->tempRoot . '/config/routes.php');
 
         $kinds = array_map(
-            static fn ($f): DriftKind => $f->kind,
+            static fn (DriftFinding $f): DriftKind => $f->kind,
             (new DriftDetector($this->tempRoot))->detect(SpecFixture::createUser())->findings,
         );
         self::assertContains(DriftKind::UnregisteredRoute, $kinds);

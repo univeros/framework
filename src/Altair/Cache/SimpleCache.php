@@ -16,7 +16,6 @@ use DateInterval;
 use Override;
 use Psr\Cache\CacheException as Psr6CacheException;
 use Psr\Cache\CacheItemPoolInterface;
-use Psr\SimpleCache\CacheException as SimpleCacheException;
 use Psr\SimpleCache\CacheInterface;
 use Traversable;
 
@@ -31,10 +30,8 @@ class SimpleCache implements CacheInterface
     {
         try {
             $item = $this->pool->getItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
 
         return $item->isHit() ? $item->get() : $default;
@@ -45,10 +42,8 @@ class SimpleCache implements CacheInterface
     {
         try {
             $item = $this->pool->getItem($key)->set($value);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
 
         if ($ttl !== null) {
@@ -63,10 +58,8 @@ class SimpleCache implements CacheInterface
     {
         try {
             return $this->pool->deleteItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
     }
 
@@ -83,10 +76,8 @@ class SimpleCache implements CacheInterface
 
         try {
             $items = $this->pool->getItems($keys);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
 
         $values = [];
@@ -116,7 +107,7 @@ class SimpleCache implements CacheInterface
             if ($valuesIsArray) {
                 $keys = [];
                 foreach ($values as $key => $value) {
-                    $keys[] = (string) $key;
+                    $keys[] = $key;
                 }
 
                 $items = $this->pool->getItems($keys);
@@ -126,10 +117,8 @@ class SimpleCache implements CacheInterface
                     $items[$key] = $this->pool->getItem($key)->set($value);
                 }
             }
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
 
         $success = true;
@@ -155,10 +144,8 @@ class SimpleCache implements CacheInterface
 
         try {
             return $this->pool->deleteItems($keys);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
     }
 
@@ -167,10 +154,8 @@ class SimpleCache implements CacheInterface
     {
         try {
             return $this->pool->hasItem($key);
-        } catch (SimpleCacheException $e) {
-            throw $e;
-        } catch (Psr6CacheException $e) {
-            throw new InvalidArgumentException($e->getMessage(), $e->getCode(), $e);
+        } catch (Psr6CacheException $psr6CacheException) {
+            throw new InvalidArgumentException($psr6CacheException->getMessage(), $psr6CacheException->getCode(), $psr6CacheException);
         }
     }
 

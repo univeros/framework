@@ -43,7 +43,7 @@ class ContainerInspectorTest extends TestCase
         $container->delegate(\stdClass::class, static fn(): \stdClass => new \stdClass());
 
         $filtered = (new ContainerInspector($container))->inspectAll(sharedOnly: true);
-        $ids = array_map('strtolower', array_column($filtered->rows, 'id'));
+        $ids = array_map(strtolower(...), array_column($filtered->rows, 'id'));
 
         // The `--shared` filter reports bindings whose name is itself
         // registered as a singleton (i.e. via `share()`). Aliases get
@@ -92,7 +92,7 @@ class ContainerInspectorTest extends TestCase
         $container->share(new \ArrayObject());
 
         $before = (new ContainerInspector($container))->inspectRealized();
-        $idsBefore = array_map('strtolower', array_column($before->rows, 'id'));
+        $idsBefore = array_map(strtolower(...), array_column($before->rows, 'id'));
 
         $this->assertContains(strtolower(\ArrayObject::class), $idsBefore, 'instance-shared services are realized at once');
         $this->assertNotContains(strtolower(NullLogger::class), $idsBefore, 'registered-but-unbuilt shares are not realized');
@@ -101,7 +101,7 @@ class ContainerInspectorTest extends TestCase
         $container->make(NullLogger::class);
 
         $after = (new ContainerInspector($container))->inspectRealized();
-        $idsAfter = array_map('strtolower', array_column($after->rows, 'id'));
+        $idsAfter = array_map(strtolower(...), array_column($after->rows, 'id'));
         $this->assertContains(strtolower(NullLogger::class), $idsAfter);
 
         $loggerRows = array_values(array_filter(
@@ -132,7 +132,7 @@ class ContainerInspectorTest extends TestCase
         $container->share(new \SplStack());
 
         $table = (new ContainerInspector($container))->inspectRealized(filter: 'array');
-        $ids = array_map('strtolower', array_column($table->rows, 'id'));
+        $ids = array_map(strtolower(...), array_column($table->rows, 'id'));
 
         $this->assertContains(strtolower(\ArrayObject::class), $ids);
         $this->assertNotContains(strtolower(\SplStack::class), $ids);

@@ -250,7 +250,7 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
     public function remove(...$values): void
     {
         foreach ($values as $value) {
-            $this->internal->remove($value, null);
+            $this->internal->remove($value);
         }
     }
 

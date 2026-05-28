@@ -152,6 +152,7 @@ class FilesystemCacheItemStorage implements CacheItemStorageInterface
         $item->id = $id;
         $item->value = $value;
         $item->expiresAt = $expiresAt;
+
         $data = str_replace('stdClass::__set_state', '(object)', var_export($item, true));
         $contents = '<?php return ' . $data . ';';
 

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Altair\Tests\Courier;
 
 use Altair\Courier\Exception\UnknownCommandMessageNameException;

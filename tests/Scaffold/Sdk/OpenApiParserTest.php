@@ -67,7 +67,7 @@ class OpenApiParserTest extends TestCase
         $doc = (new OpenApiParser())->parseYaml($this->fixture());
         $create = $doc->operations[0];
 
-        $statuses = array_map(static fn($r): string => $r->status, $create->responses);
+        $statuses = array_map(static fn(ResponseModel $r): string => $r->status, $create->responses);
         $this->assertContains('201', $statuses);
         $this->assertContains('422', $statuses);
         $this->assertCount(1, $create->successResponses());
