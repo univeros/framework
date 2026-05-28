@@ -26,5 +26,10 @@ $css = (string) @file_get_contents(__DIR__ . '/../assets/observatory.css');
     <h2>Observatory is disabled</h2>
     <p>Set <code class="o-mono">OBSERVATORY_ENABLED=true</code> in a non-production environment to enable the panel.</p>
 </div>
+<footer class="o-footer">
+    <span class="o-spacer"></span>
+    <span>Powered by the <a href="https://univeros.io" target="_blank" rel="noopener">Altair Framework</a></span>
+    <span class="o-spacer"></span>
+</footer>
 </body>
 </html>
