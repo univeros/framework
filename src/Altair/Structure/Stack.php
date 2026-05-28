@@ -51,8 +51,6 @@ class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityI
      * with a Vector in the constructor before any method is invoked.
      *
      * @var Vector<TValue>
-     *
-     * @phpstan-ignore property.defaultValue
      */
     protected $internal = [];
 

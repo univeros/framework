@@ -86,7 +86,7 @@ class Executable
     }
 
     /**
-     * @param array<int, mixed> $args
+     * @param array<int|string, mixed> $args
      */
     protected function invokeClosure(ReflectionFunction $reflection, array $args): mixed
     {

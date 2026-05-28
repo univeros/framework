@@ -82,6 +82,7 @@ class ApplicationManifestGenerator
     }
 
     /**
+     * @param  class-string       $fqcn
      * @return list<class-string>
      */
     private function matchedAttributes(string $fqcn): array

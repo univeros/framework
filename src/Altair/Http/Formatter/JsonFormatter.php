@@ -17,15 +17,12 @@ use Override;
 
 class JsonFormatter implements OutputFormatterInterface
 {
-    /**
-     * @var int
-     */
-    protected $options = 0;
+    protected int $options = 0;
 
     /**
-     * @var int
+     * @var int<1, max>
      */
-    protected $depth = 512;
+    protected int $depth = 512;
 
     /**
      * @inheritDoc
@@ -52,6 +49,6 @@ class JsonFormatter implements OutputFormatterInterface
     #[Override]
     public function body(PayloadInterface $payload): string
     {
-        return json_encode($payload->getOutput(), $this->options, $this->depth);
+        return json_encode($payload->getOutput(), $this->options | JSON_THROW_ON_ERROR, $this->depth);
     }
 }

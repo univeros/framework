@@ -45,17 +45,14 @@ class Pair implements PairInterface, JsonSerializable, Stringable
     ) {}
 
     /**
-     * This allows unset($pair->key) to not completely remove the property,
-     * but be set to null instead.
-     *
-     *
-     * @return mixed|null
+     * Resolves reads of $key/$value after they have been unset, returning null
+     * rather than triggering an "undefined property" error. The property is not
+     * re-initialised, so its declared TKey/TValue type is never violated; every
+     * subsequent read routes back through this accessor and yields null.
      */
     public function __get(mixed $name): mixed
     {
         if ($name === 'key' || $name === 'value') {
-            $this->$name = null;
-
             return null;
         }
 

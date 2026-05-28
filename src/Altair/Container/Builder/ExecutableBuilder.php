@@ -114,7 +114,12 @@ class ExecutableBuilder implements ExecutableBuilderInterface
 
         if ($relativeStaticMethodStartPos === 0) {
             $childReflection = $this->container->getReflector()->getClass($class);
-            $class = $childReflection->getParentClass()->name;
+            $parentReflection = $childReflection->getParentClass();
+            if ($parentReflection === false) {
+                throw new InjectionException(\sprintf('Class "%s" has no parent class.', $class));
+            }
+
+            $class = $parentReflection->name;
             $method = substr($method, 8);
         }
 

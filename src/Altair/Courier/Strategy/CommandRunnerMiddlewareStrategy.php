@@ -49,6 +49,10 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
     public function withMiddlewares(array $middlewares): CommandRunnerStrategyInterface
     {
         foreach ($middlewares as $middleware) {
+            if ($middleware instanceof CommandMiddlewareInterface) {
+                continue;
+            }
+
             if (!is_subclass_of($middleware, CommandMiddlewareInterface::class)) {
                 throw new InvalidCommandMiddlewareException(
                     \sprintf(
@@ -93,11 +97,30 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
         $middleware = $this->middlewares[$index];
 
         if ($this->resolver instanceof MiddlewareResolverInterface) {
-            $middleware = \call_user_func($this->resolver, $middleware);
+            $resolved = \call_user_func($this->resolver, $middleware);
+            if (!$resolved instanceof CommandMiddlewareInterface) {
+                throw new InvalidCommandMiddlewareException(
+                    \sprintf(
+                        'Resolved command middleware must implement %s',
+                        CommandMiddlewareInterface::class
+                    )
+                );
+            }
+
+            $middleware = $resolved;
             $this->middlewares[$index] = $middleware;
         }
 
-        return function ($message) use ($middleware, $index): void {
+        if (!$middleware instanceof CommandMiddlewareInterface) {
+            throw new InvalidCommandMiddlewareException(
+                \sprintf(
+                    'Command middleware must be resolved to an instance of %s before execution',
+                    CommandMiddlewareInterface::class
+                )
+            );
+        }
+
+        return function (CommandMessageInterface $message) use ($middleware, $index): void {
             $middleware->handle($message, $this->call($index + 1));
         };
     }

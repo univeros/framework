@@ -19,11 +19,8 @@ class BodyCredentialsExtractor implements CredentialsExtractorInterface
 {
     /**
      * BodyCredentialsBuilder constructor.
-     *
-     * @param string $identifier
-     * @param string $password
      */
-    public function __construct(private $identifier = 'username', private $password = 'password') {}
+    public function __construct(private readonly string $identifier = 'username', private readonly string $password = 'password') {}
 
     /**
      * @inheritDoc
@@ -33,6 +30,10 @@ class BodyCredentialsExtractor implements CredentialsExtractorInterface
     public function extract(ServerRequestInterface $request): ?array
     {
         $body = $request->getParsedBody();
+
+        if (!\is_array($body)) {
+            return null;
+        }
 
         if (empty($body[$this->identifier]) || empty($body[$this->password])) {
             return null;

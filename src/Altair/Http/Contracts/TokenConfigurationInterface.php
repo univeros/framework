@@ -17,6 +17,8 @@ interface TokenConfigurationInterface
 {
     /**
      * The public key used to sign the JWT token.
+     *
+     * @return non-empty-string
      */
     public function getPublicKey(): string;
 
@@ -29,6 +31,8 @@ interface TokenConfigurationInterface
 
     /**
      * The stable issuer identifier (`iss` claim) for tokens minted and validated by this service.
+     *
+     * @return non-empty-string
      */
     public function getIssuer(): string;
 

@@ -29,6 +29,11 @@ class FormContentMiddleware extends AbstractContentHandlerMiddleware
     {
         parse_str($body, $parsed);
 
-        return $parsed;
+        $normalized = [];
+        foreach ($parsed as $key => $value) {
+            $normalized[(string) $key] = $value;
+        }
+
+        return $normalized;
     }
 }

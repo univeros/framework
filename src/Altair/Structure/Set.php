@@ -58,8 +58,6 @@ class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInter
      * replaced with a Map in the constructor before any method is invoked.
      *
      * @var Map<TValue, null>
-     *
-     * @phpstan-ignore property.defaultValue
      */
     protected $internal = [];
 

@@ -50,8 +50,6 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
      * with a Deque in the constructor before any method is invoked.
      *
      * @var Deque<TValue>
-     *
-     * @phpstan-ignore property.defaultValue
      */
     protected $internal = [];
 
