@@ -450,10 +450,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      *
-     * @param TKey $key
-     * @param TValue|null $default
+     * @template TDefault
      *
-     * @return TValue
+     * @param TKey $key
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     #[Override]
     public function get($key, $default = null)
@@ -492,10 +494,12 @@ class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInter
     /**
      * {@inheritDoc}
      *
-     * @param TKey $key
-     * @param TValue|null $default
+     * @template TDefault
      *
-     * @return TValue
+     * @param TKey $key
+     * @param TDefault $default
+     *
+     * @return TValue|TDefault
      */
     #[Override]
     public function remove($key, $default = null)

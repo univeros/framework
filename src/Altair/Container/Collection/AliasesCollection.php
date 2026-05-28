@@ -40,11 +40,13 @@ class AliasesCollection extends Map
 
         $original = $this->normalizeName($original);
 
-        if (isset($sharesCollection[$original])) {
+        $shared = $sharesCollection->get($original);
+
+        if (\is_object($shared)) {
             throw new InvalidArgumentException(
                 \sprintf(
                     'Cannot alias class %s to %s because it is currently shared',
-                    $this->normalizeName($sharesCollection->get($original)::class),
+                    $this->normalizeName($shared::class),
                     $alias
                 )
             );
