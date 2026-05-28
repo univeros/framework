@@ -36,6 +36,8 @@ use Traversable;
  * @implements QueueInterface<TValue>
  * @implements IteratorAggregate<int, TValue>
  * @implements ArrayAccess<int, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityInterface
 {

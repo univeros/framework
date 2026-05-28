@@ -37,6 +37,8 @@ use Traversable;
  * @implements StackInterface<TValue>
  * @implements IteratorAggregate<int, TValue>
  * @implements ArrayAccess<int, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class Stack implements IteratorAggregate, ArrayAccess, StackInterface, CapacityInterface
 {
