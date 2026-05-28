@@ -1,0 +1,7 @@
+/vendor/
+/composer.lock
+/.env
+/.altair/
+/.agent/
+/build/
+/.phpunit.cache/
