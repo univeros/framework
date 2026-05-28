@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "shared_only": {
+            "type": "boolean",
+            "description": "Only list shared (singleton) bindings.",
+            "default": false
+        },
+        "filter": {
+            "type": "string",
+            "description": "Case-insensitive substring filter on the binding id."
+        }
+    }
+}
