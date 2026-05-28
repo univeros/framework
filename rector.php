@@ -23,6 +23,9 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         __DIR__ . '/tests/bootstrap.php',
+        // Skeleton template emitted by `bin/altair new` — App-namespaced project
+        // code, not framework source.
+        __DIR__ . '/src/Altair/Bootstrap/resources/skeleton',
         // Scope boundary for #93: making params explicitly `?Type` lets Rector
         // collapse `?? new X()` bodies into promoted `= new X()` defaults. That
         // narrows the constructor contract (an explicit `null` arg becomes a
