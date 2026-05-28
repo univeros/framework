@@ -1,0 +1,22 @@
+{
+    "name": "univeros/suggest",
+    "description": "bin/altair suggest — walks the introspection surface and proposes refactors: dead bindings, fat constructors, dead events, routes without specs, orphan middleware. Deterministic JSON for agents and CI.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/introspection": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Suggest\\": ""
+        }
+    }
+}
