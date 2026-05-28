@@ -22,8 +22,10 @@ use Psr\Http\Message\ServerRequestInterface;
 class FormatNegotiator implements FormatNegotiatorInterface
 {
     /**
-     * @var array Available formats with the mime types
+     * Available formats with the mime types
      * - Thanks oscarotero/psr7-middlewares
+     *
+     * @var array<string, array{0: list<string>, 1: list<string>}>
      */
     protected $formats = [
         //text
@@ -140,7 +142,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     /**
      * Returns the best format value for server request header.
      *
-     *
+     * @param list<string> $priorities
      */
     protected function negotiateHeader(string $accept, array $priorities): ?string
     {

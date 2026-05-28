@@ -49,7 +49,7 @@ class Executable
     /**
      * @return mixed
      */
-    public function __invoke(...$args)
+    public function __invoke(mixed ...$args)
     {
         $reflection = $this->callableReflection;
         if ($reflection instanceof ReflectionMethod) {
@@ -88,7 +88,7 @@ class Executable
 
     /**
      * @param ReflectionFunction|ReflectionFunctionAbstract $reflection
-     *
+     * @param array<int, mixed> $args
      */
     protected function invokeClosure(ReflectionFunction $reflection, array $args): mixed
     {

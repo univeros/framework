@@ -49,24 +49,28 @@ interface PayloadInterface extends HttpStatusInterface
     /**
      * Create a copy of the payload with output array.
      *
-     *
+     * @param array<string, mixed> $output
      */
     public function withOutput(array $output): PayloadInterface;
 
     /**
      * Get output array from the payload.
+     *
+     * @return array<string, mixed>
      */
     public function getOutput(): array;
 
     /**
      * Create a copy of the payload with messages array.
      *
-     *
+     * @param array<string, mixed> $messages
      */
     public function withMessages(array $messages): PayloadInterface;
 
     /**
      * Get messages array from the payload.
+     *
+     * @return array<string, mixed>
      */
     public function getMessages(): array;
 

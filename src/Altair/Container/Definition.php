@@ -23,6 +23,8 @@ class Definition
 
     /**
      * Definition constructor.
+     *
+     * @param array<int|string, mixed> $arguments
      */
     public function __construct(protected array $arguments) {}
 
@@ -31,36 +33,27 @@ class Definition
         return new self(array_replace($definition->getArguments(), $this->arguments));
     }
 
+    /**
+     * @return array<int|string, mixed>
+     */
     public function getArguments(): array
     {
         return $this->arguments;
     }
 
-    /**
-     * @param $value
-     *
-     */
-    public function add(string $key, $value): Definition
+    public function add(string $key, mixed $value): Definition
     {
         $this->arguments[$key] = $value;
 
         return $this;
     }
 
-    /**
-     * @param $value
-     *
-     */
-    public function addRaw(string $key, $value): Definition
+    public function addRaw(string $key, mixed $value): Definition
     {
         return $this->add(self::RAW_PREFIX . $key, $value);
     }
 
-    /**
-     * @param $value
-     *
-     */
-    public function addDelegate(string $key, $value): Definition
+    public function addDelegate(string $key, mixed $value): Definition
     {
         return $this->add(self::DELEGATE_PREFIX . $key, $value);
     }
@@ -70,10 +63,7 @@ class Definition
         return isset($this->arguments[$position]) || \array_key_exists($position, $this->arguments);
     }
 
-    /**
-     * @param $name
-     */
-    public function has($name): bool
+    public function has(string $name): bool
     {
         return isset($this->arguments[$name]) || \array_key_exists($name, $this->arguments);
     }
@@ -103,21 +93,17 @@ class Definition
     }
 
     /**
-     * @param $position
-     *
      * @return mixed
      */
-    public function getIndexed($position)
+    public function getIndexed(int $position)
     {
         return $this->arguments[$position];
     }
 
     /**
-     * @param $name
-     *
      * @return mixed
      */
-    public function get($name)
+    public function get(string $name)
     {
         if (!\array_key_exists($name, $this->arguments) && !isset($this->arguments[$name])) {
             throw new OutOfBoundsException(\sprintf("'%s' not found in definition.", $name));

@@ -26,6 +26,7 @@ class StandardReflection implements ReflectionInterface
     /**
      * @inheritDoc
      * @throws ReflectionException
+     * @return ReflectionClass<object>
      */
     #[Override]
     public function getClass(string $class): ReflectionClass
@@ -78,13 +79,15 @@ class StandardReflection implements ReflectionInterface
      * @throws ReflectionException
      */
     #[Override]
-    public function getFunction($name): ReflectionFunction
+    public function getFunction(mixed $name): ReflectionFunction
     {
         return new ReflectionFunction($name);
     }
 
     /**
      * @inheritDoc
+     *
+     * @return ReflectionParameter[]|null
      */
     public function getFunctionParameters(ReflectionFunction $reflectionFunction): ?array
     {
@@ -96,7 +99,7 @@ class StandardReflection implements ReflectionInterface
      * @throws ReflectionException
      */
     #[Override]
-    public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
+    public function getMethod(mixed $classNameOrInstance, string $methodName): ReflectionMethod
     {
         $className = \is_string($classNameOrInstance)
             ? $classNameOrInstance

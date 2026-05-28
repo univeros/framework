@@ -16,7 +16,7 @@ interface TokenGeneratorInterface
     /**
      * Generates a JWT authentication token string
      *
-     *
+     * @param array<string, mixed> $claims
      */
     public function generate(array $claims = []): string;
 }
