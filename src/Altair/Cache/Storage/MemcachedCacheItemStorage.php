@@ -20,7 +20,7 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
 {
     protected Memcached $client;
 
-    protected $maxIdLength = 250;
+    protected int $maxIdLength = 250;
 
     /**
      * MemcachedCacheItemPoolStorage constructor.
@@ -52,6 +52,8 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getItems(array $keys = []): array
@@ -100,6 +102,8 @@ class MemcachedCacheItemStorage implements CacheItemStorageInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $values
      */
     #[Override]
     public function save(array $values, int $lifespan): bool

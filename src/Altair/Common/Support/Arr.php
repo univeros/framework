@@ -26,11 +26,11 @@ class Arr // - Thanks @yii
      * For integer-keyed elements, the elements from the latter array will
      * be appended to the former array.
      *
-     * @param array $a array to be merged to
-     * @param array $b array to be merged from. You can specify additional
+     * @param array<array-key, mixed> $a array to be merged to
+     * @param array<array-key, mixed> $b array to be merged from. You can specify additional
      * arrays via third argument, fourth argument etc.
      *
-     * @return array the merged array (the original arrays are not changed.)
+     * @return array<array-key, mixed> the merged array (the original arrays are not changed.)
      */
     public static function merge(array $a, array $b): array
     {
@@ -86,7 +86,7 @@ class Arr // - Thanks @yii
      * ```
      *
      * @param array|object $array array or object to extract value from
-     * @param string|Closure|array $key key name of the array element, an array of keys or property name of the object,
+     * @param string|Closure|array<array-key, string|Closure> $key key name of the array element, an array of keys or property name of the object,
      * or an anonymous function returning the value. The anonymous function signature should be:
      * `function($array, $defaultValue)`.
      * @param mixed $default the default value to be returned if the specified array key does not exist. Not used when
@@ -145,7 +145,7 @@ class Arr // - Thanks @yii
      * // $array = ['options' => [1, 2]];
      * ```
      *
-     * @param array $array the array to extract value from
+     * @param array<array-key, mixed> $array the array to extract value from
      * @param string $key key name of the array element
      * @param mixed $default the default value to be returned if the specified key does not exist
      *
@@ -176,10 +176,10 @@ class Arr // - Thanks @yii
      * // $removed = ['Michael' => 'Jackson', 'Janet' => 'Jackson'];
      * ```
      *
-     * @param array $array the array where to look the value from
+     * @param array<array-key, mixed> $array the array where to look the value from
      * @param string $value the value to remove from the array
      *
-     * @return array the items that were removed from the array
+     * @return array<array-key, mixed> the items that were removed from the array
      */
     public static function removeValue(array &$array, string $value): array
     {
@@ -286,14 +286,14 @@ class Arr // - Thanks @yii
      * ]
      * ```
      *
-     * @param array $array the array that needs to be indexed or grouped
+     * @param array<array-key, mixed> $array the array that needs to be indexed or grouped
      * @param string|Closure|null $key the column name or anonymous function which result will be used to index the array
      * @param string|string[]|Closure[]|null $groups the array of keys, that will be used to group the input array
      * by one or more keys. If the $key attribute or its value for the particular element is null and $groups is not
      * defined, the array element will be discarded. Otherwise, if $groups is specified, array element will be added
      * to the result array without any key.
      *
-     * @return array the indexed and/or grouped array
+     * @return array<array-key, mixed> the indexed and/or grouped array
      */
     public static function index(array $array, $key, $groups = []): array
     {
@@ -351,10 +351,11 @@ class Arr // - Thanks @yii
      * });
      * ```
      *
+     * @param array<array-key, mixed> $array
      * @param string|Closure $name
      * @param bool $keepKeys whether to maintain the array keys. If false, the resulting array
      * will be re-indexed with integers.
-     * @return array the list of column values
+     * @return array<array-key, mixed> the list of column values
      */
     public static function getColumn(array $array, $name, bool $keepKeys = true): array
     {
@@ -407,10 +408,12 @@ class Arr // - Thanks @yii
      * // ]
      * ```
      *
+     * @param array<array-key, mixed> $array
      * @param string|Closure $from
      * @param string|Closure $to
      * @param string|Closure $group
      *
+     * @return array<array-key, mixed>
      */
     public static function map(array $array, $from, $to, $group = null): array
     {
@@ -434,7 +437,7 @@ class Arr // - Thanks @yii
      * key comparison.
      *
      * @param string $key the key to check
-     * @param array $array the array with keys to check
+     * @param array<array-key, mixed> $array the array with keys to check
      * @param bool $caseSensitive whether the key comparison should be case-sensitive
      *
      * @return bool whether the array contains the specified key
@@ -459,14 +462,14 @@ class Arr // - Thanks @yii
     /**
      * Sorts an array of objects or arrays (with the same structure) by one or several keys.
      *
-     * @param array $array the array to be sorted. The array will be modified after calling this method.
-     * @param string|Closure|array $key the key(s) to be sorted by. This refers to a key name of the sub-array
+     * @param array<array-key, mixed> $array the array to be sorted. The array will be modified after calling this method.
+     * @param string|Closure|array<array-key, string|Closure> $key the key(s) to be sorted by. This refers to a key name of the sub-array
      * elements, a property name of the objects, or an anonymous function returning the values for comparison
      * purpose. The anonymous function signature should be: `function($item)`.
      * To sort by multiple keys, provide an array of keys here.
-     * @param int|array $direction the sorting direction. It can be either `SORT_ASC` or `SORT_DESC`.
+     * @param int|array<array-key, int> $direction the sorting direction. It can be either `SORT_ASC` or `SORT_DESC`.
      * When sorting by multiple keys with different sorting directions, use an array of sorting directions.
-     * @param int|array $sortFlag the PHP sort flag. Valid values include
+     * @param int|array<array-key, int> $sortFlag the PHP sort flag. Valid values include
      * `SORT_REGULAR`, `SORT_NUMERIC`, `SORT_STRING`, `SORT_LOCALE_STRING`, `SORT_NATURAL` and `SORT_FLAG_CASE`.
      * Please refer to [PHP manual](http://php.net/manual/en/function.sort.php)
      * for more details. When sorting by multiple keys with different sort flags, use an array of sort flags.
@@ -517,12 +520,12 @@ class Arr // - Thanks @yii
      * If a value is an array, this method will also encode it recursively.
      * Only string values will be encoded.
      *
-     * @param array $array data to be encoded
+     * @param array<array-key, mixed> $array data to be encoded
      * @param bool $valuesOnly whether to encode array values only. If false,
      * both the array keys and array values will be encoded.
      * @param string $charset the charset that the data is using.
      *
-     * @return array the encoded data
+     * @return array<array-key, mixed> the encoded data
      * @see http://www.php.net/manual/en/function.htmlspecialchars.php
      */
     public static function htmlEncode(array $array, bool $valuesOnly = true, string $charset = 'UTF-8'): array
@@ -551,11 +554,11 @@ class Arr // - Thanks @yii
      * If a value is an array, this method will also decode it recursively.
      * Only string values will be decoded.
      *
-     * @param array $array data to be decoded
+     * @param array<array-key, mixed> $array data to be decoded
      * @param bool $valuesOnly whether to decode array values only. If false,
      * both the array keys and array values will be decoded.
      *
-     * @return array the decoded data
+     * @return array<array-key, mixed> the decoded data
      * @see http://www.php.net/manual/en/function.htmlspecialchars-decode.php
      */
     public static function htmlDecode(array $array, $valuesOnly = true): array
@@ -586,7 +589,7 @@ class Arr // - Thanks @yii
      *
      * Note that an empty array will NOT be considered associative.
      *
-     * @param array $array the array being checked
+     * @param array<array-key, mixed> $array the array being checked
      * @param bool $allStrings whether the array keys must be all strings in order for
      * the array to be treated as associative.
      *
@@ -625,7 +628,7 @@ class Arr // - Thanks @yii
      *
      * Note that an empty array will be considered indexed.
      *
-     * @param array $array the array being checked
+     * @param array<array-key, mixed> $array the array being checked
      * @param bool $consecutive whether the array keys must be a consecutive sequence
      * in order for the array to be treated as indexed.
      *
@@ -661,7 +664,7 @@ class Arr // - Thanks @yii
      * but additionally works for objects that implement the [[\Traversable]] interface.
      *
      * @param mixed $needle The value to look for.
-     * @param array|Traversable $haystack The set of values to search.
+     * @param array<array-key, mixed>|Traversable<mixed, mixed> $haystack The set of values to search.
      * @param bool $strict Whether to enable strict (`===`) comparison.
      *
      * @throws InvalidArgumentException if `$haystack` is neither traversable nor an array.
@@ -707,8 +710,8 @@ class Arr // - Thanks @yii
      * This method will return `true`, if all elements of `$needles` are contained in
      * `$haystack`. If at least one element is missing, `false` will be returned.
      *
-     * @param array|Traversable $needles The values that must **all** be in `$haystack`.
-     * @param array|Traversable $haystack The set of value to search.
+     * @param array<array-key, mixed>|Traversable<mixed, mixed> $needles The values that must **all** be in `$haystack`.
+     * @param array<array-key, mixed>|Traversable<mixed, mixed> $haystack The set of value to search.
      * @param bool $strict Whether to enable strict (`===`) comparison.
      *
      * @throws InvalidArgumentException if `$haystack` or `$needles` is neither traversable nor an array.
@@ -764,14 +767,14 @@ class Arr // - Thanks @yii
      * // ]
      * ```
      *
-     * @param array $array Source array
-     * @param array $filters Rules that define array keys which should be left or removed from results.
+     * @param array<array-key, mixed> $array Source array
+     * @param array<array-key, string> $filters Rules that define array keys which should be left or removed from results.
      * Each rule is:
      * - `var` - `$array['var']` will be left in result.
      * - `var.key` = only `$array['var']['key'] will be left in result.
      * - `!var.key` = `$array['var']['key'] will be removed from result.
      *
-     * @return array Filtered array
+     * @return array<array-key, mixed> Filtered array
      */
     public static function filter(array $array, array $filters): array
     {

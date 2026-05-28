@@ -16,22 +16,26 @@ interface PartialRepositoryInterface
     /**
      * Returns a partially populated EntityInterface.
      *
-     * @param int|string $id
-     *
+     * @param int|string        $id
+     * @param list<string>      $fields
      */
     public function findPartial($id, array $fields): ?EntityInterface;
 
     /**
      * Returns a partially populated EntityInterface by a set of criteria.
      *
-     *
+     * @param array<string, mixed> $criteria
+     * @param list<string>         $fields
      */
     public function findPartialBy(array $criteria, array $fields): ?EntityInterface;
 
     /**
      * Returns multiple partially populated EntityInterface[] by a set of criteria.
      *
+     * @param array<string, mixed>   $criteria
+     * @param list<string>           $fields
      *
+     * @return list<EntityInterface>|null
      */
     public function findPartialsBy(array $criteria, array $fields): ?array;
 }

@@ -16,7 +16,7 @@ use Override;
 class IbanRule extends AbstractRule
 {
     /**
-     * @var array
+     * @var array<string, string>
      */
     protected $patterns = [
         'AL' => '[0-9]{8}[0-9A-Z]{16}',
@@ -91,7 +91,7 @@ class IbanRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         if (!\is_scalar($value)) {
             return false;
@@ -153,7 +153,7 @@ class IbanRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid IBAN.', $value);
     }

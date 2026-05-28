@@ -34,7 +34,7 @@ class IsbnRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         $value = $this->sanitize((string) $value);
 
@@ -47,7 +47,7 @@ class IsbnRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid ISBN number.', $value);
     }
