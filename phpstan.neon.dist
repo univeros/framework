@@ -6,6 +6,9 @@ parameters:
     excludePaths:
         # Presentation-only view templates (HTML in PHP); not application logic.
         - src/Altair/Observatory/resources/views/*
+        # Skeleton template emitted by `bin/altair new`; App-namespaced project
+        # code, not framework source.
+        - src/Altair/Bootstrap/resources/skeleton/*
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
     tmpDir: .phpstan-cache

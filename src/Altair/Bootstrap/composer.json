@@ -1,0 +1,22 @@
+{
+    "name": "univeros/bootstrap",
+    "description": "Zero-to-running project bootstrap: the bin/altair new command that materialises a runnable Altair API from the skeleton template.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/doctor": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Bootstrap\\": ""
+        }
+    }
+}
