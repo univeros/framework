@@ -13,17 +13,26 @@ namespace Altair\Doctor\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
+use Altair\Doctor\Check\ComposerDepsCheck;
+use Altair\Doctor\Check\ContainerBootsCheck;
+use Altair\Doctor\Check\ContainerResolvesCheck;
 use Altair\Doctor\Check\CsCleanCheck;
+use Altair\Doctor\Check\DatabaseReachableCheck;
 use Altair\Doctor\Check\DeterminismCheck;
 use Altair\Doctor\Check\ExtensionsLoadedCheck;
 use Altair\Doctor\Check\ManifestsCurrentCheck;
+use Altair\Doctor\Check\MigrationsPendingCheck;
+use Altair\Doctor\Check\OpenApiValidCheck;
 use Altair\Doctor\Check\PhpstanCleanCheck;
 use Altair\Doctor\Check\PhpVersionCheck;
+use Altair\Doctor\Check\SpecDriftCheck;
+use Altair\Doctor\Check\TestsPassingCheck;
 use Altair\Doctor\CheckRegistry;
 use Altair\Doctor\Contracts\ProcessRunnerInterface;
 use Altair\Doctor\Doctor;
 use Altair\Doctor\Output\RendererRegistry;
 use Altair\Doctor\Process\ShellProcessRunner;
+use Closure;
 
 use const DIRECTORY_SEPARATOR;
 
@@ -35,13 +44,24 @@ use Override;
  *
  * The PHP floor and required `ext-*` list are read from the project's
  * `composer.json` so `php_version` / `extensions_loaded` reflect the
- * project's own declared requirements. Hosts add their own checks by
- * `prepare()`-ing {@see CheckRegistry} after this Configuration runs.
+ * project's own declared requirements. Host-app checks (container boot,
+ * critical bindings, database reachability) are opt-in via constructor
+ * arguments — without those hooks they report `skipped` instead of false
+ * positives. Hosts add their own checks by `prepare()`-ing
+ * {@see CheckRegistry} after this Configuration runs.
  */
 final readonly class DoctorConfiguration implements ConfigurationInterface
 {
+    /**
+     * @param (Closure(): mixed)|null $appBooter        boot callable verifying the host Container can be constructed
+     * @param list<class-string>      $criticalBindings PSR-11 ids the host considers must-resolve
+     * @param (Closure(): bool)|null  $databaseProbe    closure returning true when the DB is reachable
+     */
     public function __construct(
         private ?string $projectRoot = null,
+        private ?Closure $appBooter = null,
+        private array $criticalBindings = [],
+        private ?Closure $databaseProbe = null,
     ) {}
 
     #[Override]
@@ -55,9 +75,17 @@ final readonly class DoctorConfiguration implements ConfigurationInterface
         $registry = new CheckRegistry([
             new PhpVersionCheck($phpFloor),
             new ExtensionsLoadedCheck($extensions),
+            new ComposerDepsCheck($runner, $projectRoot),
+            new ContainerBootsCheck($this->appBooter),
+            new ContainerResolvesCheck($container, $this->criticalBindings),
+            new DatabaseReachableCheck($this->databaseProbe),
+            new MigrationsPendingCheck($runner, $projectRoot),
+            new SpecDriftCheck($runner, $projectRoot),
+            new OpenApiValidCheck($runner, $projectRoot),
             new ManifestsCurrentCheck($runner, $projectRoot),
             new CsCleanCheck($runner, $projectRoot),
             new PhpstanCleanCheck($runner, $projectRoot),
+            new TestsPassingCheck($runner, $projectRoot),
             new DeterminismCheck($runner, $projectRoot),
         ]);
 
