@@ -76,6 +76,13 @@ $icon = static fn(string $k, string $c = ''): string => IconSet::svg($k, $c);
                 <?php endforeach; ?>
             </div>
         </div>
+
+        <footer class="o-footer">
+            <span><?= $icon('overview') ?></span>
+            <span>Observatory</span>
+            <span class="o-spacer"></span>
+            <span>Powered by the <a href="https://univeros.io" target="_blank" rel="noopener">Altair Framework</a></span>
+        </footer>
     </main>
 </div>
 </body>

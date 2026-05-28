@@ -151,6 +151,12 @@ a:hover { color: var(--o-accent-hover); }
 @media (prefers-reduced-motion: reduce) { .o-stream-row { animation: none; } }
 .o-stream-time { color: var(--o-text-muted); }
 
+/* framework footer */
+.o-footer { margin-top: auto; padding: 16px 24px; border-top: 1px solid var(--o-border); color: var(--o-text-muted); font-size: 12px; display: flex; align-items: center; gap: 8px; }
+.o-footer a { color: var(--o-text-muted); }
+.o-footer a:hover { color: var(--o-accent); }
+.o-footer .o-spacer { flex: 1; }
+
 /* access-denied / empty */
 .o-empty { text-align: center; color: var(--o-text-muted); padding: 64px 24px; }
 
