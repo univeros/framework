@@ -22,6 +22,9 @@ use Override;
 use ReflectionClass;
 use Traversable;
 
+/**
+ * @implements IteratorAggregate<int, string>
+ */
 class HttpStatusCollection implements Countable, IteratorAggregate
 {
     /**
@@ -53,6 +56,8 @@ class HttpStatusCollection implements Countable, IteratorAggregate
 
     /**
      * {@inheritDoc}
+     *
+     * @return ArrayIterator<int, string>
      */
     #[Override]
     public function getIterator(): ArrayIterator

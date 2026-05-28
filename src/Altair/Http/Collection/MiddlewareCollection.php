@@ -13,4 +13,9 @@ namespace Altair\Http\Collection;
 
 use Altair\Structure\Queue;
 
+/**
+ * An ordered queue of PSR-15 middleware references (FQCN string, instance, or [class, method] pair).
+ *
+ * @extends Queue<mixed>
+ */
 class MiddlewareCollection extends Queue {}

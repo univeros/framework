@@ -116,7 +116,7 @@ class CookieCollection extends Map
     /**
      * {@inheritDoc}
      *
-     * @return VectorInterface<int, ?string>
+     * @return VectorInterface<?string>
      */
     #[Override]
     public function values(): VectorInterface
@@ -169,7 +169,7 @@ class CookieCollection extends Map
     /**
      * Converts pairs to array.
      *
-     * @param array<int, Pair> $pairs
+     * @param array<int, Pair<string, Cookie>> $pairs
      *
      * @return array<string, string>
      */
@@ -177,7 +177,7 @@ class CookieCollection extends Map
     protected function pairsToArray($pairs): array
     {
         $array = [];
-        /** @var Pair $pair */
+        /** @var Pair<string, Cookie> $pair */
         foreach ($pairs as $pair) {
             $array[$pair->key] = (string) $pair->value;
         }

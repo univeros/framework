@@ -16,10 +16,16 @@ use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
 
+/**
+ * @extends Map<string, object|null>
+ */
 class SharesCollection extends Map
 {
     use NameNormalizerTrait;
 
+    /**
+     * @return MapInterface<string, object|null>
+     */
     public function shareClass(string $name, AliasesCollection $aliasesCollection): MapInterface
     {
         [, $normalizedName] = $aliasesCollection->resolve($name);
@@ -27,6 +33,9 @@ class SharesCollection extends Map
         return $this->put($normalizedName, $this[$normalizedName] ?? null);
     }
 
+    /**
+     * @return MapInterface<string, object|null>
+     */
     public function shareInstance(object $instance, AliasesCollection $aliasesCollection): MapInterface
     {
         $normalizedName = $this->normalizeName($instance::class);
