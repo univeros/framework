@@ -26,6 +26,8 @@ use Stringable;
  * @template TValue
  *
  * @implements PairInterface<TKey, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class Pair implements PairInterface, JsonSerializable, Stringable
 {

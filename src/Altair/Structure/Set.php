@@ -42,6 +42,8 @@ use Traversable;
  * @implements SetInterface<TValue>
  * @implements IteratorAggregate<int, TValue>
  * @implements ArrayAccess<int, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class Set implements IteratorAggregate, ArrayAccess, SetInterface, CapacityInterface
 {
