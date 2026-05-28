@@ -14,6 +14,7 @@ namespace Altair\Mcp\Tool;
 use Altair\Mcp\Tool\Database\DbMigrateTool;
 use Altair\Mcp\Tool\Database\DbQueryTool;
 use Altair\Mcp\Tool\Database\DbSchemaTool;
+use Altair\Mcp\Tool\Database\PlanMigrationTool;
 use Altair\Mcp\Tool\Discovery\ContainerResolveTool;
 use Altair\Mcp\Tool\Discovery\DescribeEndpointTool;
 use Altair\Mcp\Tool\Discovery\DescribePackageTool;
@@ -75,6 +76,7 @@ final class BuiltinTools
             DbQueryTool::class,
             DbSchemaTool::class,
             DbMigrateTool::class,
+            PlanMigrationTool::class,
             // Introspection (read-only wrappers over the inspector commands)
             ContainerInspectTool::class,
             ConfigDumpTool::class,

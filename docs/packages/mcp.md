@@ -9,7 +9,7 @@
 
 The rest of the framework makes your project agent-*readable* — typed code, deterministic manifests, JSON-emitting CLI commands. This package makes it agent-*drivable*. The [Model Context Protocol](https://modelcontextprotocol.io/) is the open standard MCP clients (Claude Desktop, Cursor, Zed, …) speak to local tooling: a server advertises named, typed "tools"; the client discovers them; the agent calls them as first-class actions in its conversation. You point your MCP client at `bin/altair mcp:serve` once, and from then on "add a `POST /users` endpoint that creates a user" becomes a sequence of `framework__write_spec` + `framework__scaffold` + `framework__run_tests` calls — no file reading, no shelling out.
 
-You'll reach for this package when you want an agent to operate the project the way a developer would: list the endpoints, read a spec, scaffold a new one, run the tests, inspect a container binding, run a read-only query against the dev database. It ships **28 built-in tools** out of the box and lets you register your own with a single attribute.
+You'll reach for this package when you want an agent to operate the project the way a developer would: list the endpoints, read a spec, scaffold a new one, run the tests, inspect a container binding, run a read-only query against the dev database. It ships **29 built-in tools** out of the box and lets you register your own with a single attribute.
 
 The server is implemented directly on JSON-RPC 2.0 — there is no third-party MCP SDK in the dependency tree. The protocol is small (a handshake plus a few message types), and owning it keeps the wire format under your control. The protocol "brain" is decoupled from the bytes on the wire, so the same server runs over stdio (what desktop clients expect), over HTTP (for out-of-process agents), or over an in-memory transport (for tests).
 
@@ -45,7 +45,7 @@ From that point on the agent has the full tool palette. To see what it can call 
 bin/altair mcp:tools
 ```
 
-That prints all 28 tools and their descriptions. For the machine-readable form (name + input/output JSON schema per tool, exactly what `tools/list` returns over the wire):
+That prints all 29 tools and their descriptions. For the machine-readable form (name + input/output JSON schema per tool, exactly what `tools/list` returns over the wire):
 
 ```bash
 bin/altair mcp:tools --format=json
@@ -81,7 +81,7 @@ The guardrails are what make it safe to point an agent at your filesystem:
 
 ### The built-in tools
 
-All 28 tools use the `framework__` prefix, take JSON arguments, and return JSON. They fall into five groups:
+All 29 tools use the `framework__` prefix, take JSON arguments, and return JSON. They fall into five groups:
 
 **Discovery / inspection** — `list_packages`, `describe_package`, `list_specs`, `read_spec`, `list_endpoints`, `describe_endpoint`, `container_resolve`, `list_commands`.
 
@@ -89,7 +89,7 @@ All 28 tools use the `framework__` prefix, take JSON arguments, and return JSON.
 
 **Verification** — `doctor`, `run_tests`, `check_drift`, `phpstan`.
 
-**Database** (read-only by default) — `db_query`, `db_schema`, `db_migrate`.
+**Database** (read-only by default) — `db_query`, `db_schema`, `db_migrate`, `plan_migration`.
 
 **Introspection** — `container_inspect`, `config_dump` (secrets always masked), `routes_list`, `route_show`, `listeners_list`, `listener_show`, `middleware_list`, `manifest_diff`.
 
