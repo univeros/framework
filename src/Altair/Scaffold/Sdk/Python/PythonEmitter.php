@@ -196,8 +196,9 @@ final readonly class PythonEmitter implements EmitterInterface
             $params[] = $this->snake($param) . ': str';
         }
 
-        if ($operation->hasRequestBody()) {
-            $params[] = 'body: ' . $this->typeHint($operation->requestBody);
+        $requestBody = $operation->requestBody;
+        if ($requestBody instanceof SchemaType) {
+            $params[] = 'body: ' . $this->typeHint($requestBody);
         }
 
         $returnType = $this->returnType($operation);
@@ -205,7 +206,7 @@ final readonly class PythonEmitter implements EmitterInterface
         $await = $async ? 'await ' : '';
 
         $pathExpr = $this->pathExpression($operation);
-        $bodyArg = $operation->hasRequestBody()
+        $bodyArg = $requestBody instanceof SchemaType
             ? ', json=body.model_dump(by_alias=True, exclude_none=True) if hasattr(body, "model_dump") else body'
             : '';
 

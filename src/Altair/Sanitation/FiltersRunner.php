@@ -22,12 +22,10 @@ class FiltersRunner implements FiltersRunnerInterface
 {
     /**
      *
-     * A callable to convert queue entries to callables.
-     *
-     * @var callable|ResolverInterface
+     * A resolver to convert queue entries to callables.
      *
      */
-    protected $resolver;
+    protected ?ResolverInterface $resolver;
 
     /**
      *
@@ -48,7 +46,7 @@ class FiltersRunner implements FiltersRunnerInterface
     #[Override]
     public function __invoke(PayloadInterface $payload): PayloadInterface
     {
-        $entry = $this->queue->isEmpty() ? null : $this->queue->pop();
+        $entry = !$this->queue instanceof Queue || $this->queue->isEmpty() ? null : $this->queue->pop();
         $middleware = $this->resolve($entry);
         return $middleware($payload, $this);
     }
@@ -77,7 +75,7 @@ class FiltersRunner implements FiltersRunnerInterface
             return static fn(PayloadInterface $payload): PayloadInterface => $payload;
         }
 
-        if (!$this->resolver) {
+        if (!$this->resolver instanceof ResolverInterface) {
             return $entry;
         }
 
