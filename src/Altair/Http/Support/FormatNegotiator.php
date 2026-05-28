@@ -15,6 +15,7 @@ use Altair\Http\Contracts\FormatNegotiatorInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
 use Altair\Http\Exception\InvalidArgumentException;
 use Exception;
+use Negotiation\BaseAccept;
 use Negotiation\Negotiator;
 use Override;
 use Psr\Http\Message\ServerRequestInterface;
@@ -112,7 +113,7 @@ class FormatNegotiator implements FormatNegotiatorInterface
     #[Override]
     public function getFromServerRequestHeaderLine(ServerRequestInterface $request): ?string
     {
-        $headers = \call_user_func('array_merge', array_column($this->formats, 1));
+        $headers = array_merge(...array_column($this->formats, 1));
         $mimeType = $this->negotiateHeader($request->getHeaderLine('Accept'), $headers);
 
         if (null !== $mimeType) {
@@ -156,7 +157,9 @@ class FormatNegotiator implements FormatNegotiatorInterface
             return null;
         }
 
-        if (null !== $best) {
+        // Negotiator::getBest() is typed against the empty AcceptHeader marker interface;
+        // the concrete result is a BaseAccept, which exposes the negotiated value.
+        if ($best instanceof BaseAccept) {
             return $best->getValue();
         }
 
