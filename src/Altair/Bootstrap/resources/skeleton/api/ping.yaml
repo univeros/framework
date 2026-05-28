@@ -1,0 +1,14 @@
+endpoint:
+  method: GET
+  path: /ping
+  summary: Health check
+  tags: [health]
+input: {}
+output:
+  200:
+    body:
+      message: string
+      timestamp: string
+domain:
+  class: App\Health\Ping
+  invocation: __invoke

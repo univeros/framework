@@ -56,6 +56,7 @@ Developer experience and AI-agent ergonomics.
 - [Events](./packages/events.md) — the append-only `.altair/events.jsonl` mutation log, so agents and developers can answer "what just changed?" across sessions. (Not the PSR-14 dispatcher — that's Happen.)
 - [TestReporter](./packages/test-reporter.md) — an AI-native PHPUnit 11 extension that emits a structured JSON report, mapping each failure back to the production source under test with structured diffs.
 - [Mcp](./packages/mcp.md) — a first-party Model Context Protocol server exposing the framework as 28 agent-callable tools over stdio/HTTP, so any MCP client can build, inspect, test, and ship an Altair API through tool calls.
+- [Bootstrap](./packages/bootstrap.md) — zero-to-running project bootstrap: `bin/altair new` materialises a complete, runnable Altair API (a working `/ping`, a passing test, the spec-driven toolchain wired) from the skeleton template, with minimal/standard/full presets.
 
 ## How these docs are structured
 

@@ -1,0 +1,7 @@
+parameters:
+    level: 6
+    phpVersion: 80300
+    paths:
+        - app
+        - config
+        - public

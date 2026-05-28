@@ -1,0 +1,16 @@
+openapi: 3.1.0
+info:
+  title: 'Health check'
+  version: 0.0.0
+paths:
+  /ping:
+    get:
+      summary: 'Health check'
+      tags:
+        - health
+      responses:
+        200:
+          description: 'Response 200'
+          content:
+            application/json:
+              schema: { type: object, properties: { message: { type: string }, timestamp: { type: string } } }

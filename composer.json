@@ -75,6 +75,7 @@
     },
     "replace": {
         "univeros/agent-spec": "self.version",
+        "univeros/bootstrap": "self.version",
         "univeros/cache": "self.version",
         "univeros/cli": "self.version",
         "univeros/common": "self.version",
