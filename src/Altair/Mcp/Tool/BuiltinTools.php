@@ -27,6 +27,14 @@ use Altair\Mcp\Tool\Generation\EmitSdkTool;
 use Altair\Mcp\Tool\Generation\RewindSpecTool;
 use Altair\Mcp\Tool\Generation\ScaffoldTool;
 use Altair\Mcp\Tool\Generation\WriteSpecTool;
+use Altair\Mcp\Tool\Introspection\ConfigDumpTool;
+use Altair\Mcp\Tool\Introspection\ContainerInspectTool;
+use Altair\Mcp\Tool\Introspection\ListenerShowTool;
+use Altair\Mcp\Tool\Introspection\ListenersListTool;
+use Altair\Mcp\Tool\Introspection\ManifestDiffTool;
+use Altair\Mcp\Tool\Introspection\MiddlewareListTool;
+use Altair\Mcp\Tool\Introspection\RouteShowTool;
+use Altair\Mcp\Tool\Introspection\RoutesListTool;
 use Altair\Mcp\Tool\Verification\CheckDriftTool;
 use Altair\Mcp\Tool\Verification\DoctorTool;
 use Altair\Mcp\Tool\Verification\PhpstanTool;
@@ -67,6 +75,15 @@ final class BuiltinTools
             DbQueryTool::class,
             DbSchemaTool::class,
             DbMigrateTool::class,
+            // Introspection (read-only wrappers over the inspector commands)
+            ContainerInspectTool::class,
+            ConfigDumpTool::class,
+            RoutesListTool::class,
+            RouteShowTool::class,
+            ListenersListTool::class,
+            ListenerShowTool::class,
+            MiddlewareListTool::class,
+            ManifestDiffTool::class,
         ];
     }
 }

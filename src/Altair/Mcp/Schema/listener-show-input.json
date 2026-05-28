@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["event"],
+    "properties": {
+        "event": {
+            "type": "string",
+            "description": "The event name whose listeners to show (priority-sorted)."
+        }
+    }
+}
