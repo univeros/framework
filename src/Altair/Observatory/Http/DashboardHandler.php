@@ -23,9 +23,14 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Serves the Observatory dashboard as server-rendered HTML.
  *
- * Access is gated by the Observatory facade: when the guard denies, a 403
- * "disabled" page is returned instead of any panel data. The host routes a path
+ * `GET ?` renders the card overview; `GET ?panel=<id>` renders that panel's
+ * detail view (a filterable table of its rows, 404 when the id is unknown).
+ * Access is gated by the Observatory facade — a denied guard returns the 403
+ * "disabled" page instead of any panel data. The host routes a path
  * (e.g. /_observatory) to this handler.
+ *
+ * $streamUrl, when set, is passed to the activity detail view to drive the SSE
+ * live-tail (it should point at the host's {@see ActivityStreamHandler} route).
  */
 final readonly class DashboardHandler implements RequestHandlerInterface
 {
@@ -34,6 +39,7 @@ final readonly class DashboardHandler implements RequestHandlerInterface
         private TemplateRenderer $renderer,
         private ResponseFactoryInterface $responseFactory,
         private StreamFactoryInterface $streamFactory,
+        private string $streamUrl = '',
     ) {}
 
     #[Override]
@@ -43,8 +49,21 @@ final readonly class DashboardHandler implements RequestHandlerInterface
             return $this->html(403, $this->renderer->render('denied'));
         }
 
+        $dashboard = $this->observatory->dashboard();
+        $panel = $request->getQueryParams()['panel'] ?? null;
+        $panelId = \is_string($panel) ? $panel : '';
+
+        if ($panelId !== '') {
+            return $this->html(isset($dashboard[$panelId]) ? 200 : 404, $this->renderer->render('panel', [
+                'panels' => $dashboard,
+                'active' => $panelId,
+                'streamUrl' => $this->streamUrl,
+            ]));
+        }
+
         return $this->html(200, $this->renderer->render('dashboard', [
-            'panels' => $this->observatory->dashboard(),
+            'panels' => $dashboard,
+            'active' => '',
         ]));
     }
 

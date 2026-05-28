@@ -31,16 +31,7 @@ $icon = static fn(string $k, string $c = ''): string => IconSet::svg($k, $c);
 </head>
 <body>
 <div class="o-app">
-    <aside class="o-sidebar">
-        <div class="o-brand"><span class="o-brand-mark"><?= $icon('overview', 'o-brand-mark') ?></span> Observatory</div>
-        <div class="o-nav-group">Monitors</div>
-        <?php foreach ($panels as $id => $panel): ?>
-            <a class="o-nav-item" href="#panel-<?= $e((string) $id) ?>">
-                <?= $icon((string) ($panel['icon'] ?? '')) ?>
-                <span><?= $e((string) ($panel['label'] ?? $id)) ?></span>
-            </a>
-        <?php endforeach; ?>
-    </aside>
+    <?php include __DIR__ . '/partials/sidebar.php'; ?>
 
     <main class="o-main">
         <header class="o-topbar">
@@ -71,7 +62,7 @@ $icon = static fn(string $k, string $c = ''): string => IconSet::svg($k, $c);
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
-                        <div class="o-card-foot"><a href="#panel-<?= $e((string) $id) ?>">view &rarr;</a></div>
+                        <div class="o-card-foot"><a href="?panel=<?= $e((string) $id) ?>">view &rarr;</a></div>
                     </section>
                 <?php endforeach; ?>
             </div>
