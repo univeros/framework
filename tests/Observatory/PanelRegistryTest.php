@@ -51,7 +51,7 @@ final class PanelRegistryTest extends TestCase
 
     private function panel(string $id, string $label = 'Label'): PanelInterface
     {
-        return new readonly class($id, $label) implements PanelInterface {
+        return new readonly class ($id, $label) implements PanelInterface {
             public function __construct(private string $id, private string $label) {}
 
             public function id(): string
