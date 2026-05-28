@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Altair\Courier\Support;
 
+use Altair\Courier\Contracts\CommandInterface;
 use Altair\Structure\Map;
 
+/**
+ * @extends Map<string, class-string<CommandInterface>|CommandInterface>
+ */
 class MessageCommandMap extends Map {}

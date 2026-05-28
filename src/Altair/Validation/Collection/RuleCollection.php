@@ -18,6 +18,9 @@ use Altair\Validation\Exception\InvalidArgumentException;
 use Override;
 use Traversable;
 
+/**
+ * @extends Map<string, mixed>
+ */
 class RuleCollection extends Map
 {
     /**

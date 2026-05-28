@@ -33,7 +33,7 @@ final readonly class RouteInspector
     {
         $rows = [];
         foreach ($this->routes as $request => $action) {
-            [$method, $path] = $this->splitRequest((string) $request);
+            [$method, $path] = $this->splitRequest($request);
             $rows[] = [
                 'method' => $method,
                 'path' => $path,
@@ -63,7 +63,7 @@ final readonly class RouteInspector
     {
         $matches = [];
         foreach ($this->routes as $request => $action) {
-            [$method, $registeredPath] = $this->splitRequest((string) $request);
+            [$method, $registeredPath] = $this->splitRequest($request);
             if ($registeredPath === $path) {
                 $matches[] = [
                     'method' => $method,

@@ -18,6 +18,9 @@ use Altair\Structure\Map;
 use Override;
 use Traversable;
 
+/**
+ * @extends Map<string, mixed>
+ */
 class FilterCollection extends Map
 {
     /**

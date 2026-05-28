@@ -13,4 +13,7 @@ namespace Altair\Container\Collection;
 
 use Altair\Structure\Map;
 
+/**
+ * @extends Map<string, mixed>
+ */
 class PreparesCollection extends Map {}

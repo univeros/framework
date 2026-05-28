@@ -13,4 +13,9 @@ namespace Altair\Http\Collection;
 
 use Altair\Structure\Map;
 
+/**
+ * Maps a "METHOD /path" route key to its handler reference (an action FQCN).
+ *
+ * @extends Map<string, string>
+ */
 class RouteCollection extends Map {}

@@ -98,7 +98,7 @@ final readonly class ContainerInspector
                 continue; // null placeholder — registered but not yet built.
             }
 
-            $id = $this->displayName((string) $name);
+            $id = $this->displayName($name);
 
             if ($needle !== null && !str_contains(strtolower($id), $needle)) {
                 continue;
@@ -136,7 +136,7 @@ final readonly class ContainerInspector
 
         // Container collections are keyed by lower-cased class names — match the same normalization.
         $lookupKey = strtolower(ltrim($id, '\\'));
-        $aliasTarget = isset($aliases[$lookupKey]) ? (string) $aliases[$lookupKey] : null;
+        $aliasTarget = $aliases[$lookupKey] ?? null;
         $resolved = $aliasTarget ?? ltrim($id, '\\');
 
         $kind = match (true) {
@@ -189,7 +189,7 @@ final readonly class ContainerInspector
         $seen = [];
 
         foreach ($aliases as $original => $target) {
-            $normalized = (string) $original;
+            $normalized = $original;
             $seen[$normalized] = true;
             // An alias's `shared` flag reflects whether the alias name
             // itself is registered as a singleton — which is uncommon.
@@ -200,13 +200,13 @@ final readonly class ContainerInspector
             yield [
                 'id' => $this->displayName($normalized),
                 'kind' => 'alias',
-                'target' => (string) $target,
+                'target' => $target,
                 'shared' => $shares->hasKey($normalized),
             ];
         }
 
         foreach ($shares as $name => $_) {
-            $normalized = (string) $name;
+            $normalized = $name;
             if (isset($seen[$normalized])) {
                 continue;
             }
@@ -222,7 +222,7 @@ final readonly class ContainerInspector
         }
 
         foreach ($delegates as $name => $_) {
-            $normalized = (string) $name;
+            $normalized = $name;
             if (isset($seen[$normalized])) {
                 continue;
             }
@@ -238,7 +238,7 @@ final readonly class ContainerInspector
         }
 
         foreach ($classDefinitions as $name => $_) {
-            $normalized = (string) $name;
+            $normalized = $name;
             if (isset($seen[$normalized])) {
                 continue;
             }

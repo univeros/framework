@@ -26,6 +26,9 @@ final class TransportRegistry
     /** @var array<string, TransportInterface> */
     private array $cache = [];
 
+    /**
+     * @param TransportFactoryInterface<TransportInterface> $factory
+     */
     public function __construct(
         private readonly TransportSettings $settings,
         private readonly TransportFactoryInterface $factory,
