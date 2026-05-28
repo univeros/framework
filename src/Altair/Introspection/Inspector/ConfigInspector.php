@@ -82,8 +82,8 @@ final readonly class ConfigInspector
         // De-duplicate across the three sources; $_ENV wins over $_SERVER wins over getenv().
         $merged = array_merge(
             $this->envFromGetenv(),
-            \is_array($_SERVER) ? $_SERVER : [],
-            \is_array($_ENV) ? $_ENV : [],
+            $_SERVER,
+            $_ENV,
         );
 
         ksort($merged);

@@ -63,11 +63,13 @@ class StatusResponder implements ResponderInterface
      */
     private function status(ResponseInterface $response, PayloadInterface $payload): ResponseInterface
     {
-        $status = $payload->getStatus();
-        $code = $this->httpStatusCollection->getStatusCode($status);
+        $code = (int) $payload->getStatus();
+        $reason = $this->httpStatusCollection->hasCode($code)
+            ? $this->httpStatusCollection->getReasonPhrase($code)
+            : '';
 
         try {
-            return $response->withStatus($code);
+            return $response->withStatus($code, $reason);
         } catch (\InvalidArgumentException $invalidArgumentException) {
             throw new InvalidArgumentException($invalidArgumentException->getMessage(), $invalidArgumentException->getCode(), $invalidArgumentException->getPrevious());
         }

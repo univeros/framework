@@ -34,11 +34,10 @@ class AliasesCollection extends Map
      */
     public function define(string $original, string $alias, SharesCollection $sharesCollection): self
     {
-        if (($original === '' || $original === '0' || !\is_string($original)) || ($alias === '' || $alias === '0' || !\is_string($alias))) {
+        if ($original === '' || $original === '0' || $alias === '' || $alias === '0') {
             throw new InvalidArgumentException('"$original" and/or "$alias" cannot be empty.');
         }
 
-        /** @var AliasesCollection|string $original */
         $original = $this->normalizeName($original);
 
         if (isset($sharesCollection[$original])) {
@@ -56,7 +55,9 @@ class AliasesCollection extends Map
             $sharesCollection->put($alias, null)->remove($original);
         }
 
-        return $this->put($original, $alias);
+        $this->put($original, $alias);
+
+        return $this;
     }
 
     /**

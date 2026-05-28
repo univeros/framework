@@ -88,13 +88,8 @@ class IsbnRule extends AbstractRule
 
         $checksum = 0;
         for ($i = 0; $i < $length; $i += 2) {
-            if ($length % 2 === 0) {
-                $checksum += 3 * (int) substr($value, $i, 1);
-                $checksum += (int) substr($value, $i + 1, 1);
-            } else {
-                $checksum += (int) substr($value, $i, 1);
-                $checksum += 3 * (int) substr($value, $i + 1, 1);
-            }
+            $checksum += (int) substr($value, $i, 1);
+            $checksum += 3 * (int) substr($value, $i + 1, 1);
         }
 
         return $checksum % 10 === 0;

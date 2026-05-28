@@ -24,10 +24,15 @@ use Override;
  */
 class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 {
+    /**
+     * @var array<int, CommandMiddlewareInterface|class-string<CommandMiddlewareInterface>>
+     */
     protected array $middlewares;
 
     /**
      * CommandRunnerMiddlewareStrategy constructor.
+     *
+     * @param array<int, CommandMiddlewareInterface|class-string<CommandMiddlewareInterface>>|null $middlewares
      */
     public function __construct(?array $middlewares = null, protected ?MiddlewareResolverInterface $resolver = null)
     {
@@ -37,6 +42,7 @@ class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
     /**
      * Returns a new instance with
      *
+     * @param array<int, CommandMiddlewareInterface|class-string<CommandMiddlewareInterface>> $middlewares
      *
      * @throws InvalidCommandMiddlewareException
      */

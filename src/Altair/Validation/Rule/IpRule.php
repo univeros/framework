@@ -108,11 +108,12 @@ class IpRule extends AbstractRule
             return $range;
         }
 
-        if ($isMask || $max < 8 || $max > 30) {
+        $prefix = (int) $max;
+        if ($isMask || $prefix < 8 || $prefix > 30) {
             throw new InvalidArgumentException('Invalid network mask.');
         }
 
-        $range['mask'] = \sprintf('%032b', ip2long(long2ip(~((2 ** (32 - $max)) - 1))));
+        $range['mask'] = \sprintf('%032b', ip2long(long2ip(~((2 ** (32 - $prefix)) - 1))));
 
         return $range;
     }

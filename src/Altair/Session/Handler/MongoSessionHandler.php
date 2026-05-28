@@ -120,10 +120,10 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function gc($maxlifetime)
+    public function gc($maxlifetime): int|false
     {
         try {
-            $this->collection->deleteMany(
+            $result = $this->collection->deleteMany(
                 [
                     'session_lifetime' => ['$lt' => $this->createUTCDateTime()],
                 ]
@@ -132,7 +132,7 @@ class MongoSessionHandler implements SessionHandlerInterface
             return false;
         }
 
-        return true;
+        return $result->getDeletedCount();
     }
 
     /**

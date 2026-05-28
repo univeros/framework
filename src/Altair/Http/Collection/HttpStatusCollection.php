@@ -20,7 +20,6 @@ use Countable;
 use IteratorAggregate;
 use Override;
 use ReflectionClass;
-use Traversable;
 
 /**
  * @implements IteratorAggregate<int, string>
@@ -36,9 +35,9 @@ class HttpStatusCollection implements Countable, IteratorAggregate
 
     /**
      * @inheritDoc
-     * @param array<int, string>|Traversable<int, string> $values
+     * @param iterable<int, string> $values
      */
-    public function __construct($values = [])
+    public function __construct(iterable $values = [])
     {
         $this->values = $this->buildCommonValues();
 
@@ -107,7 +106,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      * @throws InvalidArgumentException If the requested $statusCode is not valid
      *
      */
-    public function getResponseClass(int $code): string
+    public function getResponseClass(int $code): int
     {
         $responseClass = [
             1 => HttpStatusCodeInterface::RESPONSE_CLASS_INFORMATIONAL,
@@ -117,7 +116,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
             5 => HttpStatusCodeInterface::RESPONSE_CLASS_SERVER_ERROR,
         ];
         $code = $this->filterCode($code);
-        return $responseClass[(int) substr($code, 0, 1)];
+        return $responseClass[intdiv($code, 100)];
     }
 
     /**
@@ -172,14 +171,10 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * Merges an array of status codes and its reason phrase into the default values.
      *
-     * @param array<int, string>|Traversable<int, string> $values
+     * @param iterable<int, string> $values
      */
-    public function mergeAll($values): void
+    public function mergeAll(iterable $values): void
     {
-        if (!\is_array($values) || !$values instanceof Traversable) {
-            throw new InvalidArgumentException("Values must be a Traversable object or an array");
-        }
-
         foreach ($values as $code => $reason) {
             $this->merge($code, $reason);
         }

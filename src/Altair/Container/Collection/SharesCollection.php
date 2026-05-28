@@ -30,7 +30,9 @@ class SharesCollection extends Map
     {
         [, $normalizedName] = $aliasesCollection->resolve($name);
 
-        return $this->put($normalizedName, $this[$normalizedName] ?? null);
+        $this->put($normalizedName, $this[$normalizedName] ?? null);
+
+        return $this;
     }
 
     /**
@@ -49,6 +51,8 @@ class SharesCollection extends Map
             );
         }
 
-        return $this->put($normalizedName, $instance);
+        $this->put($normalizedName, $instance);
+
+        return $this;
     }
 }

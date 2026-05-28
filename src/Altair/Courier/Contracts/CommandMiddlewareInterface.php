@@ -13,5 +13,5 @@ namespace Altair\Courier\Contracts;
 
 interface CommandMiddlewareInterface
 {
-    public function handle(CommandMessageInterface $message, callable $next);
+    public function handle(CommandMessageInterface $message, callable $next): void;
 }

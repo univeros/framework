@@ -20,8 +20,8 @@ use Exception;
 use Override;
 use Predis\Client;
 use Predis\Collection\Iterator\Keyspace;
-use Predis\Connection\Aggregate\PredisCluster;
-use Predis\Connection\Aggregate\RedisCluster;
+use Predis\Connection\Cluster\PredisCluster;
+use Predis\Connection\Cluster\RedisCluster;
 
 class PredisCacheItemStorage implements CacheItemStorageInterface
 {
@@ -163,14 +163,10 @@ class PredisCacheItemStorage implements CacheItemStorageInterface
         }
 
         $this->client->pipeline(
+            /** @param Client $pipe */
             static function ($pipe) use ($serialized, $lifespan): void {
-                /** @var Client $pipe */
                 foreach ($serialized as $id => $value) {
-                    if (0 >= $lifespan) {
-                        $pipe->set($id, $value);
-                    } else {
-                        $pipe->setex($id, $lifespan, $value);
-                    }
+                    $pipe->setex($id, $lifespan, $value);
                 }
             }
         );

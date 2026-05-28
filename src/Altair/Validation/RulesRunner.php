@@ -21,19 +21,13 @@ use Override;
 class RulesRunner implements RulesRunnerInterface
 {
     /**
-     *
-     * A callable to convert queue entries to callables.
-     *
-     * @var callable|ResolverInterface
-     *
+     * A resolver to convert queue entries to callables.
      */
-    protected $resolver;
+    protected ?ResolverInterface $resolver;
 
     /**
-     *
      * Constructor.
      *
-     * @param callable|ResolverInterface $resolver Converts queue entries to callables.
      * @param Queue<mixed> $queue The middleware queue.
      */
     public function __construct(?ResolverInterface $resolver = null, protected ?Queue $queue = null)
@@ -79,7 +73,7 @@ class RulesRunner implements RulesRunnerInterface
             return fn(PayloadInterface $payload, callable $next): PayloadInterface => $payload;
         }
 
-        if (!$this->resolver) {
+        if (!$this->resolver instanceof ResolverInterface) {
             return $entry;
         }
 
