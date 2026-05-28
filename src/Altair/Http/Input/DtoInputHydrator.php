@@ -15,7 +15,7 @@ use Altair\Http\Exception\InputValidationException;
 use BackedEnum;
 
 use const FILTER_NULL_ON_FAILURE;
-use const FILTER_VALIDATE_BOOL;
+use const FILTER_VALIDATE_BOOLEAN;
 
 use Psr\Http\Message\ServerRequestInterface;
 use ReflectionClass;
@@ -176,7 +176,7 @@ final class DtoInputHydrator
                     return $value;
                 }
 
-                $bool = filter_var($value, FILTER_VALIDATE_BOOL, FILTER_NULL_ON_FAILURE);
+                $bool = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ($bool === null) {
                     $errors[$field] = 'must be a boolean';
 
