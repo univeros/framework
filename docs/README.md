@@ -48,7 +48,14 @@ Talking to external systems and managing cryptographic primitives.
 
 Developer experience and AI-agent ergonomics.
 
+- [Cli](./packages/cli.md) — attribute-driven CLI: write a `#[Command]` invokable, decorate its `__invoke()` params with `#[Argument]`/`#[Option]`, and `bin/altair` discovers and autowires it. The substrate every other tool's commands ride on.
 - [AgentSpec](./packages/agent-spec.md) — turns every framework package into a deterministic Markdown manifest under `.agent/` so AI agents can be productive without reading source. Ships `manifest:generate` and `manifest:show` CLI commands with a `--check` drift gate for CI.
+- [Scaffold](./packages/scaffold.md) — the spec-driven core: a YAML endpoint spec in, Action / Input / Responder / domain stub / test / OpenAPI fragment / route entry out, plus a rewind/replay journal, drift linting, and TypeScript/Python SDK emitters.
+- [Introspection](./packages/introspection.md) — a read-only X-ray of a booted app — container bindings, routes, listeners, middleware, specs, masked config — as `bin/altair` commands with `--format=json` for agents.
+- [Doctor](./packages/doctor.md) — a health-check runner (`bin/altair doctor`) with a deterministic JSON report: PHP/extension/composer checks, CS/PHPStan/test gates, container and database probes, and opt-in fixes.
+- [Events](./packages/events.md) — the append-only `.altair/events.jsonl` mutation log, so agents and developers can answer "what just changed?" across sessions. (Not the PSR-14 dispatcher — that's Happen.)
+- [TestReporter](./packages/test-reporter.md) — an AI-native PHPUnit 11 extension that emits a structured JSON report, mapping each failure back to the production source under test with structured diffs.
+- [Mcp](./packages/mcp.md) — a first-party Model Context Protocol server exposing the framework as 28 agent-callable tools over stdio/HTTP, so any MCP client can build, inspect, test, and ship an Altair API through tool calls.
 
 ## How these docs are structured
 
