@@ -13,4 +13,9 @@ namespace Altair\Http\Collection;
 
 use Altair\Structure\Map;
 
+/**
+ * Maps a request input name (attribute, body, cookie, query or upload key) to its value.
+ *
+ * @extends Map<string, mixed>
+ */
 class InputCollection extends Map {}

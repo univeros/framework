@@ -60,7 +60,7 @@ final readonly class ConfigInspector
             $rows[] = [
                 'source' => 'container',
                 'key' => '$' . $name,
-                'value' => $this->renderValue((string) $name, $value, $maskSecrets, $patterns),
+                'value' => $this->renderValue($name, $value, $maskSecrets, $patterns),
             ];
         }
 

@@ -33,7 +33,7 @@ class Runner implements MiddlewareRunnerInterface
      *
      * Constructor.
      *
-     * @param Queue $queue The middleware queue.
+     * @param Queue<mixed> $queue The middleware queue.
      *
      * @param callable|MiddlewareResolverInterface $resolver Converts queue entries to callables.
      *

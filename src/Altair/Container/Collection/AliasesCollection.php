@@ -15,6 +15,9 @@ use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Traits\NameNormalizerTrait;
 use Altair\Structure\Map;
 
+/**
+ * @extends Map<string, string>
+ */
 class AliasesCollection extends Map
 {
     use NameNormalizerTrait;

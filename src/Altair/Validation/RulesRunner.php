@@ -34,7 +34,7 @@ class RulesRunner implements RulesRunnerInterface
      * Constructor.
      *
      * @param callable|ResolverInterface $resolver Converts queue entries to callables.
-     * @param Queue $queue The middleware queue.
+     * @param Queue<mixed> $queue The middleware queue.
      */
     public function __construct(?ResolverInterface $resolver = null, protected ?Queue $queue = null)
     {
