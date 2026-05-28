@@ -1,6 +1,3 @@
-includes:
-    - phpstan-baseline.neon
-
 parameters:
     level: 6
     phpVersion: 80300
@@ -11,8 +8,37 @@ parameters:
     tmpDir: .phpstan-cache
 
     ignoreErrors:
-        # PHP-side stubs for optional ext-* extensions vary across environments
+        # PHP-side stubs for optional ext-* extensions vary across environments.
         - identifier: function.notFound
           paths:
               - src/Altair/Cache/Storage/MemcachedCacheItemStorage.php
               - src/Altair/Cache/Storage/RedisCacheItemStorage.php
+
+        # Public-API mixin traits consumed by host applications (and exercised by the
+        # framework's own test fixtures). PHPStan analyses `src` only, so it reports them
+        # as "used zero times"; they are intentionally part of the published surface.
+        - identifier: trait.unused
+          paths:
+              - src/Altair/Cache/Traits/TagsAwareTrait.php
+              - src/Altair/Courier/Traits/LogMessageTrait.php
+              - src/Altair/Data/Traits/AttributesAwareTrait.php
+              - src/Altair/Data/Traits/DateAttributeMutatorAwareTrait.php
+              - src/Altair/Data/Traits/ImmutableAttributesAwareTrait.php
+              - src/Altair/Data/Traits/JsonSerializableAwareTrait.php
+              - src/Altair/Data/Traits/SerializeAwareTrait.php
+              - src/Altair/Happen/Traits/EventStackAwareTrait.php
+
+        # CookieCollection/SetCookieCollection deliberately diverge from Map<string, Cookie>:
+        # values() exposes string cookie values rather than Cookie objects, so no @extends
+        # binding is Liskov-valid. The divergence is an intentional string-keyed cookie store.
+        - identifier: missingType.generics
+          paths:
+              - src/Altair/Cookie/Collection/CookieCollection.php
+              - src/Altair/Cookie/Collection/SetCookieCollection.php
+
+        # Cycle ORM's getRepository() parameter is class-string<T>|non-empty-string|T, an
+        # ambiguous union that prevents template inference. The concrete result type is pinned
+        # via @var CycleNativeRepository<TEntity> at the call site.
+        - identifier: argument.templateType
+          paths:
+              - src/Altair/Persistence/Cycle/CycleRepository.php
