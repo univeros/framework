@@ -39,7 +39,7 @@ class CookieFactory
 
         return new CookieCollection(
             array_map(
-                static fn($pair): Cookie => static::createFromPairString($pair),
+                static::createFromPairString(...),
                 $pairs
             )
         );

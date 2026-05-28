@@ -67,7 +67,7 @@ class IpAddressMiddleware implements MiddlewareInterface
                 continue;
             }
 
-            foreach (array_map('trim', explode(',', $header)) as $ip) {
+            foreach (array_map(trim(...), explode(',', $header)) as $ip) {
                 if (!\in_array($ip, $ips, true) && filter_var($ip, FILTER_VALIDATE_IP)) {
                     $ips[] = $ip;
                 }

@@ -35,7 +35,7 @@ class JsonContentMiddleware extends AbstractContentHandlerMiddleware
         try {
             return json_decode($body, $this->associative, $this->maxDepth, $this->flags | JSON_THROW_ON_ERROR);
         } catch (JsonException $jsonException) {
-            throw new HttpBadRequestException($jsonException->getMessage(), previous: $jsonException);
+            throw new HttpBadRequestException($jsonException->getMessage(), $jsonException->getCode(), previous: $jsonException);
         }
     }
 }

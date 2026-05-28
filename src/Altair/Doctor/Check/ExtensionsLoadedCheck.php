@@ -37,7 +37,7 @@ final readonly class ExtensionsLoadedCheck implements CheckInterface
         private array $required,
         ?Closure $isLoaded = null,
     ) {
-        $this->isLoaded = $isLoaded ?? static fn(string $ext): bool => \extension_loaded($ext);
+        $this->isLoaded = $isLoaded ?? \extension_loaded(...);
     }
 
     #[Override]

@@ -100,7 +100,7 @@ class IpRestrictionMiddleware implements MiddlewareInterface
     {
         $ips = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_IP_ADDRESS);
         if (\is_array($ips)) {
-            return array_values(array_filter($ips, 'is_string'));
+            return array_values(array_filter($ips, is_string(...)));
         }
 
         if (\is_string($ips) && $ips !== '') {

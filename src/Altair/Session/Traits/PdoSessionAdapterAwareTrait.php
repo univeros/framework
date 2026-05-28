@@ -183,7 +183,7 @@ trait PdoSessionAdapterAwareTrait
                 } catch (PDOException $e) {
                     // Catch duplicate key error because other connection created the session already.
                     // It would only not be the case when the other connection destroyed the session.
-                    if (str_starts_with($e->getCode(), '23')) {
+                    if (str_starts_with((string) $e->getCode(), '23')) {
                         // Retrieve finished session data written by concurrent connection by restarting the loop.
                         // We have to start a new transaction as a failed query will mark the current transaction as
                         // aborted in PostgreSQL and disallow further queries within it.
@@ -253,7 +253,7 @@ trait PdoSessionAdapterAwareTrait
                 $insertQuery->execute();
             } catch (PDOException $e) {
                 // Handle integrity violation SQLSTATE 23000 (or a subclass like 23505 in Postgres) for duplicate keys
-                if (str_starts_with($e->getCode(), '23')) {
+                if (str_starts_with((string) $e->getCode(), '23')) {
                     $updateQuery->execute();
                 } else {
                     throw $e;

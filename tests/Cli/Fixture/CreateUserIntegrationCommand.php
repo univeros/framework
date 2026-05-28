@@ -24,9 +24,9 @@ final readonly class CreateUserIntegrationCommand
     public function __invoke(
         #[Argument(description: 'The user email')]
         string $email,
-        #[Option(short: 'p', description: 'Initial password (random if omitted)')]
+        #[Option(description: 'Initial password (random if omitted)', short: 'p')]
         ?string $password = null,
-        #[Option(short: 'r', description: 'User role')]
+        #[Option(description: 'User role', short: 'r')]
         Role $role = Role::Member,
         #[Option(description: 'Skip welcome email')]
         bool $silent = false,

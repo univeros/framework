@@ -142,7 +142,7 @@ final readonly class TransportSettings
     {
         $raw = getenv();
 
-        return \is_array($raw) ? array_map('strval', array_keys($raw)) : [];
+        return \is_array($raw) ? array_map(strval(...), array_keys($raw)) : [];
     }
 
     /**
@@ -170,7 +170,7 @@ final readonly class TransportSettings
 
             [$messageClass, $transports] = explode(':', $pair, 2);
             $messageClass = trim($messageClass);
-            $transportList = array_values(array_filter(array_map('trim', explode('|', $transports))));
+            $transportList = array_values(array_filter(array_map(trim(...), explode('|', $transports))));
 
             if ($messageClass === '' || $transportList === []) {
                 throw new InvalidArgumentException(\sprintf("Malformed routing entry '%s'.", $pair));

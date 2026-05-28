@@ -69,8 +69,8 @@ class DispatchAndConsumeTest extends TestCase
         $transport = new InMemoryTransport();
         $sendersLocator = new SendersLocator(
             [SendWelcomeEmail::class => ['default']],
-            new class($transport) implements ContainerInterface {
-                public function __construct(private readonly InMemoryTransport $transport) {}
+            new readonly class($transport) implements ContainerInterface {
+                public function __construct(private InMemoryTransport $transport) {}
 
                 public function get(string $id): InMemoryTransport
                 {

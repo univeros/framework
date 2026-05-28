@@ -210,7 +210,7 @@ final readonly class MessengerConfiguration implements ConfigurationInterface
                     TransportRegistry $registry,
                 ): FailureSenderContainer {
                     if ($settings->failureTransport === null) {
-                        return new FailureSenderContainer([], null);
+                        return new FailureSenderContainer([]);
                     }
 
                     return new FailureSenderContainer(
