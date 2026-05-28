@@ -19,7 +19,7 @@ class BooleanFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value): ?bool
+    public function parse(mixed $value): ?bool
     {
         if (!\is_scalar($value)) {
             return null;

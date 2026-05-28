@@ -16,6 +16,7 @@ use Altair\Sanitation\Exception\InvalidArgumentException;
 use Altair\Structure\Contracts\MapInterface;
 use Altair\Structure\Map;
 use Override;
+use Traversable;
 
 class FilterCollection extends Map
 {
@@ -23,7 +24,7 @@ class FilterCollection extends Map
      * @inheritDoc
      */
     #[Override]
-    public function put($key, $value): MapInterface
+    public function put(mixed $key, mixed $value): MapInterface
     {
         $this->parseFilters($value);
 
@@ -32,6 +33,8 @@ class FilterCollection extends Map
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed>|Traversable<string, mixed> $values
      */
     #[Override]
     public function putAll($values): MapInterface

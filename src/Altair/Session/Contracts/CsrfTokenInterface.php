@@ -28,5 +28,5 @@ interface CsrfTokenInterface
     /**
      * Regenerates the value of the outgoing CSRF token.
      */
-    public function generateValue();
+    public function generateValue(): string;
 }
