@@ -1,0 +1,20 @@
+{
+    "name": "univeros/observatory",
+    "description": "Observatory — a dev-only web monitoring panel for Altair apps. A thin, gated presentation layer over the framework's introspection, doctor, events, messaging and persistence data sources.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Observatory\\": ""
+        }
+    }
+}
