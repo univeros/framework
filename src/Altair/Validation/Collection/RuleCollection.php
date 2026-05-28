@@ -16,6 +16,7 @@ use Altair\Structure\Map;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Exception\InvalidArgumentException;
 use Override;
+use Traversable;
 
 class RuleCollection extends Map
 {
@@ -23,7 +24,7 @@ class RuleCollection extends Map
      * @inheritDoc
      */
     #[Override]
-    public function put($key, $value): MapInterface
+    public function put(mixed $key, mixed $value): MapInterface
     {
         $this->filterRules($value);
 
@@ -32,6 +33,8 @@ class RuleCollection extends Map
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed>|Traversable<string, mixed> $values
      */
     #[Override]
     public function putAll($values): MapInterface

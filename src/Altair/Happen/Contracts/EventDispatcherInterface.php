@@ -57,7 +57,7 @@ interface EventDispatcherInterface
     /**
      * Dispatches a stack of events. The result is an array of EventInterface objects.
      *
-     *
+     * @return list<EventInterface>
      */
     public function dispatchStack(EventStackInterface $eventStack): array;
 
@@ -67,7 +67,7 @@ interface EventDispatcherInterface
      * The first parameter should be the event name. We'll return an array of
      * all the registered even listeners, or an empty array if there are none.
      *
-     *
+     * @return list<callable>
      */
     public function getListeners(string $event): array;
 

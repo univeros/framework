@@ -28,13 +28,14 @@ interface DeleteRepositoryInterface
     /**
      * Delete a single object by variable criteria
      *
-     *
+     * @param array<string, mixed> $criteria
      */
     public function deleteOneBy(array $criteria): bool;
 
     /**
      * Delete multiple objects by variable criteria
      *
+     * @param array<string, mixed> $criteria
      *
      * @return integer the number of objects successfully deleted.
      */

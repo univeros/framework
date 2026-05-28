@@ -21,12 +21,12 @@ use Override;
 class EventDispatcher implements EventDispatcherInterface
 {
     /**
-     * @var array keeps reference of the registered listeners.
+     * @var array<string, array<int, list<callable>>> keeps reference of the registered listeners.
      */
     protected $listeners = [];
 
     /**
-     * @var array keeps reference of sorted listeners by priority.
+     * @var array<string, list<callable>> keeps reference of sorted listeners by priority.
      */
     protected $sortedListeners = [];
 
@@ -96,6 +96,8 @@ class EventDispatcher implements EventDispatcherInterface
 
     /**
      * @inheritDoc
+     *
+     * @return list<EventInterface>
      */
     #[Override]
     public function dispatchStack(EventStackInterface $eventStack): array
@@ -112,6 +114,8 @@ class EventDispatcher implements EventDispatcherInterface
 
     /**
      * @inheritDoc
+     *
+     * @return list<callable>
      */
     #[Override]
     public function getListeners(string $name): array
@@ -239,6 +243,8 @@ class EventDispatcher implements EventDispatcherInterface
      * Sorts the internal list of listeners for the given event by priority.
      *
      * @param string $name The name of the event
+     *
+     * @return list<callable>
      */
     protected function getSortedListeners(string $name): array
     {

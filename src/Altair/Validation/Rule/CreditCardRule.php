@@ -17,7 +17,7 @@ use Override;
 class CreditCardRule extends AbstractRule
 {
     /**
-     * @var array
+     * @var array<string, array{pattern: string, length: array<int, int>}>
      */
     protected $cards = [
         'visaelectron' => [
@@ -80,7 +80,7 @@ class CreditCardRule extends AbstractRule
     ];
 
     /**
-     * @var array
+     * @var array<int, string>
      */
     protected $noLuhn = ['unionpay'];
 
@@ -102,7 +102,7 @@ class CreditCardRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         $value = $this->sanitize($value);
 
@@ -110,11 +110,8 @@ class CreditCardRule extends AbstractRule
             $this->assertPattern($value) && $this->assertLuhn($value);
     }
 
-    /**
-     * @param $value
-     */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid "%s" credit card number.', $value, $this->type);
     }

@@ -19,7 +19,7 @@ class AlphaRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         if (!\is_scalar($value)) {
             return false;
@@ -32,7 +32,7 @@ class AlphaRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" have invalid alphabetic character(s)', $value);
     }

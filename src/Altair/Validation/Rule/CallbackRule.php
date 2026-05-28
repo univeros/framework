@@ -32,7 +32,7 @@ class CallbackRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         return \call_user_func($this->callable, $value);
     }
@@ -41,7 +41,7 @@ class CallbackRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf('"%s" is not a valid value.', $value);
     }

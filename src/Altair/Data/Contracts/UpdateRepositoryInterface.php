@@ -16,7 +16,8 @@ interface UpdateRepositoryInterface
     /**
      * Update an object on its storage and return the updated version.
      *
-     * @param integer $id
+     * @param integer               $id
+     * @param array<string, mixed>  $values
      *
      * @return object
      */

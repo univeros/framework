@@ -34,7 +34,10 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
 
     protected string $namespace;
 
-    protected $deferred = [];
+    /**
+     * @var array<string, CacheItem>
+     */
+    protected array $deferred = [];
 
     protected Closure $cacheItemFactory;
 
@@ -78,6 +81,11 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
         return ($this->cacheItemFactory)($key, null, false);
     }
 
+    /**
+     * @param string[] $keys
+     *
+     * @return iterable<string, CacheItemInterface>
+     */
     #[Override]
     public function getItems(array $keys = []): iterable
     {
@@ -242,7 +250,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * When bulk delete has failed, retry them individually.
      *
-     *
+     * @param array<string, string> $ids
      */
     protected function retryDeleteItems(array $ids): bool
     {
@@ -266,7 +274,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * When doing bulk save, if it has failed, retry failed individually.
      *
-     *
+     * @param array<int, array<string, mixed>> $merged
+     * @param array<int, list<string>> $data
      */
     protected function retryCommit(array $merged, array $data): bool
     {
@@ -302,7 +311,7 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
      */
     protected function ensureCommitDeferred(): void
     {
-        if (!empty($this->deferred)) {
+        if ($this->deferred !== []) {
             $this->commit();
         }
     }
@@ -310,8 +319,10 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Generates the cache items returning a generator.
      *
+     * @param array<string, mixed> $items
+     * @param array<string, string> $keys
      *
-     * @return Generator
+     * @return Generator<string, CacheItemInterface>
      */
     protected function createCacheItemsGenerator(array $items, array $keys): ?Generator
     {
@@ -406,6 +417,8 @@ class CacheItemPool implements CacheItemPoolInterface, LoggerAwareInterface
     /**
      * Logging helper function. If no logger has been set, then a warning error will be triggered having
      * previously replaced the tokens on the error message (i.e. ':key') for its correspondent value in the context.
+     *
+     * @param array<string, mixed> $context
      */
     protected function log(string $message, array $context = []): void
     {

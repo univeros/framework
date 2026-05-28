@@ -42,6 +42,8 @@ interface EventInterface extends StoppableEventInterface
 
     /**
      * Getter for all arguments.
+     *
+     * @return array<string, mixed>
      */
     public function getArguments(): array;
 
@@ -79,7 +81,7 @@ interface EventInterface extends StoppableEventInterface
     /**
      * Returns a new instance with new set of arguments keeping its name.
      *
-     *
+     * @param array<string, mixed> $arguments
      */
     public function withArguments(array $arguments): EventInterface;
 }

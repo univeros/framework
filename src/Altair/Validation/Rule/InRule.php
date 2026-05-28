@@ -26,7 +26,7 @@ class InRule extends AbstractRule
      * @inheritDoc
      */
     #[Override]
-    public function assert($value): bool
+    public function assert(mixed $value): bool
     {
         if (\is_array($this->haystack)) {
             return \in_array($value, $this->haystack, $this->strict);
@@ -42,11 +42,8 @@ class InRule extends AbstractRule
             : false !== mb_stripos((string) $this->haystack, $value, 0, mb_detect_encoding($value));
     }
 
-    /**
-     * @param $value
-     */
     #[Override]
-    protected function buildErrorMessage($value): string
+    protected function buildErrorMessage(mixed $value): string
     {
         return \sprintf(
             '"%s" not found in "%s".',

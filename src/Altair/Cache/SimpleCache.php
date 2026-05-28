@@ -97,6 +97,9 @@ class SimpleCache implements CacheInterface
         return $values;
     }
 
+    /**
+     * @param iterable<string, mixed> $values
+     */
     #[Override]
     public function setMultiple(iterable $values, null|int|DateInterval $ttl = null): bool
     {
@@ -172,6 +175,8 @@ class SimpleCache implements CacheInterface
     }
 
     /**
+     * @param iterable<array-key, string> $values
+     *
      * @return list<string>
      */
     private function iterableToArray(iterable $values): array
