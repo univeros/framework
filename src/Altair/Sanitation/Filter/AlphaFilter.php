@@ -16,7 +16,7 @@ use Override;
 class AlphaFilter extends AbstractFilter
 {
     #[Override]
-    public function parse($value): ?string
+    public function parse(mixed $value): ?string
     {
         return preg_replace('/[^\p{L}]/u', '', (string) $value);
     }

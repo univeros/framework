@@ -18,7 +18,7 @@ interface FiltersRunnerInterface extends MiddlewareRunnerInterface
     /**
      * Resets the internal queue with new array of filters and returns itself.
      *
-     *
+     * @param array<int, mixed> $filters
      */
     public function withFilters(array $filters): FiltersRunnerInterface;
 }

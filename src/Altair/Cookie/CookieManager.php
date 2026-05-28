@@ -42,11 +42,7 @@ class CookieManager
         return $this->setOnRequest($request, $cookie);
     }
 
-    /**
-     * @param $name
-     *
-     */
-    public function removeFromRequest(RequestInterface $request, $name): RequestInterface
+    public function removeFromRequest(RequestInterface $request, string $name): RequestInterface
     {
         $cookies = CookieFactory::createCollectionFromRequest($request);
         $cookies->remove($name);
@@ -83,11 +79,7 @@ class CookieManager
         return $cookies->putSetCookie($cookie)->injectIntoResponseHeader($response);
     }
 
-    /**
-     * @param $name
-     *
-     */
-    public function removeFromResponse(ResponseInterface $response, $name): ResponseInterface
+    public function removeFromResponse(ResponseInterface $response, string $name): ResponseInterface
     {
         $cookies = SetCookieFactory::createCollectionFromResponse($response);
         $cookies->remove($name);

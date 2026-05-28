@@ -30,7 +30,7 @@ class SessionBlock implements SessionBlockInterface
      * @inheritDoc
      */
     #[Override]
-    public function get(string $key, $default = null)
+    public function get(string $key, mixed $default = null)
     {
         return $_SESSION[$this->name][$key] ?? $default;
     }
@@ -39,7 +39,7 @@ class SessionBlock implements SessionBlockInterface
      * @inheritDoc
      */
     #[Override]
-    public function set(string $key, $value): SessionBlockInterface
+    public function set(string $key, mixed $value): SessionBlockInterface
     {
         $_SESSION[$this->name][$key] = $value;
 
@@ -103,7 +103,7 @@ class SessionBlock implements SessionBlockInterface
 
     /**
      * @inheritDoc
-     * @return mixed[]
+     * @return array<string, mixed>
      */
     #[Override]
     public function getAllFlashes($delete = false): array

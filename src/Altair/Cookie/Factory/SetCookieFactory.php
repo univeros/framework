@@ -86,6 +86,9 @@ class SetCookieFactory
         return $cookie;
     }
 
+    /**
+     * @param list<string> $strings
+     */
     public static function createCollectionFromCookieStrings(array $strings): SetCookieCollection
     {
         return new SetCookieCollection(

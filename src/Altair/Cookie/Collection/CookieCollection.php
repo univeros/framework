@@ -46,6 +46,11 @@ class CookieCollection extends Map
 
     /**
      * {@inheritDoc}
+     *
+     * @param string $key
+     * @param ?string $value
+     *
+     * @return MapInterface<string, Cookie>
      */
     #[Override]
     public function put($key, $value): MapInterface
@@ -64,6 +69,10 @@ class CookieCollection extends Map
 
     /**
      * {@inheritDoc}
+     *
+     * @param iterable<string, Cookie|string> $values
+     *
+     * @return MapInterface<string, Cookie>
      */
     #[Override]
     public function putAll($values): MapInterface
@@ -81,6 +90,8 @@ class CookieCollection extends Map
 
     /**
      * {@inheritDoc}
+     *
+     * @return MapInterface<string, Cookie>
      */
     #[Override]
     public function sort(?callable $comparator = null): MapInterface
@@ -104,6 +115,8 @@ class CookieCollection extends Map
 
     /**
      * {@inheritDoc}
+     *
+     * @return VectorInterface<int, ?string>
      */
     #[Override]
     public function values(): VectorInterface
@@ -156,7 +169,9 @@ class CookieCollection extends Map
     /**
      * Converts pairs to array.
      *
-     * @param $pairs
+     * @param array<int, Pair> $pairs
+     *
+     * @return array<string, string>
      */
     #[Override]
     protected function pairsToArray($pairs): array

@@ -31,7 +31,7 @@ class MinFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value)
+    public function parse(mixed $value)
     {
         if (!\is_scalar($value)) {
             return null;

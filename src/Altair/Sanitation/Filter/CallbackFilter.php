@@ -32,7 +32,7 @@ class CallbackFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value): mixed
+    public function parse(mixed $value): mixed
     {
         return \call_user_func($this->callable, $value);
     }

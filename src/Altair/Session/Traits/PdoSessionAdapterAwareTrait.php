@@ -24,7 +24,7 @@ trait PdoSessionAdapterAwareTrait
     protected $pdo;
 
     /**
-     * @var array DB connection options
+     * @var array<int, mixed> DB connection options
      */
     protected $options;
 
@@ -77,6 +77,8 @@ trait PdoSessionAdapterAwareTrait
 
     /**
      * PdoSessionHandler constructor.
+     *
+     * @param array<int, mixed> $options
      */
     public function __construct(
         string $dsn,

@@ -27,14 +27,14 @@ class SessionManager implements SessionManagerInterface
      * Incoming cookies from the client, typically a copy of the $_COOKIE
      * superglobal.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $cookies;
 
     /**
      * Session cookie parameters.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     protected $cookieParams = [];
 
@@ -150,6 +150,8 @@ class SessionManager implements SessionManagerInterface
 
     /**
      * @inheritDoc
+     *
+     * @return array<string, mixed>
      */
     #[Override]
     public function getCookieParams(): array
@@ -159,6 +161,8 @@ class SessionManager implements SessionManagerInterface
 
     /**
      * @inheritDoc
+     *
+     * @param array<string, mixed> $params
      */
     #[Override]
     public function setCookieParams(array $params): void
