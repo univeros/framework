@@ -50,7 +50,7 @@ class FileCache implements ReflectionCacheInterface
      * @inheritDoc
      */
     #[Override]
-    public function put(string $key, $data): ReflectionCacheInterface
+    public function put(string $key, mixed $data): ReflectionCacheInterface
     {
         $value = var_export($data, true);
         // HHVM fails at __set_state, so just use object cast for now

@@ -18,7 +18,7 @@ interface CredentialsExtractorInterface
     /**
      * Returns the credentials within the request (if any).
      *
-     *
+     * @return array<array-key, mixed>|null
      */
     public function extract(ServerRequestInterface $request): ?array;
 }

@@ -41,6 +41,7 @@ class CachedReflection implements ReflectionInterface
      * @inheritDoc
      *
      * @throws ReflectionException
+     * @return ReflectionClass<object>
      */
     #[Override]
     public function getClass(string $class): ReflectionClass
@@ -142,7 +143,7 @@ class CachedReflection implements ReflectionInterface
      * @throws ReflectionException
      */
     #[Override]
-    public function getFunction($name): ReflectionFunction
+    public function getFunction(mixed $name): ReflectionFunction
     {
         $key = \is_string($name)
             ? ReflectionCacheInterface::FUNCTIONS_KEY_PREFIX . strtolower($name)
@@ -164,7 +165,7 @@ class CachedReflection implements ReflectionInterface
      * @throws ReflectionException
      */
     #[Override]
-    public function getMethod($classNameOrInstance, string $methodName): ReflectionMethod
+    public function getMethod(mixed $classNameOrInstance, string $methodName): ReflectionMethod
     {
         $className = \is_string($classNameOrInstance)
             ? $classNameOrInstance

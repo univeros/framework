@@ -17,7 +17,7 @@ use Override;
 class ArrayCache implements ReflectionCacheInterface
 {
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $cache = [];
 
@@ -35,7 +35,7 @@ class ArrayCache implements ReflectionCacheInterface
      * @inheritDoc
      */
     #[Override]
-    public function put(string $key, $data): ReflectionCacheInterface
+    public function put(string $key, mixed $data): ReflectionCacheInterface
     {
         $this->cache[$key] = $data;
 

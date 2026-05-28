@@ -17,6 +17,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestPathRule implements HttpAuthRuleInterface
 {
+    /**
+     * @var array<string, list<string>>
+     */
     protected array $options = [
         'path' => ['/'],
         'passthrough' => [],

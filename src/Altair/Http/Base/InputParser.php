@@ -40,6 +40,9 @@ class InputParser implements InputInterface
         return $this->inputCollection;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getParsedBody(ServerRequestInterface $request): array
     {
         $body = $request->getParsedBody();
