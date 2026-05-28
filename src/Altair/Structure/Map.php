@@ -43,6 +43,8 @@ use UnderflowException;
  * @implements MapInterface<TKey, TValue>
  * @implements IteratorAggregate<TKey, TValue>
  * @implements ArrayAccess<TKey, TValue>
+ *
+ * @phpstan-consistent-constructor
  */
 class Map implements IteratorAggregate, ArrayAccess, MapInterface, CapacityInterface
 {

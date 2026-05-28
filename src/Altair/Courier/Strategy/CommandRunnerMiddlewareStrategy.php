@@ -19,6 +19,9 @@ use Altair\Courier\Exception\InvalidCommandMiddlewareException;
 use Closure;
 use Override;
 
+/**
+ * @phpstan-consistent-constructor
+ */
 class CommandRunnerMiddlewareStrategy implements CommandRunnerStrategyInterface
 {
     /**
