@@ -22,19 +22,21 @@ use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Token\InvalidTokenStructure;
 use Lcobucci\JWT\Token\UnsupportedHeaderFound;
 use Lcobucci\JWT\UnencryptedToken;
+use Lcobucci\JWT\Validation\Constraint;
 use Lcobucci\JWT\Validation\Constraint\IssuedBy;
 use Lcobucci\JWT\Validation\Constraint\LooseValidAt;
+use Lcobucci\JWT\Validation\Constraint\PermittedFor;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use Lcobucci\JWT\Validation\RequiredConstraintsViolated;
 use Override;
 use Psr\Clock\ClockInterface;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Parses and fully validates JWTs using lcobucci/jwt v5.
  *
- * Validation asserts the signature, the issuer (the requesting URI) and the token's
- * time window (expiry / not-before / issued-at) against an injectable PSR-20 clock.
+ * Validation asserts the signature, the configured issuer, the token's time window
+ * (expiry / not-before / issued-at) against an injectable PSR-20 clock, and — when an
+ * audience is configured — that the token is permitted for that audience.
  *
  * The verification algorithm is fixed to the framework-configured signer; lcobucci's
  * SignedWith rejects any token whose `alg` header does not match that signer, so
@@ -45,7 +47,6 @@ class LcobucciTokenParser implements TokenParserInterface
     private readonly ClockInterface $clock;
 
     public function __construct(
-        protected ServerRequestInterface $request,
         protected TokenConfigurationInterface $config,
         ?ClockInterface $clock = null
     ) {
@@ -62,17 +63,32 @@ class LcobucciTokenParser implements TokenParserInterface
         $parsed = $this->parseToken($configuration, $token);
 
         try {
-            $configuration->validator()->assert(
-                $parsed,
-                new SignedWith($this->config->getSigner(), $configuration->verificationKey()),
-                new IssuedBy((string) $this->request->getUri()),
-                new LooseValidAt($this->clock),
-            );
+            $configuration->validator()->assert($parsed, ...$this->constraints($configuration));
         } catch (RequiredConstraintsViolated $requiredConstraintsViolated) {
             throw new InvalidTokenException($requiredConstraintsViolated->getMessage(), $requiredConstraintsViolated);
         }
 
         return new Token($token, $parsed->claims()->all());
+    }
+
+    /**
+     * @return list<Constraint>
+     */
+    private function constraints(Configuration $configuration): array
+    {
+        $constraints = [
+            new SignedWith($this->config->getSigner(), $configuration->verificationKey()),
+            new IssuedBy($this->config->getIssuer()),
+            new LooseValidAt($this->clock),
+        ];
+
+        $audience = $this->config->getAudience();
+
+        if ($audience !== null && $audience !== '') {
+            $constraints[] = new PermittedFor($audience);
+        }
+
+        return $constraints;
     }
 
     private function buildConfiguration(): Configuration

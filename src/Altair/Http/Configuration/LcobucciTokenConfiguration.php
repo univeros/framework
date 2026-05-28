@@ -52,12 +52,24 @@ class LcobucciTokenConfiguration implements ConfigurationInterface
                 );
             }
 
+            $issuer = (string) $this->env->get('TOKEN_ISSUER', '');
+
+            if ($issuer === '') {
+                throw new RuntimeException(
+                    'TOKEN_ISSUER must be set to a stable issuer identifier for the tokens this service mints.'
+                );
+            }
+
+            $audience = $this->env->get('TOKEN_AUDIENCE');
+
             return new TokenConfiguration(
                 $publicKey,
                 (int) $this->env->get('TOKEN_TTL', \ini_get('session.gc_maxlifetime')),
                 new Sha256(),
+                $issuer,
                 null,
-                $this->env->get('TOKEN_PRIVATE_KEY')
+                $this->env->get('TOKEN_PRIVATE_KEY'),
+                $audience === null ? null : (string) $audience
             );
         };
 
