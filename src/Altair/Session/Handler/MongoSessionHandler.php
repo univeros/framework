@@ -59,7 +59,8 @@ class MongoSessionHandler implements SessionHandlerInterface
     public function read($sessionId)
     {
         $data = $this->collection->findOne(
-            ['_id' => $sessionId, 'session_lifetime' => ['$gte' => $this->createUTCDateTime()]]
+            ['_id' => $sessionId, 'session_lifetime' => ['$gte' => $this->createUTCDateTime()]],
+            ['typeMap' => ['root' => 'array', 'document' => 'array']]
         );
 
         if (!\is_array($data) || !isset($data['content'])) {
