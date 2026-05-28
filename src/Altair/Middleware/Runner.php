@@ -24,7 +24,7 @@ class Runner implements MiddlewareRunnerInterface
      *
      * A callable to convert queue entries to callables.
      *
-     * @var callable|MiddlewareResolverInterface
+     * @var callable|MiddlewareResolverInterface|null
      *
      */
     protected $resolver;
@@ -35,7 +35,7 @@ class Runner implements MiddlewareRunnerInterface
      *
      * @param Queue<mixed> $queue The middleware queue.
      *
-     * @param callable|MiddlewareResolverInterface $resolver Converts queue entries to callables.
+     * @param callable|MiddlewareResolverInterface|null $resolver Converts queue entries to callables.
      *
      */
     public function __construct(protected Queue $queue, ?callable $resolver = null)

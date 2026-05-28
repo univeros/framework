@@ -128,8 +128,12 @@ class IpRule extends AbstractRule
         return $input;
     }
 
-    protected function assertAddress(string $address): bool
+    protected function assertAddress(?string $address): bool
     {
+        if ($address === null) {
+            return false;
+        }
+
         return (bool) filter_var($address, FILTER_VALIDATE_IP, ['flags' => $this->options,]);
     }
 
@@ -143,9 +147,15 @@ class IpRule extends AbstractRule
             return $this->assertSubnet($value);
         }
 
+        $min = $this->range['min'];
+        $max = $this->range['max'];
+        if ($min === null || $max === null) {
+            return false;
+        }
+
         $value = \sprintf('%u', ip2long($value));
-        return bccomp($value, \sprintf('%u', ip2long($this->range['min']))) >= 0
-            && bccomp($value, \sprintf('%u', ip2long($this->range['max']))) <= 0;
+        return bccomp($value, \sprintf('%u', ip2long($min))) >= 0
+            && bccomp($value, \sprintf('%u', ip2long($max))) <= 0;
     }
 
     /**

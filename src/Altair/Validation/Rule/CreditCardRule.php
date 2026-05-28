@@ -191,6 +191,6 @@ class CreditCardRule extends AbstractRule
      */
     protected function sanitize(string $value): string
     {
-        return preg_replace('/[ -]+/', '', $value);
+        return preg_replace('/[ -]+/', '', $value) ?? $value;
     }
 }

@@ -190,7 +190,7 @@ trait SequenceTrait
      */
     public function pop()
     {
-        if ($this->isEmpty()) {
+        if ($this->internal === []) {
             throw new UnderflowException('Is empty');
         }
 
@@ -290,7 +290,7 @@ trait SequenceTrait
      */
     public function shift()
     {
-        if ($this->isEmpty()) {
+        if ($this->internal === []) {
             throw new UnderflowException('Is empty');
         }
 

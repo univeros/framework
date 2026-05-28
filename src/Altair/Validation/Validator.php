@@ -85,6 +85,6 @@ class Validator implements ValidatorInterface
 
     protected function sanitize(string $value): string
     {
-        return preg_replace('/\s+/', '', $value);
+        return preg_replace('/\s+/', '', $value) ?? $value;
     }
 }

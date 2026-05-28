@@ -114,11 +114,13 @@ trait PdoSessionAdapterAwareTrait
      */
     public function getConnection(): PDO
     {
-        if (null === $this->pdo) {
-            $this->connect();
+        $pdo = $this->pdo;
+        if (null === $pdo) {
+            $pdo = $this->createConnection();
+            $this->pdo = $pdo;
         }
 
-        return $this->pdo;
+        return $pdo;
     }
 
     /**
@@ -126,8 +128,7 @@ trait PdoSessionAdapterAwareTrait
      */
     public function connect(): void
     {
-        $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo = $this->createConnection();
     }
 
     /**
@@ -388,5 +389,13 @@ trait PdoSessionAdapterAwareTrait
     protected function getIsLockModeTransactional(): bool
     {
         return PdoSessionAdapterInterface::LOCK_TRANSACTIONAL === $this->lockMode;
+    }
+
+    private function createConnection(): PDO
+    {
+        $pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
     }
 }

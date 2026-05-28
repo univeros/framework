@@ -423,9 +423,12 @@ class Container implements ContainerInterface
                 throw new InjectionException(\sprintf("'%s' does not have public constructor.", $className));
             } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
                 $reflectionClass = $this->reflector->getClass($className);
-                $definition = isset($this->classDefinitions[$normalizedClass])
-                    ? $definition->replace($this->classDefinitions->get($normalizedClass))
-                    : $definition;
+                $classDefinition = $this->classDefinitions->get($normalizedClass);
+
+                if ($classDefinition instanceof Definition) {
+                    $definition = $definition->replace($classDefinition);
+                }
+
                 $arguments = $this->argumentsBuilder->build($constructor, $definition, $constructorParameters);
                 $object = $reflectionClass->newInstanceArgs($arguments);
             } else {

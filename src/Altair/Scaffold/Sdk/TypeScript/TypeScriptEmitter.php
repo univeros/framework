@@ -160,14 +160,15 @@ final readonly class TypeScriptEmitter implements EmitterInterface
             $params[] = $this->camel($param) . ': string';
         }
 
-        if ($operation->hasRequestBody()) {
-            $params[] = 'body: ' . $this->typeExpr($operation->requestBody);
+        $requestBody = $operation->requestBody;
+        if ($requestBody instanceof SchemaType) {
+            $params[] = 'body: ' . $this->typeExpr($requestBody);
         }
 
         $params[] = 'options: ApiOptions = {}';
 
         $pathExpr = $this->pathExpression($operation);
-        $requestArgs = $operation->hasRequestBody() ? 'body, ...options' : '...options';
+        $requestArgs = $requestBody instanceof SchemaType ? 'body, ...options' : '...options';
 
         $summary = $operation->summary !== '' ? '/** ' . $operation->summary . " */\n" : '';
 

@@ -93,7 +93,7 @@ class PostgreSqlPdoSessionAdapter implements PdoSessionAdapterInterface
     #[Override]
     public function getMergePdoStatement(string $sessionId, string $data): ?PDOStatement
     {
-        if (version_compare($this->pdo->getAttribute(PDO::ATTR_SERVER_VERSION), '9.5', '>=')) {
+        if (version_compare($this->getConnection()->getAttribute(PDO::ATTR_SERVER_VERSION), '9.5', '>=')) {
             $maxlifetime = (int) \ini_get('session.gc_maxlifetime');
             $sql = \sprintf(
                 'INSERT INTO %s (id, content, session_lifetime, session_time) ' .
