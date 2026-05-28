@@ -1,0 +1,27 @@
+{
+    "name": "univeros/migration-intelligence",
+    "description": "bin/altair db:migration-plan — proposes safe Cycle migrations from spec/entity diffs with read-only safety checks (NOT NULL backfill, unique dupes, FK orphans, type-cast, large tables) and two-phase rename/type-change plans. Deterministic JSON for agents and CI.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "cycle/database": "^2.7",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/persistence": "^2.0",
+        "univeros/scaffold": "^2.0"
+    },
+    "suggest": {
+        "univeros/events": "Records db:migration-plan runs into the .altair/events.jsonl mutation log."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\MigrationIntelligence\\": ""
+        }
+    }
+}

@@ -91,6 +91,7 @@
         "univeros/introspection": "self.version",
         "univeros/mcp": "self.version",
         "univeros/messaging": "self.version",
+        "univeros/migration-intelligence": "self.version",
         "univeros/middleware": "self.version",
         "univeros/observatory": "self.version",
         "univeros/persistence": "self.version",

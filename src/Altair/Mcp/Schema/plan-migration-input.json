@@ -1,0 +1,36 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "spec": {
+            "type": "string",
+            "description": "Path to a spec YAML whose persistence block is the desired shape; diffed against the live database."
+        },
+        "from_entity": {
+            "type": "string",
+            "description": "FQCN of a Cycle-annotated entity to diff against the live database (instead of a spec)."
+        },
+        "from_spec": {
+            "type": "string",
+            "description": "Older spec path for a spec-vs-spec diff (no database needed)."
+        },
+        "to_spec": {
+            "type": "string",
+            "description": "Newer spec path for a spec-vs-spec diff (no database needed)."
+        },
+        "driver": {
+            "type": "string",
+            "enum": ["postgres", "mysql", "sqlite"],
+            "description": "Preview SQL dialect. Defaults to the connected database, else postgres."
+        },
+        "rename": {
+            "type": "string",
+            "description": "Declared column renames as a comma list, e.g. \"old:new,old2:new2\"."
+        },
+        "skip_safety": {
+            "type": "boolean",
+            "description": "Skip the read-only database safety checks.",
+            "default": false
+        }
+    }
+}
