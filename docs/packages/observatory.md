@@ -13,7 +13,7 @@ That makes the package a presentation layer with near-zero coupling to the core.
 
 Because the panel surfaces configuration, queues and database state, **access is fail-closed**: it is denied unless explicitly enabled *and* running in a non-production environment, so a misconfigured production deploy never exposes it.
 
-> **Status:** the data-panel suite and the server-rendered dashboard UI are in. Panels: `runtime`, `health` (doctor), `events`/activity, `queues` (messaging), `routes`/`container`/`config` (introspection), `migrations` (persistence). `DashboardHandler` serves the gated, dark-first overview. The SSE live-tail and per-panel detail views are the remaining follow-up. See [Roadmap](#roadmap).
+> **Status:** complete. Panels: `runtime`, `health` (doctor), `events`/activity, `queues` (messaging), `routes`/`container`/`config` (introspection), `migrations` (persistence). `DashboardHandler` serves the gated, dark-first card overview *and* per-panel detail views (`?panel=<id>`); `ActivityStreamHandler` streams the live activity tail over SSE.
 
 ## Installation
 
@@ -110,27 +110,42 @@ $response = $container->get(DashboardHandler::class)->handle($request);
 // 200 + HTML when accessible; 403 + "disabled" page otherwise.
 ```
 
+`?panel=<id>` renders that panel's detail view — a filterable table of its rows
+(404 on an unknown id) — while the bare path renders the card overview.
+
 The `queues` and `migrations` panels read through framework-owned seams —
 `FailedQueueReaderInterface` and `MigrationStatusReaderInterface`. Bind a host
 adapter (Messenger failure transport / Cycle migrator) for live data; absent a
 binding the panel simply isn't registered (the dashboard shows fewer cards).
 
-## Roadmap
+### Live activity tail (SSE)
 
-1. **Scaffold** (done): panel contracts, registry, facade, access guard, `runtime` panel.
-2. **Data panels** (done): `health`, `events`, `queues`, `routes`, `container`, `config`, `migrations`.
-3. **UI** (done): gated `DashboardHandler` + dark-first card dashboard with the Altair-blue theme (zero-build CSS + inline icons).
-4. **Next**: SSE live-tail endpoint for the activity/queues streams, and per-panel detail views (filterable tables).
+`ActivityStreamHandler` streams the `.altair/events.jsonl` log to the activity
+panel over Server-Sent Events. Rather than holding a long-lived connection
+(which would pin a PHP worker), it emits the events newer than the client's
+`Last-Event-ID` and closes; the browser's `EventSource` reconnects with the last
+id it saw, so the tail stays near-real-time with no extra infrastructure. Route
+a second path to it and pass that URL to the dashboard handler's `$streamUrl` so
+the activity detail view can subscribe:
+
+```php
+// GET /_observatory/stream → ActivityStreamHandler (gated by the same guard)
+$response = $container->get(ActivityStreamHandler::class)->handle($request);
+```
 
 ## Related packages
 
-- `univeros/doctor` — health checks (the `health` panel's source).
-- `univeros/events` — the append-only activity/error log (the `events` panel's source).
-- `univeros/messaging` — queues and failed jobs (the `queues` panel's source).
-- `univeros/introspection` — routes, container, config, listeners, middleware.
-- `univeros/mcp` — the agent-facing consumer of the same data sources.
+- [doctor.md](./doctor.md) — health checks (the `health` panel's source).
+- [events.md](./events.md) — the append-only activity/error log (the `events` panel + the SSE tail).
+- [messaging.md](./messaging.md) — queues and failed jobs (the `queues` panel's source, via the reader seam).
+- [persistence.md](./persistence.md) — migration status (the `migrations` panel's source, via the reader seam).
+- [introspection.md](./introspection.md) — routes, container, config, listeners, middleware.
+- [mcp.md](./mcp.md) — the agent-facing consumer of the same data sources (Observatory is the human one).
 
 ## Limitations
 
-- Scaffold only: no HTTP/UI yet (see [Roadmap](#roadmap)).
-- The default guard is environment-based, not auth-based — put real authentication in front before exposing it anywhere shared.
+- **Dev-only by design.** The default guard denies in production and whenever `OBSERVATORY_ENABLED` is unset — it is environment-based, not auth-based, so put real authentication in front before exposing it anywhere shared. Point production observability (metrics/tracing) at your APM instead.
+- The SSE activity tail **emits-and-closes** (the client reconnects); it is near-real-time, not a persistent push channel, on purpose — so it never pins a worker.
+- The `queues` and `migrations` panels need a host-bound reader adapter to show live data; without one they are simply absent from the dashboard.
+- Panels describe **state** ("right now"), not history or trends — use [events.md](./events.md) for the chronological record.
+- The `resources/views/*` templates are presentation-only (HTML in PHP) and are excluded from the framework's static analysis; treat them as the view layer, not application logic.
