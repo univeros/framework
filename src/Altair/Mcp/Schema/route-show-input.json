@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["path"],
+    "properties": {
+        "path": {
+            "type": "string",
+            "description": "The route path to describe (e.g. /users)."
+        }
+    }
+}
