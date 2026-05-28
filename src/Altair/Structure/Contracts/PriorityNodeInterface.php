@@ -14,5 +14,7 @@ namespace Altair\Structure\Contracts;
 /**
  *
  * PriorityNodeInterface.
+ *
+ * @template TValue
  */
 interface PriorityNodeInterface {}

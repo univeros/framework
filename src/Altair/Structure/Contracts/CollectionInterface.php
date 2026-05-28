@@ -15,6 +15,12 @@ use Countable;
 use JsonSerializable;
 use Traversable;
 
+/**
+ * @template TKey
+ * @template TValue
+ *
+ * @extends Traversable<TKey, TValue>
+ */
 interface CollectionInterface extends Traversable, Countable, JsonSerializable
 {
     /**
@@ -50,6 +56,11 @@ interface CollectionInterface extends Traversable, Countable, JsonSerializable
      * The format of the returned array is implementation-dependent.
      * Some implementations may throw an exception if an array representation
      * could not be created.
+     *
+     * Keys are narrowed to array-key because PHP arrays cannot hold arbitrary
+     * key types even when the collection's TKey is unconstrained.
+     *
+     * @return array<array-key, TValue>
      */
     public function toArray(): array;
 

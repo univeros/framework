@@ -56,9 +56,44 @@ parameters:
 			path: src/Altair/Common/Support/Arr.php
 
 		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\AliasesCollection\\:\\:define\\(\\) should return Altair\\\\Container\\\\Collection\\\\AliasesCollection but returns Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
+			message: "#^Class Altair\\\\Configuration\\\\Collection\\\\ConfigurationCollection extends generic class Altair\\\\Structure\\\\Set but does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Altair/Configuration/Collection/ConfigurationCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\AliasesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: src/Altair/Container/Collection/AliasesCollection.php
+
+		-
+			message: "#^Method Altair\\\\Container\\\\Collection\\\\AliasesCollection\\:\\:define\\(\\) should return Altair\\\\Container\\\\Collection\\\\AliasesCollection but returns Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed, mixed\\>\\.$#"
+			count: 1
+			path: src/Altair/Container/Collection/AliasesCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\ClassDefinitionsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/ClassDefinitionsCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\DelegatesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/DelegatesCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\ParameterDefinitionsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/ParameterDefinitionsCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\PreparesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/PreparesCollection.php
+
+		-
+			message: "#^Class Altair\\\\Container\\\\Collection\\\\SharesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/SharesCollection.php
 
 		-
 			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareClass\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
@@ -66,7 +101,17 @@ parameters:
 			path: src/Altair/Container/Collection/SharesCollection.php
 
 		-
+			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareClass\\(\\) return type with generic interface Altair\\\\Structure\\\\Contracts\\\\MapInterface does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Container/Collection/SharesCollection.php
+
+		-
 			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareInstance\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
+			count: 1
+			path: src/Altair/Container/Collection/SharesCollection.php
+
+		-
+			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareInstance\\(\\) return type with generic interface Altair\\\\Structure\\\\Contracts\\\\MapInterface does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: src/Altair/Container/Collection/SharesCollection.php
 
@@ -86,7 +131,37 @@ parameters:
 			path: src/Altair/Container/Executable.php
 
 		-
-			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PairInterface\\:\\:\\$value\\.$#"
+			message: "#^Class Altair\\\\Cookie\\\\Collection\\\\CookieCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Generic type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> in PHPDoc tag @return specifies 2 template types, but interface Altair\\\\Structure\\\\Contracts\\\\VectorInterface supports only 1\\: TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:pairsToArray\\(\\) has parameter \\$pairs with generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should return Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> but returns Altair\\\\Structure\\\\Vector\\<mixed\\>\\.$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$pair contains generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Map\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
 			count: 1
 			path: src/Altair/Cookie/Collection/CookieCollection.php
 
@@ -94,6 +169,41 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Cookie/Collection/CookieCollection.php
+
+		-
+			message: "#^Class Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Generic type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> in PHPDoc tag @return specifies 2 template types, but interface Altair\\\\Structure\\\\Contracts\\\\VectorInterface supports only 1\\: TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:pairsToArray\\(\\) has parameter \\$pairs with generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should return Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> but returns Altair\\\\Structure\\\\Vector\\<mixed\\>\\.$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$pair contains generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
+
+		-
+			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Map\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
+			count: 1
+			path: src/Altair/Cookie/Collection/SetCookieCollection.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -136,6 +246,11 @@ parameters:
 			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
 
 		-
+			message: "#^Class Altair\\\\Courier\\\\Support\\\\MessageCommandMap extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Courier/Support/MessageCommandMap.php
+
+		-
 			message: "#^PHPDoc tag @var for property Altair\\\\Http\\\\Base\\\\Payload\\:\\:\\$settingsCollection with type Altair\\\\Structure\\\\Map\\|null is not subtype of native type Altair\\\\Http\\\\Collection\\\\SettingsCollection\\.$#"
 			count: 1
 			path: src/Altair/Http/Base/Payload.php
@@ -174,6 +289,26 @@ parameters:
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/Altair/Http/Collection/HttpStatusCollection.php
+
+		-
+			message: "#^Class Altair\\\\Http\\\\Collection\\\\InputCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Http/Collection/InputCollection.php
+
+		-
+			message: "#^Class Altair\\\\Http\\\\Collection\\\\MiddlewareCollection extends generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Altair/Http/Collection/MiddlewareCollection.php
+
+		-
+			message: "#^Class Altair\\\\Http\\\\Collection\\\\RouteCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Http/Collection/RouteCollection.php
+
+		-
+			message: "#^Class Altair\\\\Http\\\\Collection\\\\SettingsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			count: 1
+			path: src/Altair/Http/Collection/SettingsCollection.php
 
 		-
 			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Decoder not found\\.$#"
@@ -286,6 +421,11 @@ parameters:
 			path: src/Altair/Messaging/Transport/TransportRegistry.php
 
 		-
+			message: "#^Method Altair\\\\Middleware\\\\Runner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Altair/Middleware/Runner.php
+
+		-
 			message: "#^Property Altair\\\\Persistence\\\\Cycle\\\\CycleRepository\\:\\:\\$repository with generic interface Cycle\\\\ORM\\\\RepositoryInterface does not specify its types\\: TEntity$#"
 			count: 1
 			path: src/Altair/Persistence/Cycle/CycleRepository.php
@@ -296,12 +436,7 @@ parameters:
 			path: src/Altair/Persistence/Cycle/CycleRepository.php
 
 		-
-			message: "#^Method Altair\\\\Sanitation\\\\Collection\\\\FilterCollection\\:\\:put\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Sanitation/Collection/FilterCollection.php
-
-		-
-			message: "#^Method Altair\\\\Sanitation\\\\Collection\\\\FilterCollection\\:\\:putAll\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
+			message: "#^Class Altair\\\\Sanitation\\\\Collection\\\\FilterCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: src/Altair/Sanitation/Collection/FilterCollection.php
 
@@ -309,6 +444,11 @@ parameters:
 			message: "#^PHPDoc tag @return with type mixed is not subtype of native type int\\|null\\.$#"
 			count: 1
 			path: src/Altair/Sanitation/Filter/IntegerFilter.php
+
+		-
+			message: "#^Method Altair\\\\Sanitation\\\\FiltersRunner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Altair/Sanitation/FiltersRunner.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Sanitation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"
@@ -341,1044 +481,34 @@ parameters:
 			path: src/Altair/Session/Handler/PdoSessionHandler.php
 
 		-
-			message: "#^Interface Altair\\\\Structure\\\\Contracts\\\\CollectionInterface extends generic interface Traversable but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/CollectionInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\CollectionInterface\\:\\:clear\\(\\) return type has no value type specified in iterable type static\\(Altair\\\\Structure\\\\Contracts\\\\CollectionInterface\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/CollectionInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\CollectionInterface\\:\\:copy\\(\\) return type has no value type specified in iterable type static\\(Altair\\\\Structure\\\\Contracts\\\\CollectionInterface\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/CollectionInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\CollectionInterface\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/CollectionInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\HashableInterface\\:\\:equals\\(\\) has parameter \\$obj with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/HashableInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:apply\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:diff\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:diff\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:intersect\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:intersect\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:keys\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:ksort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:map\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:pairs\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:put\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:putAll\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:union\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:union\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:values\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:xor\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\:\\:xor\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/MapInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\PairInterface\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/PairInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\QueueInterface\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\QueueInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/QueueInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:apply\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:insert\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:map\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:rotate\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:set\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\:\\:unshift\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SequenceInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:add\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:allocate\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:diff\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:diff\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:getMap\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:intersect\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:intersect\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:remove\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:union\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:union\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:xor\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\SetInterface\\:\\:xor\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/SetInterface.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Contracts\\\\StackInterface\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\StackInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Contracts/StackInterface.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Deque implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Deque implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:apply\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:contains\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:find\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:insert\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:insert\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:map\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:push\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:rotate\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:set\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:set\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:unshift\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Deque\\:\\:unshift\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Deque\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Deque.php
-
-		-
-			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PairInterface\\:\\:\\$value\\.$#"
-			count: 4
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Map implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Map implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:apply\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:diff\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:diff\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:get\\(\\) has parameter \\$default with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:get\\(\\) has parameter \\$key with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:hasKey\\(\\) has parameter \\$key with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:hasValue\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:intersect\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:intersect\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:keys\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:ksort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:map\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:pairs\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:pairsToArray\\(\\) has parameter \\$pairs with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:pairsToArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:put\\(\\) has parameter \\$key with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:put\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:put\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:putAll\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:putAll\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:remove\\(\\) has parameter \\$default with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:remove\\(\\) has parameter \\$key with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:union\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:union\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:values\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:xor\\(\\) has parameter \\$map with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Map\\:\\:xor\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Map\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Map.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 10
 			path: src/Altair/Structure/Map.php
 
 		-
-			message: "#^Method Altair\\\\Structure\\\\Pair\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Pair.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Pair\\:\\:equalsKey\\(\\) has parameter \\$key with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Pair.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Pair\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Pair.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Structure/Pair.php
 
 		-
-			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\:\\:\\$priority \\(int\\) does not accept null\\.$#"
+			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\<TValue\\>\\:\\:\\$priority \\(int\\) does not accept null\\.$#"
 			count: 1
 			path: src/Altair/Structure/PriorityNode.php
 
 		-
-			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\:\\:\\$stamp \\(int\\) does not accept null\\.$#"
+			message: "#^Property Altair\\\\Structure\\\\PriorityNode\\<TValue\\>\\:\\:\\$stamp \\(int\\) does not accept null\\.$#"
 			count: 1
 			path: src/Altair/Structure/PriorityNode.php
 
 		-
-			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$priority\\.$#"
-			count: 2
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$stamp\\.$#"
-			count: 2
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Access to an undefined property Altair\\\\Structure\\\\Contracts\\\\PriorityNodeInterface\\:\\:\\$value\\.$#"
-			count: 3
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\PriorityQueue implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:__construct\\(\\) has parameter \\$heap with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:copy\\(\\) should return static\\(Altair\\\\Structure\\\\PriorityQueue\\) but returns Altair\\\\Structure\\\\PriorityQueue\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:peek\\(\\) has no return type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\PriorityQueue\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\PriorityQueue\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\PriorityQueue\\:\\:\\$stamp has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/PriorityQueue.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Structure/PriorityQueue.php
 
 		-
-			message: "#^Call to an undefined method Altair\\\\Structure\\\\Queue\\:\\:adjustCapacity\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Queue implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Queue implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:push\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\QueueInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Queue\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Queue\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Queue.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Altair/Structure/Queue.php
-
-		-
-			message: "#^Call to an undefined method Altair\\\\Structure\\\\Set\\:\\:adjustCapacity\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Set implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Set implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:add\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:add\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:contains\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:diff\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:diff\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:getMap\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:intersect\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:intersect\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:remove\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:union\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:union\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:xor\\(\\) has parameter \\$set with no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Set\\:\\:xor\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SetInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Set\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Set.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -1386,217 +516,12 @@ parameters:
 			path: src/Altair/Structure/Set.php
 
 		-
-			message: "#^Call to an undefined method Altair\\\\Structure\\\\Stack\\:\\:adjustCapacity\\(\\)\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Stack implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Stack implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:push\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\StackInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Stack\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Stack\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Stack.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 2
 			path: src/Altair/Structure/Stack.php
 
 		-
-			message: "#^Class Altair\\\\Structure\\\\Vector implements generic interface ArrayAccess but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Class Altair\\\\Structure\\\\Vector implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:__construct\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:__debugInfo\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:apply\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:contains\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:filter\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:find\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:insert\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:insert\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:map\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:merge\\(\\) has parameter \\$values with no value type specified in iterable type array\\|Traversable\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:merge\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:normalizeItems\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:push\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:push\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:reverse\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:rotate\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:set\\(\\) has parameter \\$value with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:set\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:slice\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:sort\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:toArray\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:unshift\\(\\) has parameter \\$values with no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Structure\\\\Vector\\:\\:unshift\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\SequenceInterface\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Property Altair\\\\Structure\\\\Vector\\:\\:\\$internal has no type specified\\.$#"
-			count: 1
-			path: src/Altair/Structure/Vector.php
-
-		-
-			message: "#^Method Altair\\\\Validation\\\\Collection\\\\RuleCollection\\:\\:put\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Validation/Collection/RuleCollection.php
-
-		-
-			message: "#^Method Altair\\\\Validation\\\\Collection\\\\RuleCollection\\:\\:putAll\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
+			message: "#^Class Altair\\\\Validation\\\\Collection\\\\RuleCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: src/Altair/Validation/Collection/RuleCollection.php
 
@@ -1614,6 +539,11 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between 1 and 0 will always evaluate to false\\.$#"
 			count: 1
 			path: src/Altair/Validation/Rule/IsbnRule.php
+
+		-
+			message: "#^Method Altair\\\\Validation\\\\RulesRunner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
+			count: 1
+			path: src/Altair/Validation/RulesRunner.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Validation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"

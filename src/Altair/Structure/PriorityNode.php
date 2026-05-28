@@ -18,6 +18,10 @@ use OutOfBoundsException;
  * PriorityNode
  *
  * A node which represents a value, priority and a stamp on a PriorityQueue
+ *
+ * @template TValue
+ *
+ * @implements PriorityNodeInterface<TValue>
  */
 class PriorityNode implements PriorityNodeInterface
 {
@@ -33,6 +37,8 @@ class PriorityNode implements PriorityNodeInterface
 
     /**
      * PriorityNode constructor.
+     *
+     * @param TValue $value
      */
     public function __construct(public mixed $value, int $priority, int $stamp)
     {

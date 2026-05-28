@@ -17,6 +17,7 @@ use Altair\Structure\Traits\SequenceTrait;
 use Altair\Structure\Traits\SquaredCapacityTrait;
 use ArrayAccess;
 use IteratorAggregate;
+use Traversable;
 
 /**
  * Deque.
@@ -31,14 +32,23 @@ use IteratorAggregate;
  * ((head + position) % capacity).
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
+ *
+ * @template TValue
+ *
+ * @implements SequenceInterface<TValue>
+ * @implements IteratorAggregate<int, TValue>
+ * @implements ArrayAccess<int, TValue>
  */
 class Deque implements IteratorAggregate, ArrayAccess, SequenceInterface, CapacityInterface
 {
+    /** @use SequenceTrait<TValue> */
     use SequenceTrait;
     use SquaredCapacityTrait;
 
     /**
      * @inheritDoc
+     *
+     * @param array<array-key, TValue>|Traversable<array-key, TValue>|null $values
      */
     public function __construct($values = null)
     {

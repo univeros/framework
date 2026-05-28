@@ -11,26 +11,33 @@ declare(strict_types=1);
 
 namespace Altair\Structure\Contracts;
 
+/**
+ * @template TValue
+ *
+ * @extends CollectionInterface<int, TValue>
+ */
 interface QueueInterface extends CollectionInterface
 {
     /**
      * Returns the value at the front of the queue without removing it.
      *
-     * @return mixed
+     * @return TValue
      */
     public function peek();
 
     /**
      * Returns and removes the value at the front of the Queue.
      *
-     * @return mixed
+     * @return TValue
      */
     public function pop();
 
     /**
      * Pushes zero or more values into the front of the queue.
      *
+     * @param TValue ...$values
      *
+     * @return QueueInterface<TValue>
      */
     public function push(mixed ...$values): QueueInterface;
 }
