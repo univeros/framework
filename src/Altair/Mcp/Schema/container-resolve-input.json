@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["interface"],
+    "properties": {
+        "interface": {
+            "type": "string",
+            "description": "Fully-qualified interface or class name to resolve in the container."
+        }
+    }
+}

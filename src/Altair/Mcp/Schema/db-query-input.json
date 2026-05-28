@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["sql"],
+    "properties": {
+        "sql": {
+            "type": "string",
+            "description": "A single read-only SELECT (or WITH ... SELECT) statement."
+        }
+    }
+}

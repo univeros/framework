@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "filter": {
+            "type": "string",
+            "description": "PHPUnit --filter expression."
+        },
+        "paths": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Restrict the run to these test files or directories."
+        }
+    }
+}

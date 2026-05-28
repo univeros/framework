@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["package"],
+    "properties": {
+        "package": {
+            "type": "string",
+            "description": "Package short name (e.g. 'scaffold') or full composer name (e.g. 'univeros/scaffold')."
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["language"],
+    "properties": {
+        "language": {
+            "type": "string",
+            "enum": ["typescript", "python"],
+            "description": "Target SDK language."
+        }
+    }
+}
