@@ -129,13 +129,45 @@ The headline asset is one honest chart: *tokens-to-ship, Univeros vs. baseline.*
   Laravel's packaging convention is a courtesy to developers, not a challenge.
 - **Not** the app-building AI layer (LLM calls, RAG). That space is taken
   (`laravel/ai`, Prism, NeuronAI, LLPhant). Univeros is about *building software
-  with agents*, not *building AI into apps*.
+  with agents*, not *building AI into apps* — and it *composes* with that layer
+  rather than competing (see §9).
 - **Is** a focused demonstration of a specific, defensible idea: a
   deterministic, spec-driven, fully reversible framework where agents are
   first-class by architecture — and the runnable evidence that 2am.tech operates
   at that frontier.
 
-## 9. Messaging kit
+## 9. Univeros + the AI-app layer (brain vs. safe hands)
+
+A fair question: what happens when someone uses Univeros to build an app that
+*itself* uses AI agents? That isn't a conflict with the AI-app layer — it's the
+other half of it.
+
+Those libraries (NeuronAI, Prism, `laravel/ai`, LLPhant) are the **brain**:
+model calls, RAG, structured output, agent loops, tool *definitions*. Univeros
+is the **safe hands**: the typed, validated, reversible, audited substrate those
+tool-calls execute against. They compose cleanly:
+
+- **Bring your own brain.** `composer require` whichever reasoning library you
+  like; Univeros never makes a model call or owns a prompt.
+- **The tools are already yours.** A Univeros app's spec-generated
+  actions/endpoints are ready-made, guardrailed tools an in-app agent can call —
+  and the MCP server already exposes them with `SqlReadGuard` / `PathGuard` /
+  readonly modes.
+- **Every action is reversible and audited.** An agent's side-effects run
+  through the journaled, rewindable mutation layer and land in the
+  `.altair/events.jsonl` log — so "what did the agent just do, and can I undo
+  it?" is a built-in answer, not a postmortem.
+
+> **NeuronAI gives your app a brain. Univeros gives it safe hands.**
+
+Where the rest of the framework makes an agent safe at *build* time, this makes
+an agent safe at *run* time. Honest caveat: today these primitives (MCP server,
+journal, event log) are dev-facing; the in-app, production-runtime agent story is
+a direction we're building toward, not a shipped claim. The discipline that
+keeps the positioning crisp: stay the substrate — never add model calls or RAG
+ourselves.
+
+## 10. Messaging kit
 
 **Candidate taglines**
 - "Spec in. Software out. Minimal tokens between."
@@ -144,6 +176,7 @@ The headline asset is one honest chart: *tokens-to-ship, Univeros vs. baseline.*
 - "Build production APIs at agent speed."
 - "Agent-native at the core — not bolted on the side."
 - "Start it the way you know. Ship it faster than you'd believe."
+- "Bring your own brain. We're the safe hands." (when positioning alongside NeuronAI / Prism)
 
 **Words to avoid:** "Laravel killer," "replaces," "the only," "the first."
 Lead with what it *does*, backed by the number.
@@ -154,7 +187,7 @@ Lead with what it *does*, backed by the number.
 methodology."** The conversion goal is a conversation with 2am.tech, not a
 `composer create-project`.
 
-## 10. Distribution (where this gets seen)
+## 11. Distribution (where this gets seen)
 
 - A single landing page: hero one-liner, the 90-second video, the benchmark
   chart, a "how we build" link to 2am.tech services. The single copy-paste
