@@ -16,6 +16,7 @@ use Altair\Structure\Contracts\QueueInterface;
 use Altair\Structure\Traits\CollectionTrait;
 use ArrayAccess;
 use Error;
+use Generator;
 use IteratorAggregate;
 use OutOfBoundsException;
 use Override;
@@ -29,15 +30,33 @@ use Traversable;
  * and iterates in that order, destructively.
  *
  * @link https://medium.com/@rtheunissen/efficient-data-structures-for-php-7-9dda7af674cd#.gl62k1xqr
+ *
+ * @template TValue
+ *
+ * @implements QueueInterface<TValue>
+ * @implements IteratorAggregate<int, TValue>
+ * @implements ArrayAccess<int, TValue>
  */
 class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityInterface
 {
+    /** @use CollectionTrait<int, TValue> */
     use CollectionTrait;
+
+    /**
+     * Backed by a Deque. The empty-array default is required for trait property
+     * compatibility (CollectionTrait declares `$internal = []`) and is replaced
+     * with a Deque in the constructor before any method is invoked.
+     *
+     * @var Deque<TValue>
+     *
+     * @phpstan-ignore property.defaultValue
+     */
+    protected $internal = [];
 
     /**
      * Creates an instance using the values of an array or Traversable object.
      *
-     * @param array|Traversable|Queue $values
+     * @param array<array-key, TValue>|Traversable<array-key, TValue>|Queue<TValue>|null $values
      */
     public function __construct($values = null)
     {
@@ -46,6 +65,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     #[Override]
     public function peek()
@@ -55,6 +76,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * {@inheritDoc}
+     *
+     * @return TValue
      */
     #[Override]
     public function pop()
@@ -64,6 +87,10 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * {@inheritDoc}
+     *
+     * @param TValue ...$values
+     *
+     * @return QueueInterface<TValue>
      */
     #[Override]
     public function push(...$values): QueueInterface
@@ -75,6 +102,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * {@inheritDoc}
+     *
+     * @return QueueInterface<TValue>
      */
     #[Override]
     public function allocate(int $capacity): QueueInterface
@@ -104,6 +133,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * {@inheritDoc}
+     *
+     * @return array<array-key, TValue>
      */
     #[Override]
     public function toArray(): array
@@ -113,6 +144,8 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
 
     /**
      * Get iterator.
+     *
+     * @return Generator<int, TValue>
      */
     #[ReturnTypeWillChange]
     #[Override]
@@ -126,11 +159,13 @@ class Queue implements IteratorAggregate, ArrayAccess, QueueInterface, CapacityI
     /**
      * {@inheritDoc}
      *
+     * @param TValue $value
+     *
      * @throws OutOfBoundsException
      */
     #[ReturnTypeWillChange]
     #[Override]
-    public function offsetSet($offset, $value): void
+    public function offsetSet($offset, mixed $value): void
     {
         if ($offset === null) {
             $this->push($value);
