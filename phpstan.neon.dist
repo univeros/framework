@@ -3,6 +3,9 @@ parameters:
     phpVersion: 80300
     paths:
         - src
+    excludePaths:
+        # Presentation-only view templates (HTML in PHP); not application logic.
+        - src/Altair/Observatory/resources/views/*
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
     tmpDir: .phpstan-cache

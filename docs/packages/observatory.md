@@ -13,7 +13,7 @@ That makes the package a presentation layer with near-zero coupling to the core.
 
 Because the panel surfaces configuration, queues and database state, **access is fail-closed**: it is denied unless explicitly enabled *and* running in a non-production environment, so a misconfigured production deploy never exposes it.
 
-> **Status:** this is the package scaffold — the data layer (panels, registry, facade, access guard) and one reference panel (`runtime`). The HTTP entrypoint, SSE live-tail and Tailwind/Alpine UI, plus the `doctor`/`events`/`messaging`/`introspection` panels, land in follow-up phases. See [Roadmap](#roadmap).
+> **Status:** the data-panel suite and the server-rendered dashboard UI are in. Panels: `runtime`, `health` (doctor), `events`/activity, `queues` (messaging), `routes`/`container`/`config` (introspection), `migrations` (persistence). `DashboardHandler` serves the gated, dark-first overview. The SSE live-tail and per-panel detail views are the remaining follow-up. See [Roadmap](#roadmap).
 
 ## Installation
 
@@ -100,11 +100,27 @@ final class QueuesPanel implements PanelInterface
 
 `RuntimePanel` is the worked reference implementation (it depends on nothing outside PHP).
 
+## Serving the dashboard
+
+`DashboardHandler` is a PSR-15 request handler. Route a path to it (it autowires
+`Observatory`, the renderer, and your PSR-17 response/stream factories):
+
+```php
+$response = $container->get(DashboardHandler::class)->handle($request);
+// 200 + HTML when accessible; 403 + "disabled" page otherwise.
+```
+
+The `queues` and `migrations` panels read through framework-owned seams —
+`FailedQueueReaderInterface` and `MigrationStatusReaderInterface`. Bind a host
+adapter (Messenger failure transport / Cycle migrator) for live data; absent a
+binding the panel simply isn't registered (the dashboard shows fewer cards).
+
 ## Roadmap
 
-1. **Scaffold** (current): panel contracts, registry, facade, access guard, `runtime` panel, docs.
-2. **UI layer**: PSR-15 HTTP entrypoint, SSE live-tail endpoint, server-rendered Tailwind/Alpine dashboard (dark-first, card-based).
-3. **Data panels**: `health` (doctor), `events` (activity/errors), `queues` (messaging), `routes`/`container`/`config`/`listeners`/`middleware` (introspection), `migrations` (persistence).
+1. **Scaffold** (done): panel contracts, registry, facade, access guard, `runtime` panel.
+2. **Data panels** (done): `health`, `events`, `queues`, `routes`, `container`, `config`, `migrations`.
+3. **UI** (done): gated `DashboardHandler` + dark-first card dashboard with the Altair-blue theme (zero-build CSS + inline icons).
+4. **Next**: SSE live-tail endpoint for the activity/queues streams, and per-panel detail views (filterable tables).
 
 ## Related packages
 
