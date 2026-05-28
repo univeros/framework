@@ -76,7 +76,7 @@ class PriorityQueue implements IteratorAggregate, CollectionInterface
      * @return self<TValue>
      */
     #[Override]
-    public function copy(): \Altair\Structure\PriorityQueue
+    public function copy(): PriorityQueue
     {
         return new PriorityQueue($this->heap, $this->capacity);
     }

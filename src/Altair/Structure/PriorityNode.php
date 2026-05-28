@@ -53,12 +53,12 @@ class PriorityNode implements PriorityNodeInterface
      *
      * @return mixed|null
      */
-    public function __get(mixed $name)
+    public function __get(mixed $name): mixed
     {
-        if ($name === 'value' || $name === 'priority' || $name === 'stamp') {
+        if (\in_array($name, ['value', 'priority', 'stamp'], true)) {
             $this->$name = null;
 
-            return;
+            return null;
         }
 
         throw new OutOfBoundsException('Out of bounds');

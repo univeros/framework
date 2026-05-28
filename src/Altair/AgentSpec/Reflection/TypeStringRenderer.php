@@ -33,13 +33,13 @@ class TypeStringRenderer
         }
 
         if ($type instanceof ReflectionUnionType) {
-            $parts = array_map(fn(ReflectionType $t): string => $this->render($t), $type->getTypes());
+            $parts = array_map($this->render(...), $type->getTypes());
 
             return implode('|', $parts);
         }
 
         if ($type instanceof ReflectionIntersectionType) {
-            $parts = array_map(fn(ReflectionType $t): string => $this->render($t), $type->getTypes());
+            $parts = array_map($this->render(...), $type->getTypes());
 
             return implode('&', $parts);
         }

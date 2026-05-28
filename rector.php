@@ -29,6 +29,11 @@ return RectorConfig::configure()
         // TypeError) — a behaviour change that belongs in its own PR, not the
         // nullable-deprecation fix. Remove this skip to adopt it deliberately.
         NewInInitializerRector::class,
+        // A child constructor that only calls parent::__construct() is NOT dead when it
+        // widens visibility (e.g. Altair\Cookie\Cookie exposes AbstractCookie's protected
+        // constructor as public). Removing it breaks `new Cookie()`. The rule can't see the
+        // visibility change, so skip it globally.
+        \Rector\DeadCode\Rector\ClassMethod\RemoveParentDelegatingConstructorRector::class,
         // Container test fixtures declare classes used as container-reflection inputs.
         // "Empty" constructors / unused private methods are not actually unused —
         // they're inspected at runtime via Reflection.

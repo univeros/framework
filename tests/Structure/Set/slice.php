@@ -40,7 +40,7 @@ trait slice
         $instance = static::getInstance($values);
 
         $sliced = $instance->slice($index);
-        $expected = array_slice($values, $index, null);
+        $expected = array_slice($values, $index);
 
         $this->assertToArray($values, $instance);
         $this->assertToArray($expected, $sliced);

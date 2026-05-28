@@ -61,7 +61,7 @@ class DigestAuthenticationMiddleware implements MiddlewareInterface
                 'realm' => $this->realm,
                 'method' => $request->getMethod(),
             ];
-            if (\call_user_func($this->identityValidator, $arguments) === true) {
+            if (\call_user_func($this->identityValidator, $arguments)) {
                 return $handler->handle(
                     $request->withAttribute(MiddlewareInterface::ATTRIBUTE_USERNAME, $authorization['username']),
                 );

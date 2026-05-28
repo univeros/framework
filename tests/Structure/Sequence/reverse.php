@@ -8,7 +8,7 @@ trait reverse
     public static function reversedDataProvider(): array
     {
         return array_map(
-            fn($a): array => [$a[0], array_reverse($a[1])],
+            fn(array $a): array => [$a[0], array_reverse($a[1])],
             static::basicDataProvider()
         );
     }

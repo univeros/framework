@@ -68,8 +68,8 @@ class LoggingMiddlewareTest extends TestCase
 
     private function stackThatReturns(Envelope $returned): StackInterface
     {
-        $middleware = new class($returned) implements MiddlewareInterface {
-            public function __construct(private readonly Envelope $returned) {}
+        $middleware = new readonly class($returned) implements MiddlewareInterface {
+            public function __construct(private Envelope $returned) {}
 
             #[Override]
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -83,8 +83,8 @@ class LoggingMiddlewareTest extends TestCase
 
     private function stackThatThrows(\Throwable $throwable): StackInterface
     {
-        $middleware = new class($throwable) implements MiddlewareInterface {
-            public function __construct(private readonly \Throwable $throwable) {}
+        $middleware = new readonly class($throwable) implements MiddlewareInterface {
+            public function __construct(private \Throwable $throwable) {}
 
             #[Override]
             public function handle(Envelope $envelope, StackInterface $stack): Envelope
@@ -98,8 +98,8 @@ class LoggingMiddlewareTest extends TestCase
 
     private function stackOf(MiddlewareInterface $middleware): StackInterface
     {
-        return new class($middleware) implements StackInterface {
-            public function __construct(private readonly MiddlewareInterface $middleware) {}
+        return new readonly class($middleware) implements StackInterface {
+            public function __construct(private MiddlewareInterface $middleware) {}
 
             #[Override]
             public function next(): MiddlewareInterface

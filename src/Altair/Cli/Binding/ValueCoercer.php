@@ -151,7 +151,7 @@ class ValueCoercer
                 return [];
             }
 
-            return array_values(array_map('trim', explode(',', $value)));
+            return array_values(array_map(trim(...), explode(',', $value)));
         }
 
         throw new ValueCoercionException(
@@ -174,10 +174,7 @@ class ValueCoercer
         try {
             return new DateTimeImmutable($value);
         } catch (Exception $exception) {
-            throw new ValueCoercionException(
-                \sprintf("Value '%s' is not a valid ISO-8601 datetime for parameter '%s'.", $value, $name),
-                previous: $exception,
-            );
+            throw new ValueCoercionException(\sprintf("Value '%s' is not a valid ISO-8601 datetime for parameter '%s'.", $value, $name), $exception->getCode(), previous: $exception);
         }
     }
 

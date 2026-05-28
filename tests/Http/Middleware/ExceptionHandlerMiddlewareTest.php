@@ -88,8 +88,8 @@ class ExceptionHandlerMiddlewareTest extends AbstractMiddlewareTest
 
     private function handlerReturning(int $code): PsrMiddlewareInterface
     {
-        return new class ($code) implements PsrMiddlewareInterface {
-            public function __construct(private readonly int $code)
+        return new readonly class ($code) implements PsrMiddlewareInterface {
+            public function __construct(private int $code)
             {
             }
 
@@ -102,8 +102,8 @@ class ExceptionHandlerMiddlewareTest extends AbstractMiddlewareTest
 
     private function handlerThrowing(\Throwable $e): PsrMiddlewareInterface
     {
-        return new class ($e) implements PsrMiddlewareInterface {
-            public function __construct(private readonly \Throwable $e)
+        return new readonly class ($e) implements PsrMiddlewareInterface {
+            public function __construct(private \Throwable $e)
             {
             }
 

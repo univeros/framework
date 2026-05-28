@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Altair\Tests\Security;
 
 use Altair\Security\Support\Pbkdf2Key;

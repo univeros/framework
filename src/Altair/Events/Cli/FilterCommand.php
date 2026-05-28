@@ -74,7 +74,7 @@ final readonly class FilterCommand
             return [];
         }
 
-        $parts = array_filter(array_map('trim', explode(',', $raw)), static fn(string $p): bool => $p !== '');
+        $parts = array_filter(array_map(trim(...), explode(',', $raw)), static fn(string $p): bool => $p !== '');
 
         return array_map(EventKind::fromString(...), array_values($parts));
     }
@@ -88,7 +88,7 @@ final readonly class FilterCommand
             return [];
         }
 
-        $parts = array_filter(array_map('trim', explode(',', $raw)), static fn(string $p): bool => $p !== '');
+        $parts = array_filter(array_map(trim(...), explode(',', $raw)), static fn(string $p): bool => $p !== '');
 
         return array_map(EventStatus::from(...), array_values($parts));
     }

@@ -198,7 +198,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
         $values = [];
         $reflectionClass = new ReflectionClass(HttpStatusInterface::class);
         foreach ($reflectionClass->getConstants() as $name => $value) {
-            $code = \constant(HttpStatusCodeInterface::class . '::' . $name);
+            $code = HttpStatusCodeInterface::{$name};
             $values[$code] = $value;
         }
 
@@ -212,7 +212,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      */
     protected function fetchCode($text): ?int
     {
-        $code = array_search(strtolower($text), array_map('strtolower', $this->values), true);
+        $code = array_search(strtolower($text), array_map(strtolower(...), $this->values), true);
 
         return $code === false ? null : $code;
     }

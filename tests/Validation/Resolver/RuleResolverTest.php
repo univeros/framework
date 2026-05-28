@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace Altair\Tests\Validation\Resolver;
 
 use Altair\Container\Container;

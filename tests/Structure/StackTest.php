@@ -55,7 +55,7 @@ class StackTest extends AbstractCollectionTest
     public static function basicDataProvider(): array
     {
         // Stack should produce values in reverse order.
-        return array_map(fn($data): array => [$data[0], array_reverse($data[1])], parent::basicDataProvider());
+        return array_map(fn(array $data): array => [$data[0], array_reverse($data[1])], parent::basicDataProvider());
     }
 
     public function serializeDataProvider(): array

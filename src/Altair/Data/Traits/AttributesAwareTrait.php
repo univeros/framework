@@ -45,10 +45,8 @@ trait AttributesAwareTrait
     /**
      * Returns a copy of the instance with the new data.
      *
-     *
-     * @return mixed
      */
-    public function withData(array $data)
+    public function withData(array $data): object
     {
         $cloned = clone $this;
 

@@ -52,7 +52,7 @@ class IpRule extends AbstractRule
      */
     protected function parseRange(string $value): ?array
     {
-        if ($value === '*' || $value === '*.*.*.*' || $value === '0.0.0.0-255.255.255.255') {
+        if (\in_array($value, ['*', '*.*.*.*', '0.0.0.0-255.255.255.255'], true)) {
             return null;
         }
 

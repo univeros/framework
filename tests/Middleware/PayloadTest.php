@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Altair\Tests\Middleware;
 
 use Altair\Middleware\Payload;

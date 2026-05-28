@@ -93,7 +93,7 @@ class SetCookieFactory
     {
         return new SetCookieCollection(
             array_map(
-                static fn($string): SetCookie => static::createFromCookieString($string),
+                static::createFromCookieString(...),
                 $strings
             )
         );
@@ -103,7 +103,7 @@ class SetCookieFactory
     {
         return new SetCookieCollection(
             array_map(
-                static fn($string): SetCookie => static::createFromCookieString($string),
+                static::createFromCookieString(...),
                 $response->getHeader(SetCookieInterface::HEADER)
             )
         );
