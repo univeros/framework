@@ -1,0 +1,31 @@
+{
+    "name": "univeros/mcp",
+    "description": "Model Context Protocol server: exposes the framework's capabilities as MCP tools so any MCP-capable agent can drive an Altair project natively.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "ext-json": "*",
+        "opis/json-schema": "^2.4",
+        "univeros/agent-spec": "^2.0",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/doctor": "^2.0",
+        "univeros/events": "^2.0",
+        "univeros/introspection": "^2.0",
+        "univeros/scaffold": "^2.0"
+    },
+    "suggest": {
+        "univeros/persistence": "Enables the framework__db_query / db_schema / db_migrate MCP tools against the project's Cycle ORM database."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Mcp\\": ""
+        }
+    }
+}

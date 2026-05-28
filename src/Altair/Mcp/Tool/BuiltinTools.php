@@ -1,0 +1,72 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Altair\Mcp\Tool;
+
+use Altair\Mcp\Tool\Database\DbMigrateTool;
+use Altair\Mcp\Tool\Database\DbQueryTool;
+use Altair\Mcp\Tool\Database\DbSchemaTool;
+use Altair\Mcp\Tool\Discovery\ContainerResolveTool;
+use Altair\Mcp\Tool\Discovery\DescribeEndpointTool;
+use Altair\Mcp\Tool\Discovery\DescribePackageTool;
+use Altair\Mcp\Tool\Discovery\ListCommandsTool;
+use Altair\Mcp\Tool\Discovery\ListEndpointsTool;
+use Altair\Mcp\Tool\Discovery\ListPackagesTool;
+use Altair\Mcp\Tool\Discovery\ListSpecsTool;
+use Altair\Mcp\Tool\Discovery\ReadSpecTool;
+use Altair\Mcp\Tool\Generation\EmitOpenApiTool;
+use Altair\Mcp\Tool\Generation\EmitSdkTool;
+use Altair\Mcp\Tool\Generation\RewindSpecTool;
+use Altair\Mcp\Tool\Generation\ScaffoldTool;
+use Altair\Mcp\Tool\Generation\WriteSpecTool;
+use Altair\Mcp\Tool\Verification\CheckDriftTool;
+use Altair\Mcp\Tool\Verification\DoctorTool;
+use Altair\Mcp\Tool\Verification\PhpstanTool;
+use Altair\Mcp\Tool\Verification\RunTestsTool;
+
+/**
+ * The catalogue of v1 built-in tool classes the server registers.
+ */
+final class BuiltinTools
+{
+    /**
+     * @return list<class-string>
+     */
+    public static function classes(): array
+    {
+        return [
+            // Discovery / inspection
+            ListPackagesTool::class,
+            DescribePackageTool::class,
+            ListSpecsTool::class,
+            ReadSpecTool::class,
+            ListEndpointsTool::class,
+            DescribeEndpointTool::class,
+            ContainerResolveTool::class,
+            ListCommandsTool::class,
+            // Generation / mutation
+            WriteSpecTool::class,
+            ScaffoldTool::class,
+            RewindSpecTool::class,
+            EmitOpenApiTool::class,
+            EmitSdkTool::class,
+            // Verification
+            DoctorTool::class,
+            RunTestsTool::class,
+            CheckDriftTool::class,
+            PhpstanTool::class,
+            // Database
+            DbQueryTool::class,
+            DbSchemaTool::class,
+            DbMigrateTool::class,
+        ];
+    }
+}

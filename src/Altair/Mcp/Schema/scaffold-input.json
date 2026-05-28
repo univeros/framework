@@ -1,0 +1,21 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["spec_path"],
+    "properties": {
+        "spec_path": {
+            "type": "string",
+            "description": "Path to a YAML spec file or a directory of specs."
+        },
+        "dry_run": {
+            "type": "boolean",
+            "description": "Plan the files without writing them.",
+            "default": false
+        },
+        "force": {
+            "type": "boolean",
+            "description": "Overwrite existing files instead of skipping them.",
+            "default": false
+        }
+    }
+}

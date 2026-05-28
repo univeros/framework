@@ -38,6 +38,7 @@ $paths = [];
 $builtIn = [
     __DIR__ . '/../src/Altair/AgentSpec/Cli',
     __DIR__ . '/../src/Altair/Doctor/Cli',
+    __DIR__ . '/../src/Altair/Mcp/Cli',
     __DIR__ . '/../src/Altair/Messaging/Cli',
     __DIR__ . '/../src/Altair/Persistence/Cli',
     __DIR__ . '/../src/Altair/Scaffold/Cli',

@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "Journal entry id (or unambiguous prefix). Defaults to the most recent scaffold."
+        },
+        "force": {
+            "type": "boolean",
+            "description": "Clobber files that were hand-edited after the scaffold.",
+            "default": false
+        }
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "dry_run": {
+            "type": "boolean",
+            "description": "List pending migrations without applying them.",
+            "default": false
+        }
+    }
+}
