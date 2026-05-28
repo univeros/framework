@@ -11,6 +11,10 @@ declare(strict_types=1);
 
 namespace Altair\Container\Collection;
 
+use Altair\Container\Definition;
 use Altair\Structure\Map;
 
+/**
+ * @extends Map<string, Definition>
+ */
 class ClassDefinitionsCollection extends Map {}

@@ -17,6 +17,9 @@ use Altair\Container\Container;
 use Altair\Structure\Set;
 use Override;
 
+/**
+ * @extends Set<class-string|ConfigurationInterface>
+ */
 class ConfigurationCollection extends Set implements ConfigurationInterface
 {
     /**

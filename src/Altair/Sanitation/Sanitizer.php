@@ -40,7 +40,7 @@ class Sanitizer implements SanitizerInterface
         $this->payload = $this->buildPayload($sanitizable);
 
         foreach ($sanitizable->getFilters() as $key => $value) {
-            $keys = explode(',', (string) preg_replace('/\s+/', '', (string) $key));
+            $keys = explode(',', (string) preg_replace('/\s+/', '', $key));
             foreach ($keys as $attribute) {
                 $filters = \is_array($value) ? $value : [$value];
                 $runner = $this->runner->withFilters($filters);

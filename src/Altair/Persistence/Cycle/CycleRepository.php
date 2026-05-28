@@ -37,6 +37,7 @@ use Override;
  */
 class CycleRepository implements RepositoryInterface
 {
+    /** @var CycleNativeRepository<TEntity> */
     private readonly CycleNativeRepository $repository;
 
     /**
@@ -47,7 +48,9 @@ class CycleRepository implements RepositoryInterface
         private readonly ORMInterface $orm,
         private readonly UnitOfWorkInterface $unitOfWork,
     ) {
-        $this->repository = $this->orm->getRepository($this->entityClass);
+        /** @var CycleNativeRepository<TEntity> $repository */
+        $repository = $this->orm->getRepository($this->entityClass);
+        $this->repository = $repository;
     }
 
     #[Override]

@@ -67,8 +67,13 @@ Three pillars:
 2. **Reliability by construction.** Features come from proven, tested,
    reversible spec modules — not freehand generation. Mistakes cost one
    `rewind`.
-3. **You own the code.** Real PHP, real database, exportable, no lock-in. This
-   is the answer to both no-code (lock-in) and JS builders (throwaway).
+3. **You own the outcome — not source-as-a-chore.** For an outcome-seeker,
+   meaningful ownership is *control of the running service* (publish, update,
+   roll back, custom domain, take it down), *your data* (exportable), and the
+   *right to take the code and leave* (the escape hatch that keeps us honest and
+   lock-in-free). They never have to touch the code day-to-day — but they can
+   always claim it. This answers both no-code (lock-in) and the JS builders
+   (throwaway, and you still have to operate it). See §10.
 
 ## 4. The "X, Y, Z features" product: a capability catalog
 
@@ -104,10 +109,12 @@ This reframes the roadmap: **stop building "framework features"; start building
 | 2 | **Intent compiler (Gii-for-AI)**, framework-agnostic | Boilerplate elimination; the Yii lever | A → B substrate | CLI, no lock-in | One spec → CRUD + persistence + OpenAPI + SDK + tests | the 90-second build |
 | 3 | **Stripe payments kit** (builds on #1) | Correct billing plumbing nobody owns generically | A + B | module | Idempotent webhooks, state machine, reconciliation, sandbox | "subscriptions that don't double-charge" |
 | 4 | **MCP "ship a feature" server** (generative + reversible) | Agent operability in *any* project | B | point your agent at it | Agent scaffolds / migrates / rewinds anywhere | agent live-builds an endpoint on camera |
-| 5 | **Capability catalog + composer** ("describe app → working app") | The Tier-B destination | B | hosted / agent-driven | Natural-language app assembly from proven modules | the flagship demo |
+| 5 | **Ship / deploy (reversible)** | "built" isn't "working" until it's reachable; deploy is unowned in the framework world and scary for agents | A + B | `altair ship` / managed publish | Push-button deploy + migrations; **rollback = `rewind` for prod** | "agent ships to a live URL, then rolls back in one command" |
+| 6 | **Capability catalog + composer** ("describe app → working app") | The Tier-B destination | B | hosted / agent-driven | Natural-language app assembly from proven modules | the flagship demo |
 
-**Sequence:** #1 → #2 → (#3 ∥ #4) → #5. Each ships real value and a marketing
-moment on its own; #5 is the synthesis everything builds toward.
+**Sequence:** #1 → #2 → (#3 ∥ #4) → #5 → #6. Each ships real value and a
+marketing moment on its own; #5 (shipping) turns "built" into "live," and #6 is
+the synthesis everything builds toward.
 
 **First move:** #1 (webhook+idempotency+outbox). It's cheap to adopt, broadly
 useful beyond payments, demonstrable in 60 seconds, fills a *real* gap, and is
@@ -152,14 +159,48 @@ purest showcase.
 
 ## 9. Open questions to resolve before building #5
 
-1. **Hosted vs. self-hosted** for the "describe → app" experience? Hosted =
-   monetization + control of the experience; self-hosted = ownership purity.
-   (Likely: hosted experience that *exports* an owned, self-hostable codebase —
-   best of both.)
+1. **Hosted vs. self-hosted** — *resolving toward hybrid.* A hosted "publish it,
+   it's live now" experience (instant gratification + monetization) with a
+   **sacred export escape hatch** to an owned, self-hostable codebase. Tier B
+   owns the running service + data + the right to leave; they don't operate the
+   code day-to-day. Honest constraint: a fully *managed* PaaS is a company-sized
+   build — start by *generating* a deploy pipeline to existing platforms (Fly,
+   Railway, Render, VPS via Docker/IaC), not by building our own cloud. See §10.
 2. **Which five catalog modules ship first?** Decide by "most-requested real app
    features," not by what's easiest to build.
 3. **Brand** for the Tier-B experience — probably distinct from "Altair the
    framework," since Tier B never needs to know the framework's name.
+
+---
+
+## 10. Creation + shipping: deployment as a reversible primitive
+
+A working app nobody can reach isn't working. **"Describe → built → live"** in
+one motion is the whole Tier-B promise — creation and shipping are one flow, not
+two products. Deployment slots into the existing thesis instead of bolting on:
+
+- **Reversible by construction.** A deploy is just another journaled mutation:
+  `ship` records an event; **`rollback` is `rewind` for production.** The agent
+  ships boldly because undo is one command — the property that makes scaffolding
+  safe makes deployment safe.
+- **Both tiers, one engine.** Tier A: `altair ship` deploys an *owned* app to
+  *their* infra (build, migrate, zero-downtime swap, rollback). Tier B: the same
+  engine behind a managed "publish it" button — describe → live, export intact.
+- **Ownership, reframed (Pillar 3).** "They don't own the code, they own the
+  power to publish it" is right for Tier B — *with* the right to claim the code
+  and leave. Operational control + data + escape hatch is the ownership that
+  matters to someone who can't read the source.
+
+**Honest sequencing.** Do **not** start by building a managed PaaS — infra,
+secrets, billing, scaling, on-call, and compliance are a company unto themselves
+and wrong for a solo+agent flagship. Start by *generating* a deploy pipeline
+(Dockerfile + IaC + one `altair ship` command) targeting existing platforms; add
+a thin managed layer or a hosting partnership later, only once demand is proven.
+
+**Security.** Deploy touches secrets and mutates production — both
+outward/high-stakes. Reuse the event log's secret **Scrubber**, require explicit
+confirmation before prod deploys (no silent agent push-to-prod), and keep every
+deploy/rollback in the journal for audit.
 
 ---
 
@@ -171,5 +212,9 @@ making the framework's *operator* an agent. The unclaimed seam is **reliable,
 owned, maintainable AI-built apps** — which our deterministic, reversible,
 spec-driven core is uniquely suited to. Build it as a **catalog of
 agent-installable capability modules**; each module is a cheap developer tool
-*and* a building block for "describe → app." Start with webhook+idempotency, then
-the intent compiler. Honest benchmarks and live demos are the marketing.
+*and* a building block for "describe → app." Creation isn't done until it ships:
+deployment is built in and reversible (**rollback = rewind**), so "describe →
+built → live" is one motion — and for Tier B, ownership means control of the
+running service plus the right to leave, not babysitting source. Start with
+webhook+idempotency, then the intent compiler. Honest benchmarks and live demos
+are the marketing.

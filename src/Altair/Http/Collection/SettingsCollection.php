@@ -13,4 +13,9 @@ namespace Altair\Http\Collection;
 
 use Altair\Structure\Map;
 
+/**
+ * Maps a setting name to its value.
+ *
+ * @extends Map<string, mixed>
+ */
 class SettingsCollection extends Map {}

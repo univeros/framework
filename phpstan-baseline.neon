@@ -56,64 +56,9 @@ parameters:
 			path: src/Altair/Common/Support/Arr.php
 
 		-
-			message: "#^Class Altair\\\\Configuration\\\\Collection\\\\ConfigurationCollection extends generic class Altair\\\\Structure\\\\Set but does not specify its types\\: TValue$#"
-			count: 1
-			path: src/Altair/Configuration/Collection/ConfigurationCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\AliasesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
+			message: "#^Method Altair\\\\Container\\\\Collection\\\\AliasesCollection\\:\\:define\\(\\) should return Altair\\\\Container\\\\Collection\\\\AliasesCollection but returns Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<string, string\\>\\.$#"
 			count: 1
 			path: src/Altair/Container/Collection/AliasesCollection.php
-
-		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\AliasesCollection\\:\\:define\\(\\) should return Altair\\\\Container\\\\Collection\\\\AliasesCollection but returns Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed, mixed\\>\\.$#"
-			count: 1
-			path: src/Altair/Container/Collection/AliasesCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\ClassDefinitionsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/ClassDefinitionsCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\DelegatesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/DelegatesCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\ParameterDefinitionsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/ParameterDefinitionsCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\PreparesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/PreparesCollection.php
-
-		-
-			message: "#^Class Altair\\\\Container\\\\Collection\\\\SharesCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/SharesCollection.php
-
-		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareClass\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Container/Collection/SharesCollection.php
-
-		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareClass\\(\\) return type with generic interface Altair\\\\Structure\\\\Contracts\\\\MapInterface does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/SharesCollection.php
-
-		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareInstance\\(\\) return type has no value type specified in iterable type Altair\\\\Structure\\\\Contracts\\\\MapInterface\\.$#"
-			count: 1
-			path: src/Altair/Container/Collection/SharesCollection.php
-
-		-
-			message: "#^Method Altair\\\\Container\\\\Collection\\\\SharesCollection\\:\\:shareInstance\\(\\) return type with generic interface Altair\\\\Structure\\\\Contracts\\\\MapInterface does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Container/Collection/SharesCollection.php
 
 		-
 			message: "#^Call to an undefined method ReflectionFunctionAbstract\\:\\:invokeArgs\\(\\)\\.$#"
@@ -136,72 +81,12 @@ parameters:
 			path: src/Altair/Cookie/Collection/CookieCollection.php
 
 		-
-			message: "#^Generic type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> in PHPDoc tag @return specifies 2 template types, but interface Altair\\\\Structure\\\\Contracts\\\\VectorInterface supports only 1\\: TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
-			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:pairsToArray\\(\\) has parameter \\$pairs with generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
-			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should return Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> but returns Altair\\\\Structure\\\\Vector\\<mixed\\>\\.$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$pair contains generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
-			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
-			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\CookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Map\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/CookieCollection.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Altair/Cookie/Collection/CookieCollection.php
 
 		-
 			message: "#^Class Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Generic type Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> in PHPDoc tag @return specifies 2 template types, but interface Altair\\\\Structure\\\\Contracts\\\\VectorInterface supports only 1\\: TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:pairsToArray\\(\\) has parameter \\$pairs with generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should return Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\> but returns Altair\\\\Structure\\\\Vector\\<mixed\\>\\.$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$pair contains generic class Altair\\\\Structure\\\\Pair but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Contracts\\\\MapInterface\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
-			count: 1
-			path: src/Altair/Cookie/Collection/SetCookieCollection.php
-
-		-
-			message: "#^Return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<int, string\\|null\\>\\) of method Altair\\\\Cookie\\\\Collection\\\\SetCookieCollection\\:\\:values\\(\\) should be compatible with return type \\(Altair\\\\Structure\\\\Contracts\\\\VectorInterface\\<mixed\\>\\) of method Altair\\\\Structure\\\\Map\\<mixed,mixed\\>\\:\\:values\\(\\)$#"
 			count: 1
 			path: src/Altair/Cookie/Collection/SetCookieCollection.php
 
@@ -246,27 +131,12 @@ parameters:
 			path: src/Altair/Courier/Strategy/CommandRunnerMiddlewareStrategy.php
 
 		-
-			message: "#^Class Altair\\\\Courier\\\\Support\\\\MessageCommandMap extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Courier/Support/MessageCommandMap.php
-
-		-
 			message: "#^PHPDoc tag @var for property Altair\\\\Http\\\\Base\\\\Payload\\:\\:\\$settingsCollection with type Altair\\\\Structure\\\\Map\\|null is not subtype of native type Altair\\\\Http\\\\Collection\\\\SettingsCollection\\.$#"
 			count: 1
 			path: src/Altair/Http/Base/Payload.php
 
 		-
-			message: "#^Class Altair\\\\Http\\\\Collection\\\\HttpStatusCollection implements generic interface IteratorAggregate but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Http/Collection/HttpStatusCollection.php
-
-		-
 			message: "#^Instanceof between array and Traversable will always evaluate to false\\.$#"
-			count: 1
-			path: src/Altair/Http/Collection/HttpStatusCollection.php
-
-		-
-			message: "#^Method Altair\\\\Http\\\\Collection\\\\HttpStatusCollection\\:\\:getIterator\\(\\) return type with generic class ArrayIterator does not specify its types\\: TKey, TValue$#"
 			count: 1
 			path: src/Altair/Http/Collection/HttpStatusCollection.php
 
@@ -289,26 +159,6 @@ parameters:
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/Altair/Http/Collection/HttpStatusCollection.php
-
-		-
-			message: "#^Class Altair\\\\Http\\\\Collection\\\\InputCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Http/Collection/InputCollection.php
-
-		-
-			message: "#^Class Altair\\\\Http\\\\Collection\\\\MiddlewareCollection extends generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
-			count: 1
-			path: src/Altair/Http/Collection/MiddlewareCollection.php
-
-		-
-			message: "#^Class Altair\\\\Http\\\\Collection\\\\RouteCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Http/Collection/RouteCollection.php
-
-		-
-			message: "#^Class Altair\\\\Http\\\\Collection\\\\SettingsCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Http/Collection/SettingsCollection.php
 
 		-
 			message: "#^Class Lcobucci\\\\Jose\\\\Parsing\\\\Decoder not found\\.$#"
@@ -406,49 +256,14 @@ parameters:
 			path: src/Altair/Http/Support/FormatNegotiator.php
 
 		-
-			message: "#^Method Altair\\\\Messaging\\\\Configuration\\\\MessengerConfiguration\\:\\:collectTransportFactories\\(\\) return type with generic interface Symfony\\\\Component\\\\Messenger\\\\Transport\\\\TransportFactoryInterface does not specify its types\\: TTransport$#"
-			count: 1
-			path: src/Altair/Messaging/Configuration/MessengerConfiguration.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$instance contains generic interface Symfony\\\\Component\\\\Messenger\\\\Transport\\\\TransportFactoryInterface but does not specify its types\\: TTransport$#"
-			count: 1
-			path: src/Altair/Messaging/Configuration/MessengerConfiguration.php
-
-		-
-			message: "#^Method Altair\\\\Messaging\\\\Transport\\\\TransportRegistry\\:\\:__construct\\(\\) has parameter \\$factory with generic interface Symfony\\\\Component\\\\Messenger\\\\Transport\\\\TransportFactoryInterface but does not specify its types\\: TTransport$#"
-			count: 1
-			path: src/Altair/Messaging/Transport/TransportRegistry.php
-
-		-
-			message: "#^Method Altair\\\\Middleware\\\\Runner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
-			count: 1
-			path: src/Altair/Middleware/Runner.php
-
-		-
-			message: "#^Property Altair\\\\Persistence\\\\Cycle\\\\CycleRepository\\:\\:\\$repository with generic interface Cycle\\\\ORM\\\\RepositoryInterface does not specify its types\\: TEntity$#"
-			count: 1
-			path: src/Altair/Persistence/Cycle/CycleRepository.php
-
-		-
 			message: "#^Unable to resolve the template type TEntity in call to method Cycle\\\\ORM\\\\ORMInterface\\:\\:getRepository\\(\\)$#"
 			count: 1
 			path: src/Altair/Persistence/Cycle/CycleRepository.php
 
 		-
-			message: "#^Class Altair\\\\Sanitation\\\\Collection\\\\FilterCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Sanitation/Collection/FilterCollection.php
-
-		-
 			message: "#^PHPDoc tag @return with type mixed is not subtype of native type int\\|null\\.$#"
 			count: 1
 			path: src/Altair/Sanitation/Filter/IntegerFilter.php
-
-		-
-			message: "#^Method Altair\\\\Sanitation\\\\FiltersRunner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
-			count: 1
-			path: src/Altair/Sanitation/FiltersRunner.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Sanitation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"
@@ -521,11 +336,6 @@ parameters:
 			path: src/Altair/Structure/Stack.php
 
 		-
-			message: "#^Class Altair\\\\Validation\\\\Collection\\\\RuleCollection extends generic class Altair\\\\Structure\\\\Map but does not specify its types\\: TKey, TValue$#"
-			count: 1
-			path: src/Altair/Validation/Collection/RuleCollection.php
-
-		-
 			message: "#^Binary operation \"\\*\\=\" between non\\-empty\\-string and 2 results in an error\\.$#"
 			count: 1
 			path: src/Altair/Validation/Rule/CreditCardRule.php
@@ -539,11 +349,6 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between 1 and 0 will always evaluate to false\\.$#"
 			count: 1
 			path: src/Altair/Validation/Rule/IsbnRule.php
-
-		-
-			message: "#^Method Altair\\\\Validation\\\\RulesRunner\\:\\:__construct\\(\\) has parameter \\$queue with generic class Altair\\\\Structure\\\\Queue but does not specify its types\\: TValue$#"
-			count: 1
-			path: src/Altair/Validation/RulesRunner.php
 
 		-
 			message: "#^PHPDoc tag @param for parameter \\$resolver with type callable is not subtype of native type Altair\\\\Validation\\\\Contracts\\\\ResolverInterface\\|null\\.$#"

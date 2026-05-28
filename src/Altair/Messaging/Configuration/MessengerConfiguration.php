@@ -40,6 +40,7 @@ use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Messenger\Transport\Sync\SyncTransportFactory;
 use Symfony\Component\Messenger\Transport\TransportFactory;
 use Symfony\Component\Messenger\Transport\TransportFactoryInterface;
+use Symfony\Component\Messenger\Transport\TransportInterface;
 
 /**
  * Wires Symfony Messenger into the Altair Container.
@@ -171,7 +172,7 @@ final readonly class MessengerConfiguration implements ConfigurationInterface
     }
 
     /**
-     * @return list<TransportFactoryInterface>
+     * @return list<TransportFactoryInterface<TransportInterface>>
      */
     private static function collectTransportFactories(LazyBus $lazyBus): array
     {
@@ -190,7 +191,7 @@ final readonly class MessengerConfiguration implements ConfigurationInterface
 
         foreach ($optional as $class) {
             if (class_exists($class)) {
-                /** @var TransportFactoryInterface $instance */
+                /** @var TransportFactoryInterface<TransportInterface> $instance */
                 $instance = new $class();
                 $factories[] = $instance;
             }
