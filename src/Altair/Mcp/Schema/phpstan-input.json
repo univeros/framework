@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "level": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Override the analysis level."
+        }
+    }
+}

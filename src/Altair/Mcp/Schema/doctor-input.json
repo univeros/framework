@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "only": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Run only these check names."
+        },
+        "skip": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Skip these check names."
+        }
+    }
+}

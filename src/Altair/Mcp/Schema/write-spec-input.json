@@ -1,0 +1,15 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["path", "content"],
+    "properties": {
+        "path": {
+            "type": "string",
+            "description": "Destination YAML spec path, relative to the project root or absolute."
+        },
+        "content": {
+            "type": "string",
+            "description": "Full YAML content of the spec. Validated before it is written."
+        }
+    }
+}
