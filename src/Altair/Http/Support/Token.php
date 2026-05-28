@@ -21,6 +21,7 @@ class Token implements TokenInterface
      *
      * @param $token
      * @param string $token
+     * @param array<string, mixed> $metadata
      */
     public function __construct(private $token, private array $metadata) {}
 

@@ -24,5 +24,5 @@ interface ErrorLoggerInterface
      *
      * @param Exception|Error $error
      */
-    public function log($error);
+    public function log($error): void;
 }

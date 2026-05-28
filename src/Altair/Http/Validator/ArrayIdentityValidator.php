@@ -16,10 +16,15 @@ use Override;
 
 class ArrayIdentityValidator implements IdentityValidatorInterface
 {
+    /**
+     * @var array<string, string>
+     */
     protected array $users;
 
     /**
      * ArrayIdentityValidator constructor.
+     *
+     * @param array<string, string>|null $users
      */
     public function __construct(?array $users = null)
     {
@@ -28,6 +33,7 @@ class ArrayIdentityValidator implements IdentityValidatorInterface
 
     /**
      * @inheritDoc
+     * @param array<string, mixed> $arguments
      */
     #[Override]
     public function __invoke(array $arguments): bool

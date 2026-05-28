@@ -32,6 +32,8 @@ class Action
     /**
      * @inheritDoc
      * @param string $domain
+     * @param string|null $responder class name of \Altair\Http\Contracts\ResponderInterface
+     * @param string|null $input class name of \Altair\Http\Contracts\InputInterface
      */
     public function __construct(
         /**

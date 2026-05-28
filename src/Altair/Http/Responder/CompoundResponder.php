@@ -23,10 +23,14 @@ class CompoundResponder implements ResponderInterface
 {
     use ResolverAwareTrait;
 
+    /**
+     * @var list<class-string<ResponderInterface>>
+     */
     protected array $responders;
 
     /**
      * @param callable(string): object $resolver
+     * @param list<class-string<ResponderInterface>> $responders
      *
      * @throws InvalidResponderException
      */
@@ -58,9 +62,11 @@ class CompoundResponder implements ResponderInterface
     }
 
     /**
+     * @param list<class-string<ResponderInterface>> $responders
+     *
      *
      * @throws InvalidResponderException
-     *
+     * @return list<class-string<ResponderInterface>>
      */
     protected function filterResponders(array $responders): array
     {

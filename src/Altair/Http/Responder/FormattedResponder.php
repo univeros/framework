@@ -27,10 +27,14 @@ class FormattedResponder implements ResponderInterface
 {
     use ResolverAwareTrait;
 
+    /**
+     * @var array<class-string<OutputFormatterInterface>, float>
+     */
     protected array $formatters;
 
     /**
      * @param callable(string): object $resolver
+     * @param array<class-string<OutputFormatterInterface>, float> $formatters
      */
     public function __construct(
         protected Negotiator $negotiator,
@@ -66,6 +70,11 @@ class FormattedResponder implements ResponderInterface
         return $cloned;
     }
 
+    /**
+     * @param array<class-string<OutputFormatterInterface>, float> $formatters
+     *
+     * @return array<class-string<OutputFormatterInterface>, float>
+     */
     protected function filterFormatters(array $formatters): array
     {
         $filtered = [];
@@ -86,6 +95,8 @@ class FormattedResponder implements ResponderInterface
 
     /**
      * Retrieve a map of accepted priorities with the responsible formatter.
+     *
+     * @return array<string, class-string<OutputFormatterInterface>>
      */
     protected function priorities(): array
     {

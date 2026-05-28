@@ -56,6 +56,9 @@ class AliasesCollection extends Map
         return $this->put($original, $alias);
     }
 
+    /**
+     * @return array{0: string, 1: string}
+     */
     public function resolve(string $name): array
     {
         $normalizedName = $this->normalizeName($name);

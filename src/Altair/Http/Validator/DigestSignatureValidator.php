@@ -17,10 +17,15 @@ use Override;
 
 class DigestSignatureValidator implements IdentityValidatorInterface
 {
+    /**
+     * @var array<string, string>
+     */
     protected array $options;
 
     /**
      * RepositoryIdentityValidator constructor.
+     *
+     * @param array<string, string>|null $options
      */
     public function __construct(protected QueryRepositoryInterface $repository, ?array $options = null)
     {
@@ -30,6 +35,9 @@ class DigestSignatureValidator implements IdentityValidatorInterface
         $this->options = $options ?? ['username' => 'username', 'password' => 'password'];
     }
 
+    /**
+     * @param array<string, mixed> $arguments
+     */
     #[Override]
     public function __invoke(array $arguments): bool
     {

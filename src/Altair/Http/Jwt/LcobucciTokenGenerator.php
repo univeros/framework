@@ -28,6 +28,7 @@ class LcobucciTokenGenerator implements TokenGeneratorInterface
 
     /**
      * @inheritDoc
+     * @param array<string, mixed> $claims
      */
     #[Override]
     public function generate(array $claims = []): string

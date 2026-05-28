@@ -36,6 +36,8 @@ interface TokenFactoryInterface
      *
      *
      * @see TokenAuthenticationMiddleware::__invoke()
+     *
+     * @param array<string, mixed> $credentials
      */
     public function fromCredentials(array $credentials): TokenInterface;
 }

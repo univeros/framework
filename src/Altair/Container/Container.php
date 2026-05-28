@@ -50,7 +50,7 @@ class Container implements ContainerInterface
     protected DelegatesCollection $delegates;
 
     /**
-     * @var array
+     * @var array<string, int>
      */
     protected $making = [];
 
@@ -293,11 +293,10 @@ class Container implements ContainerInterface
     /**
      * Invoke the specified callable or class::method string, provisioning dependencies along the way
      *
-     * @param $callableOrMethodString
      * @throws InjectionException
      * @throws ReflectionException
      */
-    public function execute($callableOrMethodString, ?Definition $definition = null): mixed
+    public function execute(mixed $callableOrMethodString, ?Definition $definition = null): mixed
     {
         $executable = $this->executableBuilder->build($callableOrMethodString);
         $definition ??= new Definition([]);
@@ -346,10 +345,7 @@ class Container implements ContainerInterface
         return $this->prepares;
     }
 
-    /**
-     * @param $name
-     */
-    public function isset($name): bool
+    public function isset(string $name): bool
     {
         $name = $this->normalizeName($name);
 
@@ -369,13 +365,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param $object
-     * @param $normalizedClass
-     *
      * @throws InjectionException
      * @return mixed
      */
-    protected function prepareInstance($object, $normalizedClass)
+    protected function prepareInstance(mixed $object, string $normalizedClass)
     {
         if (isset($this->prepares[$normalizedClass])) {
             $callableOrMethodString = $this->prepares->get($normalizedClass);
@@ -416,13 +409,10 @@ class Container implements ContainerInterface
     }
 
     /**
-     * @param $className
-     * @param $normalizedClass
-     *
      * @throws InjectionException
      * @return mixed|object
      */
-    protected function provisionInstance(string $className, $normalizedClass, Definition $definition)
+    protected function provisionInstance(string $className, string $normalizedClass, Definition $definition)
     {
         try {
             $constructor = $this->reflector->getConstructor($className);
