@@ -15,6 +15,8 @@ interface OutputFormatterInterface
 {
     /**
      * Get the content types that this formatter can satisfy.
+     *
+     * @return list<string>
      */
     public static function accepts(): array;
 

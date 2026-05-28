@@ -65,7 +65,7 @@ class PhpViewFormatter extends AbstractHtmlFormatter
      * Renders the contents to a layout specified within the payload settings. If not layout is found, it will use the
      * one configured.
      *
-     * @param $content
+     * @param string $content
      *
      *
      * @see PhpViewConfiguration::apply()
@@ -92,6 +92,7 @@ class PhpViewFormatter extends AbstractHtmlFormatter
     /**
      * Renders a view file as a PHP script.
      *
+     * @param array<string, mixed> $params
      *
      * @throws Exception
      * @throws Throwable

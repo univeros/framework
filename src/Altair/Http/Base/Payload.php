@@ -27,12 +27,12 @@ class Payload implements PayloadInterface
     protected InputCollection $inputCollection;
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $output = [];
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected $messages = [];
 
@@ -94,6 +94,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @param array<string, mixed> $output
      */
     #[Override]
     public function withOutput(array $output): PayloadInterface
@@ -106,6 +107,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @return array<string, mixed>
      */
     #[Override]
     public function getOutput(): array
@@ -115,6 +117,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @param array<string, mixed> $messages
      */
     #[Override]
     public function withMessages(array $messages): PayloadInterface
@@ -127,6 +130,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @return array<string, mixed>
      */
     #[Override]
     public function getMessages(): array
@@ -136,6 +140,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @param mixed $value
      */
     #[Override]
     public function withSetting(string $name, $value): PayloadInterface
@@ -172,6 +177,7 @@ class Payload implements PayloadInterface
 
     /**
      * @inheritDoc
+     * @param mixed $default
      */
     #[Override]
     public function getSetting(string $name, $default = null)

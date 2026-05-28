@@ -29,6 +29,7 @@ class JsonFormatter implements OutputFormatterInterface
 
     /**
      * @inheritDoc
+     * @return list<string>
      */
     #[Override]
     public static function accepts(): array

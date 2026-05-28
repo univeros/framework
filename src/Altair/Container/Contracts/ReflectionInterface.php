@@ -22,7 +22,7 @@ interface ReflectionInterface
     /**
      * Retrieves ReflectionClass instances, caching them for future retrieval
      *
-     *
+     * @return ReflectionClass<object>
      */
     public function getClass(string $class): ReflectionClass;
 

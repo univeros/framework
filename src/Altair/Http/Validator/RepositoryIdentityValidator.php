@@ -18,10 +18,15 @@ use Override;
 
 class RepositoryIdentityValidator implements IdentityValidatorInterface
 {
+    /**
+     * @var array<string, string>
+     */
     protected array $options;
 
     /**
      * RepositoryIdentityValidator constructor.
+     *
+     * @param array<string, string>|null $options
      */
     public function __construct(protected QueryRepositoryInterface $repository, ?array $options = null)
     {
@@ -34,6 +39,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
 
     /**
      * @inheritDoc
+     * @param array<string, mixed> $arguments
      */
     #[Override]
     public function __invoke(array $arguments): bool

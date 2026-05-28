@@ -16,6 +16,9 @@ use Override;
 
 abstract class AbstractHtmlFormatter implements OutputFormatterInterface
 {
+    /**
+     * @return list<string>
+     */
     #[Override]
     public static function accepts(): array
     {

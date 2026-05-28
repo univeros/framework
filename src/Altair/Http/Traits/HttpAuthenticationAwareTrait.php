@@ -36,7 +36,7 @@ trait HttpAuthenticationAwareTrait
     protected $ssl;
 
     /**
-     * @var array|string
+     * @var list<string>|string
      */
     protected $allowed;
 
@@ -59,6 +59,7 @@ trait HttpAuthenticationAwareTrait
      * Authentication middleware Constructor.
      *
      * @param HttpAuthRuleInterface[] $rules
+     * @param array<string, mixed>|null $options
      */
     public function __construct(IdentityValidatorInterface $identityValidator, ?array $rules = null, ?array $options = null)
     {

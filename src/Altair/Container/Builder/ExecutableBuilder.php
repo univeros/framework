@@ -18,6 +18,7 @@ use Altair\Container\Executable;
 use Closure;
 use Override;
 use ReflectionException;
+use ReflectionFunctionAbstract;
 
 class ExecutableBuilder implements ExecutableBuilderInterface
 {
@@ -40,7 +41,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
      * @inheritDoc
      */
     #[Override]
-    public function isExecutable($executable): bool
+    public function isExecutable(mixed $executable): bool
     {
         return \is_callable($executable)
             || (\is_string($executable) && method_exists($executable, '__invoke'))
@@ -50,11 +51,10 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     }
 
     /**
-     * @param $callableOrMethodString
-     *
      * @throws InjectionException
+     * @return array{0: ReflectionFunctionAbstract, 1: object|null}
      */
-    protected function buildExecutableStructure($callableOrMethodString): array
+    protected function buildExecutableStructure(mixed $callableOrMethodString): array
     {
         try {
             if (\is_string($callableOrMethodString)) {
@@ -83,6 +83,7 @@ class ExecutableBuilder implements ExecutableBuilderInterface
 
     /**
      * @throws InjectionException
+     * @return array{0: ReflectionFunctionAbstract, 1: object|null}
      */
     protected function buildExecutableStructureFromString(string $executableString): array
     {
@@ -104,18 +105,17 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     }
 
     /**
-     * @param $class
-     * @param $method
      * @throws InjectionException
+     * @return array{0: ReflectionFunctionAbstract, 1: object|null}
      */
-    protected function buildExecutableStructureFromClassMethodCallable($class, $method): array
+    protected function buildExecutableStructureFromClassMethodCallable(string $class, string $method): array
     {
-        $relativeStaticMethodStartPos = strpos((string) $method, 'parent::');
+        $relativeStaticMethodStartPos = strpos($method, 'parent::');
 
         if ($relativeStaticMethodStartPos === 0) {
             $childReflection = $this->container->getReflector()->getClass($class);
             $class = $childReflection->getParentClass()->name;
-            $method = substr((string) $method, 8);
+            $method = substr($method, 8);
         }
 
         [$className] = $this->container->getAliases()->resolve($class);
@@ -135,7 +135,10 @@ class ExecutableBuilder implements ExecutableBuilderInterface
     }
 
     /**
+     * @param array{0: object|string, 1: string} $executableArray
+     *
      * @throws InjectionException
+     * @return array{0: ReflectionFunctionAbstract, 1: object|null}
      */
     protected function buildExecutableStructureFromArray(array $executableArray): array
     {

@@ -22,7 +22,9 @@ class MimeType
     public const DEFAULT_MIME_TYPE = 'application/octet-stream';
 
     /**
-     * @var array of mime types according to file extensions
+     * Mime types according to file extensions.
+     *
+     * @var array<string, string>
      */
     protected $mimeTypes = [
         '3dml' => 'text/vnd.in3d.3dml',

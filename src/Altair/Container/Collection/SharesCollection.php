@@ -27,11 +27,7 @@ class SharesCollection extends Map
         return $this->put($normalizedName, $this[$normalizedName] ?? null);
     }
 
-    /**
-     * @param $instance
-     *
-     */
-    public function shareInstance($instance, AliasesCollection $aliasesCollection): MapInterface
+    public function shareInstance(object $instance, AliasesCollection $aliasesCollection): MapInterface
     {
         $normalizedName = $this->normalizeName($instance::class);
         if (isset($aliasesCollection[$normalizedName])) {

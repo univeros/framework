@@ -16,6 +16,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 trait IpAddressAwareTrait
 {
+    /**
+     * @return list<string>|null
+     */
     protected function getIps(ServerRequestInterface $request): ?array
     {
         return $request->getAttribute(MiddlewareInterface::ATTRIBUTE_IP_ADDRESS);

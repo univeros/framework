@@ -25,12 +25,15 @@ use Traversable;
 class HttpStatusCollection implements Countable, IteratorAggregate
 {
     /**
-     * @var array of status codes and texts
+     * Status codes and their reason phrases.
+     *
+     * @var array<int, string>
      */
     protected $values;
 
     /**
      * @inheritDoc
+     * @param array<int, string>|Traversable<int, string> $values
      */
     public function __construct($values = [])
     {
@@ -164,7 +167,7 @@ class HttpStatusCollection implements Countable, IteratorAggregate
     /**
      * Merges an array of status codes and its reason phrase into the default values.
      *
-     * @param array|Traversable $values
+     * @param array<int, string>|Traversable<int, string> $values
      */
     public function mergeAll($values): void
     {
@@ -182,6 +185,8 @@ class HttpStatusCollection implements Countable, IteratorAggregate
      *
      * @see HttpStatusInterface
      * @see HttpStatusCodeInterface
+     *
+     * @return array<int, string>
      */
     protected function buildCommonValues(): array
     {

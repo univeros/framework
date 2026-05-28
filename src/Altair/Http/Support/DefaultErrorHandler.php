@@ -21,6 +21,9 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class DefaultErrorHandler implements ErrorHandlerInterface
 {
+    /**
+     * @var array<string, list<string>>
+     */
     protected $handlers = [
         'plain' => [
             'text/plain',

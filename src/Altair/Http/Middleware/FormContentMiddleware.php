@@ -21,6 +21,9 @@ class FormContentMiddleware extends AbstractContentHandlerMiddleware
         return ['application/x-www-form-urlencoded'];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     #[Override]
     protected function parse(string $body): array
     {

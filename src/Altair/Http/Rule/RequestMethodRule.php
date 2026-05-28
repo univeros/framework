@@ -17,12 +17,17 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class RequestMethodRule implements HttpAuthRuleInterface
 {
+    /**
+     * @var array<string, list<string>>
+     */
     protected array $options = [
         'passthrough' => ['OPTIONS'],
     ];
 
     /**
      * RequestMethodRule constructor.
+     *
+     * @param array<string, list<string>>|null $options
      */
     public function __construct(?array $options = null)
     {
