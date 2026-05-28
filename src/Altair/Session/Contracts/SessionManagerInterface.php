@@ -23,12 +23,12 @@ interface SessionManagerInterface
     /**
      * Sets current session id.
      */
-    public function setId(string $id);
+    public function setId(string $id): void;
 
     /**
      * Sets the callable used to clear the session cookie when destroying the session.
      */
-    public function setDeleteCookieCallable(?callable $callable = null);
+    public function setDeleteCookieCallable(?callable $callable = null): void;
 
     /**
      * Creates a session block.
@@ -45,7 +45,7 @@ interface SessionManagerInterface
     /**
      * Sets session name.
      */
-    public function setName(string $name);
+    public function setName(string $name): void;
 
     /**
      * Gets the current session save path.
@@ -62,10 +62,12 @@ interface SessionManagerInterface
      *
      * @throws InvalidArgumentException if the path is not a valid directory
      */
-    public function setSavePath(string $path);
+    public function setSavePath(string $path): void;
 
     /**
      * Returns the session cookie params.
+     *
+     * @return array<string, mixed>
      */
     public function getCookieParams(): array;
 
@@ -87,11 +89,11 @@ interface SessionManagerInterface
      * - `httponly` : If set to TRUE then PHP will attempt to send the httponly
      *   flag when setting the session cookie.
      *
-     * @param array $params The array of session cookie param keys and values.
+     * @param array<string, mixed> $params The array of session cookie param keys and values.
      *
      * @see [session_set_cookie_params()](http://php.net/manual/es/function.session-set-cookie-params.php).
      */
-    public function setCookieParams(array $params);
+    public function setCookieParams(array $params): void;
 
     /**
      * Returns whether the session has started or not.
@@ -111,7 +113,7 @@ interface SessionManagerInterface
     /**
      * Clears all session variables across all session blocks.
      */
-    public function clear();
+    public function clear(): void;
 
     /**
      * Resumes a session but not starts a new one if not exists.
@@ -121,7 +123,7 @@ interface SessionManagerInterface
     /**
      * Writes all the session data from session blocks and ends the session.
      */
-    public function close();
+    public function close(): void;
 
     /**
      * Destroys the session entirely.

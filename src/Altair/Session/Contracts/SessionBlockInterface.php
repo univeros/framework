@@ -27,11 +27,8 @@ interface SessionBlockInterface
 
     /**
      * Sets the value of a key in the session block.
-     *
-     * @param $value
-     *
      */
-    public function set(string $key, $value): SessionBlockInterface;
+    public function set(string $key, mixed $value): SessionBlockInterface;
 
     /**
      * Removes a key from the session block.
@@ -80,7 +77,7 @@ interface SessionBlockInterface
      * @param bool $delete whether to delete the flash messages right after this method is called.
      * If false, the flash messages will be automatically deleted in the next request.
      *
-     * @return array flash messages (key => message or key => [message1, message2]).
+     * @return array<string, mixed> flash messages (key => message or key => [message1, message2]).
      */
     public function getAllFlashes($delete = false);
 
@@ -131,7 +128,7 @@ interface SessionBlockInterface
      * If you have a normal session variable using the same name, it will be removed
      * by this method.
      */
-    public function removeAllFlashes();
+    public function removeAllFlashes(): void;
 
     /**
      * Returns a value indicating whether there are flash messages associated with the specified key.

@@ -30,7 +30,7 @@ class DateTimeFilter extends AbstractFilter
      * @inheritDoc
      */
     #[Override]
-    public function parse($value)
+    public function parse(mixed $value)
     {
         $value = $this->buildDateTime($value);
 
@@ -41,10 +41,8 @@ class DateTimeFilter extends AbstractFilter
 
     /**
      * Creates a new datetime based on the value, otherwise returns null.
-     *
-     * @param $value
      */
-    protected function buildDateTime($value): ?DateTime
+    protected function buildDateTime(mixed $value): ?DateTime
     {
         if ($value instanceof DateTime) {
             return $value;
