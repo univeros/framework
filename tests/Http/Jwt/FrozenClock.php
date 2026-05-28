@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Tests\Http\Jwt;
 
 use DateTimeImmutable;
+use Override;
 use Psr\Clock\ClockInterface;
 
 /**
@@ -26,6 +27,7 @@ final readonly class FrozenClock implements ClockInterface
         return new self((new DateTimeImmutable())->setTimestamp($timestamp));
     }
 
+    #[Override]
     public function now(): DateTimeImmutable
     {
         return $this->now;

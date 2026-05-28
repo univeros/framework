@@ -26,8 +26,10 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
         private string $publicKey,
         private int $ttl,
         private Signer $signer,
+        private string $issuer,
         ?int $timestamp = null,
-        private ?string $privateKey = null
+        private ?string $privateKey = null,
+        private ?string $audience = null
     ) {
         $this->timestamp = $timestamp ?: time();
     }
@@ -57,6 +59,24 @@ final readonly class TokenConfiguration implements TokenConfigurationInterface
     public function getSigner(): Signer
     {
         return $this->signer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getIssuer(): string
+    {
+        return $this->issuer;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    #[Override]
+    public function getAudience(): ?string
+    {
+        return $this->audience;
     }
 
     /**

@@ -28,6 +28,16 @@ interface TokenConfigurationInterface
     public function getSigner(): Signer;
 
     /**
+     * The stable issuer identifier (`iss` claim) for tokens minted and validated by this service.
+     */
+    public function getIssuer(): string;
+
+    /**
+     * The intended audience (`aud` claim), or null when no audience restriction applies.
+     */
+    public function getAudience(): ?string;
+
+    /**
      * Returns the timestamp for token issuance and expiration in UNIX_TIMESTAMP format.
      */
     public function getTimestamp(): int;

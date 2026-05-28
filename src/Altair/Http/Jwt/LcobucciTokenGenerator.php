@@ -18,21 +18,18 @@ use DateTimeImmutable;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Override;
-use Psr\Http\Message\ServerRequestInterface;
 
 /**
  * Generates signed JWTs using lcobucci/jwt v5.
  *
  * Each call mints a fresh, immutable builder from a {@see Configuration} derived from the
  * framework {@see TokenConfigurationInterface}. Asymmetric signing is assumed (RSA/ECDSA),
- * so a private key must be configured.
+ * so a private key must be configured. The `iss` claim is the configured stable issuer and
+ * the `aud` claim is added when an audience is configured.
  */
 class LcobucciTokenGenerator implements TokenGeneratorInterface
 {
-    public function __construct(
-        protected ServerRequestInterface $request,
-        protected TokenConfigurationInterface $config
-    ) {}
+    public function __construct(protected TokenConfigurationInterface $config) {}
 
     /**
      * @inheritDoc
@@ -57,9 +54,15 @@ class LcobucciTokenGenerator implements TokenGeneratorInterface
         );
 
         $builder = $configuration->builder()
-            ->issuedBy((string) $this->request->getUri())
+            ->issuedBy($this->config->getIssuer())
             ->issuedAt((new DateTimeImmutable())->setTimestamp($this->config->getTimestamp()))
             ->expiresAt((new DateTimeImmutable())->setTimestamp($this->config->getExpirationTimestamp()));
+
+        $audience = $this->config->getAudience();
+
+        if ($audience !== null && $audience !== '') {
+            $builder = $builder->permittedFor($audience);
+        }
 
         foreach ($claims as $name => $value) {
             // Builder is immutable in v5: each withClaim() returns a new instance.

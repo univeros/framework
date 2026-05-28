@@ -15,18 +15,19 @@ use Altair\Http\Exception\InvalidTokenException;
 use Altair\Http\Jwt\LcobucciTokenParser;
 use Altair\Http\Support\TokenConfiguration;
 use DateTimeImmutable;
-use Laminas\Diactoros\ServerRequest;
-use Laminas\Diactoros\Uri;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
+use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(LcobucciTokenParser::class)]
 final class LcobucciTokenParserTest extends TestCase
 {
-    private const string ISSUER = 'https://api.example.test/login';
+    private const string ISSUER = 'https://api.example.test';
+
+    private const string AUDIENCE = 'https://client.example.test';
 
     private const int ISSUED_AT = 1_700_000_000;
 
@@ -36,6 +37,7 @@ final class LcobucciTokenParserTest extends TestCase
 
     private static string $publicKey;
 
+    #[Override]
     public static function setUpBeforeClass(): void
     {
         if (!\extension_loaded('openssl')) {
@@ -48,7 +50,7 @@ final class LcobucciTokenParserTest extends TestCase
     public function testParseReturnsTokenWithClaimsForValidToken(): void
     {
         $jwt = $this->mintToken(self::ISSUER, self::ISSUED_AT + self::TTL, ['uid' => 7]);
-        $parser = $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT + 10));
+        $parser = $this->parser(FrozenClock::at(self::ISSUED_AT + 10));
 
         $token = $parser->parse($jwt);
 
@@ -60,7 +62,7 @@ final class LcobucciTokenParserTest extends TestCase
     {
         $this->expectException(InvalidTokenException::class);
 
-        $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT))->parse('this-is-not-a-jwt');
+        $this->parser(FrozenClock::at(self::ISSUED_AT))->parse('this-is-not-a-jwt');
     }
 
     public function testParseRejectsTamperedSignature(): void
@@ -70,13 +72,13 @@ final class LcobucciTokenParserTest extends TestCase
 
         $this->expectException(InvalidTokenException::class);
 
-        $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT + 10))->parse($tampered);
+        $this->parser(FrozenClock::at(self::ISSUED_AT + 10))->parse($tampered);
     }
 
     public function testParseRejectsExpiredToken(): void
     {
         $jwt = $this->mintToken(self::ISSUER, self::ISSUED_AT + self::TTL, ['uid' => 7]);
-        $parser = $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT + self::TTL + 1));
+        $parser = $this->parser(FrozenClock::at(self::ISSUED_AT + self::TTL + 1));
 
         $this->expectException(InvalidTokenException::class);
 
@@ -86,7 +88,7 @@ final class LcobucciTokenParserTest extends TestCase
     public function testParseRejectsWrongIssuer(): void
     {
         $jwt = $this->mintToken('https://evil.example.test', self::ISSUED_AT + self::TTL, ['uid' => 7]);
-        $parser = $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT + 10));
+        $parser = $this->parser(FrozenClock::at(self::ISSUED_AT + 10));
 
         $this->expectException(InvalidTokenException::class);
 
@@ -110,13 +112,33 @@ final class LcobucciTokenParserTest extends TestCase
 
         $this->expectException(InvalidTokenException::class);
 
-        $this->parser(self::ISSUER, FrozenClock::at(self::ISSUED_AT + 10))->parse($jwt);
+        $this->parser(FrozenClock::at(self::ISSUED_AT + 10))->parse($jwt);
+    }
+
+    public function testParseAcceptsTokenWithMatchingAudience(): void
+    {
+        $jwt = $this->mintToken(self::ISSUER, self::ISSUED_AT + self::TTL, ['uid' => 7], self::AUDIENCE);
+        $parser = $this->parser(FrozenClock::at(self::ISSUED_AT + 10), self::AUDIENCE);
+
+        $token = $parser->parse($jwt);
+
+        self::assertSame(7, $token->getMetadata('uid'));
+    }
+
+    public function testParseRejectsTokenWithMissingAudienceWhenAudienceRequired(): void
+    {
+        $jwt = $this->mintToken(self::ISSUER, self::ISSUED_AT + self::TTL, ['uid' => 7]);
+        $parser = $this->parser(FrozenClock::at(self::ISSUED_AT + 10), self::AUDIENCE);
+
+        $this->expectException(InvalidTokenException::class);
+
+        $parser->parse($jwt);
     }
 
     /**
      * @param array<string, mixed> $claims
      */
-    private function mintToken(string $issuer, int $expiresAt, array $claims): string
+    private function mintToken(string $issuer, int $expiresAt, array $claims, ?string $audience = null): string
     {
         $configuration = Configuration::forAsymmetricSigner(
             new Sha256(),
@@ -129,6 +151,10 @@ final class LcobucciTokenParserTest extends TestCase
             ->issuedAt((new DateTimeImmutable())->setTimestamp(self::ISSUED_AT))
             ->expiresAt((new DateTimeImmutable())->setTimestamp($expiresAt));
 
+        if ($audience !== null) {
+            $builder = $builder->permittedFor($audience);
+        }
+
         foreach ($claims as $name => $value) {
             $builder = $builder->withClaim($name, $value);
         }
@@ -136,11 +162,18 @@ final class LcobucciTokenParserTest extends TestCase
         return $builder->getToken($configuration->signer(), $configuration->signingKey())->toString();
     }
 
-    private function parser(string $requestUri, FrozenClock $clock): LcobucciTokenParser
+    private function parser(FrozenClock $clock, ?string $audience = null): LcobucciTokenParser
     {
-        $request = (new ServerRequest())->withUri(new Uri($requestUri));
-        $config = new TokenConfiguration(self::$publicKey, self::TTL, new Sha256(), self::ISSUED_AT, self::$privateKey);
+        $config = new TokenConfiguration(
+            self::$publicKey,
+            self::TTL,
+            new Sha256(),
+            self::ISSUER,
+            self::ISSUED_AT,
+            self::$privateKey,
+            $audience
+        );
 
-        return new LcobucciTokenParser($request, $config, $clock);
+        return new LcobucciTokenParser($config, $clock);
     }
 }
