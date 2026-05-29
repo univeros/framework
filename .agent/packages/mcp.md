@@ -60,6 +60,12 @@
 - `PhpClassScanner` _(final)_
 - `PhpstanTool` _(final)_ — implements `McpToolInterface`
 - `PlanMigrationTool` _(final)_ — implements `McpToolInterface`
+- `ProfileCompareTool` _(final)_ — implements `McpToolInterface`
+- `ProfileFlameTool` _(final)_ — implements `McpToolInterface`
+- `ProfileListTool` _(final)_ — implements `McpToolInterface`
+- `ProfileRunTool` _(final)_ — implements `McpToolInterface`
+- `ProfileShowTool` _(final)_ — implements `McpToolInterface`
+- `ProfileTool` _(abstract)_ — implements `McpToolInterface`
 - `ProjectContext` _(final)_
 - `ReadSpecTool` _(final)_ — implements `McpToolInterface`
 - `Request` _(final)_

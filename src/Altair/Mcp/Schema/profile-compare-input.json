@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["base_id", "head_id"],
+    "properties": {
+        "base_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Baseline profile id."
+        },
+        "head_id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "HEAD profile id (the candidate run to compare against the baseline)."
+        }
+    }
+}

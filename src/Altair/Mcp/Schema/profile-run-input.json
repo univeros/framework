@@ -1,0 +1,28 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["script"],
+    "properties": {
+        "script": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path to a PHP script (inside the project) to execute under the sampling profiler."
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable label for the saved profile (defaults to the script path)."
+        },
+        "period_us": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 1000000,
+            "description": "Sampling period in microseconds (default 1000 = 1 ms)."
+        },
+        "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 600000,
+            "description": "Wall-clock timeout in milliseconds (default 60000)."
+        }
+    }
+}
