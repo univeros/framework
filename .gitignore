@@ -51,3 +51,6 @@ phpstan.neon.cache
 # build artefacts (univeros/test-reporter JSON output, etc.)
 /build/
 
+# Altair local runtime artefacts (events log, spec journal, symbol index, profiles)
+/.altair/
+
