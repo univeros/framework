@@ -42,6 +42,11 @@ use Altair\Mcp\Tool\Introspection\ManifestDiffTool;
 use Altair\Mcp\Tool\Introspection\MiddlewareListTool;
 use Altair\Mcp\Tool\Introspection\RouteShowTool;
 use Altair\Mcp\Tool\Introspection\RoutesListTool;
+use Altair\Mcp\Tool\Profile\ProfileCompareTool;
+use Altair\Mcp\Tool\Profile\ProfileFlameTool;
+use Altair\Mcp\Tool\Profile\ProfileListTool;
+use Altair\Mcp\Tool\Profile\ProfileRunTool;
+use Altair\Mcp\Tool\Profile\ProfileShowTool;
 use Altair\Mcp\Tool\Verification\CheckDriftTool;
 use Altair\Mcp\Tool\Verification\DoctorTool;
 use Altair\Mcp\Tool\Verification\PhpstanTool;
@@ -100,6 +105,12 @@ final class BuiltinTools
             ImpactTool::class,
             // Sandboxed eval (the "let me check" primitive)
             EvalTool::class,
+            // Sampling profiler (the "where is time spent?" loop)
+            ProfileRunTool::class,
+            ProfileListTool::class,
+            ProfileShowTool::class,
+            ProfileCompareTool::class,
+            ProfileFlameTool::class,
         ];
     }
 }

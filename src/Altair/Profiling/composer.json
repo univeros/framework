@@ -1,0 +1,25 @@
+{
+    "name": "univeros/profiling",
+    "description": "bin/altair profile — framework-native sampling profiler. Answers \"where does my code spend time?\" via excimer (or xdebug) sampling, builds a weighted call tree + hotspot table + flamegraph SVG, and diffs two profiles to flag regressions. Deterministic JSON for agents and CI.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "suggest": {
+        "ext-excimer": "Recommended sampling profiler backend (low overhead, statistical sampling).",
+        "ext-xdebug": "Alternative sampling backend; higher overhead, finer-grained."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Profiling\\": ""
+        }
+    }
+}
