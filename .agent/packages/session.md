@@ -6,13 +6,13 @@
 
 | Interface | Method | Returns | Notes |
 |---|---|---|---|
-| `CsrfTokenInterface` | `generateValue()` | `mixed` |  |
+| `CsrfTokenInterface` | `generateValue()` | `string` |  |
 |  | `getValue()` | `string` |  |
 |  | `isValid(string)` | `bool` |  |
-| `PdoSessionAdapterInterface` | `beginTransaction()` | `mixed` | constants: `DRIVER_MYSQL`, `DRIVER_POSTGRESQL`, `DRIVER_SQLITE`, `LOCK_ADVISORY`, `LOCK_NONE`, `LOCK_TRANSACTIONAL` |
+| `PdoSessionAdapterInterface` | `beginTransaction()` | `void` | constants: `DRIVER_MYSQL`, `DRIVER_POSTGRESQL`, `DRIVER_SQLITE`, `LOCK_ADVISORY`, `LOCK_NONE`, `LOCK_TRANSACTIONAL` |
 |  | `close(bool)` | `bool` |  |
-|  | `commit()` | `mixed` |  |
-|  | `connect()` | `mixed` |  |
+|  | `commit()` | `void` |  |
+|  | `connect()` | `void` |  |
 |  | `delete(string)` | `bool` |  |
 |  | `doAdvisoryLocking(string)` | `PDOStatement` |  |
 |  | `getConnection()` | `PDO` |  |
@@ -22,7 +22,7 @@
 |  | `getMergePdoStatement(string, string)` | `PDOStatement\|null` |  |
 |  | `getSelectSql()` | `string` |  |
 |  | `read(string)` | `string` |  |
-|  | `rollback()` | `mixed` |  |
+|  | `rollback()` | `void` |  |
 |  | `write(string, string)` | `bool` |  |
 | `PdoSessionHandlerInterface` | `getHasSessionExpired()` | `bool` | extends `SessionHandlerInterface` |
 | `SessionBlockInterface` | `appendFlash(string, mixed, bool)` | `SessionBlockInterface` | constants: `CSRF_KEY`, `FLASH_KEY` |
@@ -33,12 +33,12 @@
 |  | `has(string)` | `bool` |  |
 |  | `hasFlash(mixed)` | `bool` |  |
 |  | `remove(string)` | `SessionBlockInterface` |  |
-|  | `removeAllFlashes()` | `mixed` |  |
+|  | `removeAllFlashes()` | `void` |  |
 |  | `removeFlash(mixed)` | `mixed` |  |
 |  | `set(string, mixed)` | `SessionBlockInterface` |  |
 |  | `setFlash(string, mixed, bool)` | `SessionBlockInterface` |  |
-| `SessionManagerInterface` | `clear()` | `mixed` |  |
-|  | `close()` | `mixed` |  |
+| `SessionManagerInterface` | `clear()` | `void` |  |
+|  | `close()` | `void` |  |
 |  | `destroy()` | `bool` |  |
 |  | `exists()` | `bool` |  |
 |  | `getCookieParams()` | `array` |  |
@@ -50,11 +50,11 @@
 |  | `getSessionBlock(string)` | `SessionBlockInterface` |  |
 |  | `regenerateId(bool)` | `bool` |  |
 |  | `resume()` | `bool` |  |
-|  | `setCookieParams(array)` | `mixed` |  |
-|  | `setDeleteCookieCallable(callable\|null)` | `mixed` |  |
-|  | `setId(string)` | `mixed` |  |
-|  | `setName(string)` | `mixed` |  |
-|  | `setSavePath(string)` | `mixed` |  |
+|  | `setCookieParams(array)` | `void` |  |
+|  | `setDeleteCookieCallable(callable\|null)` | `void` |  |
+|  | `setId(string)` | `void` |  |
+|  | `setName(string)` | `void` |  |
+|  | `setSavePath(string)` | `void` |  |
 |  | `start()` | `bool` |  |
 
 ## Concrete classes

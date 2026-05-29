@@ -14,7 +14,7 @@
 |  | `getName()` | `string` |  |
 |  | `setLogMessage(LogMessageInterface)` | `void` |  |
 | `CommandMessageNameResolverInterface` | `resolve(CommandMessageInterface)` | `string` |  |
-| `CommandMiddlewareInterface` | `handle(CommandMessageInterface, callable)` | `mixed` |  |
+| `CommandMiddlewareInterface` | `handle(CommandMessageInterface, callable)` | `void` |  |
 | `CommandRunnerStrategyInterface` | `run(CommandMessageInterface)` | `void` |  |
 | `InMemoryCommandLocatorServiceInterface` | `add(string, string)` | `InMemoryCommandLocatorServiceInterface` | extends `CommandLocatorServiceInterface` |
 |  | `withMap(MessageCommandMap)` | `InMemoryCommandLocatorServiceInterface` |  |
