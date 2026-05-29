@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["method"],
+    "properties": {
+        "method": {
+            "type": "string",
+            "description": "Fully-qualified method, e.g. \"App\\User\\CreateUser::__invoke\"."
+        }
+    }
+}
