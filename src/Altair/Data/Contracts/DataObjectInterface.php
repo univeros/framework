@@ -15,7 +15,11 @@ use Altair\Data\Exception\InvalidArgumentException;
 use JsonSerializable;
 use Serializable;
 
-interface EntityInterface extends ArrayableInterface, JsonSerializable, Serializable
+/**
+ * A typed, immutable data object: named attributes that round-trip through
+ * JSON and PHP serialization. It carries no persistence behaviour.
+ */
+interface DataObjectInterface extends ArrayableInterface, JsonSerializable, Serializable
 {
     /**
      * Checks whether a property exists in the instance.
