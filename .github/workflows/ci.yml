@@ -113,3 +113,37 @@ jobs:
 
       - name: Rector dry-run
         run: vendor/bin/rector process --dry-run
+
+  determinism:
+    name: Determinism gate (#74)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, json, mbstring, openssl
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # The byte-stability gate: regenerate the framework's own committed
+      # generated content, then assert that nothing changed. A non-empty
+      # `git diff` here means an emitter is non-deterministic — agents
+      # would see phantom drift, which is the failure mode #74 prevents.
+      - name: Regenerate manifests
+        run: php bin/altair manifest:generate
+
+      - name: Assert .agent/ is byte-stable
+        run: |
+          if ! git diff --exit-code .agent/; then
+            echo "::error::Generated content under .agent/ changed after regeneration." \
+                 "An emitter is non-deterministic; see AGENT.md §5 for the standard."
+            exit 1
+          fi
