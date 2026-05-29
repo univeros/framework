@@ -16,6 +16,7 @@
 
 - `AttributeToolDiscoverer` _(final)_
 - `BuiltinTools` _(final)_
+- `CallersTool` _(final)_ — implements `McpToolInterface`
 - `CheckDriftTool` _(final)_ — implements `McpToolInterface`
 - `ConfigDumpTool` _(final)_ — implements `McpToolInterface`
 - `ContainerInspectTool` _(final)_ — implements `McpToolInterface`
@@ -26,6 +27,7 @@
 - `DbMigrateTool` _(final)_ — implements `McpToolInterface`
 - `DbQueryTool` _(final)_ — implements `McpToolInterface`
 - `DbSchemaTool` _(final)_ — implements `McpToolInterface`
+- `DeadCodeTool` _(final)_ — implements `McpToolInterface`
 - `DescribeEndpointTool` _(final)_ — implements `McpToolInterface`
 - `DescribePackageTool` _(final)_ — implements `McpToolInterface`
 - `DoctorTool` _(final)_ — implements `McpToolInterface`
@@ -34,8 +36,12 @@
 - `ErrorCode` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `ErrorResponse` _(final)_
 - `EventLog` _(final)_
+- `FindUsagesTool` _(final)_ — implements `McpToolInterface`
 - `HttpTransport` _(final)_
+- `ImpactTool` _(final)_ — implements `McpToolInterface`
+- `ImplementersTool` _(final)_ — implements `McpToolInterface`
 - `InMemoryTransport` _(final)_ — implements `TransportInterface`
+- `IndexTool` _(abstract)_ — implements `McpToolInterface`
 - `ListCommandsTool` _(final)_ — implements `McpToolInterface`
 - `ListEndpointsTool` _(final)_ — implements `McpToolInterface`
 - `ListPackagesTool` _(final)_ — implements `McpToolInterface`
@@ -89,6 +95,7 @@
 - `tests/Mcp/Tool/DatabaseToolsTest.php`
 - `tests/Mcp/Tool/DiscoveryToolsTest.php`
 - `tests/Mcp/Tool/GenerationToolsTest.php`
+- `tests/Mcp/Tool/IndexToolsTest.php`
 - `tests/Mcp/Tool/IntrospectionToolsTest.php`
 - `tests/Mcp/Tool/PlanMigrationToolTest.php`
 - `tests/Mcp/Tool/ToolRegistryTest.php`

@@ -28,6 +28,11 @@ use Altair\Mcp\Tool\Generation\EmitSdkTool;
 use Altair\Mcp\Tool\Generation\RewindSpecTool;
 use Altair\Mcp\Tool\Generation\ScaffoldTool;
 use Altair\Mcp\Tool\Generation\WriteSpecTool;
+use Altair\Mcp\Tool\Index\CallersTool;
+use Altair\Mcp\Tool\Index\DeadCodeTool;
+use Altair\Mcp\Tool\Index\FindUsagesTool;
+use Altair\Mcp\Tool\Index\ImpactTool;
+use Altair\Mcp\Tool\Index\ImplementersTool;
 use Altair\Mcp\Tool\Introspection\ConfigDumpTool;
 use Altair\Mcp\Tool\Introspection\ContainerInspectTool;
 use Altair\Mcp\Tool\Introspection\ListenerShowTool;
@@ -86,6 +91,12 @@ final class BuiltinTools
             ListenerShowTool::class,
             MiddlewareListTool::class,
             ManifestDiffTool::class,
+            // Symbol-usage index (read-only refactor intelligence)
+            FindUsagesTool::class,
+            ImplementersTool::class,
+            CallersTool::class,
+            DeadCodeTool::class,
+            ImpactTool::class,
         ];
     }
 }
