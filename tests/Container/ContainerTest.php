@@ -181,6 +181,17 @@ final class ContainerTest extends TestCase
         self::assertFalse($parent->has(LoggerInterface::class));
     }
 
+    public function testAliasDelegatesToTargetDefinition(): void
+    {
+        $container = new Container();
+        $container->singleton(FileLogger::class);
+        $container->alias(LoggerInterface::class, FileLogger::class);
+
+        // The alias must resolve through FileLogger's own (shared) definition,
+        // not build a fresh FileLogger that bypasses it.
+        self::assertSame($container->get(FileLogger::class), $container->get(LoggerInterface::class));
+    }
+
     public function testCallAutowiresClosure(): void
     {
         self::assertSame('dep', (new Container())->call(static fn(Dependency $dep): string => $dep->marker));
