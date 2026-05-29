@@ -196,33 +196,50 @@ $container->delegate(
 
 In tests and during local development, bind `AttributeSchemaProvider` directly and let it recompile on each construction — convenient, slow, but the slowness rarely matters under `phpunit`.
 
-### Read models (DTO hydration)
+### Read models
 
-Cycle entities are mutable, managed objects. When you want to hand a caller an immutable read model instead — an `Altair\Data\DataObjectInterface` carrying just the fields a view or API response needs — use `DataObjectHydrator`. This is the bridge the Data package deliberately does not provide: `Data` assigns values as-is (its typed-property writes reject a mismatched type), so **type coercion lives here, in the persistence layer**, never in `Data`. The dependency arrow is one-way — `univeros/persistence` depends on `univeros/data`, never the reverse.
+Cycle entities are mutable, managed objects. When a caller only needs to *read* — a view, an API response — hand it an immutable `Altair\Data\DataObjectInterface` instead. The entity manager is the entry point for the read side just as it is for writes:
 
-`hydrate()` reflects the target Data object's declared property types and coerces each matching value before construction:
+```php
+// $em is the EntityManagerInterface.
+$users = $em->readModel(User::class, UserProfileDto::class);
+
+$one  = $users->find(42);                       // ?UserProfileDto
+$some = $users->findBy(['role' => 'admin']);    // list<UserProfileDto>
+$all  = $users->findAll();                      // list<UserProfileDto>
+```
+
+`readModel()` returns a `ReadModelRepositoryInterface` — `find` / `findOneBy` / `findBy` / `findAll`, no writes. Writes stay on the entity `RepositoryInterface` and the unit of work; reads come back as Data objects. The Cycle implementation selects **raw rows** (`Select::fetchData()`) rather than managed entities, so reads skip the identity map — the right trade for the read side.
+
+#### Coercion (the hydrator underneath)
+
+Each row is projected through a `HydratorInterface` (`DataObjectHydrator` by default, bound in `CycleOrmConfiguration` and swappable). This is the bridge the Data package deliberately does not provide: `Data` assigns values as-is (its typed-property writes reject a mismatched type), so **type coercion lives here, in the persistence layer**, never in `Data`. The dependency arrow is one-way — `univeros/persistence` depends on `univeros/data`, never the reverse.
+
+You can also use the hydrator directly on any array — a custom query result, a cache payload:
 
 ```php
 use Altair\Persistence\Dto\DataObjectHydrator;
 
 $hydrator = new DataObjectHydrator();
 
-// $row is a storage row — everything stringy, as a driver returns it.
-$row = ['id' => '42', 'name' => 'Vega', 'active' => '1', 'created_at' => '2026-01-15 09:00:00'];
-
-$profile = $hydrator->hydrate(ProfileDto::class, $row);
+// A storage row — everything stringy, as a driver returns it.
+$profile = $hydrator->hydrate(ProfileDto::class, [
+    'id' => '42', 'name' => 'Vega', 'active' => '1', 'created_at' => '2026-01-15 09:00:00',
+]);
 // $profile->id === 42 (int), $profile->active === true (bool),
 // $profile->created_at instanceof DateTimeImmutable
+
+$many = $hydrator->hydrateMany(ProfileDto::class, $rows); // list<ProfileDto>
 ```
 
-Coercion rules: numeric strings to `int`/`float`; `0`/`1`/`"true"`/`"false"` to `bool` (via `FILTER_VALIDATE_BOOLEAN`); scalars and `Stringable` to `string`; date strings/timestamps to `DateTimeImmutable`/`DateTime`. A property typed as another `DataObjectInterface` is hydrated recursively from a nested array — this is how composed read-models (the read-side of a relation) are expressed:
+Coercion rules: numeric strings to `int`/`float`; `0`/`1`/`"true"`/`"false"` to `bool` (via `FILTER_VALIDATE_BOOLEAN`); scalars and `Stringable` to `string`; date strings/timestamps to `DateTimeImmutable`/`DateTime`. A property typed as another `DataObjectInterface` is hydrated recursively from a nested array — this is how composed read-models (the read side of a relation) are expressed:
 
 ```php
 $row = ['id' => 1, 'address' => ['city' => 'New York', 'zip' => '10001']];
 $profile = $hydrator->hydrate(ProfileDto::class, $row); // $profile->address instanceof AddressDto
 ```
 
-`null` passes through untouched, keys with no matching property are dropped, and a value that cannot satisfy its declared type throws `HydrationException` (a `PersistenceExceptionInterface`) naming the offending field — rather than letting a raw `TypeError` escape from the constructor. Type against `HydratorInterface` so the hydrator stays swappable.
+`null` passes through untouched, keys with no matching property are dropped, and a value that cannot satisfy its declared type throws `HydrationException` (a `PersistenceExceptionInterface`) naming the offending field — rather than letting a raw `TypeError` escape from the constructor.
 
 ## CLI
 
@@ -345,4 +362,4 @@ What you should **not** extend: `CycleEntityManager` is `final`. Replace it via 
 - **Doctrine bridge.** Not in this package. A separate `univeros/doctrine` could implement the same contracts; the wrap is already shaped for it.
 - **`--dry-run` SQL preview.** `db:migrate --dry-run` currently lists pending migration names. A per-migration SQL dump is a follow-up — Cycle's `Migrator` does not expose a non-destructive SQL preview out of the box.
 - **Postgres / MySQL CI matrix.** Tests today exercise in-memory SQLite. Real-driver integration tests are tracked as a follow-up on the original issue.
-- **DTO hydration scope.** `DataObjectHydrator` coerces against a single declared property type; union and intersection types are passed through for PHP to enforce. It does not auto-project a Cycle entity into a Data object — feed it a row array (`select()->fetchData()`, a query result, or `$entity` mapped to an array). A repository-level read-model layer that returns Data objects directly is a follow-up.
+- **Read-model scope.** `readModel()` projects a single entity role's rows; joined/eager-loaded relations are not auto-mapped into nested Data objects yet (the hydrator *will* compose a nested `DataObjectInterface` when a row already carries the relation as an array — e.g. from a custom `Select` with `->load()`). The hydrator coerces against a single declared property type; union and intersection types are passed through for PHP to enforce.

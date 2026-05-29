@@ -11,9 +11,13 @@ declare(strict_types=1);
 
 namespace Altair\Persistence\Cycle;
 
+use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Persistence\Contracts\EntityManagerInterface;
+use Altair\Persistence\Contracts\HydratorInterface;
+use Altair\Persistence\Contracts\ReadModelRepositoryInterface;
 use Altair\Persistence\Contracts\RepositoryInterface;
 use Altair\Persistence\Contracts\UnitOfWorkInterface;
+use Altair\Persistence\Dto\DataObjectHydrator;
 use Cycle\ORM\ORMInterface;
 use Override;
 use Psr\Container\ContainerInterface;
@@ -40,6 +44,7 @@ final readonly class CycleEntityManager implements EntityManagerInterface
         private ORMInterface $orm,
         private UnitOfWorkInterface $unitOfWork,
         private ContainerInterface $container,
+        private ?HydratorInterface $hydrator = null,
         private array $repositoryBindings = [],
     ) {}
 
@@ -55,6 +60,25 @@ final readonly class CycleEntityManager implements EntityManagerInterface
 
         /** @var class-string<TEntity> $entityClass */
         return new CycleRepository($entityClass, $this->orm, $this->unitOfWork);
+    }
+
+    /**
+     * @template TDataObject of DataObjectInterface
+     *
+     * @param class-string<TEntity>     $entityClass
+     * @param class-string<TDataObject> $dataObjectClass
+     *
+     * @return ReadModelRepositoryInterface<TDataObject>
+     */
+    #[Override]
+    public function readModel(string $entityClass, string $dataObjectClass): ReadModelRepositoryInterface
+    {
+        return new CycleReadModelRepository(
+            $entityClass,
+            $dataObjectClass,
+            $this->orm,
+            $this->hydrator ?? new DataObjectHydrator(),
+        );
     }
 
     #[Override]

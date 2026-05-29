@@ -73,6 +73,25 @@ final class DataObjectHydrator implements HydratorInterface
         return $instance;
     }
 
+    /**
+     * @template T of DataObjectInterface
+     *
+     * @param class-string<T>                $dataObjectClass
+     * @param iterable<array<string, mixed>> $rows
+     *
+     * @return list<T>
+     */
+    #[Override]
+    public function hydrateMany(string $dataObjectClass, iterable $rows): array
+    {
+        $result = [];
+        foreach ($rows as $row) {
+            $result[] = $this->hydrate($dataObjectClass, $row);
+        }
+
+        return $result;
+    }
+
     private function coerce(mixed $value, ?ReflectionType $type, string $class, string $field): mixed
     {
         // Null passes through untouched; union/intersection types are left for

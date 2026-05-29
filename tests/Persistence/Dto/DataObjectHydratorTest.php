@@ -134,4 +134,24 @@ final class DataObjectHydratorTest extends TestCase
         // address expects an array (or AddressDto), not a scalar.
         $this->hydrator->hydrate(ProfileDto::class, ['address' => 'not-an-array']);
     }
+
+    public function testHydrateManyProjectsEveryRow(): void
+    {
+        $rows = [
+            ['id' => '1', 'name' => 'Vega'],
+            ['id' => '2', 'name' => 'Rigel'],
+        ];
+
+        $dtos = $this->hydrator->hydrateMany(ProfileDto::class, $rows);
+
+        $this->assertCount(2, $dtos);
+        $this->assertContainsOnlyInstancesOf(ProfileDto::class, $dtos);
+        $this->assertSame(1, $dtos[0]->id);
+        $this->assertSame('Rigel', $dtos[1]->name);
+    }
+
+    public function testHydrateManyReturnsEmptyListForNoRows(): void
+    {
+        $this->assertSame([], $this->hydrator->hydrateMany(ProfileDto::class, []));
+    }
 }
