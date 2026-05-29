@@ -1,0 +1,72 @@
+name: Determinism gate
+
+# The Altair determinism gate (#74): every emitter that writes files or
+# produces --format=json MUST be byte-stable across runs. This workflow
+# regenerates the committed generated content (.agent/, scaffolded code,
+# emitted OpenAPI), then `git diff --exit-code`s those paths. Any drift
+# means an emitter is non-deterministic — agents would see phantom
+# changes and may produce mistaken edits.
+#
+# See AGENT.md §Determinism for the standard.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  determinism:
+    name: Byte-stable generated content
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: intl, json, mbstring, openssl
+          coverage: none
+          tools: composer:v2
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      # Regenerate every emitted artefact. Add new commands here as the
+      # project grows (e.g. SDK emitters, OpenAPI merge).
+      - name: Regenerate manifests
+        run: |
+          if [ -f bin/altair ] && php bin/altair manifest:generate --help >/dev/null 2>&1; then
+            php bin/altair manifest:generate
+          fi
+
+      - name: Regenerate scaffolded artefacts (if specs exist)
+        run: |
+          if [ -d api ] && [ -f bin/altair ]; then
+            php bin/altair spec:scaffold api/ --force || true
+          fi
+
+      - name: Regenerate merged OpenAPI (if fragments exist)
+        run: |
+          if [ -d docs/openapi ] && [ -f bin/altair ]; then
+            php bin/altair spec:emit-openapi --out docs/openapi.yaml || true
+          fi
+
+      - name: Assert all generated paths are byte-stable
+        run: |
+          paths=(.agent app docs/openapi.yaml)
+          existing=()
+          for p in "${paths[@]}"; do
+            [ -e "$p" ] && existing+=("$p")
+          done
+          if [ ${#existing[@]} -eq 0 ]; then
+            echo "No generated paths exist yet; nothing to check."
+            exit 0
+          fi
+          if ! git diff --exit-code "${existing[@]}"; then
+            echo "::error::Generated content changed after regeneration." \
+                 "An emitter is non-deterministic; see AGENT.md §Determinism."
+            exit 1
+          fi
