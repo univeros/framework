@@ -22,8 +22,8 @@ use Altair\Introspection\Result\InspectionTable;
  *
  * Reads env from $_ENV / $_SERVER / `getenv()` in that order so the
  * output matches what `Altair\Configuration\Support\Env` would see at
- * runtime. Walks `Container::getParameterDefinitions()` directly —
- * never triggers `make()`.
+ * runtime. Walks `Container::getDefinitions()` for raw `value()` bindings
+ * directly — never triggers `make()`.
  */
 final readonly class ConfigInspector
 {
@@ -56,11 +56,16 @@ final readonly class ConfigInspector
             ];
         }
 
-        foreach ($this->container->getParameterDefinitions() as $name => $value) {
+        foreach ($this->container->getDefinitions() as $definition) {
+            if (!$definition->hasValue()) {
+                continue;
+            }
+
+            $name = $definition->id();
             $rows[] = [
                 'source' => 'container',
                 'key' => '$' . $name,
-                'value' => $this->renderValue($name, $value, $maskSecrets, $patterns),
+                'value' => $this->renderValue($name, $definition->value(), $maskSecrets, $patterns),
             ];
         }
 

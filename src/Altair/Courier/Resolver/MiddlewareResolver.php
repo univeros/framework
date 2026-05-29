@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Altair\Courier\Resolver;
 
 use Altair\Container\Container;
-use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\ContainerException;
 use Altair\Courier\Contracts\CommandMiddlewareInterface;
 use Altair\Courier\Contracts\MiddlewareResolverInterface;
 use Override;
@@ -28,8 +28,8 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     /**
      * Resolve a class spec into an object, if it is not already instantiated.
      *
-     * @param string|object $entry
-     * @throws InjectionException
+     * @param class-string<CommandMiddlewareInterface>|CommandMiddlewareInterface $entry
+     * @throws ContainerException
      * @throws ReflectionException
      */
     #[Override]

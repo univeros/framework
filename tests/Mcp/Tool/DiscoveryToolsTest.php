@@ -173,7 +173,7 @@ final class DiscoveryToolsTest extends TestCase
     public function testContainerResolveDescribesABinding(): void
     {
         $container = new Container();
-        $container->share($container);
+        $container->instance($container::class, $container);
 
         $result = (new ContainerResolveTool($container))->call(['interface' => Container::class]);
 

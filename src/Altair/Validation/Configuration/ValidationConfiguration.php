@@ -13,7 +13,6 @@ namespace Altair\Validation\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RulesRunnerInterface;
 use Altair\Validation\Resolver\RuleResolver;
@@ -25,9 +24,8 @@ class ValidationConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->alias(ResolverInterface::class, RuleResolver::class)
-            ->alias(RulesRunnerInterface::class, RulesRunner::class)
-            ->define(RuleResolver::class, new Definition([':container' => $container]));
+        $container->alias(ResolverInterface::class, RuleResolver::class);
+        $container->alias(RulesRunnerInterface::class, RulesRunner::class);
+        $container->bind(RuleResolver::class)->withParameters(['container' => $container]);
     }
 }

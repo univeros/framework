@@ -16,7 +16,6 @@ use Altair\Cache\Storage\FilesystemCacheItemStorage;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Override;
 
 class FilesystemCacheItemStorageConfiguration implements ConfigurationInterface
@@ -26,14 +25,12 @@ class FilesystemCacheItemStorageConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $adapterConfiguration = new Definition(
-            [
-                ':directory' => $this->env->get('CACHE_FS_DIRECTORY', sys_get_temp_dir() . '/altair-cache'),
-            ]
+        $container->bind(FilesystemCacheItemStorage::class)->withParameters([
+            'directory' => $this->env->get('CACHE_FS_DIRECTORY', sys_get_temp_dir() . '/altair-cache'),
+        ]);
+        $container->factory(
+            CacheItemStorageInterface::class,
+            static fn(Container $c): CacheItemStorageInterface => $c->make(FilesystemCacheItemStorage::class),
         );
-
-        $container
-            ->define(FilesystemCacheItemStorage::class, $adapterConfiguration)
-            ->alias(CacheItemStorageInterface::class, FilesystemCacheItemStorage::class);
     }
 }

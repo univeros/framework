@@ -1,756 +1,199 @@
 <?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Tests\Container;
 
-use Altair\Container\Container;
+use Altair\Container\Attribute\Autowire;
+use Altair\Container\Attribute\Factory;
+use Altair\Container\Attribute\Inject;
+use Altair\Container\Attribute\Lazy;
+use Altair\Container\Attribute\Tag;
 
-class InaccessibleExecutableClassMethod
+interface LoggerInterface
 {
-    protected function doSomethingProtected()
-    {
-        return 42;
-    }
-    private function doSomethingPrivate()
-    {
-        return 42;
-    }
+    public function channel(): string;
 }
 
-class InaccessibleStaticExecutableClassMethod
+final class FileLogger implements LoggerInterface
 {
-    protected static function doSomethingProtected()
+    public function channel(): string
     {
-        return 42;
-    }
-    private static function doSomethingPrivate()
-    {
-        return 42;
+        return 'file';
     }
 }
 
-class ClassWithStaticMethodThatTakesArg
+final class NullLogger implements LoggerInterface
 {
-    public static function doSomething($arg)
+    public function channel(): string
     {
-        return 1 + $arg;
+        return 'null';
     }
 }
 
-class RecursiveClass1
+final class NoDeps
 {
-    public function __construct(RecursiveClass2 $dep)
+    public bool $built = true;
+}
+
+final class Dependency
+{
+    public string $marker = 'dep';
+}
+
+final class NeedsDependency
+{
+    public function __construct(public readonly Dependency $dependency) {}
+}
+
+final class NeedsLogger
+{
+    public function __construct(public readonly LoggerInterface $logger) {}
+}
+
+final class InjectConsumer
+{
+    public function __construct(
+        #[Inject(FileLogger::class)]
+        public readonly LoggerInterface $logger,
+    ) {}
+}
+
+final class AutowireServiceConsumer
+{
+    public function __construct(
+        #[Autowire(service: NullLogger::class)]
+        public readonly LoggerInterface $logger,
+    ) {}
+}
+
+final class AutowireParamConsumer
+{
+    public function __construct(
+        #[Autowire(param: 'app.locale')]
+        public readonly string $locale,
+    ) {}
+}
+
+#[Factory(WidgetFactory::class)]
+final class Widget
+{
+    public function __construct(public readonly string $label) {}
+}
+
+final class WidgetFactory
+{
+    public function __invoke(): Widget
     {
+        return new Widget('factory-made');
     }
 }
 
-class RecursiveClass2
+interface ReporterInterface
 {
-    public function __construct(RecursiveClass1 $dep)
+    public function name(): string;
+}
+
+#[Tag('reporters')]
+final class AlphaReporter implements ReporterInterface
+{
+    public function name(): string
     {
+        return 'alpha';
     }
 }
 
-class RecursiveClassA
+final class BetaReporter implements ReporterInterface
 {
-    public function __construct(RecursiveClassB $b)
+    public function name(): string
     {
+        return 'beta';
     }
 }
 
-class RecursiveClassB
+final class Heavy
 {
-    public function __construct(RecursiveClassC $c)
-    {
-    }
-}
+    public static int $constructed = 0;
 
-class RecursiveClassC
-{
-    public function __construct(RecursiveClassA $a)
-    {
-    }
-}
-
-class DependsOnCyclic
-{
-    public function __construct(RecursiveClassA $a)
-    {
-    }
-}
-
-interface SharedAliasedInterface
-{
-    public function foo();
-}
-
-class SharedClass implements SharedAliasedInterface
-{
-    public function foo()
-    {
-    }
-}
-
-class NotSharedClass implements SharedAliasedInterface
-{
-    public function foo()
-    {
-    }
-}
-
-class DependencyWithDefinedParam
-{
-    public $foo;
-
-    public function __construct($foo)
-    {
-        $this->foo = $foo;
-    }
-}
-
-class RequiresDependencyWithDefinedParam
-{
-    public $obj;
-
-    public function __construct(DependencyWithDefinedParam $obj)
-    {
-        $this->obj = $obj;
-    }
-}
-
-class ClassWithAliasAsParameter
-{
-    public $sharedClass;
-
-    public function __construct(SharedClass $sharedClass)
-    {
-        $this->sharedClass = $sharedClass;
-    }
-}
-
-class ConcreteClass1
-{
-}
-
-class ConcreteClass2
-{
-}
-
-class ClassWithoutMagicInvoke
-{
-}
-
-class TestNoConstructor
-{
-}
-
-class TestDependency
-{
-    public $testProp = 'testVal';
-}
-
-class TestDependency2 extends TestDependency
-{
-    public $testProp = 'testVal2';
-}
-
-class SpecdTestDependency extends TestDependency
-{
-    public $testProp = 'testVal';
-}
-
-class TestNeedsDep
-{
-    public function __construct(TestDependency $testDep)
-    {
-        $this->testDep = $testDep;
-    }
-}
-
-class TestClassWithNoCtorTypehints
-{
-    public function __construct($val = 42)
-    {
-        $this->test = $val;
-    }
-}
-
-class TestMultiDepsNeeded
-{
-    public function __construct(TestDependency $val1, TestDependency2 $val2)
-    {
-        $this->testDep = $val1;
-        $this->testDep = $val2;
-    }
-}
-
-class TestMultiDepsWithCtor
-{
-    public function __construct(TestDependency $val1, TestNeedsDep $val2)
-    {
-        $this->testDep = $val1;
-        $this->testDep = $val2;
-    }
-}
-
-class NoTypehintNullDefaultConstructorClass
-{
-    public $testParam = 1;
-
-    public function __construct(TestDependency $val1, $arg = 42)
-    {
-        $this->testParam = $arg;
-    }
-}
-
-class NoTypehintNoDefaultConstructorClass
-{
-    public $testParam = 1;
-
-    public function __construct(TestDependency $val1, $arg = null)
-    {
-        $this->testParam = $arg;
-    }
-}
-
-interface DepInterface
-{
-}
-
-interface SomeInterface
-{
-}
-
-class SomeImplementation implements SomeInterface
-{
-}
-
-class PreparesImplementationTest implements SomeInterface
-{
-    public $testProp = 0;
-}
-
-class DepImplementation implements DepInterface
-{
-    public $testProp = 'something';
-}
-
-class RequiresInterface
-{
-    public $dep;
-
-    public function __construct(DepInterface $dep)
-    {
-        $this->testDep = $dep;
-    }
-}
-
-class ClassInnerA
-{
-    public $dep;
-
-    public function __construct(ClassInnerB $dep)
-    {
-        $this->dep = $dep;
-    }
-}
-
-class ClassInnerB
-{
     public function __construct()
     {
+        ++self::$constructed;
+    }
+
+    public function ping(): string
+    {
+        return 'pong';
     }
 }
 
-class ClassOuter
+final class TypedVariadic
 {
-    public $dep;
+    /**
+     * @var list<Dependency>
+     */
+    public readonly array $deps;
 
-    public function __construct(ClassInnerA $dep)
+    public function __construct(Dependency ...$deps)
     {
-        $this->dep = $dep;
+        $this->deps = array_values($deps);
     }
 }
 
-class ProvTestNoDefinitionNullDefaultClass
+final class NullableInterfaceCtor
 {
-    public function __construct($arg = null)
+    public function __construct(public readonly ?LoggerInterface $logger) {}
+}
+
+final class DefaultCtor
+{
+    public function __construct(public readonly int $count = 5) {}
+}
+
+final class CycleA
+{
+    public function __construct(public readonly CycleB $b) {}
+}
+
+final class CycleB
+{
+    public function __construct(public readonly CycleA $a) {}
+}
+
+final class Greeter
+{
+    public function __invoke(Dependency $dependency): string
     {
-        $this->arg = $arg;
+        return 'hello-' . $dependency->marker;
+    }
+
+    public function greet(Dependency $dependency): string
+    {
+        return 'greet-' . $dependency->marker;
+    }
+
+    public static function shout(Dependency $dependency): string
+    {
+        return 'shout-' . $dependency->marker;
     }
 }
 
-interface TestNoExplicitDefine
+final class OverridableConsumer
 {
+    public function __construct(public readonly LoggerInterface $logger) {}
 }
 
-class InjectorTestCtorParamWithNoTypehintOrDefault implements TestNoExplicitDefine
+#[Lazy]
+final class LazyMarked
 {
-    public $val = 42;
-
-    public function __construct($val)
+    public function ping(): string
     {
-        $this->val = $val;
-    }
-}
-
-class InjectorTestCtorParamWithNoTypehintOrDefaultDependent
-{
-    private $param;
-
-    public function __construct(TestNoExplicitDefine $param)
-    {
-        $this->param = $param;
-    }
-}
-
-class InjectorTestRawCtorParams
-{
-    public $string;
-    public $obj;
-    public $int;
-    public $array;
-    public $float;
-    public $bool;
-    public $null;
-
-    public function __construct($string, $obj, $int, $array, $float, $bool, $null)
-    {
-        $this->string = $string;
-        $this->obj = $obj;
-        $this->int = $int;
-        $this->array = $array;
-        $this->float = $float;
-        $this->bool = $bool;
-        $this->null = $null;
-    }
-}
-
-class InjectorTestParentClass
-{
-    public function __construct($arg1)
-    {
-        $this->arg1 = $arg1;
-    }
-}
-
-class InjectorTestChildClass extends InjectorTestParentClass
-{
-    public function __construct($arg1, $arg2)
-    {
-        parent::__construct($arg1);
-        $this->arg2 = $arg2;
-    }
-}
-
-class CallableMock
-{
-    public function __invoke()
-    {
-    }
-}
-
-class ProviderTestCtorParamWithNoTypehintOrDefault implements TestNoExplicitDefine
-{
-    public $val = 42;
-
-    public function __construct($val)
-    {
-        $this->val = $val;
-    }
-}
-
-class ProviderTestCtorParamWithNoTypehintOrDefaultDependent
-{
-    private $param;
-
-    public function __construct(TestNoExplicitDefine $param)
-    {
-        $this->param = $param;
-    }
-}
-
-class StringStdClassDelegateMock
-{
-    public function __invoke()
-    {
-        return $this->make();
-    }
-
-    private function make()
-    {
-        $obj = new \StdClass;
-        $obj->test = 42;
-
-        return $obj;
-    }
-}
-
-class StringDelegateWithNoInvokeMethod
-{
-}
-
-class ExecuteClassNoDeps
-{
-    public function execute()
-    {
-        return 42;
-    }
-}
-
-class ExecuteClassDeps
-{
-    public function __construct(TestDependency $testDep)
-    {
-    }
-
-    public function execute()
-    {
-        return 42;
-    }
-}
-
-class ExecuteClassDepsWithMethodDeps
-{
-    public function __construct(TestDependency $testDep)
-    {
-    }
-
-    public function execute(TestDependency $dep, $arg = null)
-    {
-        return isset($arg) ? $arg : 42;
-    }
-}
-
-class ExecuteClassStaticMethod
-{
-    public static function execute()
-    {
-        return 42;
-    }
-}
-
-class ExecuteClassRelativeStaticMethod extends ExecuteClassStaticMethod
-{
-    public static function execute()
-    {
-        return 'this should NEVER be seen since we are testing against parent::execute()';
-    }
-}
-
-class ExecuteClassInvokable
-{
-    public function __invoke()
-    {
-        return 42;
-    }
-}
-
-function testExecuteFunction()
-{
-    return 42;
-}
-
-function testExecuteFunctionWithArg(ConcreteClass1 $foo)
-{
-    return 42;
-}
-
-class MadeByDelegate
-{
-}
-
-class CallableDelegateClassTest
-{
-    public function __invoke()
-    {
-        return new MadeByDelegate;
-    }
-}
-
-interface DelegatableInterface
-{
-    public function foo();
-}
-
-class ImplementsInterface implements DelegatableInterface
-{
-    public function foo()
-    {
-    }
-}
-
-class ImplementsInterfaceFactory
-{
-    public function __invoke()
-    {
-        return new ImplementsInterface();
-    }
-}
-
-class RequiresDelegatedInterface
-{
-    private $interface;
-
-    public function __construct(DelegatableInterface $interface)
-    {
-        $this->interface = $interface;
-    }
-
-    public function foo()
-    {
-        $this->interface->foo();
-    }
-}
-
-class TestMissingDependency
-{
-    public function __construct(TypoInTypehint $class)
-    {
-    }
-}
-
-class NonConcreteDependencyWithDefaultValue
-{
-    public $interface;
-
-    public function __construct(?DelegatableInterface $i = null)
-    {
-        $this->interface = $i;
-    }
-}
-
-class ConcreteDependencyWithDefaultValue
-{
-    public $dependency;
-
-    public function __construct(?\StdClass $instance = null)
-    {
-        $this->dependency = $instance;
-    }
-}
-
-class TypelessParameterDependency
-{
-    public $thumbnailSize;
-
-    public function __construct($thumbnailSize)
-    {
-        $this->thumbnailSize = $thumbnailSize;
-    }
-}
-
-class RequiresDependencyWithTypelessParameters
-{
-    public $dependency;
-
-    public function __construct(TypelessParameterDependency $dependency)
-    {
-        $this->dependency = $dependency;
-    }
-
-    public function getThumbnailSize()
-    {
-        return $this->dependency->thumbnailSize;
-    }
-}
-
-class HasNonPublicConstructor
-{
-    protected function __construct()
-    {
-    }
-}
-
-class HasNonPublicConstructorWithArgs
-{
-    protected function __construct($arg1, $arg2, $arg3)
-    {
-    }
-}
-
-class ClassWithCtor
-{
-    public function __construct()
-    {
-    }
-}
-
-class TestDependencyWithProtectedConstructor
-{
-    protected function __construct()
-    {
-    }
-
-    public static function create()
-    {
-        return new self();
-    }
-}
-
-class TestNeedsDepWithProtCons
-{
-    public function __construct(TestDependencyWithProtectedConstructor $dep)
-    {
-        $this->dep = $dep;
-    }
-}
-
-class SimpleNoTypehintClass
-{
-    public $testParam = 1;
-
-    public function __construct($arg)
-    {
-        $this->testParam = $arg;
-    }
-}
-
-class SomeClassName
-{
-}
-
-class TestDelegationSimple
-{
-    public $delgateCalled = false;
-}
-
-class TestDelegationDependency
-{
-    public $delgateCalled = false;
-
-    public function __construct(TestDelegationSimple $testDelegationSimple)
-    {
-    }
-}
-
-function createTestDelegationSimple()
-{
-    $instance = new TestDelegationSimple;
-    $instance->delegateCalled = true;
-
-    return $instance;
-}
-
-function createTestDelegationDependency(TestDelegationSimple $testDelegationSimple)
-{
-    $instance = new TestDelegationDependency($testDelegationSimple);
-    $instance->delegateCalled = true;
-
-    return $instance;
-}
-
-class BaseExecutableClass
-{
-    public function foo()
-    {
-        return 'This is the BaseExecutableClass';
-    }
-
-    public static function bar()
-    {
-        return 'This is the BaseExecutableClass';
-    }
-}
-
-class ExtendsExecutableClass extends BaseExecutableClass
-{
-    public function foo()
-    {
-        return 'This is the ExtendsExecutableClass';
-    }
-
-    public static function bar()
-    {
-        return 'This is the ExtendsExecutableClass';
-    }
-}
-
-class ReturnsCallable
-{
-    private $value = 'original';
-
-    public function __construct($value)
-    {
-        $this->value = $value;
-    }
-
-    public function getCallable()
-    {
-        $callable = function () {
-            return $this->value;
-        };
-
-        return $callable;
-    }
-}
-
-class DelegateClosureInGlobalScope
-{
-}
-
-function getDelegateClosureInGlobalScope()
-{
-    return function () {
-        return new DelegateClosureInGlobalScope();
-    };
-}
-
-class CloneTest
-{
-    public $container;
-
-    public function __construct(Container $container)
-    {
-        $this->injector = clone $container;
-    }
-}
-
-abstract class AbstractExecuteTest
-{
-    public function process()
-    {
-        return "Abstract";
-    }
-}
-
-class ConcreteExexcuteTest extends AbstractExecuteTest
-{
-    public function process()
-    {
-        return "Concrete";
-    }
-}
-
-class DependencyChainTest
-{
-    public function __construct(DepInterface $dep)
-    {
-    }
-}
-
-class ParentWithConstructor
-{
-    public $foo;
-
-    public function __construct($foo)
-    {
-        $this->foo = $foo;
-    }
-}
-
-class ChildWithoutConstructor extends ParentWithConstructor
-{
-}
-
-class NeedsContainerInterface
-{
-    public function __construct(public readonly \Psr\Container\ContainerInterface $container)
-    {
-    }
-}
-
-class NeedsConcreteContainer
-{
-    public function __construct(public readonly Container $container)
-    {
+        return 'lazy';
     }
 }

@@ -53,8 +53,10 @@ class RedisCacheItemStorageConfiguration implements ConfigurationInterface
             );
         };
 
-        $container
-            ->delegate(RedisCacheItemStorage::class, $factory)
-            ->alias(CacheItemStorageInterface::class, RedisCacheItemStorage::class);
+        $container->factory(RedisCacheItemStorage::class, $factory);
+        $container->factory(
+            CacheItemStorageInterface::class,
+            static fn(Container $c): CacheItemStorageInterface => $c->get(RedisCacheItemStorage::class),
+        );
     }
 }

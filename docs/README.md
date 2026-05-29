@@ -20,7 +20,7 @@ The request/response lifecycle and everything that runs inside it.
 
 Cross-cutting building blocks the rest of the framework — and your app — wire into.
 
-- [Container](./packages/container.md) — auto-wiring DI container with reflection caching, `define` / `share` / `alias` / `prepare` / `delegate` bindings, and DI-aware executable invocation.
+- [Container](./packages/container.md) — runtime auto-wiring DI container with generic-typed resolution, fluent bindings, attribute autowiring, contextual + tagged + lazy services, decorators, child scopes, and reflection caching.
 - [Configuration](./packages/configuration.md) — composable configuration objects with phpdotenv 5 environment loading and lazy container-bound resolution.
 - [Happen](./packages/happen.md) — PSR-14 event dispatcher with priorities, subscribers, named and wildcard listeners, and stoppable events.
 - [Courier](./packages/courier.md) — command bus with a middleware pipeline, container-backed handler resolution, and re-entrant dispatch handling.

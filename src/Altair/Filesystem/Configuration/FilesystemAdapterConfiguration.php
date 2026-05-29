@@ -26,7 +26,7 @@ class FilesystemAdapterConfiguration implements ConfigurationInterface
         // The concrete FilesystemAdapter (Local/S3/Ftp/Sftp/Dropbox) is registered by a sibling configuration.
         // This configuration just wires it into a FilesystemOperator. Caching is no longer part of league/flysystem;
         // wrap with a caching decorator separately if needed.
-        $container->delegate(
+        $container->factory(
             FilesystemOperator::class,
             static fn(FilesystemAdapter $adapter): FilesystemOperator => new Filesystem($adapter),
         );

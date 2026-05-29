@@ -19,24 +19,22 @@ use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use ReflectionClass;
 
 #[CoversClass(RedisCacheItemStorageConfiguration::class)]
 final class RedisCacheItemStorageConfigurationTest extends TestCase
 {
-    public function testAliasesCacheItemStorageInterfaceToRedisNotPredis(): void
+    public function testWiresCacheItemStorageInterfaceToRedisNotPredis(): void
     {
         $container = new Container();
         (new RedisCacheItemStorageConfiguration(new Env([])))->apply($container);
 
-        $aliases = (new ReflectionClass($container))->getProperty('aliases')->getValue($container);
-        [$resolved] = $aliases->resolve(CacheItemStorageInterface::class);
-
-        self::assertSame(
-            RedisCacheItemStorage::class,
-            ltrim((string) $resolved, '\\'),
+        // The interface and the ext-redis concrete are both wired; the Predis
+        // storage must NOT be bound by this configuration.
+        self::assertTrue($container->has(CacheItemStorageInterface::class));
+        self::assertTrue($container->has(RedisCacheItemStorage::class));
+        self::assertFalse(
+            $container->has(PredisCacheItemStorage::class),
             'RedisCacheItemStorageConfiguration must wire the ext-redis storage, not Predis.',
         );
-        self::assertNotSame(PredisCacheItemStorage::class, ltrim((string) $resolved, '\\'));
     }
 }

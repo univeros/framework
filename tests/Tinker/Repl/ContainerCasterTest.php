@@ -16,7 +16,7 @@ class ContainerCasterTest extends TestCase
     public function testCastSummarisesContainer(): void
     {
         $container = new Container();
-        $container->share(new stdClass());
+        $container->instance(stdClass::class, new stdClass());
 
         $cast = ContainerCaster::cast($container);
 

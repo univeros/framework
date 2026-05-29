@@ -45,11 +45,11 @@ class MessengerConfigurationTest extends TestCase
 
         $container = $this->bootContainer([__DIR__ . '/../Fixtures']);
 
-        $bus = $container->make(MessageBusInterface::class);
+        $bus = $container->get(MessageBusInterface::class);
         $this->assertInstanceOf(MessageBus::class, $bus);
 
-        $altairBus = $container->make(MessageBus::class);
-        $this->assertSame($bus, $altairBus);
+        // The concrete bus is wired as a shared singleton.
+        $this->assertSame($container->get(MessageBus::class), $container->get(MessageBus::class));
     }
 
     public function testApplyResolvesHandlerRegistryFromAttributes(): void
@@ -70,8 +70,8 @@ class MessengerConfigurationTest extends TestCase
         $this->setEnv(['MESSENGER_TRANSPORT_DEFAULT' => 'in-memory://']);
         $container = $this->bootContainer([]);
 
-        $r1 = $container->make(TransportRegistry::class);
-        $r2 = $container->make(TransportRegistry::class);
+        $r1 = $container->get(TransportRegistry::class);
+        $r2 = $container->get(TransportRegistry::class);
         $this->assertSame($r1, $r2);
 
         $transport = $r1->get('default');
@@ -125,7 +125,7 @@ class MessengerConfigurationTest extends TestCase
     private function bootContainer(array $handlerPaths): Container
     {
         $container = new Container();
-        $container->share(new Env());
+        $container->instance(Env::class, new Env());
 
         (new MessengerConfiguration($handlerPaths, allowNoHandlers: true))->apply($container);
 

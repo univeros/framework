@@ -26,19 +26,21 @@ class AwsS3AdapterConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->delegate(AwsS3V3Adapter::class, fn(): AwsS3V3Adapter => new AwsS3V3Adapter(
-                new S3Client([
-                    'credentials' => [
-                        'key' => $this->env->get('FS_AWS_S3_KEY'),
-                        'secret' => $this->env->get('FS_AWS_S3_SECRET'),
-                    ],
-                    'region' => $this->env->get('FS_AWS_S3_REGION'),
-                    'version' => $this->env->get('FS_AWS_S3_VERSION', 'latest'),
-                ]),
-                $this->env->get('FS_AWS_S3_BUCKET'),
-                $this->env->get('FS_AWS_S3_PREFIX', ''),
-            ))
-            ->alias(FilesystemAdapter::class, AwsS3V3Adapter::class);
+        $container->factory(AwsS3V3Adapter::class, fn(): AwsS3V3Adapter => new AwsS3V3Adapter(
+            new S3Client([
+                'credentials' => [
+                    'key' => $this->env->get('FS_AWS_S3_KEY'),
+                    'secret' => $this->env->get('FS_AWS_S3_SECRET'),
+                ],
+                'region' => $this->env->get('FS_AWS_S3_REGION'),
+                'version' => $this->env->get('FS_AWS_S3_VERSION', 'latest'),
+            ]),
+            $this->env->get('FS_AWS_S3_BUCKET'),
+            $this->env->get('FS_AWS_S3_PREFIX', ''),
+        ));
+        $container->factory(
+            FilesystemAdapter::class,
+            static fn(Container $c): FilesystemAdapter => $c->get(AwsS3V3Adapter::class),
+        );
     }
 }

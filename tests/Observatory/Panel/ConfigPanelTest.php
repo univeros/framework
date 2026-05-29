@@ -74,7 +74,7 @@ final class ConfigPanelTest extends TestCase
     public function testContainerParametersAreMaskedWhenSecretLooking(): void
     {
         $container = new Container();
-        $container->defineParameter('apiToken', 'abc123');
+        $container->value('apiToken', 'abc123');
 
         $snapshot = (new ConfigPanel(new ConfigInspector($container)))->snapshot();
 

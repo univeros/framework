@@ -11,496 +11,494 @@ declare(strict_types=1);
 
 namespace Altair\Container;
 
-use Altair\Container\Builder\ArgumentsBuilder;
-use Altair\Container\Builder\ExecutableBuilder;
-use Altair\Container\Collection\AliasesCollection;
-use Altair\Container\Collection\ClassDefinitionsCollection;
-use Altair\Container\Collection\DelegatesCollection;
-use Altair\Container\Collection\ParameterDefinitionsCollection;
-use Altair\Container\Collection\PreparesCollection;
-use Altair\Container\Collection\SharesCollection;
-use Altair\Container\Contracts\ReflectionInterface;
-use Altair\Container\Exception\InjectionException;
-use Altair\Container\Exception\InvalidArgumentException;
+use Altair\Container\Contracts\DefinitionInterface;
+use Altair\Container\Contracts\FactoryInterface;
+use Altair\Container\Contracts\InvokerInterface;
+use Altair\Container\Contracts\ReflectorInterface;
+use Altair\Container\Definition\ContextualBindingBuilder;
+use Altair\Container\Definition\Definition;
+use Altair\Container\Exception\ContainerException;
 use Altair\Container\Exception\NotFoundException;
-use Altair\Container\Reflection\CachedReflection;
-use Altair\Container\Traits\NameNormalizerTrait;
-use Altair\Structure\Map;
+use Altair\Container\Lazy\LazyFactory;
+use Altair\Container\Reflection\CachedReflector;
+use Altair\Container\Resolution\Invoker;
+use Altair\Container\Resolution\ParameterResolver;
+use Altair\Container\Resolution\ResolutionStack;
+use Altair\Container\Resolution\Resolver;
+use Altair\Container\Support\NameNormalizer;
+use Closure;
 use Override;
 use Psr\Container\ContainerInterface;
 use ReflectionException;
-use ReflectionMethod;
 
-class Container implements ContainerInterface
+/**
+ * A runtime, auto-wiring dependency-injection container.
+ *
+ * Resolves typed constructor dependencies by reflection (cached), with fluent
+ * bindings, attribute autowiring, contextual bindings, tagged services, lazy
+ * services, and isolated child scopes. PSR-11 compliant; it resolves its own
+ * type to the active instance.
+ */
+final class Container implements ContainerInterface, FactoryInterface, InvokerInterface
 {
-    use NameNormalizerTrait;
+    private readonly ReflectorInterface $reflector;
 
-    protected ReflectionInterface $reflector;
+    private readonly ResolutionStack $stack;
 
-    protected AliasesCollection $aliases;
+    private readonly ParameterResolver $parameterResolver;
 
-    protected ClassDefinitionsCollection $classDefinitions;
+    private readonly Resolver $resolver;
 
-    protected ParameterDefinitionsCollection $parameterDefinitions;
+    private readonly Invoker $invoker;
 
-    protected SharesCollection $shares;
-
-    protected PreparesCollection $prepares;
-
-    protected DelegatesCollection $delegates;
+    private readonly LazyFactory $lazyFactory;
 
     /**
-     * @var array<string, int>
+     * @var array<string, Definition>
      */
-    protected $making = [];
+    private array $definitions = [];
 
     /**
-     * Normalized identifiers that resolve to this container instance.
-     *
+     * @var array<string, object>
+     */
+    private array $singletons = [];
+
+    /**
+     * @var array<string, array<string, Closure>>
+     */
+    private array $contextual = [];
+
+    /**
+     * @var array<string, list<Closure>>
+     */
+    private array $extenders = [];
+
+    /**
      * @var array<string, true>
      */
-    protected array $selfNames = [];
+    private array $selfNames = [];
 
-    protected ExecutableBuilder $executableBuilder;
-
-    protected ArgumentsBuilder $argumentsBuilder;
-
-    /**
-     * Container constructor.
-     */
     public function __construct(
-        ?ReflectionInterface $reflector = null,
-        ?AliasesCollection $aliasesCollection = null,
-        ?ClassDefinitionsCollection $classDefinitionsCollection = null,
-        ?ParameterDefinitionsCollection $parameterDefinitionsCollection = null,
-        ?SharesCollection $sharesCollection = null,
-        ?PreparesCollection $preparesCollection = null,
-        ?DelegatesCollection $delegatesCollection = null,
-        ?ExecutableBuilder $executableBuilder = null,
-        ?ArgumentsBuilder $argumentsBuilder = null
+        ?ReflectorInterface $reflector = null,
+        private readonly ?Container $parent = null,
     ) {
-        $this->reflector = $reflector ?? new CachedReflection();
-        $this->aliases = $aliasesCollection ?? new AliasesCollection();
-        $this->classDefinitions = $classDefinitionsCollection ?? new ClassDefinitionsCollection();
-        $this->parameterDefinitions = $parameterDefinitionsCollection ?? new ParameterDefinitionsCollection();
-        $this->shares = $sharesCollection ?? new SharesCollection();
-        $this->prepares = $preparesCollection ?? new PreparesCollection();
-        $this->delegates = $delegatesCollection ?? new DelegatesCollection();
-        $this->executableBuilder = $executableBuilder ?? new ExecutableBuilder($this);
-        $this->argumentsBuilder = $argumentsBuilder ?? new ArgumentsBuilder($this);
+        $this->reflector = $reflector ?? new CachedReflector();
+        $this->stack = new ResolutionStack();
+        $this->parameterResolver = new ParameterResolver($this);
+        $this->resolver = new Resolver($this, $this->reflector, $this->parameterResolver);
+        $this->invoker = new Invoker($this, $this->reflector, $this->parameterResolver);
+        $this->lazyFactory = new LazyFactory();
 
-        foreach ([self::class, static::class, ContainerInterface::class] as $name) {
-            $this->selfNames[$this->normalizeName($name)] = true;
+        foreach ([self::class, FactoryInterface::class, InvokerInterface::class, ContainerInterface::class] as $name) {
+            $this->selfNames[NameNormalizer::normalize($name)] = true;
         }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function __clone()
-    {
-        $this->making = [];
     }
 
     #[Override]
     public function get(string $id): mixed
     {
-        if (!$this->isset($id)) {
-            throw new NotFoundException(\sprintf('Class or alias %s not found.', $id));
+        $key = NameNormalizer::normalize($id);
+
+        if (isset($this->selfNames[$key])) {
+            return $this;
         }
 
-        return $this->make($id);
+        if (isset($this->singletons[$key])) {
+            return $this->singletons[$key];
+        }
+
+        $definition = $this->definitions[$key] ?? null;
+        if ($definition !== null) {
+            return $this->resolveDefinition($key, $definition);
+        }
+
+        if ($this->parent instanceof \Altair\Container\Container && $this->parent->has($id)) {
+            return $this->parent->get($id);
+        }
+
+        if (class_exists($id)) {
+            if ($this->reflector->classMetadata($id)->isLazy) {
+                return $this->applyExtenders($key, $this->lazyFactory->create($id, fn(): object => $this->build($id, [])));
+            }
+
+            return $this->applyExtenders($key, $this->build($id, []));
+        }
+
+        throw NotFoundException::forId($id);
     }
 
     #[Override]
     public function has(string $id): bool
     {
-        return $this->isset($id);
-    }
+        $key = NameNormalizer::normalize($id);
 
-    /**
-     * Define instantiation directives for the specified class
-     *
-     * @param string $name The class (or alias) whose constructor arguments we wish to define
-     * @param Definition $definition A definition class that holds map of  values/instructions
-     */
-    public function define(string $name, Definition $definition): Container
-    {
-        [, $normalizedClass] = $this->aliases->resolve($name);
-        $this->guardNotSelfName($normalizedClass, $name);
-        $this->classDefinitions->put($normalizedClass, $definition);
-
-        return $this;
-    }
-
-    /**
-     * Assign a global default value for all parameters named $paramName
-     *
-     * Global parameter definitions are only used for parameters with no typehint, pre-defined or
-     * call-time definition.
-     *
-     * @param string $paramName The parameter name for which this value applies
-     * @param mixed $value The value to inject for this parameter name
-     */
-    public function defineParameter($paramName, mixed $value): Container
-    {
-        $this->parameterDefinitions->put($paramName, $value);
-
-        return $this;
-    }
-
-    /**
-     * Define an alias for all occurrences of a given typehint
-     *
-     * Use this method to specify implementation classes for interface and abstract class typehints.
-     *
-     * @param string $original The typehint to replace
-     * @param string $alias The implementation name
-     *
-     * @throws InvalidArgumentException if any argument is empty or not a string
-     */
-    public function alias(string $original, string $alias): Container
-    {
-        $this->aliases->define($original, $alias, $this->shares);
-
-        return $this;
-    }
-
-    /**
-     * Share the specified class/instance across the Container context
-     *
-     * @param mixed $nameOrInstance The class or object to share
-     *
-     * @throws InvalidArgumentException if $nameOrInstance is not a string or an object
-     */
-    public function share(mixed $nameOrInstance): Container
-    {
-        // The container already resolves its own type to the active instance,
-        // so sharing it again is a harmless no-op (kept for backward
-        // compatibility) — and crucially it stays out of the shares collection
-        // so introspection never reports the container as a realised singleton.
-        if ($nameOrInstance === $this) {
-            return $this;
+        if (isset($this->selfNames[$key]) || isset($this->singletons[$key]) || isset($this->definitions[$key])) {
+            return true;
         }
 
-        if (\is_string($nameOrInstance)) {
-            $this->shares->shareClass($nameOrInstance, $this->aliases);
-        } elseif (\is_object($nameOrInstance)) {
-            $this->shares->shareInstance($nameOrInstance, $this->aliases);
-        } else {
-            throw new InvalidArgumentException(
-                \sprintf(
-                    '%s::share() requires a string class name or object instance at Argument 1; %s specified',
-                    self::class,
-                    \gettype($nameOrInstance)
-                )
-            );
-        }
-
-        return $this;
+        // Deliberately explicit-registration only (not every autowireable class):
+        // the framework uses `!has(Concrete::class)` as a register-if-absent guard.
+        // get() may still autowire an unregistered class as a convenience.
+        return $this->parent?->has($id) ?? false;
     }
 
     /**
-     * Register a prepare callable to modify/prepare objects of type $name after instantiation
+     * @template T of object
      *
-     * Any callable or provisionable invokable may be specified. Preparers are passed two
-     * arguments: the instantiated object to be mutated and the current Container instance.
+     * @param class-string<T>      $class
+     * @param array<string, mixed> $parameters
      *
-     * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
-     *
-     * @throws InvalidArgumentException if $callableOrMethodStr is not a callable.
-     *
+     * @return T
      */
-    public function prepare(string $name, mixed $callableOrMethodStr): Container
+    #[Override]
+    public function make(string $class, array $parameters = []): object
     {
-        if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
-            throw new InvalidArgumentException('Invalid invokable: callable or provisional string required');
-        }
+        $key = NameNormalizer::normalize($class);
+        $definition = $this->definition($key);
 
-        [, $normalizedClass] = $this->aliases->resolve($name);
-        $this->guardNotSelfName($normalizedClass, $name);
-        $this->prepares[$normalizedClass] = $callableOrMethodStr;
-
-        return $this;
-    }
-
-    /**
-     * Delegate the creation of $name instances to the specified callable
-     *
-     * @param mixed $callableOrMethodStr Any callable or provisionable invokable method
-     * @throws InvalidArgumentException if $callableOrMethodStr is not a callable.
-     */
-    public function delegate(string $name, mixed $callableOrMethodStr): Container
-    {
-        if ($this->executableBuilder->isExecutable($callableOrMethodStr) === false) {
-            $errorDetail = '';
-            if (\is_string($callableOrMethodStr)) {
-                $errorDetail = \sprintf(" but received '%s'", $callableOrMethodStr);
-            } elseif (\is_array($callableOrMethodStr) && 2 === \count($callableOrMethodStr)
-                      &&
-                      \array_key_exists(0, $callableOrMethodStr) &&
-                \array_key_exists(1, $callableOrMethodStr)
-            ) {
-                if (\is_string($callableOrMethodStr[0]) && \is_string($callableOrMethodStr[1])) {
-                    $errorDetail = " but received ['" . $callableOrMethodStr[0] . "', '" . $callableOrMethodStr[1] . "']";
-                }
+        if ($definition instanceof DefinitionInterface && !$definition->hasValue()) {
+            $instance = $definition->instance();
+            if ($instance !== null) {
+                /** @var T $instance */
+                return $instance;
             }
 
-            throw new InvalidArgumentException(
-                \sprintf(
-                    '%s::delegate expects a valid callable or executable class::method string at Argument 2%s',
-                    self::class,
-                    $errorDetail
-                )
+            $factory = $definition->factory();
+            if ($factory instanceof Closure) {
+                /** @var T $made */
+                $made = $this->applyExtenders($key, $this->invokeForObject($factory, $key));
+
+                return $made;
+            }
+
+            /** @var T $built */
+            $built = $this->applyExtenders(
+                $key,
+                $this->build($definition->concrete() ?? $class, array_merge($definition->parameters(), $parameters))
             );
+
+            return $built;
         }
 
-        $normalizedName = $this->normalizeName($name);
-        $this->guardNotSelfName($normalizedName, $name);
-        $this->delegates->put($normalizedName, $callableOrMethodStr);
-
-        return $this;
-    }
-
-    /**
-     * Instantiate/provision a class instance
-     * @throws InjectionException
-     * @throws ReflectionException
-     * @return mixed|object|null
-     */
-    public function make(string $name, ?Definition $definition = null)
-    {
-        [$className, $normalizedClass] = $this->aliases->resolve($name);
-
-        if (isset($this->selfNames[$normalizedClass])) {
-            return $this;
-        }
-
-        if (isset($this->making[$normalizedClass])) {
-            throw new InjectionException(
-                \sprintf(
-                    "Cyclic dependency detected while provisioning '%s'",
-                    $className
-                )
-            );
-        }
-
-        $definition ??= new Definition([]);
-
-        $this->making[$normalizedClass] = \count($this->making);
-
-        if (isset($this->shares[$normalizedClass])) {
-            unset($this->making[$normalizedClass]);
-
-            return $this->shares->get($normalizedClass);
-        }
-
-        if (isset($this->delegates[$normalizedClass])) {
-            $executable = $this->executableBuilder->build($this->delegates->get($normalizedClass));
-            $reflectionFunction = $executable->getCallableReflection();
-
-            $arguments = $this->argumentsBuilder->build($reflectionFunction, $definition);
-            $object = $executable->__invoke(...$arguments);
-        } else {
-            $object = $this->provisionInstance($className, $normalizedClass, $definition);
-        }
-
-        $object = $this->prepareInstance($object, $normalizedClass);
-
-        if ($this->shares->hasKey($normalizedClass)) {
-            $this->shares->put($normalizedClass, $object);
-        }
-
-        unset($this->making[$normalizedClass]);
+        /** @var T $object */
+        $object = $this->applyExtenders($key, $this->build($class, $parameters));
 
         return $object;
     }
 
     /**
-     * Invoke the specified callable or class::method string, provisioning dependencies along the way
-     *
-     * @throws InjectionException
-     * @throws ReflectionException
+     * @param callable|array{0: object|class-string, 1: string}|string $target
+     * @param array<string, mixed>                                     $parameters
      */
-    public function execute(mixed $callableOrMethodString, ?Definition $definition = null): mixed
-    {
-        $executable = $this->executableBuilder->build($callableOrMethodString);
-        $definition ??= new Definition([]);
-        $arguments = $this->argumentsBuilder->build($executable->getCallableReflection(), $definition);
-
-        return $executable->__invoke(...$arguments);
-    }
-
-    public function getReflector(): ReflectionInterface
-    {
-        return $this->reflector;
-    }
-
-    public function getAliases(): AliasesCollection
-    {
-        return $this->aliases;
-    }
-
-    public function getClassDefinitions(): ClassDefinitionsCollection
-    {
-        return $this->classDefinitions;
-    }
-
-    public function getParameterDefinitions(): ParameterDefinitionsCollection
-    {
-        return $this->parameterDefinitions;
-    }
-
-    public function getShares(): SharesCollection
-    {
-        return $this->shares;
-    }
-
-    public function getDelegates(): DelegatesCollection
-    {
-        return $this->delegates;
-    }
-
-    /**
-     * Read-only access to registered prepare callables, keyed by normalized class name.
-     *
-     * Walking this collection is safe — it never triggers instantiation.
-     */
-    public function getPrepares(): PreparesCollection
-    {
-        return $this->prepares;
-    }
-
-    public function isset(string $name): bool
-    {
-        $name = $this->normalizeName($name);
-
-        return isset($this->selfNames[$name]) ||
-            isset($this->aliases[$name]) ||
-            isset($this->delegates[$name]) ||
-            isset($this->shares[$name]);
-    }
-
-    public function getExecutableBuilder(): ExecutableBuilder
-    {
-        return $this->executableBuilder;
-    }
-
-    public function getArgumentsBuilder(): ArgumentsBuilder
-    {
-        return $this->argumentsBuilder;
-    }
-
-    /**
-     * @throws InjectionException
-     * @return mixed
-     */
-    protected function prepareInstance(mixed $object, string $normalizedClass)
-    {
-        if (isset($this->prepares[$normalizedClass])) {
-            $callableOrMethodString = $this->prepares->get($normalizedClass);
-            $executable = $this->executableBuilder->build($callableOrMethodString);
-            $result = $executable($object, $this);
-            if ($result instanceof $normalizedClass) {
-                $object = $result;
-            }
-        }
-
-        $interfaces = @class_implements($object);
-        if ($interfaces === false) {
-            throw new InjectionException(
-                \sprintf(
-                    "Making %s did not result in an object, instead result is of type '%s'",
-                    $normalizedClass,
-                    \gettype($object)
-                )
-            );
-        }
-
-        if ($interfaces === []) {
-            return $object;
-        }
-
-        $interfaces = array_flip(array_map($this->normalizeName(...), $interfaces));
-        $prepares = $this->prepares->intersect(new Map($interfaces));
-
-        foreach ($prepares as $callableOrMethodString) {
-            $executable = $this->executableBuilder->build($callableOrMethodString);
-            $result = $executable($object, $this);
-            if ($result instanceof $normalizedClass) {
-                $object = $result;
-            }
-        }
-
-        return $object;
-    }
-
-    /**
-     * @throws InjectionException
-     * @return mixed|object
-     */
-    protected function provisionInstance(string $className, string $normalizedClass, Definition $definition)
+    #[Override]
+    public function call(callable|array|string $target, array $parameters = []): mixed
     {
         try {
-            $constructor = $this->reflector->getConstructor($className);
+            return $this->invoker->call($target, $parameters, $this->stack);
+        } catch (ReflectionException $reflectionException) {
+            throw new ContainerException('Cannot invoke callable: ' . $reflectionException->getMessage(), 0, $reflectionException);
+        }
+    }
 
-            if (!$constructor instanceof ReflectionMethod) {
-                $object = $this->instantiateWithoutConstructorParameters($className);
-            } elseif (!$constructor->isPublic()) {
-                throw new InjectionException(\sprintf("'%s' does not have public constructor.", $className));
-            } elseif ($constructorParameters = $this->reflector->getConstructorParameters($className)) {
-                $reflectionClass = $this->reflector->getClass($className);
-                $classDefinition = $this->classDefinitions->get($normalizedClass);
+    public function bind(string $id): Definition
+    {
+        $definition = new Definition($id);
+        $this->definitions[NameNormalizer::normalize($id)] = $definition;
 
-                if ($classDefinition instanceof Definition) {
-                    $definition = $definition->replace($classDefinition);
-                }
+        return $definition;
+    }
 
-                $arguments = $this->argumentsBuilder->build($constructor, $definition, $constructorParameters);
-                $object = $reflectionClass->newInstanceArgs($arguments);
-            } else {
-                $object = $this->instantiateWithoutConstructorParameters($className);
+    public function singleton(string $id, Closure|string|null $concrete = null): Definition
+    {
+        $definition = $this->bind($id)->shared();
+
+        if ($concrete instanceof Closure) {
+            $definition->using($concrete);
+        } elseif (\is_string($concrete)) {
+            $definition->to($concrete);
+        }
+
+        return $definition;
+    }
+
+    public function factory(string $id, Closure $factory): Definition
+    {
+        return $this->bind($id)->using($factory);
+    }
+
+    public function instance(string $id, object $instance): Definition
+    {
+        $this->singletons[NameNormalizer::normalize($id)] = $instance;
+
+        return $this->bind($id)->withInstance($instance);
+    }
+
+    public function value(string $id, mixed $value): Definition
+    {
+        return $this->bind($id)->withValue($value);
+    }
+
+    /**
+     * @param class-string $concrete
+     */
+    public function alias(string $abstract, string $concrete): Definition
+    {
+        return $this->bind($abstract)->to($concrete);
+    }
+
+    public function when(string $consumer): ContextualBindingBuilder
+    {
+        return new ContextualBindingBuilder($this, $consumer);
+    }
+
+    /**
+     * Register a decorator run against $id immediately after it is resolved.
+     * Decorators stack (multiple may apply) and run in registration order; a
+     * decorator that returns an object replaces the instance, otherwise the
+     * original is kept (allowing side-effect-only hooks).
+     *
+     * Register decorators during wiring: one added after a *shared* service has
+     * already been resolved does not retroactively decorate the cached instance.
+     *
+     * @param Closure(object, Container): mixed $decorator
+     */
+    public function extend(string $id, Closure $decorator): void
+    {
+        $this->extenders[NameNormalizer::normalize($id)][] = $decorator;
+    }
+
+    /**
+     * Resolve every service tagged with $tag (lazily, in registration order).
+     *
+     * @return iterable<mixed>
+     */
+    public function tagged(string $tag): iterable
+    {
+        $ids = [];
+        foreach ($this->mergedDefinitions() as $key => $definition) {
+            if (\in_array($tag, $definition->tags(), true)) {
+                $ids[$key] = true;
+
+                continue;
             }
-        } catch (ReflectionException) {
-            throw new InjectionException('Unable to provision an instance for ' . $className);
+
+            $concrete = $definition->concrete() ?? $definition->id();
+            if (class_exists($concrete) && \in_array($tag, $this->reflector->classMetadata($concrete)->tags, true)) {
+                $ids[$key] = true;
+            }
+        }
+
+        foreach (array_keys($ids) as $key) {
+            yield $this->get($key);
+        }
+    }
+
+    /**
+     * Create a child scope: it inherits this container's definitions but keeps
+     * its own singleton store and may override bindings without affecting the
+     * parent.
+     *
+     * Note: each scope has its own resolution stack, so a dependency cycle that
+     * spans a child and its parent is not detected (and is a design smell —
+     * resolve such graphs within a single container).
+     */
+    public function createScope(): self
+    {
+        return new self($this->reflector, $this);
+    }
+
+    public function addContextualBinding(string $consumer, string $type, Closure $resolver): void
+    {
+        $this->contextual[NameNormalizer::normalize($consumer)][NameNormalizer::normalize($type)] = $resolver;
+    }
+
+    public function contextualBinding(string $consumer, string $type): ?Closure
+    {
+        $consumerKey = NameNormalizer::normalize($consumer);
+        $typeKey = NameNormalizer::normalize($type);
+
+        return $this->contextual[$consumerKey][$typeKey]
+            ?? $this->parent?->contextualBinding($consumer, $type);
+    }
+
+    public function parameterValue(string $name): mixed
+    {
+        $definition = $this->definition(NameNormalizer::normalize($name));
+
+        if ($definition instanceof DefinitionInterface && $definition->hasValue()) {
+            return $definition->value();
+        }
+
+        if ($definition instanceof DefinitionInterface && $definition->hasInstance()) {
+            return $definition->instance();
+        }
+
+        throw new ContainerException(\sprintf('No container parameter "%s" is registered.', $name));
+    }
+
+    /**
+     * @return array<string, DefinitionInterface>
+     */
+    public function getDefinitions(): array
+    {
+        return $this->definitions;
+    }
+
+    /**
+     * The instances the container has actually realised and is sharing.
+     *
+     * @return array<string, object>
+     */
+    public function getRealisedSingletons(): array
+    {
+        return $this->singletons;
+    }
+
+    private function resolveDefinition(string $key, DefinitionInterface $definition): mixed
+    {
+        if ($definition->hasInstance()) {
+            return $definition->instance();
+        }
+
+        if ($definition->hasValue()) {
+            return $definition->value();
+        }
+
+        $object = $this->produce($definition, $key);
+
+        if (\is_object($object)) {
+            $object = $this->applyExtenders($key, $object);
+        }
+
+        if ($definition->isShared() && \is_object($object)) {
+            $this->singletons[$key] = $object;
+        }
+
+        return $object;
+    }
+
+    private function applyExtenders(string $key, object $object): object
+    {
+        foreach ($this->extendersFor($key) as $decorator) {
+            $result = $decorator($object, $this);
+            if (\is_object($result)) {
+                $object = $result;
+            }
         }
 
         return $object;
     }
 
     /**
-     * @param $className
-     *@throws ReflectionException
-     * @throws InjectionException
-     * @return mixed
+     * @return list<Closure>
      */
-    protected function instantiateWithoutConstructorParameters(string $className)
+    private function extendersFor(string $key): array
     {
-        $reflectionClass = $this->reflector->getClass($className);
-        if (!$reflectionClass->isInstantiable()) {
-            throw new InjectionException($className . ' is not instantiable');
+        return array_merge($this->parent?->extendersFor($key) ?? [], $this->extenders[$key] ?? []);
+    }
+
+    private function produce(DefinitionInterface $definition, string $key): mixed
+    {
+        $concrete = $definition->concrete() ?? $definition->id();
+
+        if ($this->resolvesLazily($definition, $concrete)) {
+            $class = class_exists($concrete) ? $concrete : null;
+
+            return $this->lazyFactory->create($class, fn(): mixed => $this->produceEager($definition, $key));
         }
 
-        return new $className();
+        return $this->produceEager($definition, $key);
     }
 
     /**
-     * Reject custom bindings for the container's own identifiers — they would
-     * be silently ignored, since `make()` resolves those names to the active
-     * instance before consulting definitions, delegates, or prepares. Callers
-     * who need to substitute the PSR-11 interface should use `alias()` instead.
-     *
-     * @throws InvalidArgumentException
+     * Lazy when the binding opted in (`->lazy()`) or the target class carries
+     * the `#[Lazy]` attribute.
      */
-    private function guardNotSelfName(string $normalizedName, string $originalName): void
+    private function resolvesLazily(DefinitionInterface $definition, string $concrete): bool
     {
-        if (isset($this->selfNames[$normalizedName])) {
-            throw new InvalidArgumentException(
-                \sprintf(
-                    "Cannot register a custom binding for '%s': the container always resolves its own type to the active instance. Use alias() to substitute the interface.",
-                    $originalName
-                )
-            );
+        if ($definition->isLazy()) {
+            return true;
         }
+
+        return class_exists($concrete) && $this->reflector->classMetadata($concrete)->isLazy;
+    }
+
+    private function produceEager(DefinitionInterface $definition, string $key): mixed
+    {
+        $factory = $definition->factory();
+        if ($factory instanceof Closure) {
+            return $this->callFactoryGuarded($factory, $key);
+        }
+
+        $concrete = $definition->concrete();
+
+        // An alias (`->to(B)`) pointing at a separately-bound concrete must
+        // resolve B through its own definition (factory, params, shared, …),
+        // not build it blindly. Only when the alias adds no parameters of its own.
+        if ($concrete !== null && $definition->parameters() === []) {
+            $concreteKey = NameNormalizer::normalize($concrete);
+            if ($concreteKey !== NameNormalizer::normalize($definition->id()) && $this->definition($concreteKey) instanceof DefinitionInterface) {
+                return $this->get($concrete);
+            }
+        }
+
+        return $this->build($concrete ?? $definition->id(), $definition->parameters());
+    }
+
+    /**
+     * Invoke a factory closure under the resolution-stack guard so factory-based
+     * dependency cycles raise {@see \Altair\Container\Exception\CircularDependencyException}
+     * instead of overflowing the PHP call stack.
+     */
+    private function callFactoryGuarded(Closure $factory, string $key): mixed
+    {
+        $this->stack->enter($key);
+
+        try {
+            return $this->call($factory);
+        } finally {
+            $this->stack->leave($key);
+        }
+    }
+
+    private function invokeForObject(Closure $factory, string $key): object
+    {
+        $object = $this->callFactoryGuarded($factory, $key);
+
+        if (!\is_object($object)) {
+            throw new ContainerException('Factory closure must return an object.');
+        }
+
+        return $object;
+    }
+
+    /**
+     * @param array<string, mixed> $callTime
+     */
+    private function build(string $class, array $callTime): object
+    {
+        $key = NameNormalizer::normalize($class);
+        $this->stack->enter($key);
+
+        try {
+            return $this->resolver->instantiate($class, $callTime, $this->stack);
+        } finally {
+            $this->stack->leave($key);
+        }
+    }
+
+    private function definition(string $key): ?DefinitionInterface
+    {
+        return $this->definitions[$key] ?? $this->parent?->definition($key);
+    }
+
+    /**
+     * @return array<string, Definition>
+     */
+    private function mergedDefinitions(): array
+    {
+        $parent = $this->parent?->mergedDefinitions() ?? [];
+
+        return array_merge($parent, $this->definitions);
     }
 }

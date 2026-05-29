@@ -24,7 +24,7 @@ final class PingTest extends TestCase
     public function testPingReturns200WithHealthPayload(): void
     {
         $container = new Container();
-        $container->share($container);
+        $container->instance($container::class, $container);
 
         /** @var list<array{0: string, 1: string, 2: class-string}> $routes */
         $routes = require __DIR__ . '/../../config/routes.php';

@@ -11,24 +11,15 @@ declare(strict_types=1);
 
 namespace Altair\Container\Contracts;
 
+use Altair\Container\Reflection\ClassMetadata;
+
+/**
+ * Caches the extracted {@see ClassMetadata} (plain data — never live
+ * `Reflection*` objects), keyed by normalized class name.
+ */
 interface ReflectionCacheInterface
 {
-    public const CLASSES_KEY_PREFIX = 'class.';
+    public function get(string $key): ?ClassMetadata;
 
-    public const CONSTRUCTORS_KEY_PREFIX = 'const.';
-
-    public const CONSTRUCTOR_PARAMETERS_KEY_PREFIX = 'const-params.';
-
-    public const FUNCTIONS_KEY_PREFIX = 'func.';
-
-    public const FUNCTION_PARAMETERS_KEY_PREFIX = 'func-params.';
-
-    public const METHODS_KEY_PREFIX = 'method.';
-
-    /**
-     * @return mixed
-     */
-    public function get(string $key);
-
-    public function put(string $key, mixed $data): ReflectionCacheInterface;
+    public function put(string $key, ClassMetadata $metadata): void;
 }

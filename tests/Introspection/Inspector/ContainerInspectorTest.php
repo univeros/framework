@@ -19,9 +19,9 @@ class ContainerInspectorTest extends TestCase
     {
         $container = new Container();
         $container->alias(LoggerInterface::class, NullLogger::class);
-        $container->share(NullLogger::class);
-        $container->delegate(\stdClass::class, static fn(): \stdClass => new \stdClass());
-        $container->defineParameter('appName', 'demo');
+        $container->singleton(NullLogger::class);
+        $container->factory(\stdClass::class, static fn(): \stdClass => new \stdClass());
+        $container->value('appName', 'demo');
 
         $table = (new ContainerInspector($container))->inspectAll();
 
@@ -39,8 +39,8 @@ class ContainerInspectorTest extends TestCase
     {
         $container = new Container();
         $container->alias(LoggerInterface::class, NullLogger::class);
-        $container->share(NullLogger::class);
-        $container->delegate(\stdClass::class, static fn(): \stdClass => new \stdClass());
+        $container->singleton(NullLogger::class);
+        $container->factory(\stdClass::class, static fn(): \stdClass => new \stdClass());
 
         $filtered = (new ContainerInspector($container))->inspectAll(sharedOnly: true);
         $ids = array_map(strtolower(...), array_column($filtered->rows, 'id'));
@@ -86,10 +86,10 @@ class ContainerInspectorTest extends TestCase
     public function testInspectRealizedIncludesBuiltInstancesAndExcludesUnbuiltShares(): void
     {
         $container = new Container();
-        // Registered as a singleton but never constructed → null placeholder, not realized.
-        $container->share(NullLogger::class);
-        // Sharing an existing instance realizes it immediately (shareInstance path).
-        $container->share(new \ArrayObject());
+        // Registered as a singleton but never constructed → not realized yet.
+        $container->singleton(NullLogger::class);
+        // Registering an existing instance realizes it immediately.
+        $container->instance(\ArrayObject::class, new \ArrayObject());
 
         $before = (new ContainerInspector($container))->inspectRealized();
         $idsBefore = array_map(strtolower(...), array_column($before->rows, 'id'));
@@ -97,8 +97,8 @@ class ContainerInspectorTest extends TestCase
         $this->assertContains(strtolower(\ArrayObject::class), $idsBefore, 'instance-shared services are realized at once');
         $this->assertNotContains(strtolower(NullLogger::class), $idsBefore, 'registered-but-unbuilt shares are not realized');
 
-        // Constructing the logger via make() flips it to realized.
-        $container->make(NullLogger::class);
+        // Resolving the shared logger via get() flips it to realized.
+        $container->get(NullLogger::class);
 
         $after = (new ContainerInspector($container))->inspectRealized();
         $idsAfter = array_map(strtolower(...), array_column($after->rows, 'id'));
@@ -116,7 +116,7 @@ class ContainerInspectorTest extends TestCase
     public function testInspectRealizedIsEmptyBeforeAnyInstantiation(): void
     {
         $container = new Container();
-        $container->share(NullLogger::class); // placeholder only — nothing built yet
+        $container->singleton(NullLogger::class); // registered only — nothing built yet
 
         $table = (new ContainerInspector($container))->inspectRealized();
 
@@ -128,8 +128,8 @@ class ContainerInspectorTest extends TestCase
     public function testInspectRealizedAppliesFilter(): void
     {
         $container = new Container();
-        $container->share(new \ArrayObject());
-        $container->share(new \SplStack());
+        $container->instance(\ArrayObject::class, new \ArrayObject());
+        $container->instance(\SplStack::class, new \SplStack());
 
         $table = (new ContainerInspector($container))->inspectRealized(filter: 'array');
         $ids = array_map(strtolower(...), array_column($table->rows, 'id'));

@@ -34,8 +34,10 @@ class MongoSessionHandlerConfiguration implements ConfigurationInterface
             $this->env->get('SESSION_MONGO_COLLECTION', 'session_collection')
         );
 
-        $container
-            ->delegate(MongoSessionHandler::class, $factory)
-            ->alias(SessionHandlerInterface::class, MongoSessionHandler::class);
+        $container->factory(MongoSessionHandler::class, $factory);
+        $container->factory(
+            SessionHandlerInterface::class,
+            static fn(Container $c): SessionHandlerInterface => $c->get(MongoSessionHandler::class),
+        );
     }
 }

@@ -32,11 +32,11 @@ class MySqlSessionHandlerConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $adapterDefinition = $this->getAdapterDefinition();
-
-        $container
-            ->define(MySqlPdoSessionAdapter::class, $adapterDefinition)
-            ->alias(PdoSessionAdapterInterface::class, MySqlPdoSessionAdapter::class)
-            ->alias(SessionHandlerInterface::class, PdoSessionHandler::class);
+        $container->bind(MySqlPdoSessionAdapter::class)->withParameters($this->getAdapterParameters());
+        $container->factory(
+            PdoSessionAdapterInterface::class,
+            static fn(Container $c): PdoSessionAdapterInterface => $c->make(MySqlPdoSessionAdapter::class),
+        );
+        $container->alias(SessionHandlerInterface::class, PdoSessionHandler::class);
     }
 }
