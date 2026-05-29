@@ -1,0 +1,13 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["symbols"],
+    "properties": {
+        "symbols": {
+            "type": "array",
+            "items": { "type": "string" },
+            "minItems": 1,
+            "description": "Fully-qualified symbols the change will touch."
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["symbol"],
+    "properties": {
+        "symbol": {
+            "type": "string",
+            "description": "Fully-qualified symbol: a class/interface/trait/enum, \"Class::method\", \"Class::$prop\", or \"Class::CONST\"."
+        },
+        "kind": {
+            "type": "string",
+            "enum": ["new", "extends", "implements", "type_hint", "call", "property_read", "property_write", "attribute", "class_constant", "spec_endpoint", "spec_entity", "route_middleware"],
+            "description": "Optional: restrict results to a single usage kind."
+        }
+    }
+}
