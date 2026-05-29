@@ -1,0 +1,12 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id"],
+    "properties": {
+        "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Profile id (as listed by framework__profile_list)."
+        }
+    }
+}
