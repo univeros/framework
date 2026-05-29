@@ -15,10 +15,12 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
 use Altair\Persistence\Contracts\EntityManagerInterface;
+use Altair\Persistence\Contracts\HydratorInterface;
 use Altair\Persistence\Contracts\RepositoryInterface;
 use Altair\Persistence\Contracts\UnitOfWorkInterface;
 use Altair\Persistence\Cycle\CycleEntityManager;
 use Altair\Persistence\Cycle\CycleUnitOfWork;
+use Altair\Persistence\Dto\DataObjectHydrator;
 use Altair\Persistence\Schema\SchemaProviderInterface;
 use Cycle\Database\DatabaseManager;
 use Cycle\Database\DatabaseProviderInterface;
@@ -69,6 +71,9 @@ final readonly class CycleOrmConfiguration implements ConfigurationInterface
         $container->singleton(CycleUnitOfWork::class);
         $container->alias(UnitOfWorkInterface::class, CycleUnitOfWork::class);
 
+        $container->singleton(DataObjectHydrator::class);
+        $container->alias(HydratorInterface::class, DataObjectHydrator::class);
+
         $container->factory(
             DatabaseSettings::class,
             static fn(Env $env): DatabaseSettings => DatabaseSettings::fromEnv(self::readEnv($env)),
@@ -97,7 +102,8 @@ final readonly class CycleOrmConfiguration implements ConfigurationInterface
                 ORMInterface $orm,
                 UnitOfWorkInterface $unitOfWork,
                 Container $resolver,
-            ): CycleEntityManager => new CycleEntityManager($orm, $unitOfWork, $resolver, $bindings),
+                HydratorInterface $hydrator,
+            ): CycleEntityManager => new CycleEntityManager($orm, $unitOfWork, $resolver, $hydrator, $bindings),
         )->shared();
         $container->factory(
             EntityManagerInterface::class,
