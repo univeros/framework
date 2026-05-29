@@ -14,9 +14,13 @@ namespace Altair\Persistence\Cycle;
 use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Persistence\Contracts\HydratorInterface;
 use Altair\Persistence\Contracts\ReadModelRepositoryInterface;
+use Altair\Persistence\Dto\Attribute\CollectionOf;
 use Cycle\ORM\ORMInterface;
 use Cycle\ORM\Select;
 use Override;
+use ReflectionClass;
+use ReflectionNamedType;
+use ReflectionProperty;
 
 /**
  * Cycle-backed read model: selects raw rows for an entity role and projects
@@ -82,7 +86,55 @@ final readonly class CycleReadModelRepository implements ReadModelRepositoryInte
      */
     private function select(): Select
     {
-        return new Select($this->orm, $this->entityClass);
+        $select = new Select($this->orm, $this->entityClass);
+
+        foreach ($this->relationsToLoad() as $relation) {
+            $select->load($relation);
+        }
+
+        return $select;
+    }
+
+    /**
+     * Relations to eager-load: the entity's schema relations whose name matches
+     * a nested-Data-object or {@see CollectionOf} property on the target DTO.
+     *
+     * @return list<string>
+     */
+    private function relationsToLoad(): array
+    {
+        $schema = $this->orm->getSchema();
+        if (!$schema->defines($this->entityClass)) {
+            return [];
+        }
+
+        $relationNames = $schema->getRelations($this->entityClass);
+        if ($relationNames === []) {
+            return [];
+        }
+
+        $load = [];
+        foreach ((new ReflectionClass($this->dataObjectClass))->getProperties() as $property) {
+            $name = $property->getName();
+            if (\in_array($name, $relationNames, true) && $this->isRelationProperty($property)) {
+                $load[] = $name;
+            }
+        }
+
+        return $load;
+    }
+
+    private function isRelationProperty(ReflectionProperty $property): bool
+    {
+        if ($property->getAttributes(CollectionOf::class) !== []) {
+            return true;
+        }
+
+        $type = $property->getType();
+
+        return $type instanceof ReflectionNamedType
+            && !$type->isBuiltin()
+            && is_a($type->getName(), DataObjectInterface::class, true);
     }
 
     /**
