@@ -154,4 +154,51 @@ final class DataObjectHydratorTest extends TestCase
     {
         $this->assertSame([], $this->hydrator->hydrateMany(ProfileDto::class, []));
     }
+
+    public function testHydratesCollectionOfNestedDataObjects(): void
+    {
+        $dto = $this->hydrator->hydrate(ProfileDto::class, [
+            'id' => 1,
+            'addresses' => [
+                ['city' => 'New York', 'zip' => '10001'],
+                ['city' => 'Oslo'],
+            ],
+        ]);
+
+        $this->assertIsArray($dto->addresses);
+        $this->assertCount(2, $dto->addresses);
+        $this->assertContainsOnlyInstancesOf(AddressDto::class, $dto->addresses);
+        $this->assertSame('New York', $dto->addresses[0]->city);
+        $this->assertSame('Oslo', $dto->addresses[1]->city);
+    }
+
+    public function testCollectionPassesThroughExistingInstances(): void
+    {
+        $existing = new AddressDto(['city' => 'Berlin']);
+
+        $dto = $this->hydrator->hydrate(ProfileDto::class, ['addresses' => [$existing]]);
+
+        $this->assertSame($existing, $dto->addresses[0]);
+    }
+
+    public function testNullCollectionStaysNull(): void
+    {
+        $dto = $this->hydrator->hydrate(ProfileDto::class, ['addresses' => null]);
+
+        $this->assertNull($dto->addresses);
+    }
+
+    public function testCollectionFromNonArrayThrows(): void
+    {
+        $this->expectException(HydrationException::class);
+
+        $this->hydrator->hydrate(ProfileDto::class, ['addresses' => 'nope']);
+    }
+
+    public function testCollectionElementFromNonArrayThrows(): void
+    {
+        $this->expectException(HydrationException::class);
+
+        $this->hydrator->hydrate(ProfileDto::class, ['addresses' => ['not-an-array']]);
+    }
 }

@@ -9,16 +9,14 @@ declare(strict_types=1);
  * the LICENSE file that was distributed with this source code.
  */
 
-namespace Altair\Tests\Persistence\Dto\Fixture;
+namespace Altair\Tests\Persistence\Cycle\Fixture;
 
 use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Data\Traits\ImmutableAttributesAwareTrait;
 use Altair\Data\Traits\JsonSerializableAwareTrait;
 use Altair\Data\Traits\SerializeAwareTrait;
-use Altair\Persistence\Dto\Attribute\CollectionOf;
-use DateTimeImmutable;
 
-final class ProfileDto implements DataObjectInterface
+final class PartDto implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -26,17 +24,5 @@ final class ProfileDto implements DataObjectInterface
 
     private ?int $id = null;
 
-    private ?string $name = null;
-
-    private ?bool $active = null;
-
-    private ?float $score = null;
-
-    private ?DateTimeImmutable $created_at = null;
-
-    private ?AddressDto $address = null;
-
-    /** @var list<AddressDto>|null */
-    #[CollectionOf(AddressDto::class)]
-    private ?array $addresses = null;
+    private ?string $label = null;
 }

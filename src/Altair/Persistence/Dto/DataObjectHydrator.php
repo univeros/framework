@@ -13,6 +13,7 @@ namespace Altair\Persistence\Dto;
 
 use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Persistence\Contracts\HydratorInterface;
+use Altair\Persistence\Dto\Attribute\CollectionOf;
 use Altair\Persistence\Exception\HydrationException;
 use DateTime;
 use DateTimeImmutable;
@@ -25,6 +26,7 @@ use const FILTER_VALIDATE_BOOLEAN;
 use Override;
 use ReflectionClass;
 use ReflectionNamedType;
+use ReflectionProperty;
 use ReflectionType;
 use Stringable;
 
@@ -59,12 +61,16 @@ final class DataObjectHydrator implements HydratorInterface
                 continue;
             }
 
-            $coerced[$key] = $this->coerce(
-                $value,
-                $reflection->getProperty($key)->getType(),
-                $dataObjectClass,
-                $key,
-            );
+            $property = $reflection->getProperty($key);
+
+            $elementType = $this->collectionElementType($property);
+            if ($elementType !== null) {
+                $coerced[$key] = $this->coerceCollection($value, $elementType, $dataObjectClass, $key);
+
+                continue;
+            }
+
+            $coerced[$key] = $this->coerce($value, $property->getType(), $dataObjectClass, $key);
         }
 
         /** @var T $instance */
@@ -90,6 +96,52 @@ final class DataObjectHydrator implements HydratorInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @return class-string<DataObjectInterface>|null
+     */
+    private function collectionElementType(ReflectionProperty $property): ?string
+    {
+        $attributes = $property->getAttributes(CollectionOf::class);
+
+        return $attributes === [] ? null : $attributes[0]->newInstance()->type;
+    }
+
+    /**
+     * @param class-string<DataObjectInterface> $elementClass
+     *
+     * @return list<DataObjectInterface>|null
+     */
+    private function coerceCollection(mixed $value, string $elementClass, string $class, string $field): ?array
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (!\is_array($value)) {
+            throw HydrationException::uncoercible($class, $field, 'list<' . $elementClass . '>', $value);
+        }
+
+        $items = [];
+        foreach ($value as $element) {
+            if ($element instanceof DataObjectInterface) {
+                $items[] = $element;
+
+                continue;
+            }
+
+            if (\is_array($element)) {
+                /** @var array<string, mixed> $element */
+                $items[] = $this->hydrate($elementClass, $element);
+
+                continue;
+            }
+
+            throw HydrationException::uncoercible($class, $field, $elementClass, $element);
+        }
+
+        return $items;
     }
 
     private function coerce(mixed $value, ?ReflectionType $type, string $class, string $field): mixed

@@ -211,6 +211,31 @@ $all  = $users->findAll();                      // list<UserProfileDto>
 
 `readModel()` returns a `ReadModelRepositoryInterface` — `find` / `findOneBy` / `findBy` / `findAll`, no writes. Writes stay on the entity `RepositoryInterface` and the unit of work; reads come back as Data objects. The Cycle implementation selects **raw rows** (`Select::fetchData()`) rather than managed entities, so reads skip the identity map — the right trade for the read side.
 
+#### Relations (nested read models)
+
+When the target read model declares a property whose name matches one of the entity's relations, the read model **eager-loads that relation** and nests it. A to-one relation maps onto a property typed as another `DataObjectInterface`; a to-many relation maps onto an `array` property annotated with `#[CollectionOf(...)]` (PHP can't express `array<Dto>` natively, so the attribute names the element type):
+
+```php
+use Altair\Persistence\Dto\Attribute\CollectionOf;
+
+final class WidgetDto implements DataObjectInterface
+{
+    use ImmutableAttributesAwareTrait; use JsonSerializableAwareTrait; use SerializeAwareTrait;
+
+    private ?int    $id   = null;
+    private ?string $name = null;
+
+    /** @var list<PartDto>|null */
+    #[CollectionOf(PartDto::class)]
+    private ?array $parts = null;   // matches the `parts` has-many relation
+}
+
+$widget = $em->readModel(Widget::class, WidgetDto::class)->find(1);
+// $widget->parts === [PartDto, PartDto, ...]  (eager-loaded and hydrated)
+```
+
+The match is by name: the DTO property must be named like the relation. Only declared, matching relations are loaded — no over-fetching.
+
 #### Coercion (the hydrator underneath)
 
 Each row is projected through a `HydratorInterface` (`DataObjectHydrator` by default, bound in `CycleOrmConfiguration` and swappable). This is the bridge the Data package deliberately does not provide: `Data` assigns values as-is (its typed-property writes reject a mismatched type), so **type coercion lives here, in the persistence layer**, never in `Data`. The dependency arrow is one-way — `univeros/persistence` depends on `univeros/data`, never the reverse.
@@ -362,4 +387,4 @@ What you should **not** extend: `CycleEntityManager` is `final`. Replace it via 
 - **Doctrine bridge.** Not in this package. A separate `univeros/doctrine` could implement the same contracts; the wrap is already shaped for it.
 - **`--dry-run` SQL preview.** `db:migrate --dry-run` currently lists pending migration names. A per-migration SQL dump is a follow-up — Cycle's `Migrator` does not expose a non-destructive SQL preview out of the box.
 - **Postgres / MySQL CI matrix.** Tests today exercise in-memory SQLite. Real-driver integration tests are tracked as a follow-up on the original issue.
-- **Read-model scope.** `readModel()` projects a single entity role's rows; joined/eager-loaded relations are not auto-mapped into nested Data objects yet (the hydrator *will* compose a nested `DataObjectInterface` when a row already carries the relation as an array — e.g. from a custom `Select` with `->load()`). The hydrator coerces against a single declared property type; union and intersection types are passed through for PHP to enforce.
+- **Read-model relations.** A read model eager-loads and nests relations whose name matches a `DataObjectInterface` (to-one) or `#[CollectionOf(...)]` (to-many) property on the DTO. The match is by name, so a DTO property must be named like the relation; relations exposed under a different property name, and nesting deeper than one level, are not auto-loaded — drop to a custom `Select` with explicit `->load()` and hydrate the rows yourself. The hydrator coerces against a single declared property type; union and intersection types are passed through for PHP to enforce.
