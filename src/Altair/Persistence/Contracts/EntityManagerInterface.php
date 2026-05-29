@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Altair\Persistence\Contracts;
 
+use Altair\Data\Contracts\DataObjectInterface;
+
 /**
  * Top-level entry point for accessing repositories and the unit of work.
  *
@@ -29,6 +31,19 @@ interface EntityManagerInterface
      * @return RepositoryInterface<TEntity>
      */
     public function repository(string $entityClass): RepositoryInterface;
+
+    /**
+     * Resolve a read-only repository that projects the entity's rows into an
+     * immutable Data object — the read side of the persistence layer.
+     *
+     * @template TDataObject of DataObjectInterface
+     *
+     * @param class-string<TEntity>     $entityClass
+     * @param class-string<TDataObject> $dataObjectClass
+     *
+     * @return ReadModelRepositoryInterface<TDataObject>
+     */
+    public function readModel(string $entityClass, string $dataObjectClass): ReadModelRepositoryInterface;
 
     /**
      * Access the shared unit of work for batched writes.
