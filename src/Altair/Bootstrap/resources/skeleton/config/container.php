@@ -6,11 +6,12 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
 
 /*
- * Boot factory: build the container, bind it to itself (so collaborators can
- * receive it), and apply the Configuration chain. Returns the ready container.
+ * Boot factory: build the container and apply the Configuration chain.
+ * The container resolves its own type to itself, so collaborators that depend
+ * on Container / ContainerInterface receive it without any explicit binding.
+ * Returns the ready container.
  */
 $container = new Container();
-$container->share($container);
 
 /** @var list<ConfigurationInterface> $configurations */
 $configurations = require __DIR__ . '/configurations.php';

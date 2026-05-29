@@ -120,20 +120,6 @@ class CachedReflection implements ReflectionInterface
             }
         }
 
-        /*if (false !== $typeHint) {
-            return (string)$typeHint;
-        }
-
-        if ($reflectionClass = $parameter->getClass()) {
-            $typeHint = $reflectionClass->getName();
-            $classKey = ReflectionCacheInterface::CLASSES_KEY_PREFIX . strtolower($typeHint);
-            $this->cache->put($classKey, $reflectionClass);
-        } else {
-            $typeHint = null;
-        }
-
-        $this->cache->put($key, $typeHint);*/
-
         return $typeHint;
     }
 
