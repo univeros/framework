@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Container\Definition;
 
 use Altair\Container\Container;
+use Altair\Container\Exception\ContainerException;
 use Closure;
 
 /**
@@ -42,6 +43,8 @@ final class ContextualBindingBuilder
      */
     public function give(string|Closure $concrete): Container
     {
+        $this->guardNeedsWasCalled();
+
         $resolver = $concrete instanceof Closure
             ? $concrete
             : static fn(Container $container): mixed => $container->get($concrete);
@@ -56,8 +59,19 @@ final class ContextualBindingBuilder
      */
     public function giveValue(mixed $value): Container
     {
+        $this->guardNeedsWasCalled();
+
         $this->container->addContextualBinding($this->consumer, $this->type, static fn(): mixed => $value);
 
         return $this->container;
+    }
+
+    private function guardNeedsWasCalled(): void
+    {
+        if ($this->type === '') {
+            throw new ContainerException(
+                \sprintf('Call needs() before give()/giveValue() on a contextual binding for "%s".', $this->consumer)
+            );
+        }
     }
 }

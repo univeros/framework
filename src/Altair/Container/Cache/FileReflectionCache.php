@@ -11,8 +11,12 @@ declare(strict_types=1);
 
 namespace Altair\Container\Cache;
 
+use Altair\Container\Attribute\Autowire;
+use Altair\Container\Attribute\Factory;
+use Altair\Container\Attribute\Inject;
 use Altair\Container\Contracts\ReflectionCacheInterface;
 use Altair\Container\Reflection\ClassMetadata;
+use Altair\Container\Reflection\ParameterMetadata;
 use Override;
 use Throwable;
 
@@ -21,6 +25,11 @@ use Throwable;
  * across requests. Unlike the previous container's `var_export()` of live
  * `Reflection*` objects, this serializes plain data — the only entries it skips
  * are the rare ones whose parameter defaults are themselves unserializable.
+ *
+ * Pass an application-specific, non-world-writable directory in production: the
+ * default under the system temp dir is shared across apps on the host (risking
+ * cross-app metadata bleed) and reading is hardened with an allowed-classes
+ * whitelist against tampered cache files.
  */
 final readonly class FileReflectionCache implements ReflectionCacheInterface
 {
@@ -49,7 +58,17 @@ final readonly class FileReflectionCache implements ReflectionCacheInterface
         }
 
         try {
-            $value = unserialize($contents);
+            // Whitelist only the classes a serialized ClassMetadata can legitimately
+            // contain, so a tampered cache file cannot trigger object injection.
+            $value = unserialize($contents, [
+                'allowed_classes' => [
+                    ClassMetadata::class,
+                    ParameterMetadata::class,
+                    Factory::class,
+                    Inject::class,
+                    Autowire::class,
+                ],
+            ]);
         } catch (Throwable) {
             return null;
         }

@@ -15,8 +15,7 @@ use Altair\Container\Attribute\Autowire;
 use Altair\Container\Attribute\Inject;
 use Altair\Container\Container;
 use Altair\Container\Exception\AutowireException;
-use Altair\Container\Exception\CircularDependencyException;
-use Altair\Container\Exception\ContainerException;
+use Altair\Container\Exception\NotFoundException;
 use Altair\Container\Reflection\ParameterMetadata;
 use Closure;
 
@@ -133,11 +132,16 @@ final readonly class ParameterResolver
         foreach ($parameter->classTypes as $type) {
             try {
                 return [true, $this->container->get($type)];
-            } catch (CircularDependencyException $exception) {
-                // a genuine cycle is fatal — never mask it as a "try the next type"
-                throw $exception;
-            } catch (ContainerException) {
-                // this union member is unresolvable; try the next, else fall through
+            } catch (NotFoundException) {
+                // this id simply isn't resolvable — try the next union member, else
+                // fall through to the parameter's default/null.
+            } catch (AutowireException $exception) {
+                // the type exists but its own construction failed. For a required
+                // parameter, surface that real cause (with its path) rather than
+                // masking it as a generic "cannot autowire" or wrong union member.
+                if (!$parameter->hasDefault && !$parameter->allowsNull) {
+                    throw $exception;
+                }
             }
         }
 

@@ -158,6 +158,32 @@ final class ContainerTest extends TestCase
         self::assertSame('pong', $heavy->ping());
     }
 
+    public function testLazyAttributeIsHonouredWithoutExplicitLazyBinding(): void
+    {
+        // No ->lazy() call — the #[Lazy] class attribute alone must drive lazy resolution.
+        $marked = (new Container())->get(LazyMarked::class);
+
+        self::assertInstanceOf(LazyMarked::class, $marked);
+        self::assertSame('lazy', $marked->ping());
+    }
+
+    public function testFactoryClosureCycleThrowsCircularDependency(): void
+    {
+        $container = new Container();
+        $container->factory('svc.a', static fn(Container $c): object => $c->get('svc.b'));
+        $container->factory('svc.b', static fn(Container $c): object => $c->get('svc.a'));
+
+        $this->expectException(CircularDependencyException::class);
+        $container->get('svc.a');
+    }
+
+    public function testContextualGiveWithoutNeedsThrows(): void
+    {
+        $this->expectException(ContainerException::class);
+
+        (new Container())->when(NeedsLogger::class)->give(FileLogger::class);
+    }
+
     public function testSelfBindingResolvesContainerToItself(): void
     {
         $container = new Container();
