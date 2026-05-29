@@ -66,9 +66,9 @@ class SnapshotFactoryTest extends TestCase
     public function testReflectsConstructorDependenciesAndInterfaces(): void
     {
         $container = new Container();
-        $container->share(new Collaborator());
-        $container->share(new ServiceWithCollaborator(new Collaborator(), 'x'));
-        $container->share(new SampleMiddleware());
+        $container->instance(Collaborator::class, new Collaborator());
+        $container->instance(ServiceWithCollaborator::class, new ServiceWithCollaborator(new Collaborator(), 'x'));
+        $container->instance(SampleMiddleware::class, new SampleMiddleware());
 
         $snapshot = (new SnapshotFactory(container: new ContainerInspector($container)))->create();
 
@@ -82,7 +82,7 @@ class SnapshotFactoryTest extends TestCase
     public function testUnionTypedConstructorYieldsBothEdges(): void
     {
         $container = new Container();
-        $container->share(new UnionDepService(new Collaborator()));
+        $container->instance(UnionDepService::class, new UnionDepService(new Collaborator()));
 
         $snapshot = (new SnapshotFactory(container: new ContainerInspector($container)))->create();
 

@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Introspection\Inspector;
 
 use Altair\Container\Container;
+use Altair\Container\Contracts\DefinitionInterface;
 use Altair\Introspection\Exception\NotFoundException;
 use Altair\Introspection\Result\InspectionTable;
 use Closure;
@@ -21,16 +22,16 @@ use ReflectionNamedType;
 use Throwable;
 
 /**
- * Walks the Container's six binding collections without triggering
+ * Walks the Container's binding definitions without triggering
  * instantiation — so it's safe to run against a project whose database
- * is down or whose Configuration `prepare` hooks would have side effects.
+ * is down or whose Configuration `extend` hooks would have side effects.
  *
  * `inspectAll()` / `inspectOne()` report definitions (what *would* be
  * built). `inspectRealized()` reports the complementary view — instances
  * the Container has actually constructed so far — for long-running-process
- * introspection (worker memory growth, surprised-by-singleton, prepare-hook
+ * introspection (worker memory growth, surprised-by-singleton, extend-hook
  * ordering). It still never instantiates: it only reads the already-built
- * objects sitting in the shares collection.
+ * objects sitting in the realised-singletons collection.
  */
 final readonly class ContainerInspector
 {
@@ -76,11 +77,10 @@ final readonly class ContainerInspector
      * Realised view: only the singletons the Container has actually
      * constructed so far.
      *
-     * The shares collection holds a `null` placeholder for a singleton
-     * that has been registered but not yet built (see
-     * `SharesCollection::shareClass()`), and the constructed object once
-     * `make()` (or `share($instance)`) has run. So a non-null value is the
-     * "has been instantiated" signal — we filter on exactly that.
+     * The container's realised-singletons collection holds an entry only
+     * once a shared binding (or a pre-made `instance()`) has been built, so
+     * every value is a constructed object — the "has been instantiated"
+     * signal.
      *
      * Safe by construction: we read instances that already exist and only
      * call `::class` on them. We never `make()`, and never serialise (which
@@ -93,11 +93,7 @@ final readonly class ContainerInspector
         $needle = $filter !== null && $filter !== '' ? strtolower($filter) : null;
         $rows = [];
 
-        foreach ($this->container->getShares() as $name => $instance) {
-            if (!\is_object($instance)) {
-                continue; // null placeholder — registered but not yet built.
-            }
-
+        foreach ($this->container->getRealisedSingletons() as $name => $instance) {
             $id = $this->displayName($name);
 
             if ($needle !== null && !str_contains(strtolower($id), $needle)) {
@@ -129,33 +125,41 @@ final readonly class ContainerInspector
      */
     public function inspectOne(string $id): InspectionTable
     {
-        $aliases = $this->container->getAliases();
-        $shares = $this->container->getShares();
-        $delegates = $this->container->getDelegates();
-        $prepares = $this->container->getPrepares();
+        $definitions = $this->container->getDefinitions();
 
         // Container collections are keyed by lower-cased class names — match the same normalization.
         $lookupKey = strtolower(ltrim($id, '\\'));
-        $aliasTarget = $aliases[$lookupKey] ?? null;
-        $resolved = $aliasTarget ?? ltrim($id, '\\');
+        $definition = $definitions[$lookupKey] ?? null;
 
-        $kind = match (true) {
-            $aliasTarget !== null => 'alias',
-            $delegates->hasKey($lookupKey) => 'delegate',
-            $shares->hasKey($lookupKey) => 'share',
-            class_exists($resolved) || interface_exists($resolved) => 'class',
-            default => throw new NotFoundException(\sprintf("No binding for '%s'.", $id)),
-        };
+        if ($definition instanceof DefinitionInterface) {
+            $kind = $this->kindOf($definition);
+            $resolved = $this->targetOf($definition);
+            $shared = $definition->isShared();
+            $lazy = $definition->isLazy();
+            $tags = $definition->tags();
+        } elseif (class_exists(ltrim($id, '\\')) || interface_exists(ltrim($id, '\\'))) {
+            $kind = 'class';
+            $resolved = ltrim($id, '\\');
+            $shared = false;
+            $lazy = false;
+            $tags = [];
+        } else {
+            throw new NotFoundException(\sprintf("No binding for '%s'.", $id));
+        }
 
         $rows = [
             ['field' => 'id', 'value' => $id],
             ['field' => 'kind', 'value' => $kind],
             ['field' => 'target', 'value' => $resolved],
-            ['field' => 'shared', 'value' => $shares->hasKey($lookupKey) ? 'true' : 'false'],
+            ['field' => 'shared', 'value' => $shared ? 'true' : 'false'],
         ];
 
-        if ($prepares->hasKey($lookupKey)) {
-            $rows[] = ['field' => 'prepares', 'value' => $this->describeCallable($prepares[$lookupKey])];
+        if ($lazy) {
+            $rows[] = ['field' => 'lazy', 'value' => 'true'];
+        }
+
+        if ($tags !== []) {
+            $rows[] = ['field' => 'tags', 'value' => implode(', ', $tags)];
         }
 
         foreach ($this->dependenciesFor($resolved) as $position => $dep) {
@@ -180,88 +184,53 @@ final readonly class ContainerInspector
      */
     public function collectBindings(): iterable
     {
-        $aliases = $this->container->getAliases();
-        $shares = $this->container->getShares();
-        $delegates = $this->container->getDelegates();
-        $classDefinitions = $this->container->getClassDefinitions();
-        $params = $this->container->getParameterDefinitions();
+        foreach ($this->container->getDefinitions() as $normalized => $definition) {
+            $kind = $this->kindOf($definition);
 
-        $seen = [];
+            if ($kind === 'value') {
+                yield [
+                    'id' => '$' . $this->displayName($normalized),
+                    'kind' => 'parameter',
+                    'target' => $this->describeValue($definition->value()),
+                    'shared' => false,
+                ];
 
-        foreach ($aliases as $original => $target) {
-            $normalized = $original;
-            $seen[$normalized] = true;
-            // An alias's `shared` flag reflects whether the alias name
-            // itself is registered as a singleton — which is uncommon.
-            // The target's share status appears on its own row. Use
-            // `hasKey()` (not `isset()`) because `Map::offsetExists()` is
-            // value-aware and `shareClass()` stores a null placeholder
-            // until the instance is first constructed.
+                continue;
+            }
+
             yield [
                 'id' => $this->displayName($normalized),
-                'kind' => 'alias',
-                'target' => $target,
-                'shared' => $shares->hasKey($normalized),
+                'kind' => $kind,
+                'target' => $this->targetOf($definition),
+                'shared' => $definition->isShared(),
             ];
         }
+    }
 
-        foreach ($shares as $name => $_) {
-            $normalized = $name;
-            if (isset($seen[$normalized])) {
-                continue;
-            }
+    /**
+     * Classify a binding from its read surface. The container expresses
+     * aliases as a `to()` redirect, delegates/factories as a closure,
+     * pre-made objects via `hasInstance()`, and raw values via `hasValue()`.
+     */
+    private function kindOf(DefinitionInterface $definition): string
+    {
+        return match (true) {
+            $definition->hasValue() => 'value',
+            $definition->hasInstance() => 'share',
+            $definition->factory() instanceof Closure => 'delegate',
+            $definition->concrete() !== null => 'alias',
+            default => 'class',
+        };
+    }
 
-            $seen[$normalized] = true;
-            $display = $this->displayName($normalized);
-            yield [
-                'id' => $display,
-                'kind' => 'share',
-                'target' => $display,
-                'shared' => true,
-            ];
+    private function targetOf(DefinitionInterface $definition): string
+    {
+        $concrete = $definition->concrete();
+        if ($concrete !== null) {
+            return $concrete;
         }
 
-        foreach ($delegates as $name => $_) {
-            $normalized = $name;
-            if (isset($seen[$normalized])) {
-                continue;
-            }
-
-            $seen[$normalized] = true;
-            $display = $this->displayName($normalized);
-            yield [
-                'id' => $display,
-                'kind' => 'delegate',
-                'target' => $display,
-                'shared' => $shares->hasKey($normalized),
-            ];
-        }
-
-        foreach ($classDefinitions as $name => $_) {
-            $normalized = $name;
-            if (isset($seen[$normalized])) {
-                continue;
-            }
-
-            $seen[$normalized] = true;
-            $display = $this->displayName($normalized);
-            yield [
-                'id' => $display,
-                'kind' => 'definition',
-                'target' => $display,
-                'shared' => $shares->hasKey($normalized),
-            ];
-        }
-
-        foreach ($params as $name => $value) {
-            $id = '$' . $name;
-            yield [
-                'id' => $id,
-                'kind' => 'parameter',
-                'target' => $this->describeValue($value),
-                'shared' => false,
-            ];
-        }
+        return $this->displayName($definition->id());
     }
 
     /**
@@ -318,25 +287,6 @@ final readonly class ContainerInspector
         }
 
         return $out;
-    }
-
-    private function describeCallable(mixed $callable): string
-    {
-        if (\is_string($callable)) {
-            return $callable;
-        }
-
-        if (\is_array($callable) && \count($callable) === 2 && \is_string($callable[1])) {
-            $left = \is_object($callable[0]) ? $callable[0]::class : (string) $callable[0];
-
-            return $left . '::' . $callable[1];
-        }
-
-        if ($callable instanceof Closure) {
-            return 'Closure';
-        }
-
-        return \is_object($callable) ? $callable::class : '(callable)';
     }
 
     private function describeValue(mixed $value): string

@@ -36,7 +36,7 @@ final class ContainerPanelTest extends TestCase
     {
         $container = new Container();
         $container->alias(LoggerInterface::class, NullLogger::class);
-        $container->share(NullLogger::class);
+        $container->singleton(NullLogger::class);
 
         $snapshot = (new ContainerPanel(new ContainerInspector($container)))->snapshot();
 

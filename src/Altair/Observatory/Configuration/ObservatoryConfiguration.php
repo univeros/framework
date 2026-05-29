@@ -61,34 +61,29 @@ class ObservatoryConfiguration implements ConfigurationInterface
         $environment = (string) $this->env->get('APP_ENV', 'production');
         $guard = new EnvironmentAccessGuard($enabled, $environment);
 
-        $container
-            ->delegate(AccessGuardInterface::class, static fn(): AccessGuardInterface => $guard)
-            ->share(AccessGuardInterface::class)
+        $container->factory(AccessGuardInterface::class, static fn(): AccessGuardInterface => $guard)->shared();
 
-            ->delegate(TemplateRenderer::class, static fn(): TemplateRenderer => TemplateRenderer::default())
-            ->share(TemplateRenderer::class)
+        $container->factory(TemplateRenderer::class, static fn(): TemplateRenderer => TemplateRenderer::default())->shared();
 
-            ->delegate(PanelRegistry::class, function () use ($container): PanelRegistry {
-                $registry = new PanelRegistry([new RuntimePanel()]);
+        $container->factory(PanelRegistry::class, function () use ($container): PanelRegistry {
+            $registry = new PanelRegistry([new RuntimePanel()]);
 
-                $this->registerIfAvailable($registry, $container, HealthPanel::class, Doctor::class);
-                $this->registerIfAvailable($registry, $container, EventsPanel::class, Reader::class);
-                $this->registerIfAvailable($registry, $container, QueuesPanel::class, FailedQueueReaderInterface::class);
-                $this->registerIfAvailable($registry, $container, RoutesPanel::class, RouteInspector::class);
-                $this->registerIfAvailable($registry, $container, ContainerPanel::class, ContainerInspector::class);
-                $this->registerIfAvailable($registry, $container, ConfigPanel::class, ConfigInspector::class);
-                $this->registerIfAvailable($registry, $container, MigrationsPanel::class, MigrationStatusReaderInterface::class);
+            $this->registerIfAvailable($registry, $container, HealthPanel::class, Doctor::class);
+            $this->registerIfAvailable($registry, $container, EventsPanel::class, Reader::class);
+            $this->registerIfAvailable($registry, $container, QueuesPanel::class, FailedQueueReaderInterface::class);
+            $this->registerIfAvailable($registry, $container, RoutesPanel::class, RouteInspector::class);
+            $this->registerIfAvailable($registry, $container, ContainerPanel::class, ContainerInspector::class);
+            $this->registerIfAvailable($registry, $container, ConfigPanel::class, ConfigInspector::class);
+            $this->registerIfAvailable($registry, $container, MigrationsPanel::class, MigrationStatusReaderInterface::class);
 
-                return $registry;
-            })
-            ->share(PanelRegistry::class)
+            return $registry;
+        })->shared();
 
-            ->delegate(Observatory::class, static function () use ($container, $guard): Observatory {
-                $registry = $container->get(PanelRegistry::class);
+        $container->factory(Observatory::class, static function () use ($container, $guard): Observatory {
+            $registry = $container->get(PanelRegistry::class);
 
-                return new Observatory($registry instanceof PanelRegistry ? $registry : new PanelRegistry(), $guard);
-            })
-            ->share(Observatory::class);
+            return new Observatory($registry instanceof PanelRegistry ? $registry : new PanelRegistry(), $guard);
+        })->shared();
     }
 
     /**

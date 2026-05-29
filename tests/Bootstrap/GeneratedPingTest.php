@@ -59,7 +59,7 @@ final class GeneratedPingTest extends TestCase
 
         try {
             $container = new Container();
-            $container->share($container);
+            $container->instance($container::class, $container);
 
             /** @var list<array{0: string, 1: string, 2: class-string}> $routes */
             $routes = require $this->dir . '/config/routes.php';

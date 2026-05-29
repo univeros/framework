@@ -36,16 +36,14 @@ final readonly class MigrationIntelligenceConfiguration implements Configuration
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->share(SchemaDiffer::class)
-            ->share(PlannerRegistry::class)
-            ->share(SpecSchemaReader::class)
-            ->share(EntitySchemaReader::class)
-            ->share(DbSchemaReader::class)
-            ->share(CycleMigrationEmitter::class)
-            ->share(PlanBuilder::class)
+        $container->singleton(SchemaDiffer::class);
+        $container->singleton(PlannerRegistry::class);
+        $container->singleton(SpecSchemaReader::class);
+        $container->singleton(EntitySchemaReader::class);
+        $container->singleton(DbSchemaReader::class);
+        $container->singleton(CycleMigrationEmitter::class);
+        $container->singleton(PlanBuilder::class);
 
-            ->delegate(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())
-            ->share(RendererRegistry::class);
+        $container->factory(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())->shared();
     }
 }

@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Altair\Middleware\Resolver;
 
 use Altair\Container\Container;
-use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\ContainerException;
 use Altair\Middleware\Contracts\MiddlewareInterface;
 use Altair\Middleware\Contracts\MiddlewareResolverInterface;
 use InvalidArgumentException;
@@ -27,7 +27,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @throws InjectionException
+     * @throws ContainerException
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
@@ -38,7 +38,7 @@ class MiddlewareResolver implements MiddlewareResolverInterface
             return $entry;
         }
 
-        if (\is_string($entry)) {
+        if (\is_string($entry) && class_exists($entry)) {
             $resolved = $this->container->make($entry);
             if ($resolved instanceof MiddlewareInterface) {
                 return $resolved;

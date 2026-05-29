@@ -73,8 +73,10 @@ class LcobucciTokenConfiguration implements ConfigurationInterface
             );
         };
 
-        $container
-            ->alias(TokenConfigurationInterface::class, TokenConfiguration::class)
-            ->delegate(TokenConfiguration::class, $tokenConfigurationFactory);
+        $container->factory(TokenConfiguration::class, $tokenConfigurationFactory);
+        $container->factory(
+            TokenConfigurationInterface::class,
+            static fn(Container $c): TokenConfigurationInterface => $c->get(TokenConfiguration::class),
+        );
     }
 }

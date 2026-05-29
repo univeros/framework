@@ -12,7 +12,7 @@ declare(strict_types=1);
 namespace Altair\Configuration\Contracts;
 
 use Altair\Container\Container;
-use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\ContainerException;
 use Altair\Container\Exception\InvalidArgumentException;
 
 interface ConfigurationInterface
@@ -22,7 +22,7 @@ interface ConfigurationInterface
      *
      *
      * @throws InvalidArgumentException
-     * @throws InjectionException
+     * @throws ContainerException
      */
     public function apply(Container $container): void;
 }

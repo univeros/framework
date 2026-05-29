@@ -32,11 +32,11 @@ class PostgreSqlSessionHandlerConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $adapterDefinition = $this->getAdapterDefinition();
-
-        $container
-            ->define(PostgreSqlPdoSessionAdapter::class, $adapterDefinition)
-            ->alias(PdoSessionAdapterInterface::class, PostgreSqlPdoSessionAdapter::class)
-            ->alias(SessionHandlerInterface::class, PdoSessionHandler::class);
+        $container->bind(PostgreSqlPdoSessionAdapter::class)->withParameters($this->getAdapterParameters());
+        $container->factory(
+            PdoSessionAdapterInterface::class,
+            static fn(Container $c): PdoSessionAdapterInterface => $c->make(PostgreSqlPdoSessionAdapter::class),
+        );
+        $container->alias(SessionHandlerInterface::class, PdoSessionHandler::class);
     }
 }

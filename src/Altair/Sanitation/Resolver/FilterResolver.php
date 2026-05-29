@@ -12,8 +12,7 @@ declare(strict_types=1);
 namespace Altair\Sanitation\Resolver;
 
 use Altair\Container\Container;
-use Altair\Container\Definition;
-use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\ContainerException;
 use Altair\Sanitation\Contracts\FilterInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Sanitation\Exception\InvalidArgumentException;
@@ -28,7 +27,7 @@ class FilterResolver implements ResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @throws InjectionException
+     * @throws ContainerException
      * @throws ReflectionException
      */
     #[Override]
@@ -44,13 +43,18 @@ class FilterResolver implements ResolverInterface
             $entry = $entry['class']; // force error if key is not configured
         } // else is a string
 
-        if (!\is_string($entry)) {
+        if (!\is_string($entry) || !class_exists($entry)) {
             throw new InvalidArgumentException(
                 \sprintf('A filter entry must resolve to a class-string or %s instance.', FilterInterface::class)
             );
         }
 
-        $filter = $this->container->make($entry, new Definition($arguments));
+        $parameters = [];
+        foreach ($arguments as $key => $value) {
+            $parameters[ltrim((string) $key, ':')] = $value;
+        }
+
+        $filter = $this->container->make($entry, $parameters);
 
         if (!$filter instanceof FilterInterface) {
             throw new InvalidArgumentException(

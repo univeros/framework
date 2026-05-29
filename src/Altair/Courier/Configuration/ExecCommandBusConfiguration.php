@@ -53,11 +53,13 @@ class ExecCommandBusConfiguration implements ConfigurationInterface
             return new InMemoryCommandLocatorService($map);
         };
 
-        $container
-            ->delegate(InMemoryCommandLocatorService::class, $factory)
-            ->alias(CommandMessageNameResolverInterface::class, ClassCommandMessageNameResolver::class)
-            ->alias(CommandLocatorServiceInterface::class, InMemoryCommandLocatorService::class)
-            ->alias(CommandRunnerStrategyInterface::class, CommandRunnerExecStrategy::class)
-            ->alias(CommandBusInterface::class, CommandBus::class);
+        $container->factory(InMemoryCommandLocatorService::class, $factory);
+        $container->alias(CommandMessageNameResolverInterface::class, ClassCommandMessageNameResolver::class);
+        $container->factory(
+            CommandLocatorServiceInterface::class,
+            static fn(Container $c): CommandLocatorServiceInterface => $c->get(InMemoryCommandLocatorService::class),
+        );
+        $container->alias(CommandRunnerStrategyInterface::class, CommandRunnerExecStrategy::class);
+        $container->alias(CommandBusInterface::class, CommandBus::class);
     }
 }

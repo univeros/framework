@@ -1,488 +1,327 @@
 <?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
 namespace Altair\Tests\Container;
 
-use Altair\Container\Exception\InjectionException;
-use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Container;
-use Altair\Container\Definition;
-use Psr\Container\ContainerInterface;
+use Altair\Container\Contracts\FactoryInterface;
+use Altair\Container\Contracts\InvokerInterface;
+use Altair\Container\Exception\AutowireException;
+use Altair\Container\Exception\CircularDependencyException;
+use Altair\Container\Exception\ContainerException;
+use Altair\Container\Exception\NotFoundException;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-class ContainerTest extends TestCase
+#[CoversClass(Container::class)]
+final class ContainerTest extends TestCase
 {
-    public function testMakeInstanceInjectsSimpleConcreteDependency(): void
+    public function testAutowiresConcreteDependency(): void
     {
         $container = new Container();
 
-        $this->assertEquals(new TestNeedsDep(new TestDependency()), $container->make(TestNeedsDep::class));
+        $object = $container->make(NeedsDependency::class);
+
+        self::assertInstanceOf(Dependency::class, $object->dependency);
+        self::assertSame('dep', $object->dependency->marker);
     }
 
-    public function testMakeInstanceReturnsNewInstanceIfClassHasNoConstructor(): void
+    public function testInstantiatesClassWithoutConstructor(): void
+    {
+        self::assertTrue((new Container())->make(NoDeps::class)->built);
+    }
+
+    public function testAliasResolvesInterfaceToImplementation(): void
     {
         $container = new Container();
-        $this->assertEquals(new TestNoConstructor, $container->make(TestNoConstructor::class));
+        $container->alias(LoggerInterface::class, FileLogger::class);
+
+        self::assertInstanceOf(FileLogger::class, $container->get(LoggerInterface::class));
+        self::assertSame('file', $container->make(NeedsLogger::class)->logger->channel());
     }
 
-    public function testMakeInstanceReturnsAliasInstanceOnNonConcreteTypehint(): void
+    public function testGetThrowsNotFoundForUnknownId(): void
+    {
+        $this->expectException(NotFoundException::class);
+
+        (new Container())->get('no.such.service');
+    }
+
+    public function testThrowsAutowireExceptionWhenDependencyUnresolvable(): void
+    {
+        $this->expectException(AutowireException::class);
+
+        (new Container())->make(NeedsLogger::class);
+    }
+
+    public function testSingletonReturnsSameInstance(): void
     {
         $container = new Container();
-        $container->alias(DepInterface::class, DepImplementation::class);
-        $this->assertEquals(new DepImplementation, $container->make(DepInterface::class));
+        $container->singleton(Dependency::class);
 
-        $container->alias('custom', DepImplementation::class);
-        $this->assertTrue($container->isset('custom'));
-        $this->assertEquals(new DepImplementation, $container->make('custom'));
+        self::assertSame($container->get(Dependency::class), $container->get(Dependency::class));
     }
 
-    public function testMakeInstanceThrowsExceptionOnInterfaceWithoutAlias(): void
-    {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container();
-        $container->make('Altair\Tests\DepInterface');
-    }
-
-    public function testMakeInstanceThrowsExceptionOnNonConcreteCtorParamWithoutImplementation(): void
-    {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container;
-        $container->make('Altair\Tests\RequiresInterface');
-    }
-
-    public function testMakeInstanceBuildsNonConcreteCtorParamWithAlias(): void
-    {
-        $container = new Container;
-        $container->alias(DepInterface::class, DepImplementation::class);
-        $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
-    }
-
-    public function testMakeInstancePassesNullCtorParameterIfNoTypehintOrDefaultCanBeDetermined(): void
-    {
-        $container = new Container;
-        $nullCtorParamObj = $container->make(ProvTestNoDefinitionNullDefaultClass::class);
-        $this->assertEquals(new ProvTestNoDefinitionNullDefaultClass, $nullCtorParamObj);
-        $this->assertEquals(null, $nullCtorParamObj->arg);
-    }
-
-    public function testMakeInstanceReturnsSharedInstanceIfAvailable(): void
-    {
-        $container = new Container;
-        $container->define(RequiresInterface::class, new Definition(['dep' => DepImplementation::class]));
-        $container->share(RequiresInterface::class);
-
-        $injected = $container->make(RequiresInterface::class);
-        $this->assertEquals('something', $injected->testDep->testProp);
-        $injected->testDep->testProp = 'something else';
-        $injected2 = $container->make(RequiresInterface::class);
-        $this->assertEquals('something else', $injected2->testDep->testProp);
-    }
-
-    public function testMakeInstanceThrowsExceptionOnClassLoadFailure(): void
-    {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container;
-        $container->make('ClassThatDoesntExist');
-    }
-
-    public function testMakeInstanceUsesCustomDefinitionIfSpecified(): void
-    {
-        $container = new Container;
-        $container->define(TestNeedsDep::class, new Definition(['testDep' => TestDependency::class]));
-
-        $injected = $container->make(TestNeedsDep::class, new Definition(['testDep' => TestDependency2::class]));
-        $this->assertEquals('testVal2', $injected->testDep->testProp);
-    }
-
-    public function testMakeInstanceCustomDefinitionOverridesExistingDefinitions(): void
-    {
-        $container = new Container;
-        $definition = (new Definition([]))
-            ->addRaw('arg1', 'First argument')
-            ->addRaw('arg2', 'Second argument');
-        $container->define(InjectorTestChildClass::class, $definition);
-
-        $injected = $container->make(InjectorTestChildClass::class, new Definition([':arg1' => 'Override']));
-        $this->assertEquals('Override', $injected->arg1);
-        $this->assertEquals('Second argument', $injected->arg2);
-    }
-
-    public function testMakeInstanceStoresShareIfMarkedWithNullInstance(): void
+    public function testMakeAlwaysReturnsFreshInstanceEvenWhenShared(): void
     {
         $container = new Container();
-        $container->share(TestDependency::class);
+        $container->singleton(Dependency::class);
 
-        $instance = $container->make(TestDependency::class);
-        $anotherInstance = $container->make(TestDependency::class);
-        $this->assertTrue($instance instanceof TestDependency);
-        $this->assertTrue($instance === $anotherInstance);
+        self::assertNotSame($container->make(Dependency::class), $container->make(Dependency::class));
+        self::assertSame($container->get(Dependency::class), $container->get(Dependency::class));
     }
 
-    public function testMakeInstanceUsesReflectionForUnknownParamsInMultiBuildWithDeps(): void
+    public function testFactoryClosureAutowiresItsParameters(): void
     {
         $container = new Container();
-        $object = $container->make(TestMultiDepsWithCtor::class, new Definition(['val1' => TestDependency::class]));
-        $this->assertInstanceOf(TestMultiDepsWithCtor::class, $object);
-        $object = $container->make(
-            NoTypehintNoDefaultConstructorClass::class,
-            new Definition(['val1' => TestDependency::class])
-        );
-        $this->assertInstanceOf(NoTypehintNoDefaultConstructorClass::class, $object);
-        $this->assertEquals(null, $object->testParam);
+        $container->factory(NeedsDependency::class, static fn(Dependency $dep): NeedsDependency => new NeedsDependency($dep));
+
+        self::assertSame('dep', $container->get(NeedsDependency::class)->dependency->marker);
     }
 
-    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefault(): void
-    {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container();
-        $obj = $container->make(InjectorTestCtorParamWithNoTypehintOrDefault::class);
-        $this->assertNull($obj->val);
-    }
-
-    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithoutDefinitionOrDefaultThroughAliasedTypehint(
-    ): void {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container();
-        $container->alias(TestNoExplicitDefine::class, InjectorTestCtorParamWithNoTypehintOrDefault::class);
-        $container->make(InjectorTestCtorParamWithNoTypehintOrDefaultDependent::class);
-    }
-
-    public function testTypelessDefineForDependency(): void
-    {
-        $thumbnailSize = 128;
-        $container = new Container();
-        $container->defineParameter('thumbnailSize', $thumbnailSize);
-
-        $testClass = $container->make(RequiresDependencyWithTypelessParameters::class);
-        $this->assertEquals(
-            $thumbnailSize,
-            $testClass->getThumbnailSize(),
-            'Typeless define was not injected correctly.'
-        );
-    }
-
-    public function testTypelessDefineForAliasedDependency(): void
+    public function testInstanceBindingReturnsTheSameObject(): void
     {
         $container = new Container();
-        $container->defineParameter('val', 42);
-        $container->alias(TestNoExplicitDefine::class, ProviderTestCtorParamWithNoTypehintOrDefault::class);
+        $instance = new Dependency();
+        $container->instance(Dependency::class, $instance);
 
-        $instance = $container->make(ProviderTestCtorParamWithNoTypehintOrDefaultDependent::class);
-        $this->assertTrue(($instance instanceof ProviderTestCtorParamWithNoTypehintOrDefaultDependent));
+        self::assertSame($instance, $container->get(Dependency::class));
     }
 
-    public function testMakeInstanceInjectsRawParametersDirectly(): void
+    public function testValueBindingFeedsAutowireParamAttribute(): void
     {
         $container = new Container();
-        $container->define(
-            InjectorTestRawCtorParams::class,
-            new Definition(
-                [
-                    ':string' => 'string',
-                    ':obj' => new \StdClass,
-                    ':int' => 42,
-                    ':array' => [],
-                    ':float' => 9.3,
-                    ':bool' => true,
-                    ':null' => null,
-                ]
-            )
-        );
-        $obj = $container->make(InjectorTestRawCtorParams::class);
-        $this->assertIsString($obj->string);
-        $this->assertInstanceOf('StdClass', $obj->obj);
-        $this->assertIsInt($obj->int);
-        $this->assertIsArray($obj->array);
-        $this->assertIsFloat($obj->float);
-        $this->assertIsBool($obj->bool);
-        $this->assertNull($obj->null);
+        $container->value('app.locale', 'en-GB');
+
+        self::assertSame('en-GB', $container->make(AutowireParamConsumer::class)->locale);
     }
 
-    public function testMakeInstanceThrowsExceptionWhenDelegateDoes(): void
+    public function testInjectAttributeResolvesSpecificImplementation(): void
     {
-        $this->expectException(\Exception::class);
-
-        $container = new Container();
-        $callable = $this->createMock(
-            CallableMock::class
-        );
-        $container->delegate('TestDependency', $callable);
-        $callable->expects($this->once())
-            ->method('__invoke')
-            ->will($this->throwException(new \Exception()));
-        $container->make('TestDependency');
+        self::assertSame('file', (new Container())->make(InjectConsumer::class)->logger->channel());
     }
 
-    public function testMakeInstanceHandlesNamespacedClasses(): void
+    public function testAutowireServiceAttributeResolvesSpecificService(): void
     {
-        $container = new Container();
-        $instance = $container->make(SomeClassName::class);
-        $this->assertTrue($instance instanceof SomeClassName);
+        self::assertSame('null', (new Container())->make(AutowireServiceConsumer::class)->logger->channel());
     }
 
-    public function testMakeInstanceDelegate(): void
+    public function testFactoryAttributeBuildsThroughFactory(): void
+    {
+        self::assertSame('factory-made', (new Container())->make(Widget::class)->label);
+    }
+
+    public function testContextualBindingOverridesGlobalForOneConsumer(): void
     {
         $container = new Container();
-        $callable = $this->createMock(
-            CallableMock::class
+        $container->alias(LoggerInterface::class, NullLogger::class);
+        $container->when(NeedsLogger::class)->needs(LoggerInterface::class)->give(FileLogger::class);
+
+        self::assertSame('file', $container->make(NeedsLogger::class)->logger->channel());
+        self::assertSame('null', $container->get(LoggerInterface::class)->channel());
+    }
+
+    public function testTaggedServicesResolveAsCollection(): void
+    {
+        $container = new Container();
+        $container->bind(AlphaReporter::class);            // tagged via #[Tag]
+        $container->bind(BetaReporter::class)->tag('reporters');
+
+        $names = array_map(
+            static fn(ReporterInterface $reporter): string => $reporter->name(),
+            iterator_to_array($container->tagged('reporters'), false)
         );
 
-        $callable
-            ->expects($this->once())
-            ->method('__invoke')
-            ->willReturn(new TestDependency());
-
-        $container->delegate(TestDependency::class, $callable);
-        $obj = $container->make(TestDependency::class);
-        $this->assertInstanceOf(TestDependency::class, $obj);
+        sort($names);
+        self::assertSame(['alpha', 'beta'], $names);
     }
 
-    public function testMakeInstanceWithStringDelegate(): void
-    {
-        $container = new Container;
-        $container->delegate('StdClass', StringStdClassDelegateMock::class);
-
-        $obj = $container->make('StdClass');
-        $this->assertEquals(42, $obj->test);
-    }
-
-    public function testMakeInstanceThrowsExceptionIfStringDelegateClassInstantiationFails(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $container = new Container();
-        $container->delegate('StdClass', 'SomeClassThatDefinitelyDoesNotExistForReal');
-    }
-
-    public function testMakeInstanceThrowsExceptionOnUntypehintedParameterWithNoDefinition(): void
-    {
-        $this->expectException(InjectionException::class);
-
-        $container = new Container();
-        $obj = $container->make(RequiresInterface::class);
-    }
-
-    public function testDefineAssignsPassedDefinition(): void
+    public function testLazyServiceResolvesToWorkingInstance(): void
     {
         $container = new Container();
-        $definition = new Definition(['dep' => DepImplementation::class]);
-        $container->define(RequiresInterface::class, $definition);
-        $this->assertInstanceOf(RequiresInterface::class, $container->make(RequiresInterface::class));
+        $container->bind(Heavy::class)->lazy();
+
+        // Native lazy objects (PHP 8.4+) defer construction transparently; on 8.3
+        // the binding resolves eagerly. Either way the instance must be usable.
+        $heavy = $container->get(Heavy::class);
+
+        self::assertInstanceOf(Heavy::class, $heavy);
+        self::assertSame('pong', $heavy->ping());
     }
 
-    #[DataProvider('provideExecutionExpectations')]
-    public function testProvisionedInvokables(mixed $toInvoke, mixed $definition, mixed $expectedResult): void
+    public function testLazyAttributeIsHonouredWithoutExplicitLazyBinding(): void
+    {
+        // No ->lazy() call — the #[Lazy] class attribute alone must drive lazy resolution.
+        $marked = (new Container())->get(LazyMarked::class);
+
+        self::assertInstanceOf(LazyMarked::class, $marked);
+        self::assertSame('lazy', $marked->ping());
+    }
+
+    public function testFactoryClosureCycleThrowsCircularDependency(): void
     {
         $container = new Container();
-        $this->assertEquals($expectedResult, $container->execute($toInvoke, new Definition($definition)));
+        $container->factory('svc.a', static fn(Container $c): object => $c->get('svc.b'));
+        $container->factory('svc.b', static fn(Container $c): object => $c->get('svc.a'));
+
+        $this->expectException(CircularDependencyException::class);
+        $container->get('svc.a');
     }
 
-    public static function provideExecutionExpectations(): array
+    public function testContextualGiveWithoutNeedsThrows(): void
     {
-        $return = [];
-        // 0 -------------------------------------------------------------------------------------->
-        $toInvoke = [ExecuteClassNoDeps::class, 'execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 1 -------------------------------------------------------------------------------------->
-        $toInvoke = [new ExecuteClassNoDeps, 'execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 2 -------------------------------------------------------------------------------------->
-        $toInvoke = [ExecuteClassDeps::class, 'execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 3 -------------------------------------------------------------------------------------->
-        $toInvoke = [new ExecuteClassDeps(new TestDependency), 'execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 4 -------------------------------------------------------------------------------------->
-        $toInvoke = [ExecuteClassDepsWithMethodDeps::class, 'execute'];
-        $args = [':arg' => 9382];
-        $expectedResult = 9382;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 5 -------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassStaticMethod::execute(...);
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 6 -------------------------------------------------------------------------------------->
-        $toInvoke = [new ExecuteClassStaticMethod, 'execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 7 -------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassStaticMethod::class . '::execute';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 8 -------------------------------------------------------------------------------------->
-        $toInvoke = [ExecuteClassRelativeStaticMethod::class, 'parent::execute'];
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 9 -------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\testExecuteFunction';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 10 ------------------------------------------------------------------------------------->
-        $toInvoke = fn(): int => 42;
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 11 ------------------------------------------------------------------------------------->
-        $toInvoke = new ExecuteClassInvokable;
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 12 ------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassInvokable::class;
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 13 ------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassNoDeps::class . '::execute';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 14 ------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassDeps::class . '::execute';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 15 ------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassStaticMethod::class . '::execute';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 16 ------------------------------------------------------------------------------------->
-        $toInvoke = ExecuteClassRelativeStaticMethod::class . '::parent::execute';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 17 ------------------------------------------------------------------------------------->
-        $toInvoke = 'Altair\Tests\Container\testExecuteFunctionWithArg';
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
-        // 18 ------------------------------------------------------------------------------------->
-        $toInvoke = fn(): int => 42;
-        $args = [];
-        $expectedResult = 42;
-        $return[] = [$toInvoke, $args, $expectedResult];
+        $this->expectException(ContainerException::class);
 
-        // 19 ------------------------------------------------------------------------------------->
-        $object = new ReturnsCallable('new value');
-        $args = [];
-        $toInvoke = $object->getCallable();
-        $expectedResult = 'new value';
-        $return[] = [$toInvoke, $args, $expectedResult];
-
-        // x -------------------------------------------------------------------------------------->
-        return $return;
+        (new Container())->when(NeedsLogger::class)->give(FileLogger::class);
     }
 
-    public function testInstanceMutate(): void
-    {
-        $container = new Container();
-        $container->prepare(
-            '\StdClass',
-            function ($obj, $container): void {
-                $obj->testval = 42;
-            }
-        );
-        $obj = $container->make('StdClass');
-        $this->assertSame(42, $obj->testval);
-    }
-
-    public function testInterfaceMutate(): void
-    {
-        $container = new Container();
-        $container->prepare(
-            SomeInterface::class,
-            function ($obj, $container): void {
-                $obj->testProp = 42;
-            }
-        );
-        $obj = $container->make(PreparesImplementationTest::class);
-        $this->assertSame(42, $obj->testProp);
-    }
-
-    public function testMakeResolvesConcreteContainerToItself(): void
+    public function testSelfBindingResolvesContainerToItself(): void
     {
         $container = new Container();
 
-        $this->assertSame($container, $container->make(Container::class));
+        self::assertSame($container, $container->get(Container::class));
+        self::assertSame($container, $container->get(ContainerInterface::class));
+        self::assertSame($container, $container->get(FactoryInterface::class));
+        self::assertSame($container, $container->get(InvokerInterface::class));
     }
 
-    public function testMakeResolvesPsrContainerInterfaceToItself(): void
+    public function testChildScopeInheritsParentAndIsolatesOverrides(): void
+    {
+        $parent = new Container();
+        $parent->singleton('shared.dep', static fn(): Dependency => new Dependency());
+
+        $child = $parent->createScope();
+        $child->alias(LoggerInterface::class, FileLogger::class);
+
+        self::assertSame($parent->get('shared.dep'), $child->get('shared.dep'));
+        self::assertInstanceOf(FileLogger::class, $child->get(LoggerInterface::class));
+        self::assertFalse($parent->has(LoggerInterface::class));
+    }
+
+    public function testAliasDelegatesToTargetDefinition(): void
+    {
+        $container = new Container();
+        $container->singleton(FileLogger::class);
+        $container->alias(LoggerInterface::class, FileLogger::class);
+
+        // The alias must resolve through FileLogger's own (shared) definition,
+        // not build a fresh FileLogger that bypasses it.
+        self::assertSame($container->get(FileLogger::class), $container->get(LoggerInterface::class));
+    }
+
+    public function testCallAutowiresClosure(): void
+    {
+        self::assertSame('dep', (new Container())->call(static fn(Dependency $dep): string => $dep->marker));
+    }
+
+    public function testCallInvokableObjectMethodAndStatic(): void
     {
         $container = new Container();
 
-        $this->assertSame($container, $container->make(ContainerInterface::class));
+        self::assertSame('hello-dep', $container->call(new Greeter()));
+        self::assertSame('greet-dep', $container->call([new Greeter(), 'greet']));
+        self::assertSame('shout-dep', $container->call(Greeter::class . '::shout'));
+        self::assertSame('hello-dep', $container->call(Greeter::class));
     }
 
-    public function testInjectsItselfIntoConcreteContainerDependency(): void
+    public function testCallHonoursParameterOverrides(): void
+    {
+        self::assertSame('override', (new Container())->call(
+            static fn(string $name): string => $name,
+            ['name' => 'override']
+        ));
+    }
+
+    public function testVariadicParameterIsNotMisinjected(): void
     {
         $container = new Container();
 
-        $dependent = $container->make(NeedsConcreteContainer::class);
+        self::assertSame([], $container->make(TypedVariadic::class)->deps);
 
-        $this->assertSame($container, $dependent->container);
+        $deps = [new Dependency(), new Dependency()];
+        self::assertCount(2, $container->make(TypedVariadic::class, ['deps' => $deps])->deps);
     }
 
-    public function testInjectsItselfIntoPsrContainerInterfaceDependency(): void
+    public function testDefaultValueUsedWhenParameterUnresolvable(): void
     {
-        $container = new Container();
-        // A binding only the real container knows about: if a fresh, empty
-        // container were injected instead, this alias would be absent.
-        $container->alias(DepInterface::class, DepImplementation::class);
-
-        $dependent = $container->make(NeedsContainerInterface::class);
-
-        $this->assertSame($container, $dependent->container);
-        $this->assertInstanceOf(DepImplementation::class, $dependent->container->make(DepInterface::class));
+        self::assertSame(5, (new Container())->make(DefaultCtor::class)->count);
     }
 
-    public function testSharingTheContainerItselfIsANoOpAndDoesNotPolluteShares(): void
+    public function testNullableUnresolvableDependencyBecomesNull(): void
     {
-        $container = new Container();
-
-        $this->assertSame($container, $container->share($container));
-        // The container must not appear as a realised singleton in its shares.
-        $this->assertCount(0, $container->getShares());
+        self::assertNull((new Container())->make(NullableInterfaceCtor::class)->logger);
     }
 
-    public function testDefineRejectsContainerSelfName(): void
+    public function testCircularDependencyThrowsWithReadablePath(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(CircularDependencyException::class);
+        $this->expectExceptionMessageMatches('/Circular dependency detected/');
 
-        $container = new Container();
-        $container->define(ContainerInterface::class, new Definition([]));
+        (new Container())->make(CycleA::class);
     }
 
-    public function testDelegateRejectsContainerSelfName(): void
+    public function testResolutionGuardIsExceptionSafe(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-
         $container = new Container();
-        $container->delegate(Container::class, fn(): Container => new Container());
+
+        try {
+            $container->make(NeedsLogger::class);
+            self::fail('Expected the first resolution to fail.');
+        } catch (AutowireException) {
+            // expected: LoggerInterface is unbound
+        }
+
+        // The guard must have been cleared; a second attempt must report the
+        // same real error, never a bogus "Circular dependency".
+        $this->expectException(AutowireException::class);
+        $container->make(NeedsLogger::class);
     }
 
-    public function testPrepareRejectsContainerSelfName(): void
+    public function testHasCoversExplicitRegistrationsAndSelf(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-
         $container = new Container();
-        $container->prepare(ContainerInterface::class, function ($obj, $container): void {});
+
+        self::assertFalse($container->has(Dependency::class));
+        $container->bind(Dependency::class);
+        self::assertTrue($container->has(Dependency::class));
+        self::assertTrue($container->has(Container::class));
+        self::assertFalse($container->has('unbound.id'));
+    }
+
+    public function testExtendDecoratesResolvedServiceAndStacks(): void
+    {
+        $container = new Container();
+        $container->singleton('greeting', static fn(): string => 'hi');
+
+        $seen = [];
+        $container->extend(NoDeps::class, static function (NoDeps $noDeps) use (&$seen): NoDeps {
+            $seen[] = 'a';
+
+            return $noDeps;
+        });
+        $container->extend(NoDeps::class, static function (NoDeps $noDeps) use (&$seen): void {
+            $seen[] = 'b';
+        });
+
+        $result = $container->get(NoDeps::class);
+
+        self::assertInstanceOf(NoDeps::class, $result);
+        self::assertSame(['a', 'b'], $seen);
+    }
+
+    public function testMissingAutowireParamThrowsContainerException(): void
+    {
+        $this->expectException(ContainerException::class);
+
+        (new Container())->make(AutowireParamConsumer::class);
     }
 }

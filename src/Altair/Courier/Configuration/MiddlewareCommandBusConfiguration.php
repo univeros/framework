@@ -14,7 +14,6 @@ namespace Altair\Courier\Configuration;
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Configuration\Traits\EnvAwareTrait;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Altair\Courier\CommandBus;
 use Altair\Courier\Contracts\CommandBusInterface;
 use Altair\Courier\Contracts\CommandLocatorServiceInterface;
@@ -44,29 +43,24 @@ class MiddlewareCommandBusConfiguration implements ConfigurationInterface
     {
         $fs = new Filesystem();
 
-        $mapDefinition = new Definition([':config' => $fs->getRequiredFileValue($this->env->get('COURIER_MAP_FILE'))]);
-        $resolverDefinition = new Definition([':container' => $container]);
-        $runnerDefinition = new Definition(
-            [
-                ':middlewares' => [
-                    CommandLockerMiddleware::class,
-                    // Command Logger Middleware
-                    // ensure a Psr\Log\LoggerInterface is configured
-                    // on the application's container
-                    CommandLoggerMiddleware::class,
-                    CommandHandlerMiddleware::class,
-                ],
-            ]
-        );
-
-        $container
-            ->define(CommandRunnerMiddlewareStrategy::class, $runnerDefinition)
-            ->define(MiddlewareResolver::class, $resolverDefinition)
-            ->define(MessageCommandMap::class, $mapDefinition)
-            ->alias(MiddlewareResolverInterface::class, MiddlewareResolver::class)
-            ->alias(CommandMessageNameResolverInterface::class, ClassCommandMessageNameResolver::class)
-            ->alias(CommandLocatorServiceInterface::class, InMemoryCommandLocatorService::class)
-            ->alias(CommandRunnerStrategyInterface::class, CommandRunnerMiddlewareStrategy::class)
-            ->alias(CommandBusInterface::class, CommandBus::class);
+        $container->bind(CommandRunnerMiddlewareStrategy::class)->withParameters([
+            'middlewares' => [
+                CommandLockerMiddleware::class,
+                // Command Logger Middleware
+                // ensure a Psr\Log\LoggerInterface is configured
+                // on the application's container
+                CommandLoggerMiddleware::class,
+                CommandHandlerMiddleware::class,
+            ],
+        ]);
+        $container->bind(MiddlewareResolver::class)->withParameters(['container' => $container]);
+        $container->bind(MessageCommandMap::class)->withParameters([
+            'config' => $fs->getRequiredFileValue($this->env->get('COURIER_MAP_FILE')),
+        ]);
+        $container->alias(MiddlewareResolverInterface::class, MiddlewareResolver::class);
+        $container->alias(CommandMessageNameResolverInterface::class, ClassCommandMessageNameResolver::class);
+        $container->alias(CommandLocatorServiceInterface::class, InMemoryCommandLocatorService::class);
+        $container->alias(CommandRunnerStrategyInterface::class, CommandRunnerMiddlewareStrategy::class);
+        $container->alias(CommandBusInterface::class, CommandBus::class);
     }
 }

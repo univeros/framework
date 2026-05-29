@@ -17,8 +17,9 @@ use Altair\Container\Container;
  * A PsySH/VarDumper caster that renders a {@see Container} as a short summary
  * instead of its full internal object graph.
  *
- * Dependency-free: it reads only the container's public `getShares()` so it
- * works whether or not `univeros/introspection` is installed.
+ * Dependency-free: it reads only the container's public
+ * `getRealisedSingletons()` so it works whether or not
+ * `univeros/introspection` is installed.
  */
 final class ContainerCaster
 {
@@ -27,16 +28,9 @@ final class ContainerCaster
      */
     public static function cast(Container $container): array
     {
-        $realised = 0;
-        foreach ($container->getShares() as $instance) {
-            if (\is_object($instance)) {
-                ++$realised;
-            }
-        }
-
         return [
             'class' => $container::class,
-            'realised singletons' => $realised,
+            'realised singletons' => \count($container->getRealisedSingletons()),
             'tip' => 'resolve services with $container->make(Foo::class)',
         ];
     }

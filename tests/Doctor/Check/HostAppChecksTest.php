@@ -49,7 +49,7 @@ class HostAppChecksTest extends TestCase
     public function testContainerResolvesOkWhenAllBindingsResolve(): void
     {
         $container = new Container();
-        $container->share(new \stdClass());
+        $container->instance(\stdClass::class, new \stdClass());
 
         $this->assertSame(CheckStatus::Ok, (new ContainerResolvesCheck($container, [\stdClass::class]))->run()->status);
     }
@@ -57,7 +57,7 @@ class HostAppChecksTest extends TestCase
     public function testContainerResolvesErrorListsFailedIds(): void
     {
         $container = new Container();
-        $container->share(new \stdClass());
+        $container->instance(\stdClass::class, new \stdClass());
 
         $result = (new ContainerResolvesCheck($container, [\stdClass::class, 'App\\Missing\\Service']))->run();
         $this->assertSame(CheckStatus::Error, $result->status);

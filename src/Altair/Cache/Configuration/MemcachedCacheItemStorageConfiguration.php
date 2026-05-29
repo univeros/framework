@@ -39,8 +39,10 @@ class MemcachedCacheItemStorageConfiguration implements ConfigurationInterface
             return $memcached;
         };
 
-        $container
-            ->delegate(MemcachedCacheItemStorage::class, $factory)
-            ->alias(CacheItemStorageInterface::class, MemcachedCacheItemStorage::class);
+        $container->factory(MemcachedCacheItemStorage::class, $factory);
+        $container->factory(
+            CacheItemStorageInterface::class,
+            static fn(Container $c): object => $c->get(MemcachedCacheItemStorage::class),
+        );
     }
 }

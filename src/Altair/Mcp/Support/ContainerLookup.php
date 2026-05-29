@@ -24,7 +24,7 @@ final class ContainerLookup
 {
     public static function optional(Container $container, string $id): ?object
     {
-        if (!$container->isset($id)) {
+        if (!$container->has($id)) {
             return null;
         }
 
