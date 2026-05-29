@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Http\Validator;
 
-use Altair\Data\Contracts\EntityInterface;
-use Altair\Data\Contracts\QueryRepositoryInterface;
+use Altair\Http\Contracts\IdentityProviderInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Override;
 
@@ -24,11 +23,11 @@ class DigestSignatureValidator implements IdentityValidatorInterface
     protected array $options;
 
     /**
-     * RepositoryIdentityValidator constructor.
+     * DigestSignatureValidator constructor.
      *
      * @param array<string, string>|null $options
      */
-    public function __construct(protected QueryRepositoryInterface $repository, ?array $options = null)
+    public function __construct(protected IdentityProviderInterface $repository, ?array $options = null)
     {
         // Options contain the names of the fields to search on the db by the entity.
         // By default: 'username' and 'hash' are the default fieldname values. You can easily change them as:
@@ -45,13 +44,13 @@ class DigestSignatureValidator implements IdentityValidatorInterface
         $authorization = $arguments['authorization'];
         $realm = $arguments['realm'];
         $method = $arguments['method'];
-        $user = $this->repository->findOneBy([$this->options['username'] => $authorization['username']]);
-        if (!$user instanceof EntityInterface) {
+        $identity = $this->repository->findOneBy([$this->options['username'] => $authorization['username']]);
+        if ($identity === null) {
             return false;
         }
 
         $data = [
-            md5(\sprintf('%s:%s:%s', $authorization['username'], $realm, $user->get($this->options['password']))),
+            md5(\sprintf('%s:%s:%s', $authorization['username'], $realm, $identity[$this->options['password']] ?? '')),
             $authorization['nonce'],
             $authorization['nc'],
             $authorization['cnonce'],

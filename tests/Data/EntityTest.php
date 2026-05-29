@@ -3,7 +3,7 @@
 namespace Altair\Tests\Data;
 
 use Altair\Data\Contracts\ArrayableInterface;
-use Altair\Data\Contracts\EntityInterface;
+use Altair\Data\Contracts\DataObjectInterface;
 use Carbon\Carbon;
 use PHPUnit\Framework\TestCase;
 use JsonSerializable;
@@ -17,7 +17,7 @@ class EntityTest extends TestCase
     protected $data;
 
     /**
-     * @var EntityInterface
+     * @var DataObjectInterface
      */
     protected $entity;
 
@@ -34,7 +34,7 @@ class EntityTest extends TestCase
 
     public function testInterfaces(): void
     {
-        $this->assertInstanceOf(EntityInterface::class, $this->entity);
+        $this->assertInstanceOf(DataObjectInterface::class, $this->entity);
         $this->assertInstanceOf(JsonSerializable::class, $this->entity);
         $this->assertInstanceOf(ArrayableInterface::class, $this->entity);
         $this->assertInstanceOf(Serializable::class, $this->entity);
