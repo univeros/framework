@@ -260,6 +260,27 @@ final class ContainerTest extends TestCase
         self::assertFalse($container->has('unbound.id'));
     }
 
+    public function testExtendDecoratesResolvedServiceAndStacks(): void
+    {
+        $container = new Container();
+        $container->singleton('greeting', static fn(): string => 'hi');
+
+        $seen = [];
+        $container->extend(NoDeps::class, static function (NoDeps $noDeps) use (&$seen): NoDeps {
+            $seen[] = 'a';
+
+            return $noDeps;
+        });
+        $container->extend(NoDeps::class, static function (NoDeps $noDeps) use (&$seen): void {
+            $seen[] = 'b';
+        });
+
+        $result = $container->get(NoDeps::class);
+
+        self::assertInstanceOf(NoDeps::class, $result);
+        self::assertSame(['a', 'b'], $seen);
+    }
+
     public function testMissingAutowireParamThrowsContainerException(): void
     {
         $this->expectException(ContainerException::class);
