@@ -13,4 +13,13 @@ namespace Altair\Container\Exception;
 
 use Psr\Container\NotFoundExceptionInterface;
 
-class NotFoundException extends InvalidArgumentException implements NotFoundExceptionInterface {}
+/**
+ * Thrown by `get()` when no entry and no instantiable class match the id.
+ */
+class NotFoundException extends ContainerException implements NotFoundExceptionInterface
+{
+    public static function forId(string $id): self
+    {
+        return new self(\sprintf('No entry or instantiable class found for "%s".', $id));
+    }
+}
