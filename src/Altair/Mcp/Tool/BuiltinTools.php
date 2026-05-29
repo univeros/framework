@@ -23,6 +23,7 @@ use Altair\Mcp\Tool\Discovery\ListEndpointsTool;
 use Altair\Mcp\Tool\Discovery\ListPackagesTool;
 use Altair\Mcp\Tool\Discovery\ListSpecsTool;
 use Altair\Mcp\Tool\Discovery\ReadSpecTool;
+use Altair\Mcp\Tool\Eval\EvalTool;
 use Altair\Mcp\Tool\Generation\EmitOpenApiTool;
 use Altair\Mcp\Tool\Generation\EmitSdkTool;
 use Altair\Mcp\Tool\Generation\RewindSpecTool;
@@ -97,6 +98,8 @@ final class BuiltinTools
             CallersTool::class,
             DeadCodeTool::class,
             ImpactTool::class,
+            // Sandboxed eval (the "let me check" primitive)
+            EvalTool::class,
         ];
     }
 }

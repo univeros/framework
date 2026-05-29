@@ -39,6 +39,7 @@ $builtIn = [
     __DIR__ . '/../src/Altair/AgentSpec/Cli',
     __DIR__ . '/../src/Altair/Bootstrap/Cli',
     __DIR__ . '/../src/Altair/Doctor/Cli',
+    __DIR__ . '/../src/Altair/Eval/Cli',
     __DIR__ . '/../src/Altair/Index/Cli',
     __DIR__ . '/../src/Altair/Mcp/Cli',
     __DIR__ . '/../src/Altair/Messaging/Cli',
