@@ -740,3 +740,17 @@ class ParentWithConstructor
 class ChildWithoutConstructor extends ParentWithConstructor
 {
 }
+
+class NeedsContainerInterface
+{
+    public function __construct(public readonly \Psr\Container\ContainerInterface $container)
+    {
+    }
+}
+
+class NeedsConcreteContainer
+{
+    public function __construct(public readonly Container $container)
+    {
+    }
+}

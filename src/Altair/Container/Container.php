@@ -54,6 +54,13 @@ class Container implements ContainerInterface
      */
     protected $making = [];
 
+    /**
+     * Normalized identifiers that resolve to this container instance.
+     *
+     * @var array<string, true>
+     */
+    protected array $selfNames = [];
+
     protected ExecutableBuilder $executableBuilder;
 
     protected ArgumentsBuilder $argumentsBuilder;
@@ -81,6 +88,10 @@ class Container implements ContainerInterface
         $this->delegates = $delegatesCollection ?? new DelegatesCollection();
         $this->executableBuilder = $executableBuilder ?? new ExecutableBuilder($this);
         $this->argumentsBuilder = $argumentsBuilder ?? new ArgumentsBuilder($this);
+
+        foreach ([self::class, static::class, ContainerInterface::class] as $name) {
+            $this->selfNames[$this->normalizeName($name)] = true;
+        }
     }
 
     /**
@@ -116,6 +127,7 @@ class Container implements ContainerInterface
     public function define(string $name, Definition $definition): Container
     {
         [, $normalizedClass] = $this->aliases->resolve($name);
+        $this->guardNotSelfName($normalizedClass, $name);
         $this->classDefinitions->put($normalizedClass, $definition);
 
         return $this;
@@ -163,6 +175,14 @@ class Container implements ContainerInterface
      */
     public function share(mixed $nameOrInstance): Container
     {
+        // The container already resolves its own type to the active instance,
+        // so sharing it again is a harmless no-op (kept for backward
+        // compatibility) — and crucially it stays out of the shares collection
+        // so introspection never reports the container as a realised singleton.
+        if ($nameOrInstance === $this) {
+            return $this;
+        }
+
         if (\is_string($nameOrInstance)) {
             $this->shares->shareClass($nameOrInstance, $this->aliases);
         } elseif (\is_object($nameOrInstance)) {
@@ -198,6 +218,7 @@ class Container implements ContainerInterface
         }
 
         [, $normalizedClass] = $this->aliases->resolve($name);
+        $this->guardNotSelfName($normalizedClass, $name);
         $this->prepares[$normalizedClass] = $callableOrMethodStr;
 
         return $this;
@@ -235,6 +256,7 @@ class Container implements ContainerInterface
         }
 
         $normalizedName = $this->normalizeName($name);
+        $this->guardNotSelfName($normalizedName, $name);
         $this->delegates->put($normalizedName, $callableOrMethodStr);
 
         return $this;
@@ -249,6 +271,10 @@ class Container implements ContainerInterface
     public function make(string $name, ?Definition $definition = null)
     {
         [$className, $normalizedClass] = $this->aliases->resolve($name);
+
+        if (isset($this->selfNames[$normalizedClass])) {
+            return $this;
+        }
 
         if (isset($this->making[$normalizedClass])) {
             throw new InjectionException(
@@ -349,7 +375,8 @@ class Container implements ContainerInterface
     {
         $name = $this->normalizeName($name);
 
-        return isset($this->aliases[$name]) ||
+        return isset($this->selfNames[$name]) ||
+            isset($this->aliases[$name]) ||
             isset($this->delegates[$name]) ||
             isset($this->shares[$name]);
     }
@@ -455,5 +482,25 @@ class Container implements ContainerInterface
         }
 
         return new $className();
+    }
+
+    /**
+     * Reject custom bindings for the container's own identifiers — they would
+     * be silently ignored, since `make()` resolves those names to the active
+     * instance before consulting definitions, delegates, or prepares. Callers
+     * who need to substitute the PSR-11 interface should use `alias()` instead.
+     *
+     * @throws InvalidArgumentException
+     */
+    private function guardNotSelfName(string $normalizedName, string $originalName): void
+    {
+        if (isset($this->selfNames[$normalizedName])) {
+            throw new InvalidArgumentException(
+                \sprintf(
+                    "Cannot register a custom binding for '%s': the container always resolves its own type to the active instance. Use alias() to substitute the interface.",
+                    $originalName
+                )
+            );
+        }
     }
 }
