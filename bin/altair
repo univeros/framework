@@ -44,6 +44,7 @@ $builtIn = [
     __DIR__ . '/../src/Altair/Mcp/Cli',
     __DIR__ . '/../src/Altair/Messaging/Cli',
     __DIR__ . '/../src/Altair/MigrationIntelligence/Cli',
+    __DIR__ . '/../src/Altair/Observability/Cli',
     __DIR__ . '/../src/Altair/Persistence/Cli',
     __DIR__ . '/../src/Altair/Profiling/Cli',
     __DIR__ . '/../src/Altair/Scaffold/Cli',

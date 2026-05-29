@@ -42,6 +42,8 @@ use Altair\Mcp\Tool\Introspection\ManifestDiffTool;
 use Altair\Mcp\Tool\Introspection\MiddlewareListTool;
 use Altair\Mcp\Tool\Introspection\RouteShowTool;
 use Altair\Mcp\Tool\Introspection\RoutesListTool;
+use Altair\Mcp\Tool\Observability\ObservabilityStatsTool;
+use Altair\Mcp\Tool\Observability\ObservabilityTailTool;
 use Altair\Mcp\Tool\Profile\ProfileCompareTool;
 use Altair\Mcp\Tool\Profile\ProfileFlameTool;
 use Altair\Mcp\Tool\Profile\ProfileListTool;
@@ -111,6 +113,9 @@ final class BuiltinTools
             ProfileShowTool::class,
             ProfileCompareTool::class,
             ProfileFlameTool::class,
+            // Runtime observability (OTel-style spans + metrics)
+            ObservabilityTailTool::class,
+            ObservabilityStatsTool::class,
         ];
     }
 }
