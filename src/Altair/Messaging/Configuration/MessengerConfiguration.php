@@ -70,102 +70,103 @@ final readonly class MessengerConfiguration implements ConfigurationInterface
         $handlerPaths = $this->handlerPaths;
         $allowNoHandlers = $this->allowNoHandlers;
 
-        $container
-            ->delegate(
-                TransportSettings::class,
-                static fn(Env $env): TransportSettings => TransportSettings::fromEnv($env),
-            )
-            ->share(TransportSettings::class)
-            ->delegate(
-                PhpSerializer::class,
-                static fn(): PhpSerializer => new PhpSerializer(),
-            )
-            ->share(PhpSerializer::class)
-            ->alias(SerializerInterface::class, PhpSerializer::class)
-            ->delegate(
-                TransportFactory::class,
-                static fn(): TransportFactory => new TransportFactory(self::collectTransportFactories(new LazyBus($container))),
-            )
-            ->share(TransportFactory::class)
-            ->alias(TransportFactoryInterface::class, TransportFactory::class)
-            ->delegate(
-                TransportRegistry::class,
-                static fn(
-                    TransportSettings $settings,
-                    TransportFactoryInterface $factory,
-                    SerializerInterface $serializer,
-                ): TransportRegistry => new TransportRegistry($settings, $factory, $serializer),
-            )
-            ->share(TransportRegistry::class)
-            ->delegate(
-                TransportLocator::class,
-                static fn(TransportRegistry $registry): TransportLocator => new TransportLocator($registry),
-            )
-            ->share(TransportLocator::class)
-            ->delegate(
-                EventDispatcher::class,
-                static fn(): EventDispatcher => new EventDispatcher(),
-            )
-            ->share(EventDispatcher::class)
-            ->alias(SymfonyEventDispatcherInterface::class, EventDispatcher::class)
-            ->delegate(
-                HandlerRegistry::class,
-                static fn(
-                    AttributeHandlerDiscoverer $discoverer,
-                ): HandlerRegistry => $discoverer->buildRegistry($handlerPaths),
-            )
-            ->share(HandlerRegistry::class)
-            ->share(AttributeHandlerDiscoverer::class)
-            ->delegate(
-                HandlerLocator::class,
-                static fn(
-                    HandlerRegistry $registry,
-                ): HandlerLocator => new HandlerLocator($container, $registry),
-            )
-            ->share(HandlerLocator::class)
-            ->delegate(
-                SendersLocator::class,
-                static fn(
-                    TransportSettings $settings,
-                    TransportLocator $locator,
-                ): SendersLocator => new SendersLocator($settings->routing, $locator),
-            )
-            ->share(SendersLocator::class)
-            ->delegate(
-                SendMessageMiddleware::class,
-                static fn(
-                    SendersLocator $senders,
-                    SymfonyEventDispatcherInterface $dispatcher,
-                ): SendMessageMiddleware => new SendMessageMiddleware($senders, $dispatcher),
-            )
-            ->share(SendMessageMiddleware::class)
-            ->delegate(
-                ContainerHandlerMiddleware::class,
-                static fn(
-                    HandlerLocator $locator,
-                    ?LoggerInterface $logger,
-                ): ContainerHandlerMiddleware => new ContainerHandlerMiddleware(
-                    $locator,
-                    $allowNoHandlers,
-                    $logger,
-                ),
-            )
-            ->share(ContainerHandlerMiddleware::class)
-            ->delegate(
-                SymfonyMessageBus::class,
-                static fn(
-                    SendMessageMiddleware $send,
-                    ContainerHandlerMiddleware $handle,
-                ): SymfonyMessageBus => new SymfonyMessageBus([$send, $handle]),
-            )
-            ->share(SymfonyMessageBus::class)
-            ->alias(SymfonyMessageBusInterface::class, SymfonyMessageBus::class)
-            ->delegate(
-                MessageBus::class,
-                static fn(SymfonyMessageBusInterface $bus): MessageBus => new MessageBus($bus),
-            )
-            ->share(MessageBus::class)
-            ->alias(MessageBusInterface::class, MessageBus::class);
+        $container->factory(
+            TransportSettings::class,
+            static fn(Env $env): TransportSettings => TransportSettings::fromEnv($env),
+        )->shared();
+        $container->factory(
+            PhpSerializer::class,
+            static fn(): PhpSerializer => new PhpSerializer(),
+        )->shared();
+        $container->factory(
+            SerializerInterface::class,
+            static fn(Container $c): SerializerInterface => $c->get(PhpSerializer::class),
+        )->shared();
+        $container->factory(
+            TransportFactory::class,
+            static fn(): TransportFactory => new TransportFactory(self::collectTransportFactories(new LazyBus($container))),
+        )->shared();
+        $container->factory(
+            TransportFactoryInterface::class,
+            static fn(Container $c): TransportFactoryInterface => $c->get(TransportFactory::class),
+        )->shared();
+        $container->factory(
+            TransportRegistry::class,
+            static fn(
+                TransportSettings $settings,
+                TransportFactoryInterface $factory,
+                SerializerInterface $serializer,
+            ): TransportRegistry => new TransportRegistry($settings, $factory, $serializer),
+        )->shared();
+        $container->factory(
+            TransportLocator::class,
+            static fn(TransportRegistry $registry): TransportLocator => new TransportLocator($registry),
+        )->shared();
+        $container->factory(
+            EventDispatcher::class,
+            static fn(): EventDispatcher => new EventDispatcher(),
+        )->shared();
+        $container->factory(
+            SymfonyEventDispatcherInterface::class,
+            static fn(Container $c): SymfonyEventDispatcherInterface => $c->get(EventDispatcher::class),
+        )->shared();
+        $container->factory(
+            HandlerRegistry::class,
+            static fn(
+                AttributeHandlerDiscoverer $discoverer,
+            ): HandlerRegistry => $discoverer->buildRegistry($handlerPaths),
+        )->shared();
+        $container->singleton(AttributeHandlerDiscoverer::class);
+        $container->factory(
+            HandlerLocator::class,
+            static fn(
+                HandlerRegistry $registry,
+            ): HandlerLocator => new HandlerLocator($container, $registry),
+        )->shared();
+        $container->factory(
+            SendersLocator::class,
+            static fn(
+                TransportSettings $settings,
+                TransportLocator $locator,
+            ): SendersLocator => new SendersLocator($settings->routing, $locator),
+        )->shared();
+        $container->factory(
+            SendMessageMiddleware::class,
+            static fn(
+                SendersLocator $senders,
+                SymfonyEventDispatcherInterface $dispatcher,
+            ): SendMessageMiddleware => new SendMessageMiddleware($senders, $dispatcher),
+        )->shared();
+        $container->factory(
+            ContainerHandlerMiddleware::class,
+            static fn(
+                HandlerLocator $locator,
+                ?LoggerInterface $logger,
+            ): ContainerHandlerMiddleware => new ContainerHandlerMiddleware(
+                $locator,
+                $allowNoHandlers,
+                $logger,
+            ),
+        )->shared();
+        $container->factory(
+            SymfonyMessageBus::class,
+            static fn(
+                SendMessageMiddleware $send,
+                ContainerHandlerMiddleware $handle,
+            ): SymfonyMessageBus => new SymfonyMessageBus([$send, $handle]),
+        )->shared();
+        $container->factory(
+            SymfonyMessageBusInterface::class,
+            static fn(Container $c): SymfonyMessageBusInterface => $c->get(SymfonyMessageBus::class),
+        )->shared();
+        $container->factory(
+            MessageBus::class,
+            static fn(SymfonyMessageBusInterface $bus): MessageBus => new MessageBus($bus),
+        )->shared();
+        $container->factory(
+            MessageBusInterface::class,
+            static fn(Container $c): MessageBus => $c->get(MessageBus::class),
+        )->shared();
 
         $this->registerFailureListener($container);
         $this->registerLoggerFallback($container);
@@ -202,41 +203,39 @@ final readonly class MessengerConfiguration implements ConfigurationInterface
 
     private function registerFailureListener(Container $container): void
     {
-        $container
-            ->delegate(
-                FailureSenderContainer::class,
-                static function (
-                    TransportSettings $settings,
-                    TransportRegistry $registry,
-                ): FailureSenderContainer {
-                    if ($settings->failureTransport === null) {
-                        return new FailureSenderContainer([]);
-                    }
+        $container->factory(
+            FailureSenderContainer::class,
+            static function (
+                TransportSettings $settings,
+                TransportRegistry $registry,
+            ): FailureSenderContainer {
+                if ($settings->failureTransport === null) {
+                    return new FailureSenderContainer([]);
+                }
 
-                    return new FailureSenderContainer(
-                        $settings->names(),
-                        $registry->get($settings->failureTransport),
-                    );
-                },
-            )
-            ->share(FailureSenderContainer::class)
-            ->delegate(
-                SendFailedMessageToFailureTransportListener::class,
-                static fn(
-                    FailureSenderContainer $senders,
-                    ?LoggerInterface $logger,
-                ): SendFailedMessageToFailureTransportListener => new SendFailedMessageToFailureTransportListener($senders, $logger),
-            )
-            ->share(SendFailedMessageToFailureTransportListener::class);
+                return new FailureSenderContainer(
+                    $settings->names(),
+                    $registry->get($settings->failureTransport),
+                );
+            },
+        )->shared();
+        $container->factory(
+            SendFailedMessageToFailureTransportListener::class,
+            static fn(
+                FailureSenderContainer $senders,
+                ?LoggerInterface $logger,
+            ): SendFailedMessageToFailureTransportListener => new SendFailedMessageToFailureTransportListener($senders, $logger),
+        )->shared();
     }
 
     private function registerLoggerFallback(Container $container): void
     {
-        if ($container->isset(LoggerInterface::class)) {
+        if ($container->has(LoggerInterface::class)) {
             return;
         }
 
-        $container->share(new NullLogger());
+        $nullLogger = new NullLogger();
+        $container->instance($nullLogger::class, $nullLogger);
         $container->alias(LoggerInterface::class, NullLogger::class);
     }
 }

@@ -29,22 +29,15 @@ class HttpMessageConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->alias(
-                RequestInterface::class,
-                ServerRequest::class
-            )
-            ->alias(
-                ServerRequestInterface::class,
-                ServerRequest::class
-            )
-            ->alias(
-                ResponseInterface::class,
-                Response::class
-            )
-            ->delegate(
-                ServerRequest::class,
-                ServerRequestFactory::fromGlobals(...)
-            );
+        $container->factory(ServerRequest::class, ServerRequestFactory::fromGlobals(...));
+        $container->factory(
+            RequestInterface::class,
+            static fn(Container $c): RequestInterface => $c->get(ServerRequest::class),
+        );
+        $container->factory(
+            ServerRequestInterface::class,
+            static fn(Container $c): ServerRequestInterface => $c->get(ServerRequest::class),
+        );
+        $container->alias(ResponseInterface::class, Response::class);
     }
 }

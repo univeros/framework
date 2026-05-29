@@ -46,30 +46,26 @@ final readonly class ScaffoldJournalConfiguration implements ConfigurationInterf
     {
         $projectRoot = $this->projectRoot ?? (getcwd() ?: '.');
 
-        $container
-            ->delegate(
-                FileDiffer::class,
-                static fn(): FileDiffer => new FileDiffer(),
-            )
-            ->share(FileDiffer::class)
+        $container->factory(
+            FileDiffer::class,
+            static fn(): FileDiffer => new FileDiffer(),
+        )->shared();
 
-            ->delegate(
-                FilesystemStorage::class,
-                static function (Env $env) use ($projectRoot): FilesystemStorage {
-                    $base = (string) $env->get('ALTAIR_JOURNAL_DIR', '.altair');
-                    $sub = (string) $env->get('ALTAIR_JOURNAL_SUBDIR', 'journal');
+        $container->factory(
+            FilesystemStorage::class,
+            static function (Env $env) use ($projectRoot): FilesystemStorage {
+                $base = (string) $env->get('ALTAIR_JOURNAL_DIR', '.altair');
+                $sub = (string) $env->get('ALTAIR_JOURNAL_SUBDIR', 'journal');
 
-                    return new FilesystemStorage(
-                        $projectRoot . DIRECTORY_SEPARATOR . rtrim($base, '/\\') . DIRECTORY_SEPARATOR . $sub,
-                    );
-                },
-            )
-            ->share(FilesystemStorage::class)
+                return new FilesystemStorage(
+                    $projectRoot . DIRECTORY_SEPARATOR . rtrim($base, '/\\') . DIRECTORY_SEPARATOR . $sub,
+                );
+            },
+        )->shared();
 
-            ->delegate(
-                Journal::class,
-                static fn(FilesystemStorage $storage): Journal => new Journal($storage, $projectRoot),
-            )
-            ->share(Journal::class);
+        $container->factory(
+            Journal::class,
+            static fn(FilesystemStorage $storage): Journal => new Journal($storage, $projectRoot),
+        )->shared();
     }
 }

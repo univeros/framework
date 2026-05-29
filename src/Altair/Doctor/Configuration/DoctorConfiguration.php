@@ -47,7 +47,7 @@ use Override;
  * project's own declared requirements. Host-app checks (container boot,
  * critical bindings, database reachability) are opt-in via constructor
  * arguments — without those hooks they report `skipped` instead of false
- * positives. Hosts add their own checks by `prepare()`-ing
+ * positives. Hosts add their own checks by `extend()`-ing
  * {@see CheckRegistry} after this Configuration runs.
  */
 final readonly class DoctorConfiguration implements ConfigurationInterface
@@ -89,18 +89,10 @@ final readonly class DoctorConfiguration implements ConfigurationInterface
             new DeterminismCheck($runner, $projectRoot),
         ]);
 
-        $container
-            ->delegate(ProcessRunnerInterface::class, static fn(): ProcessRunnerInterface => $runner)
-            ->share(ProcessRunnerInterface::class)
-
-            ->delegate(CheckRegistry::class, static fn(): CheckRegistry => $registry)
-            ->share(CheckRegistry::class)
-
-            ->delegate(Doctor::class, static fn(): Doctor => new Doctor($registry))
-            ->share(Doctor::class)
-
-            ->delegate(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())
-            ->share(RendererRegistry::class);
+        $container->factory(ProcessRunnerInterface::class, static fn(): ProcessRunnerInterface => $runner)->shared();
+        $container->factory(CheckRegistry::class, static fn(): CheckRegistry => $registry)->shared();
+        $container->factory(Doctor::class, static fn(): Doctor => new Doctor($registry))->shared();
+        $container->factory(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())->shared();
     }
 
     /**

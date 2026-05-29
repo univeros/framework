@@ -29,9 +29,8 @@ class CorsMiddlewareConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->alias(AnalysisStrategyInterface::class, Settings::class) /** Settings class must be defined by user */
-            ->alias(FactoryInterface::class, Factory::class)
-            ->alias(AnalyzerInterface::class, Analyzer::class);
+        $container->alias(AnalysisStrategyInterface::class, Settings::class); /** Settings class must be defined by user */
+        $container->alias(FactoryInterface::class, Factory::class);
+        $container->alias(AnalyzerInterface::class, Analyzer::class);
     }
 }

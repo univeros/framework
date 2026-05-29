@@ -39,7 +39,7 @@ class ConfigurationCollection extends Set implements ConfigurationInterface
                 throw new InvalidConfigurationException(
                     \sprintf(
                         "Configuration class '%s' must implement '%s'",
-                        \is_object($configuration) ? $configuration::class : $configuration,
+                        $configuration::class,
                         ConfigurationInterface::class
                     )
                 );

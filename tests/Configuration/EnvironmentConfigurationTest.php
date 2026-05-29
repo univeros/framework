@@ -9,7 +9,6 @@ use Altair\Configuration\EnvironmentConfiguration;
 use Altair\Configuration\Exception\InvalidArgumentException;
 use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Dotenv\Exception\InvalidFileException;
 use PHPUnit\Framework\TestCase;
 
@@ -19,7 +18,7 @@ class EnvironmentConfigurationTest extends TestCase
     {
         $container = $this->prepareContainer(__DIR__ . '/fixtures/good.env');
 
-        $this->assertTrue($container->getShares()->hasKey(strtolower(Env::class)));
+        $this->assertTrue($container->has(Env::class));
     }
 
     public function testMethodApplyPreparesSharedClassEnvWithLoadedEnvironmentFileValues(): void
@@ -54,10 +53,7 @@ class EnvironmentConfigurationTest extends TestCase
     private function prepareContainer(string $filePath): Container
     {
         $container = new Container();
-        $container->define(
-            EnvironmentConfiguration::class,
-            new Definition([':filePath' => $filePath]),
-        );
+        $container->bind(EnvironmentConfiguration::class)->withParameters(['filePath' => $filePath]);
         $configuration = new ConfigurationCollection([EnvironmentConfiguration::class]);
         $configuration->apply($container);
 

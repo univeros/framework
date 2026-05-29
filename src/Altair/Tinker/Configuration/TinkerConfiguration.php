@@ -47,29 +47,26 @@ final readonly class TinkerConfiguration implements ConfigurationInterface
         $historyFile = $this->historyFile ?? $this->env('ALTAIR_TINKER_HISTORY_FILE', ReplContext::DEFAULT_HISTORY_FILE);
         $historySize = $this->historySize > 0 ? $this->historySize : (int) $this->env('ALTAIR_TINKER_HISTORY_SIZE', '0');
 
-        $container
-            ->delegate(
-                ReplContext::class,
-                static fn(): ReplContext => new ReplContext(
-                    scopeVariables: ['container' => $container],
-                    historyFile: $historyFile === '' ? null : $historyFile,
-                    historySize: $historySize,
-                ),
-            )
-            ->share(ReplContext::class)
+        $container->factory(
+            ReplContext::class,
+            static fn(): ReplContext => new ReplContext(
+                scopeVariables: ['container' => $container],
+                historyFile: $historyFile === '' ? null : $historyFile,
+                historySize: $historySize,
+            ),
+        )->shared();
 
-            ->delegate(
-                PreambleBuilder::class,
-                static fn(): PreambleBuilder => new PreambleBuilder(
-                    class_exists(ContainerInspector::class) ? new ContainerInspector($container) : null,
-                    self::optional($container, RouteInspector::class),
-                    self::optional($container, ListenerInspector::class),
-                ),
-            )
-            ->share(PreambleBuilder::class)
+        $container->factory(
+            PreambleBuilder::class,
+            static fn(): PreambleBuilder => new PreambleBuilder(
+                class_exists(ContainerInspector::class) ? new ContainerInspector($container) : null,
+                self::optional($container, RouteInspector::class),
+                self::optional($container, ListenerInspector::class),
+            ),
+        )->shared();
 
-            ->alias(ReplInterface::class, PsyShellRepl::class)
-            ->share(PsyShellRepl::class);
+        $container->alias(ReplInterface::class, PsyShellRepl::class);
+        $container->singleton(PsyShellRepl::class);
     }
 
     /**

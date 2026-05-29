@@ -61,31 +61,26 @@ final readonly class SuggestConfiguration implements ConfigurationInterface
             new DeadBindingRule(),
         ]);
 
-        $container
-            ->delegate(RuleRegistry::class, static fn(): RuleRegistry => $registry)
-            ->share(RuleRegistry::class)
+        $container->factory(RuleRegistry::class, static fn(): RuleRegistry => $registry)->shared();
 
-            ->delegate(
-                SnapshotFactory::class,
-                // Capture the real container: a `Container`-typed delegate
-                // parameter would be auto-wired to a fresh, empty instance,
-                // so ContainerInspector is constructed against the container
-                // we were handed rather than resolved through make().
-                static fn(): SnapshotFactory => new SnapshotFactory(
-                    new ContainerInspector($container),
-                    self::optional($container, RouteInspector::class),
-                    self::optional($container, ListenerInspector::class),
-                    self::optional($container, PipelineInspector::class),
-                    self::optional($container, SpecInspector::class),
-                ),
-            )
-            ->share(SnapshotFactory::class)
+        // Capture the real container: a `Container`-typed factory parameter
+        // would be auto-wired to a fresh, empty instance, so ContainerInspector
+        // is constructed against the container we were handed rather than
+        // resolved through make().
+        $container->factory(
+            SnapshotFactory::class,
+            static fn(): SnapshotFactory => new SnapshotFactory(
+                new ContainerInspector($container),
+                self::optional($container, RouteInspector::class),
+                self::optional($container, ListenerInspector::class),
+                self::optional($container, PipelineInspector::class),
+                self::optional($container, SpecInspector::class),
+            ),
+        )->shared();
 
-            ->delegate(SuggestionEngine::class, static fn(): SuggestionEngine => new SuggestionEngine($registry))
-            ->share(SuggestionEngine::class)
+        $container->factory(SuggestionEngine::class, static fn(): SuggestionEngine => new SuggestionEngine($registry))->shared();
 
-            ->delegate(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())
-            ->share(RendererRegistry::class);
+        $container->factory(RendererRegistry::class, static fn(): RendererRegistry => RendererRegistry::default())->shared();
     }
 
     /**

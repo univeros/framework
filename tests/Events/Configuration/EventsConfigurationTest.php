@@ -89,7 +89,7 @@ class EventsConfigurationTest extends TestCase
     private function bootContainer(): Container
     {
         $container = new Container();
-        $container->share(new Env());
+        $container->instance(Env::class, new Env());
 
         (new EventsConfiguration(projectRoot: $this->tmpRoot))->apply($container);
 

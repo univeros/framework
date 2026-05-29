@@ -66,7 +66,7 @@ class DoctorConfigurationTest extends TestCase
     public function testHostAppHooksMakeTheirChecksRun(): void
     {
         $container = new Container();
-        $container->share(new \stdClass());
+        $container->instance(\stdClass::class, new \stdClass());
 
         (new DoctorConfiguration(
             projectRoot: $this->root,

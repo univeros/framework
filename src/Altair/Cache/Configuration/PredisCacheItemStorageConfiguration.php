@@ -37,8 +37,10 @@ class PredisCacheItemStorageConfiguration implements ConfigurationInterface
             return new PredisCacheItemStorage($client);
         };
 
-        $container
-            ->delegate(PredisCacheItemStorage::class, $factory)
-            ->alias(CacheItemStorageInterface::class, PredisCacheItemStorage::class);
+        $container->factory(PredisCacheItemStorage::class, $factory);
+        $container->factory(
+            CacheItemStorageInterface::class,
+            static fn(Container $c): CacheItemStorageInterface => $c->get(PredisCacheItemStorage::class),
+        );
     }
 }

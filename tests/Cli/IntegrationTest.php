@@ -103,7 +103,7 @@ class IntegrationTest extends TestCase
     {
         $container = new Container();
         $repository = new SpyUserRepository();
-        $container->share($repository);
+        $container->instance($repository::class, $repository);
 
         return [$container, $repository];
     }

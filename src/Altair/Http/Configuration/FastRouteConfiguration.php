@@ -42,6 +42,6 @@ class FastRouteConfiguration implements ConfigurationInterface
                 }
             }
         );
-        $container->delegate(Dispatcher::class, $factory);
+        $container->factory(Dispatcher::class, $factory);
     }
 }

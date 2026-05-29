@@ -27,9 +27,9 @@ class IntrospectionConfigurationTest extends TestCase
     public function testWiresEveryInspectorAndRendererRegistry(): void
     {
         $container = new Container();
-        $container->share(new RouteCollection());
-        $container->share(new MiddlewareCollection());
-        $container->share(new EventDispatcher());
+        $container->instance(RouteCollection::class, new RouteCollection());
+        $container->instance(MiddlewareCollection::class, new MiddlewareCollection());
+        $container->instance(EventDispatcher::class, new EventDispatcher());
         $container->alias(EventDispatcherInterface::class, EventDispatcher::class);
 
         (new IntrospectionConfiguration(projectRoot: sys_get_temp_dir()))->apply($container);
