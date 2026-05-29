@@ -15,6 +15,8 @@ At its core the container is an auto-wiring injector. You hand it a class name a
 
 The container implements `Psr\Container\ContainerInterface` (`psr/container ^2`), so it is a drop-in wherever a PSR-11 container is expected. Its `get(string $id): mixed` method delegates to `make()`, and `has(string $id): bool` returns true if the identifier is known through an alias, a delegate, or a prior `share()` call. Note that auto-wirable concrete classes that have never been mentioned explicitly return `false` from `has()` — the container discovers them lazily through reflection when you call `make()`.
 
+The container also **registers itself**: a constructor dependency typed `Altair\Container\Container` or `Psr\Container\ContainerInterface` resolves to the active container instance, so service-locator-style classes receive the real container (with all its bindings) rather than a fresh, empty one. You do not need to `share($container)` yourself — that call is now a harmless no-op. Because self-resolution is a guarantee, `define()`, `delegate()`, and `prepare()` reject the container's own identifiers (they would otherwise be silently ignored); use `alias()` if you genuinely need to substitute the PSR-11 interface with a different implementation.
+
 The design deliberately differs from Symfony's compiled container and Laravel's IoC container in one key regard: there is no build or warmup step. Bindings are registered at runtime, reflection is cached in memory, and the container can be reconfigured between requests if your application needs that flexibility. The trade-off is that the container is more explicit about what it knows: `has()` only covers explicitly registered identifiers, not every auto-wirable class in the codebase.
 
 The framework's own configuration layer (`univeros/configuration`) standardises how packages register bindings: each package ships one or more classes that implement `Altair\Configuration\Contracts\ConfigurationInterface`, whose single method `apply(Container $container): void` adds aliases, delegates, and shares to a container instance passed from the application bootstrap. This convention lets you compose your container's wiring from independent units without a monolithic service-provider file.
@@ -561,7 +563,7 @@ If you are migrating from a very old revision of the framework (pre-2024), verif
 
 - **Cyclic dependencies throw immediately.** The `$making` guard detects direct and transitive cycles (A→B→A, A→B→C→A) and throws `InjectionException('Cyclic dependency detected')`. There is no lazy-proxy mechanism to break cycles; you must refactor the dependency graph.
 
-- **`has()` only covers explicitly registered identifiers.** A concrete class that has never been passed to `alias()`, `share()`, `delegate()`, or `define()` returns `false` from `has()`, even though `make()` will succeed for it via auto-wiring. Do not use `has()` as a general "can I make this?" probe.
+- **`has()` only covers aliases, shares, and delegates.** It is backed by `isset()`, which checks those three collections — *not* class definitions or parameter definitions. So a class given only construction directives via `define()`, or never registered at all, returns `false` from `has()` even though `make()` will succeed for it via auto-wiring. Do not use `has()` as a general "can I make this?" probe.
 
 - **One prepare per name.** Calling `prepare(Foo::class, $callable)` a second time silently replaces the first callable. There is no stacking of multiple prepares for the same class or interface name.
 

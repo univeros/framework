@@ -5,6 +5,7 @@ use Altair\Container\Exception\InjectionException;
 use Altair\Container\Exception\InvalidArgumentException;
 use Altair\Container\Container;
 use Altair\Container\Definition;
+use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -414,5 +415,74 @@ class ContainerTest extends TestCase
         );
         $obj = $container->make(PreparesImplementationTest::class);
         $this->assertSame(42, $obj->testProp);
+    }
+
+    public function testMakeResolvesConcreteContainerToItself(): void
+    {
+        $container = new Container();
+
+        $this->assertSame($container, $container->make(Container::class));
+    }
+
+    public function testMakeResolvesPsrContainerInterfaceToItself(): void
+    {
+        $container = new Container();
+
+        $this->assertSame($container, $container->make(ContainerInterface::class));
+    }
+
+    public function testInjectsItselfIntoConcreteContainerDependency(): void
+    {
+        $container = new Container();
+
+        $dependent = $container->make(NeedsConcreteContainer::class);
+
+        $this->assertSame($container, $dependent->container);
+    }
+
+    public function testInjectsItselfIntoPsrContainerInterfaceDependency(): void
+    {
+        $container = new Container();
+        // A binding only the real container knows about: if a fresh, empty
+        // container were injected instead, this alias would be absent.
+        $container->alias(DepInterface::class, DepImplementation::class);
+
+        $dependent = $container->make(NeedsContainerInterface::class);
+
+        $this->assertSame($container, $dependent->container);
+        $this->assertInstanceOf(DepImplementation::class, $dependent->container->make(DepInterface::class));
+    }
+
+    public function testSharingTheContainerItselfIsANoOpAndDoesNotPolluteShares(): void
+    {
+        $container = new Container();
+
+        $this->assertSame($container, $container->share($container));
+        // The container must not appear as a realised singleton in its shares.
+        $this->assertCount(0, $container->getShares());
+    }
+
+    public function testDefineRejectsContainerSelfName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $container = new Container();
+        $container->define(ContainerInterface::class, new Definition([]));
+    }
+
+    public function testDelegateRejectsContainerSelfName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $container = new Container();
+        $container->delegate(Container::class, fn(): Container => new Container());
+    }
+
+    public function testPrepareRejectsContainerSelfName(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $container = new Container();
+        $container->prepare(ContainerInterface::class, function ($obj, $container): void {});
     }
 }
