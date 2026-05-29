@@ -85,6 +85,7 @@
         "univeros/cookie": "self.version",
         "univeros/courier": "self.version",
         "univeros/doctor": "self.version",
+        "univeros/eval": "self.version",
         "univeros/events": "self.version",
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",

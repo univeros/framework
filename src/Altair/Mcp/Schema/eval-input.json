@@ -1,0 +1,26 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["snippet"],
+    "properties": {
+        "snippet": {
+            "type": "string",
+            "minLength": 1,
+            "description": "PHP code to execute. The snippet runs inside a sandboxed subprocess against the project's container; use `container(SomeClass::class)` to resolve services. Last `return` is captured."
+        },
+        "timeout_ms": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 60000,
+            "description": "Wall-clock timeout in milliseconds (default 5000). Exceeding it kills the subprocess (SIGTERM → SIGKILL)."
+        },
+        "allow_writes": {
+            "type": "boolean",
+            "description": "Permit database writes via the ALTAIR_EVAL_ALLOW_WRITES env var (host-cooperative — the host's persistence config can read it and refuse writes). Defaults to false."
+        },
+        "allow_network": {
+            "type": "boolean",
+            "description": "Permit outbound network calls (lifts the function-block on curl/fsockopen/stream_socket_client and allow_url_fopen). Defaults to false."
+        }
+    }
+}

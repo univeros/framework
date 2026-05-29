@@ -35,6 +35,7 @@
 - `EmitSdkTool` _(final)_ — implements `McpToolInterface`
 - `ErrorCode` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `ErrorResponse` _(final)_
+- `EvalTool` _(final)_ — implements `McpToolInterface`
 - `EventLog` _(final)_
 - `FindUsagesTool` _(final)_ — implements `McpToolInterface`
 - `HttpTransport` _(final)_
@@ -94,6 +95,7 @@
 - `tests/Mcp/Tool/AttributeToolDiscovererTest.php`
 - `tests/Mcp/Tool/DatabaseToolsTest.php`
 - `tests/Mcp/Tool/DiscoveryToolsTest.php`
+- `tests/Mcp/Tool/EvalToolTest.php`
 - `tests/Mcp/Tool/GenerationToolsTest.php`
 - `tests/Mcp/Tool/IndexToolsTest.php`
 - `tests/Mcp/Tool/IntrospectionToolsTest.php`
