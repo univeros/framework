@@ -87,7 +87,7 @@
 |  | `last()` | `mixed` |  |
 |  | `merge(mixed)` | `SetInterface` |  |
 |  | `reduce(callable, mixed)` | `mixed` |  |
-|  | `remove(mixed)` | `mixed` |  |
+|  | `remove(mixed)` | `void` |  |
 |  | `reverse()` | `SetInterface` |  |
 |  | `slice(int, int\|null)` | `SetInterface` |  |
 |  | `sort(callable\|null)` | `SetInterface` |  |

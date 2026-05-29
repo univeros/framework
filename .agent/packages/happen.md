@@ -29,7 +29,7 @@
 | `EventStackInterface` | `addEvent(EventInterface\|string)` | `EventStackInterface` |  |
 |  | `getStack()` | `array` |  |
 | `EventSubscriberInterface` | `getSubscribedEvents()` | `array` |  |
-| `ListenerInterface` | `__invoke(EventInterface)` | `mixed` |  |
+| `ListenerInterface` | `__invoke(EventInterface)` | `void` |  |
 | `ListenerProviderInterface` | `provideListeners(EventDispatcherInterface)` | `ListenerProviderInterface` |  |
 
 ## Concrete classes
@@ -38,6 +38,8 @@
 - `Event` — implements `EventInterface`, `StoppableEventInterface`
 - `EventDispatcher` — implements `EventDispatcherInterface`
 - `ListenerFactory`
+- `Psr14EventDispatcher` _(final)_ — implements `EventDispatcherInterface`
+- `Psr14ListenerProvider` _(final)_ — implements `ListenerProviderInterface`
 
 ## Tests as documentation
 
@@ -45,6 +47,8 @@
 - `tests/Happen/EventTest.php`
 - `tests/Happen/Factory/ListenerFactoryTest.php`
 - `tests/Happen/Listener/CallbackListenerTest.php`
+- `tests/Happen/Psr14EventDispatcherTest.php`
+- `tests/Happen/Psr14ListenerProviderTest.php`
 
 ## Related packages
 
