@@ -3,6 +3,8 @@ parameters:
     phpVersion: 80300
     paths:
         - src
+        # Type-assertion fixture that locks the container's generic make()/get() typing.
+        - tests/Container/TypeAssertions.php
     excludePaths:
         # Presentation-only view templates (HTML in PHP); not application logic.
         - src/Altair/Observatory/resources/views/*
@@ -14,6 +16,12 @@ parameters:
     tmpDir: .phpstan-cache
 
     ignoreErrors:
+        # ReflectionClass::newLazyProxy() is a PHP 8.4 API; the container detects it at
+        # runtime (LazyFactory::supportsNative) and falls back to eager construction on
+        # 8.3, which is the version PHPStan analyses against (phpVersion: 80300).
+        - identifier: method.notFound
+          path: src/Altair/Container/Lazy/LazyFactory.php
+
         # PHP-side stubs for optional ext-* extensions vary across environments.
         - identifier: function.notFound
           paths:

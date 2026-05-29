@@ -11,7 +11,10 @@ declare(strict_types=1);
 
 namespace Altair\Container\Exception;
 
-use Exception;
 use Psr\Container\ContainerExceptionInterface;
+use RuntimeException;
 
-class InjectionException extends Exception implements ContainerExceptionInterface {}
+/**
+ * Base type for every error raised while wiring or resolving services.
+ */
+class ContainerException extends RuntimeException implements ContainerExceptionInterface {}
