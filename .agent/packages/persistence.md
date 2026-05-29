@@ -8,6 +8,7 @@
 |---|---|---|---|
 | `EntityManagerInterface` | `repository(string)` | `RepositoryInterface` |  |
 |  | `unitOfWork()` | `UnitOfWorkInterface` |  |
+| `HydratorInterface` | `hydrate(string, array)` | `DataObjectInterface` |  |
 | `RepositoryInterface` | `delete(object)` | `void` |  |
 |  | `find(string\|int)` | `object\|null` |  |
 |  | `findAll()` | `iterable` |  |
@@ -27,6 +28,7 @@
 - `CycleOrmConfiguration` _(final)_ — implements `ConfigurationInterface`
 - `CycleRepository` — implements `RepositoryInterface`
 - `CycleUnitOfWork` _(final)_ — implements `UnitOfWorkInterface`
+- `DataObjectHydrator` _(final)_ — implements `HydratorInterface`
 - `DatabaseConnectionFactory` _(final)_
 - `DatabaseSettings` _(final)_
 - `MigrateCommand` _(final)_
@@ -43,6 +45,7 @@
 - `tests/Persistence/Configuration/DatabaseSettingsTest.php`
 - `tests/Persistence/Cycle/CycleEntityManagerTest.php`
 - `tests/Persistence/Cycle/CycleRepositoryTest.php`
+- `tests/Persistence/Dto/DataObjectHydratorTest.php`
 
 ## Related packages
 
@@ -55,3 +58,4 @@
 - `univeros/cli`
 - `univeros/configuration`
 - `univeros/container`
+- `univeros/data`

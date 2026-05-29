@@ -196,6 +196,34 @@ $container->delegate(
 
 In tests and during local development, bind `AttributeSchemaProvider` directly and let it recompile on each construction — convenient, slow, but the slowness rarely matters under `phpunit`.
 
+### Read models (DTO hydration)
+
+Cycle entities are mutable, managed objects. When you want to hand a caller an immutable read model instead — an `Altair\Data\DataObjectInterface` carrying just the fields a view or API response needs — use `DataObjectHydrator`. This is the bridge the Data package deliberately does not provide: `Data` assigns values as-is (its typed-property writes reject a mismatched type), so **type coercion lives here, in the persistence layer**, never in `Data`. The dependency arrow is one-way — `univeros/persistence` depends on `univeros/data`, never the reverse.
+
+`hydrate()` reflects the target Data object's declared property types and coerces each matching value before construction:
+
+```php
+use Altair\Persistence\Dto\DataObjectHydrator;
+
+$hydrator = new DataObjectHydrator();
+
+// $row is a storage row — everything stringy, as a driver returns it.
+$row = ['id' => '42', 'name' => 'Vega', 'active' => '1', 'created_at' => '2026-01-15 09:00:00'];
+
+$profile = $hydrator->hydrate(ProfileDto::class, $row);
+// $profile->id === 42 (int), $profile->active === true (bool),
+// $profile->created_at instanceof DateTimeImmutable
+```
+
+Coercion rules: numeric strings to `int`/`float`; `0`/`1`/`"true"`/`"false"` to `bool` (via `FILTER_VALIDATE_BOOLEAN`); scalars and `Stringable` to `string`; date strings/timestamps to `DateTimeImmutable`/`DateTime`. A property typed as another `DataObjectInterface` is hydrated recursively from a nested array — this is how composed read-models (the read-side of a relation) are expressed:
+
+```php
+$row = ['id' => 1, 'address' => ['city' => 'New York', 'zip' => '10001']];
+$profile = $hydrator->hydrate(ProfileDto::class, $row); // $profile->address instanceof AddressDto
+```
+
+`null` passes through untouched, keys with no matching property are dropped, and a value that cannot satisfy its declared type throws `HydrationException` (a `PersistenceExceptionInterface`) naming the offending field — rather than letting a raw `TypeError` escape from the constructor. Type against `HydratorInterface` so the hydrator stays swappable.
+
 ## CLI
 
 The package ships four `bin/altair db:*` commands. They auto-load when the framework's CLI binary picks up `src/Altair/Persistence/Cli` (already wired in `bin/altair`).
@@ -317,3 +345,4 @@ What you should **not** extend: `CycleEntityManager` is `final`. Replace it via 
 - **Doctrine bridge.** Not in this package. A separate `univeros/doctrine` could implement the same contracts; the wrap is already shaped for it.
 - **`--dry-run` SQL preview.** `db:migrate --dry-run` currently lists pending migration names. A per-migration SQL dump is a follow-up — Cycle's `Migrator` does not expose a non-destructive SQL preview out of the box.
 - **Postgres / MySQL CI matrix.** Tests today exercise in-memory SQLite. Real-driver integration tests are tracked as a follow-up on the original issue.
+- **DTO hydration scope.** `DataObjectHydrator` coerces against a single declared property type; union and intersection types are passed through for PHP to enforce. It does not auto-project a Cycle entity into a Data object — feed it a row array (`select()->fetchData()`, a query result, or `$entity` mapped to an array). A repository-level read-model layer that returns Data objects directly is a follow-up.
