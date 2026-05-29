@@ -1,0 +1,22 @@
+{
+    "name": "univeros/eval",
+    "description": "bin/altair eval — a sandboxed scratchpad that executes a short PHP snippet inside the project's container in a guarded subprocess (disable_functions, open_basedir, memory + wall-clock limits) and returns a structured JSON result. The agent's \"let me check\" primitive.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/events": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Eval\\": ""
+        }
+    }
+}
