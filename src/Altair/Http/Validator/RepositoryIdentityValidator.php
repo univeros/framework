@@ -11,8 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Http\Validator;
 
-use Altair\Data\Contracts\EntityInterface;
-use Altair\Data\Contracts\QueryRepositoryInterface;
+use Altair\Http\Contracts\IdentityProviderInterface;
 use Altair\Http\Contracts\IdentityValidatorInterface;
 use Override;
 
@@ -28,7 +27,7 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
      *
      * @param array<string, string>|null $options
      */
-    public function __construct(protected QueryRepositoryInterface $repository, ?array $options = null)
+    public function __construct(protected IdentityProviderInterface $repository, ?array $options = null)
     {
         // Options contain the names of the fields to search on the db by the entity.
         // By default: 'username' and 'hash' are the default fieldname values. You can easily change them as:
@@ -47,10 +46,10 @@ class RepositoryIdentityValidator implements IdentityValidatorInterface
         $user = $arguments["user"] ?? null;
         $password = $arguments["password"] ?? null;
 
-        $user = $this->repository->findOneBy([$this->options['username'] => $user]);
+        $identity = $this->repository->findOneBy([$this->options['username'] => $user]);
 
-        if ($user instanceof EntityInterface) {
-            return password_verify((string) $password, (string) $user->get($this->options['hash']));
+        if ($identity !== null) {
+            return password_verify((string) $password, (string) ($identity[$this->options['hash']] ?? ''));
         }
 
         return false;

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Data;
 
-use Altair\Data\Contracts\EntityInterface;
+use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Data\Traits\DateAttributeMutatorAwareTrait;
 use Altair\Data\Traits\ImmutableAttributesAwareTrait;
 use Altair\Data\Traits\JsonSerializableAwareTrait;
 use Altair\Data\Traits\SerializeAwareTrait;
 
-class Entity implements EntityInterface
+class Entity implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
