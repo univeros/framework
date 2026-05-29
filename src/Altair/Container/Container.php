@@ -69,6 +69,11 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
     private array $contextual = [];
 
     /**
+     * @var array<string, list<Closure>>
+     */
+    private array $extenders = [];
+
+    /**
      * @var array<string, true>
      */
     private array $selfNames = [];
@@ -112,7 +117,7 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
         }
 
         if (class_exists($id)) {
-            return $this->build($id, []);
+            return $this->applyExtenders($key, $this->build($id, []));
         }
 
         throw NotFoundException::forId($id);
@@ -141,7 +146,8 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
     #[Override]
     public function make(string $class, array $parameters = []): object
     {
-        $definition = $this->definition(NameNormalizer::normalize($class));
+        $key = NameNormalizer::normalize($class);
+        $definition = $this->definition($key);
 
         if ($definition instanceof DefinitionInterface && !$definition->hasValue()) {
             $instance = $definition->instance();
@@ -153,19 +159,22 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
             $factory = $definition->factory();
             if ($factory instanceof Closure) {
                 /** @var T $made */
-                $made = $this->invokeForObject($factory);
+                $made = $this->applyExtenders($key, $this->invokeForObject($factory));
 
                 return $made;
             }
 
             /** @var T $built */
-            $built = $this->build($definition->concrete() ?? $class, array_merge($definition->parameters(), $parameters));
+            $built = $this->applyExtenders(
+                $key,
+                $this->build($definition->concrete() ?? $class, array_merge($definition->parameters(), $parameters))
+            );
 
             return $built;
         }
 
         /** @var T $object */
-        $object = $this->build($class, $parameters);
+        $object = $this->applyExtenders($key, $this->build($class, $parameters));
 
         return $object;
     }
@@ -233,6 +242,19 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
     public function when(string $consumer): ContextualBindingBuilder
     {
         return new ContextualBindingBuilder($this, $consumer);
+    }
+
+    /**
+     * Register a decorator run against $id immediately after it is resolved.
+     * Decorators stack (multiple may apply) and run in registration order; a
+     * decorator that returns an object replaces the instance, otherwise the
+     * original is kept (allowing side-effect-only hooks).
+     *
+     * @param Closure(object, Container): mixed $decorator
+     */
+    public function extend(string $id, Closure $decorator): void
+    {
+        $this->extenders[NameNormalizer::normalize($id)][] = $decorator;
     }
 
     /**
@@ -330,11 +352,35 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
 
         $object = $this->produce($definition);
 
+        if (\is_object($object)) {
+            $object = $this->applyExtenders($key, $object);
+        }
+
         if ($definition->isShared() && \is_object($object)) {
             $this->singletons[$key] = $object;
         }
 
         return $object;
+    }
+
+    private function applyExtenders(string $key, object $object): object
+    {
+        foreach ($this->extendersFor($key) as $decorator) {
+            $result = $decorator($object, $this);
+            if (\is_object($result)) {
+                $object = $result;
+            }
+        }
+
+        return $object;
+    }
+
+    /**
+     * @return list<Closure>
+     */
+    private function extendersFor(string $key): array
+    {
+        return array_merge($this->parent?->extendersFor($key) ?? [], $this->extenders[$key] ?? []);
     }
 
     private function produce(DefinitionInterface $definition): mixed
