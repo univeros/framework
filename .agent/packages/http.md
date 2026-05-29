@@ -97,6 +97,7 @@
 - `InputCollection` — implements `ArrayAccess`, `CapacityInterface`, `CollectionInterface`, `Countable`, `IteratorAggregate`, `JsonSerializable`, `MapInterface`, `Stringable`, `Traversable`
 - `InputParser` — implements `InputInterface`
 - `IpAddressMiddleware` — implements `MiddlewareInterface`
+- `IpKeyResolver` _(final)_ — implements `KeyResolverInterface`
 - `IpRestrictionMiddleware` — implements `MiddlewareInterface`
 - `JsonContentMiddleware` — implements `MiddlewareInterface`
 - `JsonFormatter` — implements `OutputFormatterInterface`
@@ -114,6 +115,8 @@
 - `PrivateNoExpireCacheLimiter` — implements `CacheLimiterInterface`
 - `PublicCacheLimiter` — implements `CacheLimiterInterface`
 - `QueryParamsTokenExtractor` — implements `TokenExtractorInterface`
+- `RateLimit` _(final)_
+- `RateLimitMiddleware` _(final)_ — implements `MiddlewareInterface`
 - `RedirectResponder` — implements `ResponderInterface`
 - `RelayConfiguration` — implements `ConfigurationInterface`
 - `RepositoryIdentityValidator` — implements `IdentityValidatorInterface`
@@ -161,6 +164,7 @@
 - `tests/Http/Middleware/IpAddressMiddlewareTest.php`
 - `tests/Http/Middleware/IpRestrictionMiddlewareTest.php`
 - `tests/Http/Middleware/JsonContentMiddlewareTest.php`
+- `tests/Http/Middleware/RateLimit/RateLimitMiddlewareTest.php`
 - `tests/Http/Middleware/SpamBlockerMiddlewareTest.php`
 - `tests/Http/Resolver/ContainerResolverTest.php`
 - `tests/Http/Responder/RedirectResponderTest.php`
