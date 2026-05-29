@@ -54,6 +54,8 @@
 - `McpTool` _(final)_
 - `MiddlewareListTool` _(final)_ — implements `McpToolInterface`
 - `NullDatabaseGateway` _(final)_ — implements `DatabaseGatewayInterface`
+- `ObservabilityStatsTool` _(final)_ — implements `McpToolInterface`
+- `ObservabilityTailTool` _(final)_ — implements `McpToolInterface`
 - `OpenApiFragments` _(final)_
 - `Output` _(final)_
 - `PathGuard` _(final)_

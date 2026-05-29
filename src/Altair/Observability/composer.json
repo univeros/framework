@@ -1,0 +1,24 @@
+{
+    "name": "univeros/observability",
+    "description": "bin/altair observability:* — framework-native runtime observability. OpenTelemetry-compatible spans + metrics emitted natively (OTLP-JSON over HTTP, no SDK dependency), a PSR-15 middleware for per-request tracing, and a JSONL log under .altair/observability/ for local inspection and after-the-fact analysis.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Observability\\": ""
+        }
+    }
+}
