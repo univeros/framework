@@ -188,3 +188,12 @@ final class OverridableConsumer
 {
     public function __construct(public readonly LoggerInterface $logger) {}
 }
+
+#[Lazy]
+final class LazyMarked
+{
+    public function ping(): string
+    {
+        return 'lazy';
+    }
+}

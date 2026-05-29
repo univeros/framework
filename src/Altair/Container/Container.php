@@ -117,6 +117,10 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
         }
 
         if (class_exists($id)) {
+            if ($this->reflector->classMetadata($id)->isLazy) {
+                return $this->applyExtenders($key, $this->lazyFactory->create($id, fn(): object => $this->build($id, [])));
+            }
+
             return $this->applyExtenders($key, $this->build($id, []));
         }
 
@@ -132,6 +136,9 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
             return true;
         }
 
+        // Deliberately explicit-registration only (not every autowireable class):
+        // the framework uses `!has(Concrete::class)` as a register-if-absent guard.
+        // get() may still autowire an unregistered class as a convenience.
         return $this->parent?->has($id) ?? false;
     }
 
@@ -159,7 +166,7 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
             $factory = $definition->factory();
             if ($factory instanceof Closure) {
                 /** @var T $made */
-                $made = $this->applyExtenders($key, $this->invokeForObject($factory));
+                $made = $this->applyExtenders($key, $this->invokeForObject($factory, $key));
 
                 return $made;
             }
@@ -250,6 +257,9 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
      * decorator that returns an object replaces the instance, otherwise the
      * original is kept (allowing side-effect-only hooks).
      *
+     * Register decorators during wiring: one added after a *shared* service has
+     * already been resolved does not retroactively decorate the cached instance.
+     *
      * @param Closure(object, Container): mixed $decorator
      */
     public function extend(string $id, Closure $decorator): void
@@ -287,6 +297,10 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
      * Create a child scope: it inherits this container's definitions but keeps
      * its own singleton store and may override bindings without affecting the
      * parent.
+     *
+     * Note: each scope has its own resolution stack, so a dependency cycle that
+     * spans a child and its parent is not detected (and is a design smell —
+     * resolve such graphs within a single container).
      */
     public function createScope(): self
     {
@@ -350,7 +364,7 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
             return $definition->value();
         }
 
-        $object = $this->produce($definition);
+        $object = $this->produce($definition, $key);
 
         if (\is_object($object)) {
             $object = $this->applyExtenders($key, $object);
@@ -383,23 +397,37 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
         return array_merge($this->parent?->extendersFor($key) ?? [], $this->extenders[$key] ?? []);
     }
 
-    private function produce(DefinitionInterface $definition): mixed
+    private function produce(DefinitionInterface $definition, string $key): mixed
     {
-        if ($definition->isLazy()) {
-            $concrete = $definition->concrete() ?? $definition->id();
+        $concrete = $definition->concrete() ?? $definition->id();
+
+        if ($this->resolvesLazily($definition, $concrete)) {
             $class = class_exists($concrete) ? $concrete : null;
 
-            return $this->lazyFactory->create($class, fn(): mixed => $this->produceEager($definition));
+            return $this->lazyFactory->create($class, fn(): mixed => $this->produceEager($definition, $key));
         }
 
-        return $this->produceEager($definition);
+        return $this->produceEager($definition, $key);
     }
 
-    private function produceEager(DefinitionInterface $definition): mixed
+    /**
+     * Lazy when the binding opted in (`->lazy()`) or the target class carries
+     * the `#[Lazy]` attribute.
+     */
+    private function resolvesLazily(DefinitionInterface $definition, string $concrete): bool
+    {
+        if ($definition->isLazy()) {
+            return true;
+        }
+
+        return class_exists($concrete) && $this->reflector->classMetadata($concrete)->isLazy;
+    }
+
+    private function produceEager(DefinitionInterface $definition, string $key): mixed
     {
         $factory = $definition->factory();
         if ($factory instanceof Closure) {
-            return $this->call($factory);
+            return $this->callFactoryGuarded($factory, $key);
         }
 
         $concrete = $definition->concrete();
@@ -417,9 +445,25 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
         return $this->build($concrete ?? $definition->id(), $definition->parameters());
     }
 
-    private function invokeForObject(Closure $factory): object
+    /**
+     * Invoke a factory closure under the resolution-stack guard so factory-based
+     * dependency cycles raise {@see \Altair\Container\Exception\CircularDependencyException}
+     * instead of overflowing the PHP call stack.
+     */
+    private function callFactoryGuarded(Closure $factory, string $key): mixed
     {
-        $object = $this->call($factory);
+        $this->stack->enter($key);
+
+        try {
+            return $this->call($factory);
+        } finally {
+            $this->stack->leave($key);
+        }
+    }
+
+    private function invokeForObject(Closure $factory, string $key): object
+    {
+        $object = $this->callFactoryGuarded($factory, $key);
 
         if (!\is_object($object)) {
             throw new ContainerException('Factory closure must return an object.');
