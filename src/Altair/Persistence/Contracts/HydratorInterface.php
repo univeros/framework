@@ -36,4 +36,18 @@ interface HydratorInterface
      * @return T
      */
     public function hydrate(string $dataObjectClass, array $data): DataObjectInterface;
+
+    /**
+     * Hydrate a collection of rows into a list of Data objects.
+     *
+     * @template T of DataObjectInterface
+     *
+     * @param class-string<T>                  $dataObjectClass
+     * @param iterable<array<string, mixed>>   $rows
+     *
+     * @throws PersistenceExceptionInterface when a value cannot satisfy the declared property type
+     *
+     * @return list<T>
+     */
+    public function hydrateMany(string $dataObjectClass, iterable $rows): array;
 }
