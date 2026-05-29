@@ -198,7 +198,14 @@ The standard — a deterministic emitter has:
 4. **No machine identifiers** — no hostname, username, or absolute paths.
 5. **No nondeterministic randomness** — derive any UUID from the spec SHA (`uuid5`), never `random_*`.
 
-Enforcement: every emitter ships a "run twice, diff empty" PHPUnit test; `bin/altair doctor`'s `determinism_check` runs the regenerate-and-diff gate (see `univeros/doctor`); host projects run the same gate in CI. **Any new package added to the framework must meet this standard** — it's a review gate, tracked in [#74](https://github.com/univeros/framework/issues/74).
+Enforcement is layered and live:
+
+- **In-process tests** — `tests/Determinism/TwiceHarness.php` is the shared harness, and `tests/AgentSpec/Determinism/`, `tests/Scaffold/Determinism/` ship "run twice, diff empty" tests for the manifest pipeline, the OpenAPI fragment merger, and the TypeScript + Python SDK emitters. Add one anywhere you add a new emitter.
+- **CI determinism gate** — `.github/workflows/ci.yml` regenerates `.agent/` and `git diff --exit-code`s it on every PR. A non-deterministic emitter fails the gate.
+- **`bin/altair doctor`** — the `determinism_check` from `univeros/doctor` runs the same regenerate-and-diff gate against any generators a host configures (see `DoctorConfiguration`'s constructor).
+- **Skeleton workflow** — `src/Altair/Bootstrap/resources/skeleton/.github/workflows/determinism.yml` ships with `bin/altair new`, so generated host projects inherit the gate.
+
+**Any new package added to the framework must meet this standard.** Tracked in [#74](https://github.com/univeros/framework/issues/74).
 
 ---
 

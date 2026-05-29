@@ -77,6 +77,8 @@
 ## Tests as documentation
 
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
+- `tests/Scaffold/Determinism/EmitOpenApiDeterminismTest.php`
+- `tests/Scaffold/Determinism/SdkEmitterDeterminismTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
 - `tests/Scaffold/Emitter/EntityEmitterTest.php`

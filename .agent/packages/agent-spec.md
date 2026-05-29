@@ -44,6 +44,7 @@
 ## Tests as documentation
 
 - `tests/AgentSpec/ApplicationManifestGeneratorTest.php`
+- `tests/AgentSpec/Determinism/ManifestDeterminismTest.php`
 - `tests/AgentSpec/Fixtures/TestsRoot/SamplePackage/SampleGreeterTest.php`
 - `tests/AgentSpec/IndexGeneratorTest.php`
 - `tests/AgentSpec/ManifestPipelineTest.php`
