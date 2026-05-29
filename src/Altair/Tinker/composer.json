@@ -1,0 +1,25 @@
+{
+    "name": "univeros/tinker",
+    "description": "bin/altair tinker — an interactive PsySH REPL with the DI container in scope and a doctor-style preamble of what's wired. A local debugging tool for developers, not an agent surface.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "psy/psysh": "^0.12",
+        "univeros/cli": "^2.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "suggest": {
+        "univeros/introspection": "Powers the startup preamble (container/route/listener summary)."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Tinker\\": ""
+        }
+    }
+}

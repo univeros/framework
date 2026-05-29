@@ -60,6 +60,7 @@ Developer experience and AI-agent ergonomics.
 - [Mcp](./packages/mcp.md) — a first-party Model Context Protocol server exposing the framework as 29 agent-callable tools over stdio/HTTP, so any MCP client can build, inspect, test, and ship an Altair API through tool calls.
 - [Bootstrap](./packages/bootstrap.md) — zero-to-running project bootstrap: `bin/altair new` materialises a complete, runnable Altair API (a working `/ping`, a passing test, the spec-driven toolchain wired) from the skeleton template, with minimal/standard/full presets.
 - [Observatory](./packages/observatory.md) — a dev-only, fail-closed web monitoring panel: health, activity (live SSE tail), queues, routes, container, config and migrations, as a thin presentation layer over the framework's own introspection / doctor / events data.
+- [Tinker](./packages/tinker.md) — `bin/altair tinker` drops into an interactive PsySH REPL with the DI container in scope and a doctor-style preamble of what's wired; a human debugging tool (dev-only dependency), the dynamic counterpart to introspection.
 
 ## How these docs are structured
 
