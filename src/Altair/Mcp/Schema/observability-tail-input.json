@@ -1,0 +1,17 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Maximum rows to return (default 50)."
+        },
+        "kind": {
+            "type": "string",
+            "enum": ["span", "metric"],
+            "description": "Optional: restrict to one row kind."
+        }
+    }
+}
