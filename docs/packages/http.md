@@ -858,7 +858,7 @@ If you have any custom middleware that extends `Relay\MiddlewareInterface` or th
 
 The Http package deliberately excludes several concerns:
 
-- **HTTP/2 push and server-sent events** — The package operates at the PSR-7/PSR-15 level, which is message-oriented and synchronous. Neither push streams nor event streams are expressible as a single `ResponseInterface` return value.
+- **HTTP/2 server push** — Not supported, and largely moot (server push has been removed from major browsers); the package stays at the message-oriented PSR-7/PSR-15 level. Note that server-sent events *are* achievable over PSR-15 — Observatory's `ActivityStreamHandler` streams an SSE tail through an emit-and-close handler — they are simply not shipped as a built-in Http helper.
 - **WebSockets** — WebSocket connections require a protocol upgrade and persistent connection handling outside the PSR-15 request/response cycle.
 - **Route caching** — `FastRouteConfiguration` uses `simpleDispatcher`, which recompiles routes on every request. For high-traffic applications, replace the factory with `cachedDispatcher` and a file path.
 - **Rate limiting** — No rate limiting middleware is included. Add your own or use a reverse proxy.
