@@ -12,8 +12,7 @@ declare(strict_types=1);
 namespace Altair\Validation\Resolver;
 
 use Altair\Container\Container;
-use Altair\Container\Definition;
-use Altair\Container\Exception\InjectionException;
+use Altair\Container\Exception\ContainerException;
 use Altair\Validation\Contracts\ResolverInterface;
 use Altair\Validation\Contracts\RuleInterface;
 use Altair\Validation\Exception\InvalidArgumentException;
@@ -28,7 +27,7 @@ class RuleResolver implements ResolverInterface
     public function __construct(protected Container $container) {}
 
     /**
-     * @throws InjectionException
+     * @throws ContainerException
      * @throws ReflectionException
      */
     #[Override]
@@ -44,13 +43,18 @@ class RuleResolver implements ResolverInterface
             $entry = $entry['class']; // force error if key is not configured
         } // else is a string
 
-        if (!\is_string($entry)) {
+        if (!\is_string($entry) || !class_exists($entry)) {
             throw new InvalidArgumentException(
                 \sprintf('A rule entry must resolve to a class-string or %s instance.', RuleInterface::class)
             );
         }
 
-        $rule = $this->container->make($entry, new Definition($arguments));
+        $parameters = [];
+        foreach ($arguments as $key => $value) {
+            $parameters[ltrim((string) $key, ':')] = $value;
+        }
+
+        $rule = $this->container->make($entry, $parameters);
 
         if (!$rule instanceof RuleInterface) {
             throw new InvalidArgumentException(

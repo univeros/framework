@@ -64,12 +64,6 @@ final readonly class HandlerLocator implements HandlersLocatorInterface
     {
         $instance = $this->container->make($entry->handlerClass);
 
-        if (!\is_object($instance)) {
-            throw new InvalidHandlerException(
-                \sprintf("Container resolved '%s' to a non-object value.", $entry->handlerClass),
-            );
-        }
-
         if (!method_exists($instance, $entry->method)) {
             throw new InvalidHandlerException(
                 \sprintf(

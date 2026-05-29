@@ -12,12 +12,12 @@ use PHPUnit\Framework\TestCase;
 /**
  * Key acceptance criterion from #71: walking the Container with the
  * introspection inspector must NEVER trigger instantiation or fire
- * `prepare` hooks. That's what makes the inspector safe to run against
- * projects whose databases are down or whose `prepare` hooks have
+ * `extend` hooks. That's what makes the inspector safe to run against
+ * projects whose databases are down or whose `extend` hooks have
  * external side effects.
  *
- * The test wires a Container where `make()` would explode (delegate
- * throws, prepare hook throws) and asserts inspection still completes.
+ * The test wires a Container where `make()` would explode (factory
+ * throws, extend hook throws) and asserts inspection still completes.
  */
 #[CoversClass(ContainerInspector::class)]
 class LazyBindingSafetyTest extends TestCase
@@ -27,12 +27,12 @@ class LazyBindingSafetyTest extends TestCase
         $container = new Container();
 
         $invoked = 0;
-        $container->delegate(
+        $container->factory(
             \stdClass::class,
             static function () use (&$invoked): \stdClass {
                 $invoked++;
                 throw new \RuntimeException(
-                    'Inspector triggered a delegate — this proves the lazy-binding contract is broken.',
+                    'Inspector triggered a factory — this proves the lazy-binding contract is broken.',
                 );
             },
         );
@@ -44,23 +44,23 @@ class LazyBindingSafetyTest extends TestCase
         $detail = (new ContainerInspector($container))->inspectOne(\stdClass::class);
         $this->assertNotSame([], $detail->rows);
 
-        $this->assertSame(0, $invoked, 'Delegate must NEVER fire during introspection.');
+        $this->assertSame(0, $invoked, 'Factory must NEVER fire during introspection.');
     }
 
     public function testInspectionDoesNotFirePrepareHooks(): void
     {
         $container = new Container();
-        $container->share(new \stdClass());
+        $container->instance(\stdClass::class, new \stdClass());
 
         $invoked = 0;
-        $container->prepare(\stdClass::class, static function () use (&$invoked): void {
+        $container->extend(\stdClass::class, static function () use (&$invoked): void {
             $invoked++;
-            throw new \RuntimeException('Inspector triggered a prepare hook — lazy-binding contract violated.');
+            throw new \RuntimeException('Inspector triggered an extend hook — lazy-binding contract violated.');
         });
 
         (new ContainerInspector($container))->inspectAll();
         (new ContainerInspector($container))->inspectOne(\stdClass::class);
 
-        $this->assertSame(0, $invoked, 'Prepare hook must NEVER fire during introspection.');
+        $this->assertSame(0, $invoked, 'Extend hook must NEVER fire during introspection.');
     }
 }

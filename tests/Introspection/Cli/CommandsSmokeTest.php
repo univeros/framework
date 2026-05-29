@@ -81,7 +81,7 @@ class CommandsSmokeTest extends TestCase
     public function testContainerInspectRealizedListsInstantiatedServices(): void
     {
         $container = new Container();
-        $container->share(new \ArrayObject());
+        $container->instance(\ArrayObject::class, new \ArrayObject());
 
         $command = new ContainerInspectCommand(new ContainerInspector($container), $this->renderers);
 

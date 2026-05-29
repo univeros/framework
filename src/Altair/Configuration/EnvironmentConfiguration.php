@@ -43,19 +43,18 @@ class EnvironmentConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->share(Env::class)
-            ->delegate(
-                Dotenv::class,
-                fn(): Dotenv => $this->immutable
-                    ? Dotenv::createImmutable($this->directory, $this->fileName)
-                    : Dotenv::createMutable($this->directory, $this->fileName),
-            )
-            ->prepare(
-                Env::class,
-                static function (Env $env, Container $container): void {
-                    $container->make(Dotenv::class)->load();
-                },
-            );
+        $container->singleton(Env::class);
+        $container->factory(
+            Dotenv::class,
+            fn(): Dotenv => $this->immutable
+                ? Dotenv::createImmutable($this->directory, $this->fileName)
+                : Dotenv::createMutable($this->directory, $this->fileName),
+        );
+        $container->extend(
+            Env::class,
+            static function (object $env, Container $container): void {
+                $container->make(Dotenv::class)->load();
+            },
+        );
     }
 }

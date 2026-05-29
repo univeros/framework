@@ -26,13 +26,15 @@ class LocalAdapterConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->delegate(LocalFilesystemAdapter::class, fn(): LocalFilesystemAdapter => new LocalFilesystemAdapter(
-                $this->env->get('FS_LOCAL_PATH'),
-                PortableVisibilityConverter::fromArray([]),
-                $this->env->get('FS_LOCAL_LOCK', LOCK_EX),
-                $this->env->get('FS_LOCAL_DISALLOW_LINKS', LocalFilesystemAdapter::DISALLOW_LINKS),
-            ))
-            ->alias(FilesystemAdapter::class, LocalFilesystemAdapter::class);
+        $container->factory(LocalFilesystemAdapter::class, fn(): LocalFilesystemAdapter => new LocalFilesystemAdapter(
+            $this->env->get('FS_LOCAL_PATH'),
+            PortableVisibilityConverter::fromArray([]),
+            $this->env->get('FS_LOCAL_LOCK', LOCK_EX),
+            $this->env->get('FS_LOCAL_DISALLOW_LINKS', LocalFilesystemAdapter::DISALLOW_LINKS),
+        ));
+        $container->factory(
+            FilesystemAdapter::class,
+            static fn(Container $c): FilesystemAdapter => $c->get(LocalFilesystemAdapter::class),
+        );
     }
 }

@@ -13,7 +13,6 @@ namespace Altair\Http\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Altair\Http\Collection\MiddlewareCollection;
 use Altair\Http\Resolver\ContainerResolver;
 use Override;
@@ -24,14 +23,13 @@ class RelayConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->define(ContainerResolver::class, new Definition([':container' => $container]))
-            ->delegate(
-                Relay::class,
-                static fn(
-                    MiddlewareCollection $queue,
-                    ContainerResolver $resolver,
-                ): Relay => new Relay($queue->toArray(), $resolver),
-            );
+        $container->bind(ContainerResolver::class)->withParameters(['container' => $container]);
+        $container->factory(
+            Relay::class,
+            static fn(
+                MiddlewareCollection $queue,
+                ContainerResolver $resolver,
+            ): Relay => new Relay($queue->toArray(), $resolver),
+        );
     }
 }

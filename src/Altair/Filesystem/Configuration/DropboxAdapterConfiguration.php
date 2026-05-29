@@ -26,11 +26,13 @@ class DropboxAdapterConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->delegate(DropboxAdapter::class, fn(): DropboxAdapter => new DropboxAdapter(
-                new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN')),
-                $this->env->get('FS_DROPBOX_PREFIX', ''),
-            ))
-            ->alias(FilesystemAdapter::class, DropboxAdapter::class);
+        $container->factory(DropboxAdapter::class, fn(): DropboxAdapter => new DropboxAdapter(
+            new Client($this->env->get('FS_DROPBOX_ACCESS_TOKEN')),
+            $this->env->get('FS_DROPBOX_PREFIX', ''),
+        ));
+        $container->factory(
+            FilesystemAdapter::class,
+            static fn(Container $c): FilesystemAdapter => $c->get(DropboxAdapter::class),
+        );
     }
 }

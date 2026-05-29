@@ -29,7 +29,7 @@ class DispatchAndConsumeTest extends TestCase
         $handler = new SendWelcomeEmailHandler();
 
         $container = new Container();
-        $container->share($handler);
+        $container->instance($handler::class, $handler);
 
         $registry = new HandlerRegistry();
         $registry->registerFromAttribute(
@@ -55,7 +55,7 @@ class DispatchAndConsumeTest extends TestCase
         $handler = new SendWelcomeEmailHandler();
 
         $container = new Container();
-        $container->share($handler);
+        $container->instance($handler::class, $handler);
 
         $registry = new HandlerRegistry();
         $registry->registerFromAttribute(

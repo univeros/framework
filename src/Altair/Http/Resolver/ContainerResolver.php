@@ -22,6 +22,9 @@ class ContainerResolver
         private readonly Container $container,
     ) {}
 
+    /**
+     * @param class-string|object $entry
+     */
     public function __invoke(object|string $entry): object
     {
         return \is_object($entry) ? $entry : $this->container->make($entry);

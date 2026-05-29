@@ -65,82 +65,80 @@ final readonly class McpConfiguration implements ConfigurationInterface
 
         $userToolPaths = $this->userToolPaths;
 
-        $container
-            ->share($container)
-            ->share($context)
-            ->share($this->mode)
-            ->share(new PathGuard($context->projectRoot))
-            ->share(new ServerInfo())
-            ->share(new SchemaValidator())
+        $container->instance($container::class, $container);
+        $container->instance($context::class, $context);
+        $container->instance($this->mode::class, $this->mode);
 
-            ->delegate(
-                EventLog::class,
-                static fn(?RecorderInterface $recorder = null): EventLog => new EventLog($recorder),
-            )
-            ->share(EventLog::class)
+        $pathGuard = new PathGuard($context->projectRoot);
+        $container->instance($pathGuard::class, $pathGuard);
+        $serverInfo = new ServerInfo();
+        $container->instance($serverInfo::class, $serverInfo);
+        $schemaValidator = new SchemaValidator();
+        $container->instance($schemaValidator::class, $schemaValidator);
 
-            ->delegate(
-                DatabaseGatewayInterface::class,
-                static function (Container $c): DatabaseGatewayInterface {
-                    if (interface_exists(DatabaseProviderInterface::class) && $c->isset(DatabaseProviderInterface::class)) {
-                        $provider = $c->get(DatabaseProviderInterface::class);
-                        if ($provider instanceof DatabaseProviderInterface) {
-                            return new CycleDatabaseGateway($provider);
-                        }
+        $container->factory(
+            EventLog::class,
+            static fn(?RecorderInterface $recorder = null): EventLog => new EventLog($recorder),
+        )->shared();
+
+        $container->factory(
+            DatabaseGatewayInterface::class,
+            static function (Container $c): DatabaseGatewayInterface {
+                if (interface_exists(DatabaseProviderInterface::class) && $c->has(DatabaseProviderInterface::class)) {
+                    $provider = $c->get(DatabaseProviderInterface::class);
+                    if ($provider instanceof DatabaseProviderInterface) {
+                        return new CycleDatabaseGateway($provider);
                     }
+                }
 
-                    return new NullDatabaseGateway();
-                },
-            )
-            ->share(DatabaseGatewayInterface::class)
+                return new NullDatabaseGateway();
+            },
+        )->shared();
 
-            ->delegate(
-                ToolResolverInterface::class,
-                static fn(Container $c): ToolResolverInterface => new ContainerToolResolver($c),
-            )
-            ->share(ToolResolverInterface::class)
+        $container->factory(
+            ToolResolverInterface::class,
+            static fn(Container $c): ToolResolverInterface => new ContainerToolResolver($c),
+        )->shared();
 
-            ->delegate(
-                ToolRegistry::class,
-                static function () use ($userToolPaths): ToolRegistry {
-                    $discoverer = new AttributeToolDiscoverer();
-                    $registry = new ToolRegistry();
+        $container->factory(
+            ToolRegistry::class,
+            static function () use ($userToolPaths): ToolRegistry {
+                $discoverer = new AttributeToolDiscoverer();
+                $registry = new ToolRegistry();
 
-                    $classes = [...BuiltinTools::classes(), ...$discoverer->discoverClasses($userToolPaths)];
-                    foreach ($discoverer->fromClasses($classes) as $descriptor) {
-                        if (!$registry->has($descriptor->name)) {
-                            $registry->register($descriptor);
-                        }
+                $classes = [...BuiltinTools::classes(), ...$discoverer->discoverClasses($userToolPaths)];
+                foreach ($discoverer->fromClasses($classes) as $descriptor) {
+                    if (!$registry->has($descriptor->name)) {
+                        $registry->register($descriptor);
                     }
+                }
 
-                    return $registry;
-                },
-            )
-            ->share(ToolRegistry::class)
+                return $registry;
+            },
+        )->shared();
 
-            ->delegate(
-                Server::class,
-                static fn(
-                    ToolRegistry $registry,
-                    ToolResolverInterface $resolver,
-                    SchemaValidator $validator,
-                    ServerInfo $info,
-                ): Server => new Server($registry, $resolver, $validator, $info),
-            )
-            ->share(Server::class);
+        $container->factory(
+            Server::class,
+            static fn(
+                ToolRegistry $registry,
+                ToolResolverInterface $resolver,
+                SchemaValidator $validator,
+                ServerInfo $info,
+            ): Server => new Server($registry, $resolver, $validator, $info),
+        )->shared();
     }
 
     private function applyPrerequisites(Container $container, string $root): void
     {
-        if (!$container->isset(RecorderInterface::class)) {
+        if (!$container->has(RecorderInterface::class)) {
             (new EventsConfiguration($root))->apply($container);
         }
 
-        if (!$container->isset(Journal::class)) {
+        if (!$container->has(Journal::class)) {
             (new ScaffoldJournalConfiguration($root))->apply($container);
         }
 
-        if (!$container->isset(Doctor::class)) {
+        if (!$container->has(Doctor::class)) {
             (new DoctorConfiguration($root))->apply($container);
         }
     }

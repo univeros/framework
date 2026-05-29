@@ -13,7 +13,6 @@ namespace Altair\Sanitation\Configuration;
 
 use Altair\Configuration\Contracts\ConfigurationInterface;
 use Altair\Container\Container;
-use Altair\Container\Definition;
 use Altair\Sanitation\Contracts\FiltersRunnerInterface;
 use Altair\Sanitation\Contracts\ResolverInterface;
 use Altair\Sanitation\FiltersRunner;
@@ -25,9 +24,8 @@ class SanitationConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->alias(ResolverInterface::class, FilterResolver::class)
-            ->alias(FiltersRunnerInterface::class, FiltersRunner::class)
-            ->define(FilterResolver::class, new Definition([':container' => $container]));
+        $container->alias(ResolverInterface::class, FilterResolver::class);
+        $container->alias(FiltersRunnerInterface::class, FiltersRunner::class);
+        $container->bind(FilterResolver::class)->withParameters(['container' => $container]);
     }
 }

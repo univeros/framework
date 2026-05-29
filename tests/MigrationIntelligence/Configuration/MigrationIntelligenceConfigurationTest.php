@@ -35,6 +35,6 @@ class MigrationIntelligenceConfigurationTest extends TestCase
         $container = new Container();
         (new MigrationIntelligenceConfiguration())->apply($container);
 
-        $this->assertSame($container->make(PlanBuilder::class), $container->make(PlanBuilder::class));
+        $this->assertSame($container->get(PlanBuilder::class), $container->get(PlanBuilder::class));
     }
 }

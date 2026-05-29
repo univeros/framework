@@ -63,55 +63,46 @@ final readonly class IntrospectionConfiguration implements ConfigurationInterfac
         $manifestRoot = $this->manifestRoot ?? $projectRoot . DIRECTORY_SEPARATOR . '.agent';
         $extraSecretPatterns = $this->extraSecretPatterns;
 
-        $container
-            ->delegate(
-                RendererRegistry::class,
-                static fn(): RendererRegistry => RendererRegistry::default(),
-            )
-            ->share(RendererRegistry::class)
+        $container->factory(
+            RendererRegistry::class,
+            static fn(): RendererRegistry => RendererRegistry::default(),
+        )->shared();
 
-            ->delegate(
-                ContainerInspector::class,
-                static fn(Container $c): ContainerInspector => new ContainerInspector($c),
-            )
-            ->share(ContainerInspector::class)
+        $container->factory(
+            ContainerInspector::class,
+            static fn(Container $c): ContainerInspector => new ContainerInspector($c),
+        )->shared();
 
-            ->delegate(
-                RouteInspector::class,
-                static fn(RouteCollection $routes): RouteInspector => new RouteInspector($routes),
-            )
-            ->share(RouteInspector::class)
+        $container->factory(
+            RouteInspector::class,
+            static fn(RouteCollection $routes): RouteInspector => new RouteInspector($routes),
+        )->shared();
 
-            ->delegate(
-                ListenerInspector::class,
-                static fn(EventDispatcherInterface $d): ListenerInspector => new ListenerInspector(
-                    $d instanceof EventDispatcher ? $d : new EventDispatcher(),
-                ),
-            )
-            ->share(ListenerInspector::class)
+        $container->factory(
+            ListenerInspector::class,
+            static fn(EventDispatcherInterface $d): ListenerInspector => new ListenerInspector(
+                $d instanceof EventDispatcher ? $d : new EventDispatcher(),
+            ),
+        )->shared();
 
-            ->delegate(
-                PipelineInspector::class,
-                static fn(MiddlewareCollection $q): PipelineInspector => new PipelineInspector($q),
-            )
-            ->share(PipelineInspector::class)
+        $container->factory(
+            PipelineInspector::class,
+            static fn(MiddlewareCollection $q): PipelineInspector => new PipelineInspector($q),
+        )->shared();
 
-            ->delegate(
-                ConfigInspector::class,
-                static fn(Container $c): ConfigInspector => new ConfigInspector($c, $extraSecretPatterns),
-            )
-            ->share(ConfigInspector::class)
+        $container->factory(
+            ConfigInspector::class,
+            static fn(Container $c): ConfigInspector => new ConfigInspector($c, $extraSecretPatterns),
+        )->shared();
 
-            ->delegate(
-                SpecInspector::class,
-                static fn(): SpecInspector => new SpecInspector($specRoot),
-            )
-            ->share(SpecInspector::class)
+        $container->factory(
+            SpecInspector::class,
+            static fn(): SpecInspector => new SpecInspector($specRoot),
+        )->shared();
 
-            ->delegate(
-                ManifestDiffInspector::class,
-                static fn(): ManifestDiffInspector => new ManifestDiffInspector($manifestRoot),
-            )
-            ->share(ManifestDiffInspector::class);
+        $container->factory(
+            ManifestDiffInspector::class,
+            static fn(): ManifestDiffInspector => new ManifestDiffInspector($manifestRoot),
+        )->shared();
     }
 }

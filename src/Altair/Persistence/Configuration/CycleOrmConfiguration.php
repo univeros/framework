@@ -66,45 +66,46 @@ final readonly class CycleOrmConfiguration implements ConfigurationInterface
     #[Override]
     public function apply(Container $container): void
     {
-        $container
-            ->share(DatabaseSettings::class)
-            ->share(DatabaseManager::class)
-            ->share(CycleUnitOfWork::class)
-            ->share(CycleEntityManager::class)
-            ->share(ORMInterface::class)
-            ->alias(DatabaseProviderInterface::class, DatabaseManager::class)
-            ->alias(UnitOfWorkInterface::class, CycleUnitOfWork::class)
-            ->alias(EntityManagerInterface::class, CycleEntityManager::class);
+        $container->singleton(CycleUnitOfWork::class);
+        $container->alias(UnitOfWorkInterface::class, CycleUnitOfWork::class);
 
-        $container->delegate(
+        $container->factory(
             DatabaseSettings::class,
             static fn(Env $env): DatabaseSettings => DatabaseSettings::fromEnv(self::readEnv($env)),
-        );
+        )->shared();
 
-        $container->delegate(
+        $container->factory(
             DatabaseManager::class,
             static fn(DatabaseSettings $settings): DatabaseManager
                 => (new DatabaseConnectionFactory())->create($settings),
-        );
+        )->shared();
+        $container->factory(
+            DatabaseProviderInterface::class,
+            static fn(Container $c): DatabaseProviderInterface => $c->get(DatabaseManager::class),
+        )->shared();
 
-        $container->delegate(
+        $container->factory(
             ORMInterface::class,
             static fn(DatabaseProviderInterface $databases, SchemaProviderInterface $provider): ORMInterface
                 => new ORM(new Factory($databases), new Schema($provider->schema())),
-        );
+        )->shared();
 
         $bindings = $this->repositoryBindings;
-        $container->delegate(
+        $container->factory(
             CycleEntityManager::class,
             static fn(
                 ORMInterface $orm,
                 UnitOfWorkInterface $unitOfWork,
                 Container $resolver,
             ): CycleEntityManager => new CycleEntityManager($orm, $unitOfWork, $resolver, $bindings),
-        );
+        )->shared();
+        $container->factory(
+            EntityManagerInterface::class,
+            static fn(Container $c): EntityManagerInterface => $c->get(CycleEntityManager::class),
+        )->shared();
 
         foreach ($bindings as $repository) {
-            $container->share($repository);
+            $container->singleton($repository);
         }
     }
 

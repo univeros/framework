@@ -34,7 +34,7 @@ final class IntrospectionToolsTest extends TestCase
     private function container(): Container
     {
         $container = new Container();
-        $container->share($container);
+        $container->instance($container::class, $container);
 
         return $container;
     }
@@ -50,8 +50,8 @@ final class IntrospectionToolsTest extends TestCase
     public function testConfigDumpMasksSecretsUnconditionally(): void
     {
         $container = $this->container();
-        $container->defineParameter('db_password', 'supersecret');
-        $container->defineParameter('app_name', 'altair');
+        $container->value('db_password', 'supersecret');
+        $container->value('app_name', 'altair');
 
         $result = (new ConfigDumpTool($container))->call([]);
 
@@ -74,7 +74,7 @@ final class IntrospectionToolsTest extends TestCase
     public function testRoutesListReturnsRoutesWhenBound(): void
     {
         $container = $this->container();
-        $container->share(new RouteCollection(['GET /users' => 'App\\ListUsers']));
+        $container->instance(RouteCollection::class, new RouteCollection(['GET /users' => 'App\\ListUsers']));
 
         $result = (new RoutesListTool($container))->call([]);
 
@@ -85,7 +85,7 @@ final class IntrospectionToolsTest extends TestCase
     public function testRouteShowFindsAndMisses(): void
     {
         $container = $this->container();
-        $container->share(new RouteCollection(['GET /users' => 'App\\ListUsers']));
+        $container->instance(RouteCollection::class, new RouteCollection(['GET /users' => 'App\\ListUsers']));
 
         $found = (new RouteShowTool($container))->call(['path' => '/users']);
         self::assertSame('/users', $found['rows'][0]['path']);
@@ -105,7 +105,7 @@ final class IntrospectionToolsTest extends TestCase
         $dispatcher->addListener('user.created', static fn(): null => null);
 
         $container = $this->container();
-        $container->share($dispatcher);
+        $container->instance($dispatcher::class, $dispatcher);
 
         $list = (new ListenersListTool($container))->call([]);
         self::assertContains('user.created', array_column($list['rows'], 'event'));
@@ -123,8 +123,7 @@ final class IntrospectionToolsTest extends TestCase
         $dispatcher->addListener('order.placed', static fn(): null => null);
 
         $container = $this->container();
-        $container->delegate(EventDispatcherInterface::class, static fn(): EventDispatcher => $dispatcher)
-            ->share(EventDispatcherInterface::class);
+        $container->factory(EventDispatcherInterface::class, static fn(): EventDispatcher => $dispatcher)->shared();
 
         $result = (new ListenersListTool($container))->call([]);
 
@@ -136,7 +135,7 @@ final class IntrospectionToolsTest extends TestCase
         self::assertFalse((new MiddlewareListTool($this->container()))->call([])['available']);
 
         $container = $this->container();
-        $container->share(new MiddlewareCollection(['App\\Middleware\\Cors']));
+        $container->instance(MiddlewareCollection::class, new MiddlewareCollection(['App\\Middleware\\Cors']));
 
         $result = (new MiddlewareListTool($container))->call([]);
         self::assertSame('App\\Middleware\\Cors', $result['rows'][0]['middleware']);

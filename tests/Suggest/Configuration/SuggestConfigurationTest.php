@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Suggest\Configuration;
 
+use Altair\Suggest\Result\Suggestion;
 use Altair\Container\Container;
 use Altair\Introspection\Inspector\ContainerInspector;
 use Altair\Suggest\Configuration\SuggestConfiguration;
@@ -57,8 +58,8 @@ class SuggestConfigurationTest extends TestCase
     public function testCustomThresholdFlowsIntoFatConstructorRule(): void
     {
         $container = new Container();
-        $container->share(new ServiceWithCollaborator(new Collaborator(), 'x'));
-        $container->delegate(
+        $container->instance(ServiceWithCollaborator::class, new ServiceWithCollaborator(new Collaborator(), 'x'));
+        $container->factory(
             ContainerInspector::class,
             static fn(Container $c): ContainerInspector => new ContainerInspector($c),
         );
@@ -71,7 +72,7 @@ class SuggestConfigurationTest extends TestCase
             ['fat_constructor'],
         );
 
-        $subjects = array_map(static fn($s): string => $s->subject, $report->suggestions);
+        $subjects = array_map(static fn(Suggestion $s): string => $s->subject, $report->suggestions);
         $this->assertContains(ServiceWithCollaborator::class, $subjects, 'threshold 0 flags the one-object-dep service');
     }
 }

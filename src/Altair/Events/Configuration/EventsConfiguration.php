@@ -46,54 +46,49 @@ final readonly class EventsConfiguration implements ConfigurationInterface
     {
         $projectRoot = $this->projectRoot;
 
-        $container
-            ->delegate(
-                EventsSettings::class,
-                static fn(Env $env): EventsSettings => EventsSettings::fromEnv($env, $projectRoot),
-            )
-            ->share(EventsSettings::class)
+        $container->factory(
+            EventsSettings::class,
+            static fn(Env $env): EventsSettings => EventsSettings::fromEnv($env, $projectRoot),
+        )->shared();
 
-            ->delegate(
-                Scrubber::class,
-                static fn(EventsSettings $settings): Scrubber => (new Scrubber())->withSecrets($settings->extraSecretFlags),
-            )
-            ->share(Scrubber::class)
+        $container->factory(
+            Scrubber::class,
+            static fn(EventsSettings $settings): Scrubber => (new Scrubber())->withSecrets($settings->extraSecretFlags),
+        )->shared();
 
-            ->delegate(
-                JsonlStorage::class,
-                static fn(EventsSettings $settings): JsonlStorage => new JsonlStorage($settings->logPath()),
-            )
-            ->share(JsonlStorage::class)
-            ->alias(EventStorageInterface::class, JsonlStorage::class)
+        $container->factory(
+            JsonlStorage::class,
+            static fn(EventsSettings $settings): JsonlStorage => new JsonlStorage($settings->logPath()),
+        )->shared();
+        $container->factory(
+            EventStorageInterface::class,
+            static fn(Container $c): EventStorageInterface => $c->get(JsonlStorage::class),
+        )->shared();
 
-            ->delegate(
-                SnapshotStorage::class,
-                static fn(EventsSettings $settings): SnapshotStorage => new SnapshotStorage($settings->snapshotsPath()),
-            )
-            ->share(SnapshotStorage::class)
+        $container->factory(
+            SnapshotStorage::class,
+            static fn(EventsSettings $settings): SnapshotStorage => new SnapshotStorage($settings->snapshotsPath()),
+        )->shared();
 
-            ->delegate(
-                CheckpointStorage::class,
-                static fn(EventsSettings $settings): CheckpointStorage => new CheckpointStorage($settings->checkpointsPath()),
-            )
-            ->share(CheckpointStorage::class)
+        $container->factory(
+            CheckpointStorage::class,
+            static fn(EventsSettings $settings): CheckpointStorage => new CheckpointStorage($settings->checkpointsPath()),
+        )->shared();
 
-            ->delegate(
-                Reader::class,
-                static fn(EventStorageInterface $storage): Reader => new Reader($storage),
-            )
-            ->share(Reader::class)
+        $container->factory(
+            Reader::class,
+            static fn(EventStorageInterface $storage): Reader => new Reader($storage),
+        )->shared();
 
-            ->delegate(
-                RecorderInterface::class,
-                static fn(
-                    EventsSettings $settings,
-                    EventStorageInterface $storage,
-                    Scrubber $scrubber,
-                ): RecorderInterface => $settings->enabled
-                    ? new Recorder($storage, $scrubber)
-                    : new NullRecorder(),
-            )
-            ->share(RecorderInterface::class);
+        $container->factory(
+            RecorderInterface::class,
+            static fn(
+                EventsSettings $settings,
+                EventStorageInterface $storage,
+                Scrubber $scrubber,
+            ): RecorderInterface => $settings->enabled
+                ? new Recorder($storage, $scrubber)
+                : new NullRecorder(),
+        )->shared();
     }
 }

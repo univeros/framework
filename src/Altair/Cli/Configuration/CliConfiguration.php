@@ -44,14 +44,13 @@ class CliConfiguration implements ConfigurationInterface
         $name = $this->name;
         $version = $this->version;
 
-        $container
-            ->alias(CommandLocatorInterface::class, AttributeCommandDiscoverer::class)
-            ->share(AttributeCommandDiscoverer::class)
-            ->delegate(
-                Application::class,
-                static fn(
-                    AttributeCommandDiscoverer $discoverer,
-                ): Application => (new Application($container, $name, $version))->discover($discoverer->scan($paths)),
-            );
+        $container->alias(CommandLocatorInterface::class, AttributeCommandDiscoverer::class);
+        $container->singleton(AttributeCommandDiscoverer::class);
+        $container->factory(
+            Application::class,
+            static fn(
+                AttributeCommandDiscoverer $discoverer,
+            ): Application => (new Application($container, $name, $version))->discover($discoverer->scan($paths)),
+        );
     }
 }

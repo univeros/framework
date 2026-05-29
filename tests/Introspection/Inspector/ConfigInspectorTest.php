@@ -67,7 +67,7 @@ class ConfigInspectorTest extends TestCase
     public function testIncludesContainerParameters(): void
     {
         $container = new Container();
-        $container->defineParameter('appName', 'demo');
+        $container->value('appName', 'demo');
 
         $rows = (new ConfigInspector($container))->dump()->rows;
         $found = false;
