@@ -1,6 +1,6 @@
 # Data
 
-A trait-composed, immutable-by-default entity base layer with JSON serialization, PHP `Serializable` support, and Carbon-powered date attribute mutators.
+A trait-composed, immutable-by-default data-object layer with JSON serialization, PHP `Serializable` support, and Carbon-powered date attribute mutators.
 
 ---
 
@@ -16,13 +16,13 @@ A trait-composed, immutable-by-default entity base layer with JSON serialization
 
 The Data package provides the structural foundation for typed, immutable data objects in the Altair framework. It is the right tool when you need an object that carries named attributes, can survive a round-trip through `json_encode` / `json_decode`, and enforces that no caller ever modifies its state after construction.
 
-A **DTO** (Data Transfer Object) carries data across a process boundary but typically has no behaviour. An Altair entity built on this package is similar: it is attribute-oriented and has no persistence logic. The difference is that it goes further by providing a standardised interface — `EntityInterface` — that every consuming layer (validation, HTTP responders, view models) can depend on without knowing the concrete class.
+A **DTO** (Data Transfer Object) carries data across a process boundary but typically has no behaviour. A Data object is similar: it is attribute-oriented and carries no persistence logic. The difference is that it goes further by providing a standardised interface — `DataObjectInterface` — that every consuming layer (validation, HTTP responders, view models, cache and queue payloads) can depend on without knowing the concrete class.
 
-This package is **not an ORM**. There is no query builder, no relationship loading, no lazy hydration, and no database connection. The companion repository contracts (`QueryRepositoryInterface`, `CreateRepositoryInterface`, and so on) define the shape of a storage layer, but the Data package provides none of the implementations. You bring your own persistence adapter and have it return `EntityInterface` instances.
+This package is **not an ORM**, and it owns no repository contracts. There is no query builder, no relationship loading, no lazy hydration, and no database connection. Persistence is a separate concern: the `univeros/persistence` package owns the framework's single `RepositoryInterface` and is where a Data object can gain persistence, relations, and type coercion. The dependency arrow is one-way — Persistence may depend on Data, never the reverse — which keeps this package a zero-dependency leaf.
 
 Date fields get first-class treatment. Any string attribute that holds a parseable date can be read back as a `Carbon\Carbon` instance via `asCarbonDate()`, or as a formatted string via `asDateString()`. This removes the boilerplate of constructing Carbon objects at the call site and keeps the conversion logic co-located with the entity.
 
-The implementation is entirely trait-based. There is no abstract base class to extend. You compose the four traits into a `final` (or open) class and implement `EntityInterface`. This design keeps the package usable alongside other base classes your architecture may already impose.
+The implementation is entirely trait-based. There is no abstract base class to extend. You compose the four traits into a `final` (or open) class and implement `DataObjectInterface`. This design keeps the package usable alongside other base classes your architecture may already impose.
 
 ---
 
@@ -38,18 +38,18 @@ composer require univeros/data
 
 ## Quick start
 
-Create a small entity by implementing `EntityInterface` and composing the four traits. Pass initial values as an associative array to the constructor.
+Create a small entity by implementing `DataObjectInterface` and composing the four traits. Pass initial values as an associative array to the constructor.
 
 ```php
 <?php declare(strict_types=1);
 
-use Altair\Data\Contracts\EntityInterface;
+use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Data\Traits\ImmutableAttributesAwareTrait;
 use Altair\Data\Traits\JsonSerializableAwareTrait;
 use Altair\Data\Traits\DateAttributeMutatorAwareTrait;
 use Altair\Data\Traits\SerializeAwareTrait;
 
-final class Product implements EntityInterface
+final class Product implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -83,7 +83,7 @@ echo json_encode($product);                    // {"id":1,"name":"Orion Lens","c
 
 ### Contracts
 
-`EntityInterface` extends three standard contracts:
+`DataObjectInterface` extends three standard contracts:
 
 | Contract | Source |
 |---|---|
@@ -91,7 +91,7 @@ echo json_encode($product);                    // {"id":1,"name":"Orion Lens","c
 | `JsonSerializable` | PHP built-in |
 | `Serializable` | PHP built-in |
 
-`ArrayableInterface` declares a single method, `toArray(): array`. `EntityInterface` builds on it by adding `has(string $key): bool`, `get(string $key): mixed`, and `withData(array $data): static`. These three methods are the stable API that consuming code should target.
+`ArrayableInterface` declares a single method, `toArray(): array`. `DataObjectInterface` builds on it by adding `has(string $key): bool`, `get(string $key): mixed`, and `withData(array $data): static`. These three methods are the stable API that consuming code should target.
 
 ### Attribute access
 
@@ -117,18 +117,18 @@ Date mutators operate on any attribute that holds a date string parseable by `Ca
 
 ### Defining an entity
 
-Declare the class, implement `EntityInterface`, and compose all four traits. Properties must be declared explicitly — the constructor uses `get_object_vars()` to discover them, so undeclared dynamic properties are invisible.
+Declare the class, implement `DataObjectInterface`, and compose all four traits. Properties must be declared explicitly — the constructor uses `get_object_vars()` to discover them, so undeclared dynamic properties are invisible.
 
 ```php
 <?php declare(strict_types=1);
 
-use Altair\Data\Contracts\EntityInterface;
+use Altair\Data\Contracts\DataObjectInterface;
 use Altair\Data\Traits\DateAttributeMutatorAwareTrait;
 use Altair\Data\Traits\ImmutableAttributesAwareTrait;
 use Altair\Data\Traits\JsonSerializableAwareTrait;
 use Altair\Data\Traits\SerializeAwareTrait;
 
-final class UserProfile implements EntityInterface
+final class UserProfile implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -235,7 +235,7 @@ The following patterns cover the scenarios you are most likely to encounter:
 
 use PHPUnit\Framework\TestCase;
 use Altair\Data\Contracts\ArrayableInterface;
-use Altair\Data\Contracts\EntityInterface;
+use Altair\Data\Contracts\DataObjectInterface;
 use Carbon\Carbon;
 
 final class UserProfileTest extends TestCase
@@ -257,7 +257,7 @@ final class UserProfileTest extends TestCase
 
     public function testImplementsContracts(): void
     {
-        $this->assertInstanceOf(EntityInterface::class, $this->profile);
+        $this->assertInstanceOf(DataObjectInterface::class, $this->profile);
         $this->assertInstanceOf(ArrayableInterface::class, $this->profile);
         $this->assertInstanceOf(\JsonSerializable::class, $this->profile);
         $this->assertInstanceOf(\Serializable::class, $this->profile);
@@ -342,7 +342,7 @@ trait MoneyAttributeMutatorTrait
 Then compose it in your entity:
 
 ```php
-final class Invoice implements EntityInterface
+final class Invoice implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -356,47 +356,18 @@ final class Invoice implements EntityInterface
 }
 ```
 
-### Implementing repository contracts
+### Pairing with a persistence layer
 
-The Data package ships five repository contracts. They express the shape of a storage layer without binding you to any implementation. Your adapter class implements whichever combination suits your use case.
+The Data package owns no repository contracts. When you need to load and store Data objects, depend on the `univeros/persistence` package: its `RepositoryInterface` is the framework's single repository abstraction. A persistence adapter fetches a row and hydrates a Data object — for example by passing the row array straight to the constructor — so the Data object stays free of any storage concern.
 
 ```php
 <?php declare(strict_types=1);
 
-use Altair\Data\Contracts\QueryRepositoryInterface;
-use Altair\Data\Contracts\CreateRepositoryInterface;
-use Altair\Data\Contracts\EntityInterface;
+// In your persistence layer (univeros/persistence), not in Data:
+$row = $connection->fetchRow('SELECT * FROM users WHERE id = ?', [$id]);
 
-final class UserRepository implements QueryRepositoryInterface, CreateRepositoryInterface
-{
-    public function find(mixed $id): ?EntityInterface
-    {
-        // fetch from your storage, hydrate a UserProfile, return it
-    }
-
-    public function findAll(): ?array { /* ... */ }
-
-    public function findOneBy(array $criteria): ?EntityInterface { /* ... */ }
-
-    public function findAllBy(array $condition): ?array { /* ... */ }
-
-    public function create(array $values): EntityInterface
-    {
-        return new UserProfile($values);
-    }
-}
+return $row === null ? null : new UserProfile($row);
 ```
-
-The five available contracts are:
-
-| Contract | Operations |
-|---|---|
-| `QueryRepositoryInterface` | `find`, `findAll`, `findOneBy`, `findAllBy` |
-| `CreateRepositoryInterface` | `create` |
-| `UpdateRepositoryInterface` | `update` |
-| `DeleteRepositoryInterface` | `delete`, `deleteAll`, `deleteOneBy`, `deleteAllBy` |
-| `PartialRepositoryInterface` | `findPartial`, `findPartialBy`, `findPartialsBy` |
-| `ScalarRepositoryInterface` | `findScalar`, `findScalars`, `findScalarBy` |
 
 ---
 
@@ -415,7 +386,7 @@ trait MoneyAttributeMutatorTrait
     }
 }
 
-final class OrderLine implements EntityInterface
+final class OrderLine implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -444,7 +415,7 @@ trait JsonColumnMutatorTrait
     }
 }
 
-final class EventLog implements EntityInterface
+final class EventLog implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -463,7 +434,7 @@ $decoded = $log->asDecodedJson('payload'); // ['action' => 'login', 'ip' => '127
 Declare property defaults at the class level so `toArray()` always includes every key, even when the caller omits the value.
 
 ```php
-final class Notification implements EntityInterface
+final class Notification implements DataObjectInterface
 {
     use ImmutableAttributesAwareTrait;
     use JsonSerializableAwareTrait;
@@ -485,7 +456,7 @@ assert($n->read === false);
 Because `withData()` returns a new clone, you can diff two instances by comparing their `toArray()` outputs.
 
 ```php
-function changedKeys(EntityInterface $before, EntityInterface $after): array
+function changedKeys(DataObjectInterface $before, DataObjectInterface $after): array
 {
     $prev = $before->toArray();
     $next = $after->toArray();
@@ -529,8 +500,10 @@ echo $partial->role;  // null (default)
 
 ## Limitations
 
-- **No persistence.** The package does not connect to any database, file system, or external service. Entities are pure in-memory value objects.
-- **No relations.** There is no mechanism for lazy-loading or eager-loading associated entities. If you need to nest entities, set a composed entity as a property value manually before construction, or use a custom mutator trait to decode a related payload.
-- **No ORM features.** There is no identity map, unit-of-work, dirty-tracking, or schema reflection. The repository contracts define a persistence interface but provide no implementations.
+These are deliberate scope boundaries, not gaps. Data is the value-object layer; persistence, relations, and coercion belong to `univeros/persistence`, which may depend on Data to hydrate or expose Data objects.
+
+- **No persistence.** The package does not connect to any database, file system, or external service. Data objects are pure in-memory value objects.
+- **No relations.** There is no mechanism for lazy-loading or eager-loading associated objects. If you need to nest objects, set a composed object as a property value before construction, or use a custom mutator trait to decode a related payload.
+- **No ORM features.** There is no identity map, unit-of-work, dirty-tracking, or schema reflection, and the package ships no repository contracts. Use `univeros/persistence` and its `RepositoryInterface` when you need them.
 - **No automatic type coercion.** The constructor assigns values as-is. If your storage layer returns integers as strings, you must coerce them before passing to the constructor or in a custom mutator trait.
-- **`serialize()` / `unserialize()` writes directly to properties.** The `unserialize()` implementation in `SerializeAwareTrait` bypasses `__set()` by writing to `$this->{$key}` inside the trait's own scope. This is intentional — it is the only path for deserializing an immutable object — but it means a deserialized entity does not pass through the constructor or any validation logic.
+- **`serialize()` / `unserialize()` writes directly to properties.** The `unserialize()` implementation in `SerializeAwareTrait` bypasses `__set()` by writing to `$this->{$key}` inside the trait's own scope. This is intentional — it is the only path for deserializing an immutable object — but it means a deserialized object does not pass through the constructor or any validation logic.
