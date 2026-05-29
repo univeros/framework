@@ -402,7 +402,19 @@ final class Container implements ContainerInterface, FactoryInterface, InvokerIn
             return $this->call($factory);
         }
 
-        return $this->build($definition->concrete() ?? $definition->id(), $definition->parameters());
+        $concrete = $definition->concrete();
+
+        // An alias (`->to(B)`) pointing at a separately-bound concrete must
+        // resolve B through its own definition (factory, params, shared, …),
+        // not build it blindly. Only when the alias adds no parameters of its own.
+        if ($concrete !== null && $definition->parameters() === []) {
+            $concreteKey = NameNormalizer::normalize($concrete);
+            if ($concreteKey !== NameNormalizer::normalize($definition->id()) && $this->definition($concreteKey) instanceof DefinitionInterface) {
+                return $this->get($concrete);
+            }
+        }
+
+        return $this->build($concrete ?? $definition->id(), $definition->parameters());
     }
 
     private function invokeForObject(Closure $factory): object
