@@ -50,6 +50,21 @@ class Action
     }
 
     /**
+     * Rehydrates an Action from a `var_export`-serialized state array.
+     *
+     * Required so that {@see \FastRoute\cachedDispatcher} can read back
+     * Actions stored in its compiled route-cache file — without this,
+     * the cache file would emit `Action::__set_state(...)` calls that
+     * PHP could not resolve.
+     *
+     * @param array{domain: string, responder: string, input: string} $data
+     */
+    public static function __set_state(array $data): self
+    {
+        return new self($data['domain'], $data['responder'], $data['input']);
+    }
+
+    /**
      * Returns the domain specification fully qualified class name.
      *
      * @return string of \Altair\Http\Contracts\DomainInterface
