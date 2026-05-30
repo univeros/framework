@@ -1,7 +1,7 @@
-<h1 align="center">Univeros</h1>
+<h1 align="center">Univeros Framework</h1>
 
 <p align="center">
-  <em>A PHP framework whose primitives — generators, mutations, introspection — are built so an AI agent can drive it.</em>
+  <em>The source code of the Univeros framework. Namespace: <code>Altair\*</code>. Ships as <code>composer require univeros/framework</code>.</em>
 </p>
 
 <p align="center">
@@ -13,239 +13,15 @@
 
 ---
 
-## What is Univeros?
+> **Note:** this repository contains the core code of Univeros. If you want to build an application using Univeros, visit the main [**univeros/univeros**](https://github.com/univeros/univeros) repository.
 
-Univeros is a PHP 8.3+ framework for building APIs. Its codebase is namespaced `Altair\*` and ships as 35 composable packages (`univeros/http`, `univeros/scaffold`, `univeros/persistence`, …) plus a meta-package, `univeros/framework`, that bundles them all.
+## About Univeros
 
-It looks familiar at first — PSR-7/15 HTTP stack, a DI container, an ORM bridge over Cycle, a message bus over Symfony Messenger, immutable value objects, single-pass middleware. The unusual part is the layer above that: a CLI surface (`bin/altair`) whose every command emits **deterministic JSON** an AI agent can branch on, and a set of primitives — **scaffolding from a YAML spec, a rewindable journal of mutations, an append-only event log, a symbol-usage index, a doctor, a refactor adviser** — designed so an agent can be productive in the codebase without a human in the loop.
+Univeros is a PHP 8.3+ framework for building APIs. Its codebase lives under the `Altair\*` namespace — the engineering name, the way `Illuminate\*` is the engineering name for Laravel's components. The brand consumers see is **Univeros**; `Altair\*` is the plumbing.
 
-This README is the front door to what makes that work and how to use it.
+It looks familiar at first — PSR-7/15 HTTP stack, a DI container, a Cycle ORM bridge, a Symfony Messenger bridge, immutable value objects, single-pass middleware. The unusual part is the layer above that: a CLI surface (`bin/altair`) whose every command emits deterministic JSON an AI agent can branch on, and a set of primitives — **spec-driven scaffolding, a rewindable journal, an append-only event log, a symbol-usage index, a doctor, a refactor adviser, an MCP server** — designed so an agent can be productive without a human in the loop.
 
----
-
-## Why it exists
-
-Most frameworks were designed for a developer who reads documentation and infers patterns, greps for examples and mimics them, remembers project conventions between sessions, and catches their own mistakes by re-reading code.
-
-An AI agent does none of those things reliably. It needs:
-
-1. **Conventions emitted as machine-readable manifests** — not inferred from prose docs.
-2. **Generators that are deterministic** — so output can be verified, not just executed.
-3. **A clean way to undo a failed iteration** — not "hope you committed before that".
-4. **Mutation history that persists across context windows** — so "what did I just do?" is answerable in any session.
-
-Univeros provides those four things as first-class primitives. That is the reason it exists.
-
----
-
-## Quick start
-
-```bash
-composer create-project univeros/univeros myapp
-cd myapp
-php -S localhost:8080 -t public
-curl localhost:8080/ping
-# → {"status":"ok"}
-```
-
-You now have a runnable Altair API with a passing test, a health endpoint, the spec-driven toolchain wired, and the Altair agent skill staged at `.ai/skills/altair/SKILL.md` so any agent (Claude Code, Cursor, ChatGPT desktop) that lands in the project gets the project-specific operating manual on first load.
-
-To add an endpoint, write the spec — don't hand-write the boilerplate:
-
-```yaml
-# api/users/create.yaml
-endpoint:
-  name: CreateUser
-  method: POST
-  path: /users
-input:
-  email: { type: string, format: email, required: true }
-  name:  { type: string, required: true }
-responder:
-  success: 201
-persistence:
-  entity: User
-  table: users
-  columns:
-    id:    { type: uuid, primary: true }
-    email: { type: string, unique: true }
-    name:  { type: string }
-```
-
-Then scaffold:
-
-```bash
-bin/altair spec:scaffold api/users/create.yaml
-# Writes: Action, Input, Responder, domain stub, PHPUnit test,
-#         route entry, OpenAPI fragment, Cycle entity, migration, repository.
-```
-
-Every emitted file is byte-stable. Re-run on the same spec and not a byte changes — `bin/altair spec:lint` is a CI drift gate, and the SDK emitters ship their own `--check` mode.
-
----
-
-## What makes it work for agents
-
-These are the framework primitives that exist because agents need them. Each is a real `bin/altair` command with a `--format=json` (or default JSON) output mode.
-
-### 1. Spec-driven, deterministic emitters
-
-Every code generator — scaffolder, OpenAPI emitter, TypeScript SDK emitter, Python SDK emitter, Cycle migration emitter — produces byte-stable output for the same input. CI gates verify this:
-
-```bash
-bin/altair spec:scaffold api/users/create.yaml          # emit
-bin/altair spec:emit-openapi --out docs/openapi.yaml    # merge OpenAPI fragments
-bin/altair spec:emit-sdk typescript --out=sdk.ts --check  # exit 1 on drift
-bin/altair spec:lint                                    # drift check after hand-edits
-```
-
-An agent that generates from a spec can re-generate and compare to verify it did not corrupt the output. Determinism is enforced by issue **#74** as a CI gate on every PR.
-
-### 2. Spec journal — rewind / replay
-
-Every successful `bin/altair spec:scaffold` writes a self-contained entry to `.altair/journal/<id>.json` capturing the spec, per-file SHAs, and `content_before` for modified files. Failed iterations become recoverable.
-
-```bash
-bin/altair journal:list -n 50            # newest 50 entries
-bin/altair journal:rewind                # undo the most recent scaffold
-bin/altair journal:rewind --to=<id>      # undo back to a point
-bin/altair journal:rewind --dry-run      # preview without writing
-bin/altair journal:replay <id>           # re-apply one entry
-```
-
-### 3. Append-only event log — cross-session memory
-
-Every mutating operation (scaffold, migration, rewind, replay, `cs:fix`, rector, worker consume, manifest generate) records a structured entry to `.altair/events.jsonl`:
-
-```bash
-bin/altair events:tail -n 50                  # newest 50 events
-bin/altair events:since-last-success          # what happened since the last OK event
-bin/altair events:stats                       # counts by kind/status + total duration
-bin/altair events:checkpoint:create feat/posts # bookmark current head
-bin/altair events:checkpoint:diff feat/posts  # everything since the bookmark
-```
-
-An agent opens a fresh session, reads the log, and knows what was attempted, what landed, and what failed — without re-deriving it from `git log`.
-
-### 4. Symbol-usage index — refactor with confidence
-
-`bin/altair index` walks every PHP file with `nikic/php-parser` and stores symbols + usages in SQLite (`.altair/index.db`). It understands the framework's higher-level constructs too — spec endpoints, persistence entities — so refactor queries surface the YAML that drives a class, not just the PHP that references it.
-
-```bash
-bin/altair index:build                                       # ~1.8s on a 1490-file repo (8k symbols, 21k usages)
-bin/altair index:find-usages "App\User\User"
-bin/altair index:implements "Altair\Http\Contracts\MiddlewareInterface"
-bin/altair index:callers-of "App\User\UserRepository::findById"
-bin/altair index:impact "App\Order\Order"                    # blast radius of changing this
-bin/altair index:unused                                      # dead symbols
-bin/altair index:orphans                                     # files with no incoming references
-```
-
-Incremental rebuilds (content-hashed per file) keep queries millisecond-fast on a moving session.
-
-### 5. Doctor — agent-actionable health checks
-
-`bin/altair doctor` runs PHP / extension / composer checks, CS / PHPStan / test gates, container probes, and database probes. The JSON shape includes an `agent_action` per failure, telling the agent exactly what to do next — not just *what is wrong*, but *what to run next to fix it*.
-
-```bash
-bin/altair doctor --format=json
-bin/altair doctor --fix              # opt-in autofix for the subset that's safe
-bin/altair doctor --only=database    # filter by check group
-```
-
-### 6. Suggest — refactor adviser
-
-`bin/altair suggest` walks the introspection surface and flags dead container bindings, fat constructors, dead event listeners, routes without specs, orphan middleware. Each finding ships with file, line, rationale, and (where safe) an autofix.
-
-```bash
-bin/altair suggest --format=json
-bin/altair suggest --rule=dead-bindings
-```
-
-### 7. Eval — sandboxed scratchpad
-
-`bin/altair eval '<php>'` runs a snippet inside the project's container in a guarded subprocess (`disable_functions`, `open_basedir`, memory + wall-clock kill) and returns a structured JSON result.
-
-```bash
-bin/altair eval 'return $container->get(App\User\UserRepository::class)->count();'
-```
-
-The agent's "let me check" primitive. `--unsafe` lifts the sandbox and is audit-logged to `events.jsonl`.
-
-### 8. MCP server — drive Altair from any agent
-
-`bin/altair mcp:serve` exposes 42 framework operations as Model Context Protocol tools over stdio or HTTP. Any MCP-capable agent (Claude Code, ChatGPT desktop, Cursor) can drive an Altair project natively — introspect routes, run doctor, scaffold endpoints, rewind journal entries, query the index — without shell access.
-
-```bash
-bin/altair mcp:serve            # stdio
-bin/altair mcp:serve --http     # HTTP for remote agents
-bin/altair mcp:tools            # list exposed tools
-```
-
-For shell-capable agents working in a local checkout, the framework also ships an Altair skill at `.ai/skills/altair/SKILL.md` (and `.claude/skills/altair/SKILL.md`) in every project — onboarding without prompting.
-
-### 9. Introspection — read the booted app as JSON
-
-`bin/altair` ships read-only inspectors for everything the container resolves: bindings, routes, listeners, middleware, manifests, specs, masked config. Each emits deterministic JSON for agents and a scannable view for humans.
-
-### 10. Test reporter — failures mapped back to source
-
-`Altair\TestReporter\AltairExtension` is a PHPUnit 11 extension that emits a structured JSON report at the end of every run — failures mapped back to the production class under test (via `#[CoversClass]`, `@covers`, or a namespace heuristic), structured diffs for `assertSame` / `assertEquals`, one-word `result` for agents to branch on.
-
-### 11. Migration intelligence — safe schema changes
-
-`bin/altair db:migration-plan` proposes a Cycle migration from a spec/entity diff, with read-only safety checks: NOT NULL backfill paths, unique-constraint dupes, FK orphans, type-cast risk, large-table warnings, two-phase rename / type-change plans. Deterministic JSON output for agents and CI.
-
----
-
-## What you get on the human side
-
-Concrete decisions worth highlighting if you're evaluating from a developer angle, not an agent angle:
-
-- **PHP 8.3+**, `declare(strict_types=1)` on every file (995/995 source files compliant), native types over PHPDoc.
-- **PSR-7 / 15 / 14 / 6 / 16** where applicable.
-- **Single-pass middleware** — no `$next($req, $res)` double-pass leftovers from the 2015 era.
-- **Immutable value objects** — `withFoo()` instead of `setFoo()`. See `Altair\Cookie\Cookie` as the reference.
-- **Cycle ORM v2** behind framework-owned `RepositoryInterface` / `UnitOfWorkInterface` / `EntityManagerInterface` contracts — ORM imports stay out of HTTP/domain code.
-- **Symfony Messenger** behind a thin `MessageBusInterface` bridge, attribute-driven handler discovery (`#[AsHandler]`), built-in `bin/altair worker` commands.
-- **Attribute-driven CLI** — write a `#[Command]` invokable, decorate its `__invoke()` params with `#[Argument]`/`#[Option]`, and `bin/altair` discovers and autowires it.
-- **OpenTelemetry-format observability** without an OTel SDK dependency: PSR-15 middleware emits OTLP-JSON spans, the JSONL log captures them locally, the OTLP exporter forwards to any OTel Collector.
-- **Sampling profiler** (`bin/altair profile:*`, ext-excimer) — weighted call tree, hotspot table, flamegraph SVG, `profile:compare` regression gate for CI.
-- **Many small files** — 200-400 LOC typical, 800 LOC hard cap. Cohesion over containerisation.
-
----
-
-## Architecture in three layers
-
-```
-┌──────────────────────────────────────────────────────────────┐
-│  HTTP                                                        │
-│  Http · Middleware · Cookie · Session · Sanitation           │
-│  Validation · Courier · Security                             │
-├──────────────────────────────────────────────────────────────┤
-│  Application core                                            │
-│  Container · Configuration · Happen · Common · Structure     │
-│  Data · Cache · Filesystem · Messaging · Persistence         │
-├──────────────────────────────────────────────────────────────┤
-│  Agent and tooling surface                                   │
-│  Scaffold · AgentSpec · Cli · Introspection · Doctor         │
-│  Suggest · Index · Eval · Profiling · Observability          │
-│  Migration Intelligence · Events · TestReporter              │
-│  Mcp · Bootstrap · Tinker · Observatory                      │
-└──────────────────────────────────────────────────────────────┘
-```
-
-All three layers ship as the bundled `univeros/framework`, or as 35 independently installable packages — see [Sub-packages](#sub-packages) below.
-
----
-
-## Repositories
-
-Univeros is split across three top-level repositories — `univeros/univeros`, `univeros/framework`, `univeros/docs` — plus a read-only mirror per sub-package.
-
-- **[univeros/univeros](https://github.com/univeros/univeros)** — the create-project starter. `composer create-project univeros/univeros myapp` lays down a runnable Altair API.
-- **[univeros/framework](https://github.com/univeros/framework)** — this repo. The library you depend on (`composer require univeros/framework`).
-- **[univeros/docs](https://github.com/univeros/docs)** — read-only mirror of the [docs/](docs/) tree from this monorepo. Open issues and PRs against `univeros/framework`; the docs repo is the published surface only.
+For the pitch, agent affordances walkthrough, and architecture diagram, see [**univeros/univeros**](https://github.com/univeros/univeros). For per-package guides, see [**univeros/docs**](https://github.com/univeros/docs).
 
 ## Sub-packages
 
@@ -255,7 +31,7 @@ The framework is composed of 35 standalone PHP packages under [src/Altair/](src/
 composer require univeros/framework
 ```
 
-…or compose individual packages. A few representative ones:
+…or compose individual packages:
 
 ```bash
 composer require univeros/http          # PSR-7 + PSR-15 stack, single-pass middleware
@@ -265,30 +41,19 @@ composer require univeros/messaging     # MessageBus bridge over Symfony Messeng
 composer require univeros/events        # Append-only mutation event log for agents
 ```
 
-Per-package documentation lives under [docs/packages/](docs/packages/). The complete published list:
+The complete published list: `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
 
-`agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
+Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
 
-Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; every split repo (including `univeros/univeros` and `univeros/docs`) is a read-only mirror.
+## Repositories
 
----
-
-## Documentation
-
-Per-package guides live in [docs/packages/](docs/packages/) — every page stands alone and is kept in lockstep with the source via the same PR that changes the code. Recommended starting points:
-
-- [docs/README.md](docs/README.md) — full index, grouped by HTTP stack / application core / data / infrastructure / tooling
-- [docs/packages/scaffold.md](docs/packages/scaffold.md) — the spec-driven core
-- [docs/packages/events.md](docs/packages/events.md) — the agent memory model
-- [docs/packages/index.md](docs/packages/index.md) — the refactor index
-- [docs/packages/mcp.md](docs/packages/mcp.md) — driving Altair from any agent over MCP
-- [docs/packages/agent-spec.md](docs/packages/agent-spec.md) — the `.agent/` manifest emitter
-
----
+- **[univeros/univeros](https://github.com/univeros/univeros)** — `composer create-project` starter and the main entry point for application developers.
+- **[univeros/framework](https://github.com/univeros/framework)** — this repo. The library source.
+- **[univeros/docs](https://github.com/univeros/docs)** — per-package documentation.
 
 ## Contributing
 
-Bug reports and pull requests are welcome against [`univeros/framework`](https://github.com/univeros/framework). The 35 sub-package repos under `github.com/univeros/*` are read-only mirrors maintained automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — PRs against them will be ignored and overwritten on the next split.
+Issues and pull requests are welcome on this repository — it's the source of truth. The 35 sub-package repos under `github.com/univeros/*` are read-only mirrors; PRs against them will be ignored and overwritten on the next split.
 
 Before submitting:
 
@@ -301,8 +66,8 @@ CI mirrors the same gates plus the determinism drift check.
 
 ## Security
 
-If you discover a security vulnerability, please email *****REDACTED***** instead of opening a public issue. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability, please email *****REDACTED***** instead of opening a public issue.
 
 ## License
 
-The Univeros framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Univeros is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
