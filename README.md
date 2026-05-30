@@ -8,7 +8,7 @@
   <a href="https://github.com/univeros/framework/actions/workflows/ci.yml"><img src="https://github.com/univeros/framework/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/php-%3E%3D8.3-777BB4.svg" alt="PHP 8.3+">
-  <img src="https://img.shields.io/badge/packages-35-success.svg" alt="35 packages">
+  <img src="https://img.shields.io/badge/packages-36-success.svg" alt="36 packages">
 </p>
 
 ---
@@ -25,7 +25,7 @@ For the pitch, agent affordances walkthrough, and architecture diagram, see [**u
 
 ## Sub-packages
 
-The framework is composed of 35 standalone PHP packages under [src/Altair/](src/Altair/). Each is published as a read-only repository at `github.com/univeros/<name>`. Pull the whole framework via:
+The framework is composed of 36 standalone PHP packages under [src/Altair/](src/Altair/). Each is published as a read-only repository at `github.com/univeros/<name>`. Pull the whole framework via:
 
 ```bash
 composer require univeros/framework
@@ -41,7 +41,7 @@ composer require univeros/messaging     # MessageBus bridge over Symfony Messeng
 composer require univeros/events        # Append-only mutation event log for agents
 ```
 
-The complete published list: `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
+The complete published list: `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `examples`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
 
 Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
 

@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["id"],
+    "properties": {
+        "id": {
+            "type": "string",
+            "description": "The example identifier — the path under the library root with the `.md` extension stripped, e.g. `http/basic-endpoint`."
+        }
+    }
+}

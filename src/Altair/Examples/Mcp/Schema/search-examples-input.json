@@ -1,0 +1,11 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["query"],
+    "properties": {
+        "query": {
+            "type": "string",
+            "description": "Free-text substring to match (case-insensitive) across the example id, title, scenario, and body."
+        }
+    }
+}

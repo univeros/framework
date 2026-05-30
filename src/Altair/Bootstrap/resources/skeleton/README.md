@@ -8,7 +8,7 @@
   <a href="https://github.com/univeros/framework/actions/workflows/ci.yml"><img src="https://github.com/univeros/framework/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT"></a>
   <img src="https://img.shields.io/badge/php-%3E%3D8.3-777BB4.svg" alt="PHP 8.3+">
-  <img src="https://img.shields.io/badge/packages-35-success.svg" alt="35 packages">
+  <img src="https://img.shields.io/badge/packages-36-success.svg" alt="36 packages">
 </p>
 
 ---

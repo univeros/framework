@@ -1,0 +1,76 @@
+{
+    "version": 1,
+    "count": 7,
+    "examples": [
+        {
+            "id": "common/string-and-array-helpers",
+            "title": "Use Str and Arr helpers for tidy string and array work",
+            "scenario": "You need string truncation or array column extraction without rolling helpers each time.",
+            "packages": [
+                "common"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/CommonStringAndArrayHelpersTest.php"
+        },
+        {
+            "id": "container/define-and-resolve",
+            "title": "Register a singleton and resolve it via the container",
+            "scenario": "Bind a service constructor to the DI container so it can be resolved with its dependencies auto-wired.",
+            "packages": [
+                "container"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/ContainerDefineAndResolveTest.php"
+        },
+        {
+            "id": "cookie/build-an-immutable-cookie",
+            "title": "Build an immutable cookie value object",
+            "scenario": "Construct a Cookie, derive a new value from it without mutating the original — the framework's readonly-everywhere posture in miniature.",
+            "packages": [
+                "cookie"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/CookieBuildAnImmutableCookieTest.php"
+        },
+        {
+            "id": "events/recorder-roundtrip",
+            "title": "Record an event and read it back through the Reader",
+            "scenario": "Capture a structured mutation in the agent-readable event log, then assert against it from a test or follow-up step.",
+            "packages": [
+                "events"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/EventsRecorderRoundtripTest.php"
+        },
+        {
+            "id": "examples-library/programmatic-access",
+            "title": "List and read examples programmatically (not via CLI)",
+            "scenario": "Build a custom agent surface, doc generator, or CI gate that walks the example library and reasons about each entry.",
+            "packages": [
+                "examples"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/ExamplesLibraryProgrammaticAccessTest.php"
+        },
+        {
+            "id": "happen/dispatch-a-domain-event",
+            "title": "Dispatch a domain event and react to it",
+            "scenario": "A domain operation completes; you want one or more side effects to fire without coupling them to the caller.",
+            "packages": [
+                "happen"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/HappenDispatchADomainEventTest.php"
+        },
+        {
+            "id": "structure/typed-collections",
+            "title": "Use Map and Vector for typed in-memory collections",
+            "scenario": "You need keyed lookup with insertion order or a contiguous sequence — without the gotchas of bare PHP arrays.",
+            "packages": [
+                "structure"
+            ],
+            "since": "2.0.0",
+            "tested_by": "tests/Examples/StructureTypedCollectionsTest.php"
+        }
+    ]
+}
