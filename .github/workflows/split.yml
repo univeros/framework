@@ -15,27 +15,46 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single package to split (leave blank to split all 16)'
+        description: 'Single package to split (leave blank to split all 35)'
         required: false
         type: choice
         default: ''
         options:
           - ''
+          - agent-spec
+          - bootstrap
           - cache
+          - cli
           - common
           - configuration
           - container
           - cookie
           - courier
           - data
+          - doctor
+          - eval
+          - events
           - filesystem
           - happen
           - http
+          - index
+          - introspection
+          - mcp
+          - messaging
           - middleware
+          - migration-intelligence
+          - observability
+          - observatory
+          - persistence
+          - profiling
           - sanitation
+          - scaffold
           - security
           - session
           - structure
+          - suggest
+          - test-reporter
+          - tinker
           - validation
       dry_run:
         description: 'Compute splits but skip pushing to sub-repos'
@@ -61,30 +80,73 @@ jobs:
     outputs:
       matrix: ${{ steps.compute.outputs.matrix }}
     steps:
+      - name: Checkout (for drift check)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
       - name: Build matrix JSON
         id: compute
         env:
           PACKAGE: ${{ github.event.inputs.package }}
         run: |
           set -euo pipefail
+          # Source of truth: every directory under src/Altair/ that ships a
+          # composer.json with a univeros/<name> package name. Keep this list
+          # alphabetically sorted by composer name so additions are obvious in
+          # review and so the workflow_dispatch dropdown matches.
           full='[
-            {"name":"cache",         "path":"src/Altair/Cache"},
-            {"name":"common",        "path":"src/Altair/Common"},
-            {"name":"configuration", "path":"src/Altair/Configuration"},
-            {"name":"container",     "path":"src/Altair/Container"},
-            {"name":"cookie",        "path":"src/Altair/Cookie"},
-            {"name":"courier",       "path":"src/Altair/Courier"},
-            {"name":"data",          "path":"src/Altair/Data"},
-            {"name":"filesystem",    "path":"src/Altair/Filesystem"},
-            {"name":"happen",        "path":"src/Altair/Happen"},
-            {"name":"http",          "path":"src/Altair/Http"},
-            {"name":"middleware",    "path":"src/Altair/Middleware"},
-            {"name":"sanitation",    "path":"src/Altair/Sanitation"},
-            {"name":"security",      "path":"src/Altair/Security"},
-            {"name":"session",       "path":"src/Altair/Session"},
-            {"name":"structure",     "path":"src/Altair/Structure"},
-            {"name":"validation",    "path":"src/Altair/Validation"}
+            {"name":"agent-spec",             "path":"src/Altair/AgentSpec"},
+            {"name":"bootstrap",              "path":"src/Altair/Bootstrap"},
+            {"name":"cache",                  "path":"src/Altair/Cache"},
+            {"name":"cli",                    "path":"src/Altair/Cli"},
+            {"name":"common",                 "path":"src/Altair/Common"},
+            {"name":"configuration",          "path":"src/Altair/Configuration"},
+            {"name":"container",              "path":"src/Altair/Container"},
+            {"name":"cookie",                 "path":"src/Altair/Cookie"},
+            {"name":"courier",                "path":"src/Altair/Courier"},
+            {"name":"data",                   "path":"src/Altair/Data"},
+            {"name":"doctor",                 "path":"src/Altair/Doctor"},
+            {"name":"eval",                   "path":"src/Altair/Eval"},
+            {"name":"events",                 "path":"src/Altair/Events"},
+            {"name":"filesystem",             "path":"src/Altair/Filesystem"},
+            {"name":"happen",                 "path":"src/Altair/Happen"},
+            {"name":"http",                   "path":"src/Altair/Http"},
+            {"name":"index",                  "path":"src/Altair/Index"},
+            {"name":"introspection",          "path":"src/Altair/Introspection"},
+            {"name":"mcp",                    "path":"src/Altair/Mcp"},
+            {"name":"messaging",              "path":"src/Altair/Messaging"},
+            {"name":"middleware",             "path":"src/Altair/Middleware"},
+            {"name":"migration-intelligence", "path":"src/Altair/MigrationIntelligence"},
+            {"name":"observability",          "path":"src/Altair/Observability"},
+            {"name":"observatory",            "path":"src/Altair/Observatory"},
+            {"name":"persistence",            "path":"src/Altair/Persistence"},
+            {"name":"profiling",              "path":"src/Altair/Profiling"},
+            {"name":"sanitation",             "path":"src/Altair/Sanitation"},
+            {"name":"scaffold",               "path":"src/Altair/Scaffold"},
+            {"name":"security",               "path":"src/Altair/Security"},
+            {"name":"session",                "path":"src/Altair/Session"},
+            {"name":"structure",              "path":"src/Altair/Structure"},
+            {"name":"suggest",                "path":"src/Altair/Suggest"},
+            {"name":"test-reporter",          "path":"src/Altair/TestReporter"},
+            {"name":"tinker",                 "path":"src/Altair/Tinker"},
+            {"name":"validation",             "path":"src/Altair/Validation"}
           ]'
+
+          # Drift guard: every src/Altair/* directory that ships a composer.json
+          # is a publishable sub-package, so it MUST appear in the matrix above.
+          # Surface drift here instead of silently skipping the new package.
+          expected=$(find src/Altair -mindepth 2 -maxdepth 2 -name composer.json -print0 \
+            | xargs -0 -n1 dirname \
+            | sort)
+          actual=$(jq -r '.[].path' <<< "$full" | sort)
+          if ! diff -u <(echo "$expected") <(echo "$actual") >/tmp/matrix-drift.diff; then
+            echo "::error::split.yml matrix is out of sync with src/Altair/*. Diff:"
+            cat /tmp/matrix-drift.diff
+            echo "::error::Add or remove entries in the 'full' JSON array above to match the filesystem."
+            exit 1
+          fi
 
           if [[ -z "${PACKAGE}" ]]; then
             matrix=$(jq -c '.' <<< "$full")

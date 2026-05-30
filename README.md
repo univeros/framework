@@ -11,6 +11,30 @@ Nothing is yet published on composer, API is being defined as it goes and if you
 
 ## Univeros
 
+## Sub-packages
+
+The framework is composed of 35 standalone PHP packages under [src/Altair/](src/Altair/). Each is published as a read-only repository at `github.com/univeros/<name>` and registered on Packagist as `univeros/<name>`. Pull the whole framework via:
+
+```bash
+composer require univeros/framework
+```
+
+…or compose individual packages. A few representative ones:
+
+```bash
+composer require univeros/http          # PSR-7 + PSR-15 stack, single-pass middleware
+composer require univeros/scaffold      # YAML spec → Action/Input/Responder + OpenAPI + tests
+composer require univeros/persistence   # Repository/UnitOfWork bridge over Cycle ORM v2
+composer require univeros/messaging     # MessageBus bridge over Symfony Messenger
+composer require univeros/events        # Append-only mutation event log for agents
+```
+
+Per-package documentation lives under [docs/packages/](docs/packages/). The complete published list:
+
+`agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
+
+Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
+
 ## Learning Univeros
 
 ## Contributing
