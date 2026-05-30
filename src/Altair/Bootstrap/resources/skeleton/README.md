@@ -255,7 +255,7 @@ Bug reports and pull requests against [univeros/framework](https://github.com/un
 
 ## Security
 
-If you discover a security vulnerability, please email *****REDACTED***** instead of opening a public issue. All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability, please **report it privately via [GitHub Security Advisories](https://github.com/univeros/framework/security/advisories/new)** instead of opening a public issue. All vulnerabilities will be promptly addressed.
 
 ## License
 

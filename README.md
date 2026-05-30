@@ -66,7 +66,7 @@ CI mirrors the same gates plus the determinism drift check.
 
 ## Security
 
-If you discover a security vulnerability, please email *****REDACTED***** instead of opening a public issue.
+If you discover a security vulnerability, please **report it privately via [GitHub Security Advisories](https://github.com/univeros/framework/security/advisories/new)** instead of opening a public issue. We will respond and coordinate disclosure from there.
 
 ## License
 
