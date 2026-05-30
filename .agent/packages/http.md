@@ -149,6 +149,7 @@
 ## Tests as documentation
 
 - `tests/Http/Base/PayloadTest.php`
+- `tests/Http/Configuration/FastRouteConfigurationTest.php`
 - `tests/Http/Formatter/JsonFormatterTest.php`
 - `tests/Http/Input/DtoInputHydratorTest.php`
 - `tests/Http/Jwt/LcobucciTokenGeneratorTest.php`
