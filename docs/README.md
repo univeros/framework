@@ -65,6 +65,7 @@ Developer experience and AI-agent ergonomics.
 - [Bootstrap](./packages/bootstrap.md) — zero-to-running project bootstrap: `bin/altair new` materialises a complete, runnable Altair API (a working `/ping`, a passing test, the spec-driven toolchain wired) from the skeleton template, with minimal/standard/full presets.
 - [Observatory](./packages/observatory.md) — a dev-only, fail-closed web monitoring panel: health, activity (live SSE tail), queues, routes, container, config and migrations, as a thin presentation layer over the framework's own introspection / doctor / events data.
 - [Tinker](./packages/tinker.md) — `bin/altair tinker` drops into an interactive PsySH REPL with the DI container in scope and a doctor-style preamble of what's wired; a human debugging tool (dev-only dependency), the dynamic counterpart to introspection.
+- [Examples](./packages/examples.md) — a curated, browsable library of idiomatic Univeros patterns under `.altair/examples/`. CLI (`bin/altair examples:list|show|search|index|test`) and MCP tools (`framework__list_examples`, `framework__read_example`, `framework__search_examples`) so agents can discover canonical patterns instead of inventing them. Every example links to a real test, so drift fails CI.
 
 ## How these docs are structured
 

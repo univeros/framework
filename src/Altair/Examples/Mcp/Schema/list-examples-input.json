@@ -1,0 +1,10 @@
+{
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "package": {
+            "type": "string",
+            "description": "Optional: only return examples whose `packages` frontmatter contains this name."
+        }
+    }
+}

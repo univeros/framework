@@ -1,7 +1,8 @@
 /vendor/
 /composer.lock
 /.env
-/.altair/
+/.altair/*
+!/.altair/examples/
 /.agent/
 /build/
 /.phpunit.cache/

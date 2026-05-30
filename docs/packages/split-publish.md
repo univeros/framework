@@ -19,7 +19,7 @@ The split is reproducible: re-running it on the same commit produces the same SH
 
 Before the workflow can push anything, the following must exist:
 
-1. **GitHub repositories** for each of the 35 packages plus the three top-level repos (`univeros/univeros`, `univeros/framework`, `univeros/docs`). The original 16 sub-package repos (`cache`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `filesystem`, `happen`, `http`, `middleware`, `sanitation`, `security`, `session`, `structure`, `validation`) plus `univeros/univeros` and `univeros/framework` already exist. Create the remaining 19 sub-package repos and `univeros/docs`:
+1. **GitHub repositories** for each of the 36 packages plus the three top-level repos (`univeros/univeros`, `univeros/framework`, `univeros/docs`). The original 16 sub-package repos (`cache`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `filesystem`, `happen`, `http`, `middleware`, `sanitation`, `security`, `session`, `structure`, `validation`) plus `univeros/univeros` and `univeros/framework` already exist. Create the remaining 19 sub-package repos and `univeros/docs`:
 
    ```bash
    for pkg in agent-spec bootstrap cli doctor eval events index introspection \
@@ -70,7 +70,7 @@ Triggered manually via `workflow_dispatch` — the comment at the top of `split.
 # Dry-run: compute splits for every entry without pushing
 gh workflow run split.yml -f dry_run=true
 
-# Real run: split + push all 37 entries (35 packages + docs + univeros)
+# Real run: split + push all 38 entries (36 packages + docs + univeros)
 gh workflow run split.yml
 
 # Single split (matches the workflow_dispatch dropdown)

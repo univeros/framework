@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single split to publish (leave blank to publish all 37: 35 packages + docs + univeros starter)'
+        description: 'Single split to publish (leave blank to publish all 38: 36 packages + docs + univeros starter)'
         required: false
         type: choice
         default: ''
@@ -35,6 +35,7 @@ on:
           - docs
           - eval
           - events
+          - examples
           - filesystem
           - happen
           - http
@@ -119,6 +120,7 @@ jobs:
             {"name":"docs",                   "path":"docs"},
             {"name":"eval",                   "path":"src/Altair/Eval"},
             {"name":"events",                 "path":"src/Altair/Events"},
+            {"name":"examples",               "path":"src/Altair/Examples"},
             {"name":"filesystem",             "path":"src/Altair/Filesystem"},
             {"name":"happen",                 "path":"src/Altair/Happen"},
             {"name":"http",                   "path":"src/Altair/Http"},
