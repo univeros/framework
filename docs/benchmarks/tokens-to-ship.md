@@ -1,6 +1,5 @@
 # Benchmark methodology — "Tokens to Ship"
 
-> The credibility artifact behind the [positioning](../marketing/positioning.md).
 > Because a software company's reputation rests on its honesty, this methodology
 > is designed to be **defensible first, flattering second.** A benchmark that
 > doesn't survive scrutiny is worse than no benchmark.

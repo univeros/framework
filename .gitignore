@@ -54,3 +54,8 @@ phpstan.neon.cache
 # Altair local runtime artefacts (events log, spec journal, symbol index, profiles)
 /.altair/
 
+# Local-only positioning / strategy notes — not for the public framework
+# or its docs split. Keep these on the maintainer's machine.
+/docs/marketing/
+/docs/strategy/
+
