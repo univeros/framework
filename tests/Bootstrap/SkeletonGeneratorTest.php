@@ -42,8 +42,36 @@ final class SkeletonGeneratorTest extends TestCase
         self::assertContains('app/Health/Ping.php', $created);
         self::assertContains('config/routes.php', $created);
         self::assertContains('api/ping.yaml', $created);
+        // #131 — the skeleton ships the Altair agent skill at two paths so it's
+        // discoverable by both the cross-agent Agent Skills spec (.ai/skills/)
+        // and Claude Code's project-skills path (.claude/skills/). Both copies
+        // travel through the generator unmodified.
+        self::assertContains('.ai/skills/altair/SKILL.md', $created);
+        self::assertContains('.claude/skills/altair/SKILL.md', $created);
 
         self::assertFileExists($this->target . '/.env.example');
+        self::assertFileExists($this->target . '/.ai/skills/altair/SKILL.md');
+        self::assertFileExists($this->target . '/.claude/skills/altair/SKILL.md');
+    }
+
+    public function testAiAndClaudeSkillCopiesAreByteEqual(): void
+    {
+        // #131 — the two skill paths must stay in lockstep; a drift here would
+        // mean a Claude Code agent and a Junie-style agent on the same project
+        // see different guidance. Asserted at the skeleton source (the file
+        // committed to the repo) so a future hand-edit catches it before it
+        // ships into generated projects.
+        $base = \dirname(__DIR__, 2) . '/src/Altair/Bootstrap/resources/skeleton';
+        $aiPath = $base . '/.ai/skills/altair/SKILL.md';
+        $claudePath = $base . '/.claude/skills/altair/SKILL.md';
+
+        self::assertFileExists($aiPath, '.ai/skills/altair/SKILL.md missing from the skeleton');
+        self::assertFileExists($claudePath, '.claude/skills/altair/SKILL.md missing from the skeleton');
+        self::assertSame(
+            file_get_contents($aiPath),
+            file_get_contents($claudePath),
+            'the .ai/ and .claude/ copies of the Altair skill have drifted — keep them byte-equal',
+        );
     }
 
     public function testSetsTheProjectNameInComposer(): void
