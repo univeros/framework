@@ -42,8 +42,12 @@ final class SkeletonGeneratorTest extends TestCase
         self::assertContains('app/Health/Ping.php', $created);
         self::assertContains('config/routes.php', $created);
         self::assertContains('api/ping.yaml', $created);
+        // #131 — the skeleton ships the Altair Claude Code skill so shell-capable
+        // agents drive the framework through `bin/altair`, not the MCP server.
+        self::assertContains('.claude/skills/altair/SKILL.md', $created);
 
         self::assertFileExists($this->target . '/.env.example');
+        self::assertFileExists($this->target . '/.claude/skills/altair/SKILL.md');
     }
 
     public function testSetsTheProjectNameInComposer(): void
