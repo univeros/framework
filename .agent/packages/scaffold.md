@@ -31,6 +31,7 @@
 - `HandlerEmitter`
 - `HandlerTestEmitter`
 - `HistoryCommand` _(final)_
+- `ImportReceipt` _(final)_
 - `InputEmitter`
 - `InputFieldSpec` _(final)_
 - `Journal` _(final)_
@@ -42,6 +43,9 @@
 - `Naming` _(final)_
 - `OpenApiDocument` _(final)_
 - `OpenApiEmitter`
+- `OpenApiImportCommand` _(final)_
+- `OpenApiImportOptions` _(final)_
+- `OpenApiImportRunner` _(final)_
 - `OpenApiParser` _(final)_
 - `OperationKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `OperationMapper` _(final)_
@@ -52,6 +56,7 @@
 - `PathResolver`
 - `PersistenceEntitySpec` _(final)_
 - `PersistenceFieldSpec` _(final)_
+- `PersistenceInferrer` _(final)_
 - `PersistenceSpec` _(final)_
 - `PhpHeader` _(final)_
 - `PythonEmitter` _(final)_ — implements `EmitterInterface`
@@ -82,6 +87,10 @@
 
 ## Tests as documentation
 
+- `tests/Scaffold/Cli/ImportReceiptTest.php`
+- `tests/Scaffold/Cli/OpenApiImportRunnerTest.php`
+- `tests/Scaffold/Cli/OpenApiImportScaffoldTest.php`
+- `tests/Scaffold/Cli/PersistenceInferrerTest.php`
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
 - `tests/Scaffold/Determinism/EmitOpenApiDeterminismTest.php`
 - `tests/Scaffold/Determinism/MessagingEmitterDeterminismTest.php`

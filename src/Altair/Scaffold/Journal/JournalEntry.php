@@ -107,6 +107,52 @@ final readonly class JournalEntry
         );
     }
 
+    /**
+     * Named-constructor for an `openapi:import` operation. The "spec" field
+     * stores the OpenAPI source document so rewind/replay can reconstruct
+     * the entire import even if the source file is later moved or deleted.
+     *
+     * Uses {@see OperationKind::Scaffold} on disk so existing
+     * `journal:rewind` / `journal:replay` logic — which dispatches on the
+     * recorded file lists, not the operation kind — keeps working without
+     * needing a parallel rewind path.
+     *
+     * @param list<FileSnapshot>   $filesCreated
+     * @param list<FileSnapshot>   $filesModified
+     * @param list<string>         $filesSkipped
+     */
+    public static function openApiImport(
+        string $command,
+        string $documentPath,
+        string $documentContent,
+        string $scaffoldVersion,
+        array $filesCreated = [],
+        array $filesModified = [],
+        array $filesSkipped = [],
+        ?DateTimeImmutable $timestamp = null,
+        ?string $user = null,
+    ): self {
+        $ts = $timestamp ?? new DateTimeImmutable('now');
+        $sha = hash('sha256', $documentContent);
+
+        return new self(
+            id: self::buildId($ts, $sha),
+            operation: OperationKind::Scaffold,
+            command: $command,
+            timestamp: $ts,
+            user: $user ?? self::resolveUser(),
+            spec: [
+                'path' => $documentPath,
+                'sha256' => $sha,
+                'content_inline' => $documentContent,
+            ],
+            scaffoldVersion: $scaffoldVersion,
+            filesCreated: $filesCreated,
+            filesModified: $filesModified,
+            filesSkipped: $filesSkipped,
+        );
+    }
+
     public function withRevertedAt(DateTimeImmutable $when): self
     {
         return new self(
