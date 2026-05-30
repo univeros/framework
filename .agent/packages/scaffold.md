@@ -78,6 +78,9 @@
 
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
 - `tests/Scaffold/Determinism/EmitOpenApiDeterminismTest.php`
+- `tests/Scaffold/Determinism/MessagingEmitterDeterminismTest.php`
+- `tests/Scaffold/Determinism/PersistenceEmitterDeterminismTest.php`
+- `tests/Scaffold/Determinism/ScaffoldCommandDeterminismTest.php`
 - `tests/Scaffold/Determinism/SdkEmitterDeterminismTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
@@ -87,6 +90,7 @@
 - `tests/Scaffold/Emitter/InputEmitterTest.php`
 - `tests/Scaffold/Emitter/MessageEmitterTest.php`
 - `tests/Scaffold/Emitter/MigrationEmitterTest.php`
+- `tests/Scaffold/Emitter/NamingTest.php`
 - `tests/Scaffold/Emitter/OpenApiEmitterTest.php`
 - `tests/Scaffold/Emitter/RepositoryEmitterTest.php`
 - `tests/Scaffold/Emitter/ResponderEmitterTest.php`
