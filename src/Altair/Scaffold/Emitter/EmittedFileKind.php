@@ -26,4 +26,5 @@ enum EmittedFileKind: string
     case Message = 'message';
     case Handler = 'handler';
     case HandlerTest = 'handler-test';
+    case Spec = 'spec';
 }

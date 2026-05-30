@@ -27,6 +27,7 @@ enum EventKind: string
     case ManifestGenerate = 'manifest_generate';
     case ManualEdit = 'manual_edit';
     case Migration = 'migration';
+    case OpenapiImport = 'openapi_import';
     case RectorRun = 'rector_run';
     case Replay = 'replay';
     case Rewind = 'rewind';

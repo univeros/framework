@@ -1,0 +1,106 @@
+openapi: 3.1.0
+info:
+  title: Posts API
+  version: 1.0.0
+paths:
+  /posts:
+    post:
+      operationId: createPost
+      summary: Create a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, body]
+              properties:
+                title: { type: string }
+                body: { type: string }
+                published: { type: boolean }
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+    get:
+      operationId: listPosts
+      summary: List posts
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  posts:
+                    type: array
+                    items: { $ref: '#/components/schemas/Post' }
+  /posts/{id}:
+    get:
+      operationId: getPost
+      summary: Fetch one post
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Not found
+    put:
+      operationId: updatePost
+      summary: Update a post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title: { type: string }
+                body: { type: string }
+                published: { type: boolean }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Not found
+        '422':
+          description: Validation failed
+    delete:
+      operationId: deletePost
+      summary: Delete a post
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not found
+components:
+  schemas:
+    Post:
+      type: object
+      required: [id, title, body, createdAt]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        body: { type: string }
+        published: { type: boolean }
+        createdAt: { type: string, format: date-time }

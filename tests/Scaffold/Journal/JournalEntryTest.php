@@ -17,6 +17,28 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(OperationKind::class)]
 class JournalEntryTest extends TestCase
 {
+    public function testOpenApiImportFactoryEmbedsSourceDocument(): void
+    {
+        $entry = JournalEntry::openApiImport(
+            command: 'bin/altair openapi:import openapi.yaml --scaffold',
+            documentPath: 'openapi.yaml',
+            documentContent: "openapi: 3.1.0\ninfo: { title: X, version: 1.0 }\npaths: {}\n",
+            scaffoldVersion: '1.0',
+            filesCreated: [FileSnapshot::created('api/users/create.yaml', str_repeat('a', 64), 200)],
+            timestamp: new DateTimeImmutable('2026-05-30T12:00:00Z'),
+            user: 'tester',
+        );
+
+        $expectedSha = hash('sha256', "openapi: 3.1.0\ninfo: { title: X, version: 1.0 }\npaths: {}\n");
+        $this->assertSame(OperationKind::Scaffold, $entry->operation);
+        $this->assertSame('20260530T120000Z-' . substr($expectedSha, 0, 8), $entry->id);
+        $this->assertSame('openapi.yaml', $entry->spec['path']);
+        $this->assertSame($expectedSha, $entry->spec['sha256']);
+        $this->assertStringContainsString('openapi: 3.1.0', $entry->spec['content_inline']);
+        $this->assertCount(1, $entry->filesCreated);
+        $this->assertSame('tester', $entry->user);
+    }
+
     public function testScaffoldFactoryStampsIdAndShaFromContent(): void
     {
         $entry = JournalEntry::scaffold(
