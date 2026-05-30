@@ -45,12 +45,82 @@ final readonly class OperationMapper
             $spec['output'] = $this->outputBlock($outputs);
         }
 
-        $spec['domain'] = [
+        $spec['domain'] = $this->resolveDomain($operation);
+
+        $persistence = $this->extensionMap($operation, 'x-altair-persistence');
+        if ($persistence !== null) {
+            $spec['persistence'] = $persistence;
+        }
+
+        $queue = $this->extensionMap($operation, 'x-altair-queue');
+        if ($queue !== null) {
+            $spec['queue'] = $this->renderQueue($queue);
+        }
+
+        return $spec;
+    }
+
+    /**
+     * Pulls `x-altair-domain` when present so an imported endpoint keeps
+     * the FQCN its original spec carried. Falls back to {@see PathDeriver}
+     * when the extension is absent.
+     *
+     * @return array<string, string>
+     */
+    private function resolveDomain(OperationModel $operation): array
+    {
+        $extension = $operation->extensions['x-altair-domain'] ?? null;
+        if (\is_array($extension) && isset($extension['class']) && \is_string($extension['class']) && $extension['class'] !== '') {
+            $invocation = isset($extension['invocation']) && \is_string($extension['invocation']) && $extension['invocation'] !== ''
+                ? $extension['invocation']
+                : '__invoke';
+
+            return ['class' => $extension['class'], 'invocation' => $invocation];
+        }
+
+        return [
             'class' => $this->pathDeriver->domainFqcn($operation),
             'invocation' => '__invoke',
         ];
+    }
 
-        return $spec;
+    /**
+     * @return ?array<int|string, mixed>
+     */
+    private function extensionMap(OperationModel $operation, string $key): ?array
+    {
+        $value = $operation->extensions[$key] ?? null;
+
+        return \is_array($value) ? $value : null;
+    }
+
+    /**
+     * Turns the list form `x-altair-queue: [{name, message, ...}]` carried
+     * in the OpenAPI extension back into the map form
+     * `queue: { name: { message, ... } }` the Altair Parser expects.
+     *
+     * @param  array<int|string, mixed>      $value
+     * @return array<string, array<string, mixed>>
+     */
+    private function renderQueue(array $value): array
+    {
+        $result = [];
+        foreach ($value as $entry) {
+            if (!\is_array($entry)) {
+                continue;
+            }
+
+            $name = isset($entry['name']) && \is_string($entry['name']) ? $entry['name'] : null;
+            if ($name === null) {
+                continue;
+            }
+
+            $rendered = $entry;
+            unset($rendered['name']);
+            $result[$name] = $rendered;
+        }
+
+        return $result;
     }
 
     /**

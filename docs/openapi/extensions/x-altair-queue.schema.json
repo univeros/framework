@@ -1,0 +1,36 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-queue.schema.json",
+    "title": "x-altair-queue",
+    "description": "Mirrors the Altair spec's queue: block, capturing one or more message dispatches per operation. Each entry is the same shape the Symfony Messenger handler factory consumes downstream.",
+    "type": "array",
+    "minItems": 1,
+    "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "message", "fields"],
+        "properties": {
+            "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Dispatch handle, e.g. on_create. Keys the message back to the queue: map after import."
+            },
+            "message": {
+                "type": "string",
+                "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$",
+                "description": "FQCN of the Message DTO to dispatch."
+            },
+            "fields": {
+                "type": "object",
+                "description": "Field name => PHP-ish type (string|int|float|bool) or FQCN.",
+                "additionalProperties": {
+                    "type": "string"
+                }
+            },
+            "transport": {
+                "type": "string",
+                "description": "Symfony Messenger transport name; null = bus default routing."
+            }
+        }
+    }
+}

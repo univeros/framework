@@ -1,0 +1,22 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-input-location.schema.json",
+    "title": "x-altair-input-location",
+    "description": "Per-input-field annotation that records where the value came from on the wire (path, query, header) so an imported spec preserves the location even though Altair's input: block stores all inputs flat. Reserved key — OpenApiParser does not yet read parameters[] schemas, so the round-trip is incomplete in this release; the schema is published so authoring tooling can lint a doc that uses it.",
+    "type": "object",
+    "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["in"],
+        "properties": {
+            "in": {
+                "type": "string",
+                "enum": ["path", "query", "header", "body"]
+            },
+            "name": {
+                "type": "string",
+                "description": "Override the field name as it appears on the wire (e.g. snake_case ↔ camelCase mapping)."
+            }
+        }
+    }
+}

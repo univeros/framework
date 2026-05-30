@@ -24,6 +24,7 @@ final readonly class OperationModel
     /**
      * @param list<string>        $pathParameters Names of `{param}` path segments, in order.
      * @param list<ResponseModel> $responses
+     * @param array<string, mixed> $extensions    `x-altair-*` keys carried verbatim from the OpenAPI document.
      */
     public function __construct(
         public string $operationId,
@@ -33,6 +34,7 @@ final readonly class OperationModel
         public ?SchemaType $requestBody,
         public array $responses,
         public string $summary = '',
+        public array $extensions = [],
     ) {}
 
     public function hasRequestBody(): bool

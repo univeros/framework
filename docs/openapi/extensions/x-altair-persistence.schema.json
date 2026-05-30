@@ -1,0 +1,58 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-persistence.schema.json",
+    "title": "x-altair-persistence",
+    "description": "Mirrors the Altair spec's persistence: block at the operation level so the imported entity + table + fields survive a round trip through OpenAPI 3.1.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["entity"],
+    "properties": {
+        "entity": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["class", "table", "fields"],
+            "properties": {
+                "class": {
+                    "type": "string",
+                    "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$"
+                },
+                "table": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "fields": {
+                    "type": "object",
+                    "minProperties": 1,
+                    "additionalProperties": {
+                        "type": "object",
+                        "required": ["type"],
+                        "properties": {
+                            "type": {
+                                "type": "string",
+                                "enum": [
+                                    "uuid", "string", "text", "int", "integer",
+                                    "bigint", "smallint", "float", "decimal",
+                                    "bool", "boolean", "datetime", "date", "time",
+                                    "json", "enum"
+                                ]
+                            },
+                            "primary": { "type": "boolean" },
+                            "nullable": { "type": "boolean" },
+                            "unique": { "type": "boolean" },
+                            "default": {},
+                            "of": {
+                                "type": "string",
+                                "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$",
+                                "description": "FQCN of the PHP enum for type=enum fields."
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "repository": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$"
+        }
+    }
+}

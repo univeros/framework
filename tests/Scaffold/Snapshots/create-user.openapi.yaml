@@ -8,6 +8,9 @@ paths:
       summary: 'Create a new user'
       tags:
         - users
+      x-altair-domain:
+        class: App\User\CreateUser
+        invocation: __invoke
       requestBody:
         required: true
         content:

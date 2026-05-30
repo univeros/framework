@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-idempotency.schema.json",
+    "title": "x-altair-idempotency",
+    "description": "Reserved key for the idempotency primitive arriving with the dedicated framework work. Emitted by spec:emit-openapi when the spec carries an idempotency block; imported as-is on the reverse path. This release does not yet wire the runtime.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["ttl"],
+    "properties": {
+        "ttl": {
+            "type": "string",
+            "description": "Duration the framework should remember the Idempotency-Key for, e.g. 24h, 7d.",
+            "pattern": "^[0-9]+(ms|s|m|h|d)$"
+        },
+        "scope": {
+            "type": "string",
+            "description": "Logical bucket the key is scoped to (e.g. tenant, user, global). Application-defined.",
+            "default": "tenant"
+        }
+    }
+}

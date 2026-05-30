@@ -1,0 +1,29 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-webhook.schema.json",
+    "title": "x-altair-webhook",
+    "description": "Reserved key for the webhook primitive arriving with the dedicated framework work. Marks an operation as an inbound (in) or outbound (out) webhook endpoint and carries the verification settings the framework will need at runtime. This release does not yet wire the runtime.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["direction", "signing"],
+    "properties": {
+        "direction": {
+            "type": "string",
+            "enum": ["in", "out"]
+        },
+        "signing": {
+            "type": "string",
+            "description": "Signing scheme expected on inbound requests / applied to outbound dispatches.",
+            "enum": ["hmac-sha256", "hmac-sha512", "ed25519"]
+        },
+        "header": {
+            "type": "string",
+            "description": "Header name carrying the signature (inbound). Defaults to X-Signature."
+        },
+        "dedupe_ttl": {
+            "type": "string",
+            "pattern": "^[0-9]+(ms|s|m|h|d)$",
+            "description": "How long to remember the request ID for replay protection."
+        }
+    }
+}
