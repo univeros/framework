@@ -155,6 +155,7 @@ final class McpToolsTest extends TestCase
             if ($item === '.') {
                 continue;
             }
+
             if ($item === '..') {
                 continue;
             }

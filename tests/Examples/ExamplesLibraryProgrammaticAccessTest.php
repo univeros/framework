@@ -117,6 +117,7 @@ final class ExamplesLibraryProgrammaticAccessTest extends TestCase
             if ($item === '.') {
                 continue;
             }
+
             if ($item === '..') {
                 continue;
             }

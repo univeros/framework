@@ -157,6 +157,7 @@ final class ExampleRepositoryTest extends TestCase
             if ($item === '.') {
                 continue;
             }
+
             if ($item === '..') {
                 continue;
             }

@@ -61,6 +61,7 @@ final class ExampleRepository implements ExampleRepositoryInterface
             if (!$fileInfo->isFile()) {
                 continue;
             }
+
             if ($fileInfo->getExtension() !== 'md') {
                 continue;
             }
