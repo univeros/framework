@@ -29,7 +29,7 @@ correct, typed, tested, and documented to the same bar on both arms.**
 ## 2. The task (frozen)
 
 A single realistic feature, specified once and never changed:
-[`benchmarks/tokens-to-ship/task.md`](../../benchmarks/tokens-to-ship/task.md).
+[`benchmarks/tokens-to-ship/task.md`](https://github.com/univeros/framework/blob/master/benchmarks/tokens-to-ship/task.md).
 
 > Build a **Posts** REST resource: `POST /posts`, `GET /posts`, `GET /posts/{id}`,
 > `PUT /posts/{id}`, `DELETE /posts/{id}`. Input validation, persistence
@@ -108,7 +108,7 @@ Two supported protocols, in increasing rigor:
   but still auditable.
 
 Either way, per-run records land in a usage log and are aggregated by
-[`benchmarks/tokens-to-ship/score.php`](../../benchmarks/tokens-to-ship/score.php)
+[`benchmarks/tokens-to-ship/score.php`](https://github.com/univeros/framework/blob/master/benchmarks/tokens-to-ship/score.php)
 into `results/results.json` plus a printed table.
 
 ## 7. Threats to validity (state these publicly)

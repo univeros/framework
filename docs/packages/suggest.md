@@ -273,12 +273,12 @@ self::assertSame(Severity::Warning, $suggestions[0]->severity);
 self::assertSame('order.placed', $suggestions[0]->subject);
 ```
 
-- [tests/Suggest/Rule/](../../tests/Suggest/Rule/) — one focused test per rule, each over hand-built snapshots.
-- [tests/Suggest/SuggestionEngineTest.php](../../tests/Suggest/SuggestionEngineTest.php) — the engine: aggregation, the `--severity` floor, `--only`/`--skip`, deterministic ordering.
-- [tests/Suggest/Snapshot/SnapshotFactoryTest.php](../../tests/Suggest/Snapshot/SnapshotFactoryTest.php) — the one integration test: builds real inspectors over fixtures and asserts the reflected dependency/interface enrichment.
-- [tests/Suggest/Output/RenderersTest.php](../../tests/Suggest/Output/RenderersTest.php) — human + JSON rendering, determinism of the JSON projection.
-- [tests/Suggest/Cli/SuggestCommandTest.php](../../tests/Suggest/Cli/SuggestCommandTest.php) — exit codes, format/severity handling, flag forwarding.
-- [tests/Suggest/Configuration/SuggestConfigurationTest.php](../../tests/Suggest/Configuration/SuggestConfigurationTest.php) — Container wiring and graceful degradation without introspection.
+- [tests/Suggest/Rule/](https://github.com/univeros/framework/blob/master/tests/Suggest/Rule/) — one focused test per rule, each over hand-built snapshots.
+- [tests/Suggest/SuggestionEngineTest.php](https://github.com/univeros/framework/blob/master/tests/Suggest/SuggestionEngineTest.php) — the engine: aggregation, the `--severity` floor, `--only`/`--skip`, deterministic ordering.
+- [tests/Suggest/Snapshot/SnapshotFactoryTest.php](https://github.com/univeros/framework/blob/master/tests/Suggest/Snapshot/SnapshotFactoryTest.php) — the one integration test: builds real inspectors over fixtures and asserts the reflected dependency/interface enrichment.
+- [tests/Suggest/Output/RenderersTest.php](https://github.com/univeros/framework/blob/master/tests/Suggest/Output/RenderersTest.php) — human + JSON rendering, determinism of the JSON projection.
+- [tests/Suggest/Cli/SuggestCommandTest.php](https://github.com/univeros/framework/blob/master/tests/Suggest/Cli/SuggestCommandTest.php) — exit codes, format/severity handling, flag forwarding.
+- [tests/Suggest/Configuration/SuggestConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Suggest/Configuration/SuggestConfigurationTest.php) — Container wiring and graceful degradation without introspection.
 
 When you add a rule, mirror this: construct a `Snapshot` with exactly the nodes the rule reasons about, and assert on the resulting suggestions. No rule should require a real Container or a booted app to test.
 

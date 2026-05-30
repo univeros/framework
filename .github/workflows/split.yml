@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single package to split (leave blank to split all 35)'
+        description: 'Single split to publish (leave blank to publish all 37: 35 packages + docs + univeros starter)'
         required: false
         type: choice
         default: ''
@@ -32,6 +32,7 @@ on:
           - courier
           - data
           - doctor
+          - docs
           - eval
           - events
           - filesystem
@@ -55,6 +56,7 @@ on:
           - suggest
           - test-reporter
           - tinker
+          - univeros
           - validation
       dry_run:
         description: 'Compute splits but skip pushing to sub-repos'
@@ -92,10 +94,16 @@ jobs:
           PACKAGE: ${{ github.event.inputs.package }}
         run: |
           set -euo pipefail
-          # Source of truth: every directory under src/Altair/ that ships a
-          # composer.json with a univeros/<name> package name. Keep this list
-          # alphabetically sorted by composer name so additions are obvious in
-          # review and so the workflow_dispatch dropdown matches.
+          # The matrix has two kinds of entries:
+          #   1. Per-package splits under src/Altair/* (the bulk of the work).
+          #      The drift guard below enforces that EVERY src/Altair/*/composer.json
+          #      is represented here — the gap that left 19 packages unpublished
+          #      for months can't recur.
+          #   2. Non-package splits (docs, univeros starter). These are managed
+          #      manually and intentionally NOT in src/Altair/.
+          #
+          # Keep alphabetically sorted by name so the workflow_dispatch dropdown
+          # stays in lockstep.
           full='[
             {"name":"agent-spec",             "path":"src/Altair/AgentSpec"},
             {"name":"bootstrap",              "path":"src/Altair/Bootstrap"},
@@ -108,6 +116,7 @@ jobs:
             {"name":"courier",                "path":"src/Altair/Courier"},
             {"name":"data",                   "path":"src/Altair/Data"},
             {"name":"doctor",                 "path":"src/Altair/Doctor"},
+            {"name":"docs",                   "path":"docs"},
             {"name":"eval",                   "path":"src/Altair/Eval"},
             {"name":"events",                 "path":"src/Altair/Events"},
             {"name":"filesystem",             "path":"src/Altair/Filesystem"},
@@ -131,16 +140,18 @@ jobs:
             {"name":"suggest",                "path":"src/Altair/Suggest"},
             {"name":"test-reporter",          "path":"src/Altair/TestReporter"},
             {"name":"tinker",                 "path":"src/Altair/Tinker"},
+            {"name":"univeros",               "path":"src/Altair/Bootstrap/resources/skeleton"},
             {"name":"validation",             "path":"src/Altair/Validation"}
           ]'
 
           # Drift guard: every src/Altair/* directory that ships a composer.json
           # is a publishable sub-package, so it MUST appear in the matrix above.
-          # Surface drift here instead of silently skipping the new package.
+          # Non-package matrix entries (docs, univeros) are filtered out before
+          # comparing — they're allowed to exist without a filesystem twin.
           expected=$(find src/Altair -mindepth 2 -maxdepth 2 -name composer.json -print0 \
             | xargs -0 -n1 dirname \
             | sort)
-          actual=$(jq -r '.[].path' <<< "$full" | sort)
+          actual=$(jq -r '.[].path | select(startswith("src/Altair/") and (split("/") | length) == 3)' <<< "$full" | sort)
           if ! diff -u <(echo "$expected") <(echo "$actual") >/tmp/matrix-drift.diff; then
             echo "::error::split.yml matrix is out of sync with src/Altair/*. Diff:"
             cat /tmp/matrix-drift.diff

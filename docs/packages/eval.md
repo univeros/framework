@@ -233,12 +233,12 @@ use Altair\Eval\Configuration\EvalConfiguration;
 
 The published tests under `tests/Eval/` are real subprocess tests — they prove the sandbox actually sandboxes, not just that the flags are present:
 
-- [tests/Eval/Encoder/ValueEncoderTest.php](../../tests/Eval/Encoder/ValueEncoderTest.php) — golden tests for every encoded shape, including object cycles, infinite generators, and depth-cap truncation.
-- [tests/Eval/Encoder/ExceptionEncoderTest.php](../../tests/Eval/Encoder/ExceptionEncoderTest.php) — frame rendering and chain-walking.
-- [tests/Eval/Runner/SecurityProfileTest.php](../../tests/Eval/Runner/SecurityProfileTest.php) — the `php -d` flag matrix for default / `--network` / `--unsafe`.
-- [tests/Eval/Runner/WrapperBuilderTest.php](../../tests/Eval/Runner/WrapperBuilderTest.php) — generated source contains the snippet verbatim and passes `php -l`.
-- [tests/Eval/EvaluatorTest.php](../../tests/Eval/EvaluatorTest.php) — full subprocess integration. Asserts that `disable_functions` blocks `exec`, that `open_basedir` blocks writes outside the project root, that a runaway loop is killed at the wall-clock deadline, and that `container()` resolves bindings from an explicit bootstrap file.
-- [tests/Eval/Cli/EvalCommandTest.php](../../tests/Eval/Cli/EvalCommandTest.php) — every command path including `--unsafe` event recording and `--file=…`.
+- [tests/Eval/Encoder/ValueEncoderTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/Encoder/ValueEncoderTest.php) — golden tests for every encoded shape, including object cycles, infinite generators, and depth-cap truncation.
+- [tests/Eval/Encoder/ExceptionEncoderTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/Encoder/ExceptionEncoderTest.php) — frame rendering and chain-walking.
+- [tests/Eval/Runner/SecurityProfileTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/Runner/SecurityProfileTest.php) — the `php -d` flag matrix for default / `--network` / `--unsafe`.
+- [tests/Eval/Runner/WrapperBuilderTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/Runner/WrapperBuilderTest.php) — generated source contains the snippet verbatim and passes `php -l`.
+- [tests/Eval/EvaluatorTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/EvaluatorTest.php) — full subprocess integration. Asserts that `disable_functions` blocks `exec`, that `open_basedir` blocks writes outside the project root, that a runaway loop is killed at the wall-clock deadline, and that `container()` resolves bindings from an explicit bootstrap file.
+- [tests/Eval/Cli/EvalCommandTest.php](https://github.com/univeros/framework/blob/master/tests/Eval/Cli/EvalCommandTest.php) — every command path including `--unsafe` event recording and `--file=…`.
 
 When you add a guard or a security policy, mirror this pattern: write a snippet that *would* break it, run it through the real `Evaluator`, and assert the guard held.
 

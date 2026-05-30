@@ -175,14 +175,14 @@ Every service is stateless. The database is not opened at boot: it is read on de
 
 The tests under `tests/MigrationIntelligence/` double as worked examples. The pure pieces (differ, planners, emitter, renderers) are tested with hand-built shapes and plans — no database. The schema reader and safety checks are tested against a real in-memory SQLite database built by `Support\SqliteDatabaseFactory`, so the Cycle introspection and the counting queries are exercised for real:
 
-- [tests/MigrationIntelligence/Schema/](../../tests/MigrationIntelligence/Schema/) — the canonical type model and column equivalence.
-- [tests/MigrationIntelligence/Reader/](../../tests/MigrationIntelligence/Reader/) — spec, entity-reflection, and live-SQLite readers.
-- [tests/MigrationIntelligence/Diff/SchemaDifferTest.php](../../tests/MigrationIntelligence/Diff/SchemaDifferTest.php) — every intent kind, rename hints, safe vs. incompatible type changes.
-- [tests/MigrationIntelligence/Planner/](../../tests/MigrationIntelligence/Planner/) — golden preview SQL per dialect, the SQLite ALTER-COLUMN note, driver-alias resolution.
-- [tests/MigrationIntelligence/Safety/SafetyRunnerTest.php](../../tests/MigrationIntelligence/Safety/SafetyRunnerTest.php) — each check against seeded SQLite fixtures (duplicates, orphans, nulls, non-castable data, force).
-- [tests/MigrationIntelligence/Plan/PlanBuilderTest.php](../../tests/MigrationIntelligence/Plan/PlanBuilderTest.php) — single-phase and two-phase rename expansion, deterministic naming.
-- [tests/MigrationIntelligence/Emitter/CycleMigrationEmitterTest.php](../../tests/MigrationIntelligence/Emitter/CycleMigrationEmitterTest.php) — emitted migrations are asserted to be syntactically valid PHP (`php -l`).
-- [tests/MigrationIntelligence/Cli/PlanCommandTest.php](../../tests/MigrationIntelligence/Cli/PlanCommandTest.php) — diff-source resolution, formats, file writing, exit codes.
+- [tests/MigrationIntelligence/Schema/](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Schema/) — the canonical type model and column equivalence.
+- [tests/MigrationIntelligence/Reader/](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Reader/) — spec, entity-reflection, and live-SQLite readers.
+- [tests/MigrationIntelligence/Diff/SchemaDifferTest.php](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Diff/SchemaDifferTest.php) — every intent kind, rename hints, safe vs. incompatible type changes.
+- [tests/MigrationIntelligence/Planner/](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Planner/) — golden preview SQL per dialect, the SQLite ALTER-COLUMN note, driver-alias resolution.
+- [tests/MigrationIntelligence/Safety/SafetyRunnerTest.php](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Safety/SafetyRunnerTest.php) — each check against seeded SQLite fixtures (duplicates, orphans, nulls, non-castable data, force).
+- [tests/MigrationIntelligence/Plan/PlanBuilderTest.php](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Plan/PlanBuilderTest.php) — single-phase and two-phase rename expansion, deterministic naming.
+- [tests/MigrationIntelligence/Emitter/CycleMigrationEmitterTest.php](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Emitter/CycleMigrationEmitterTest.php) — emitted migrations are asserted to be syntactically valid PHP (`php -l`).
+- [tests/MigrationIntelligence/Cli/PlanCommandTest.php](https://github.com/univeros/framework/blob/master/tests/MigrationIntelligence/Cli/PlanCommandTest.php) — diff-source resolution, formats, file writing, exit codes.
 
 ## Extending
 
