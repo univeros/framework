@@ -21,6 +21,12 @@ use Altair\Scaffold\Spec\Ast\Spec;
  */
 final readonly class Naming
 {
+    /** 2000-01-01T00:00:00Z, expressed as a Unix timestamp. */
+    private const int MIGRATION_STAMP_EPOCH = 946684800;
+
+    /** ~10 years in seconds — the deterministic stamp window. */
+    private const int MIGRATION_STAMP_WINDOW = 315360000;
+
     public function __construct(
         private string $appNamespace = 'App',
         private string $httpRelativeRoot = 'app/Http',
@@ -146,7 +152,7 @@ final readonly class Naming
             return '';
         }
 
-        $stamp = ($timestamp ?? time());
+        $stamp = $timestamp ?? $this->deterministicMigrationStamp($spec);
         $date = gmdate('Ymd.His', $stamp);
         $table = preg_replace('/[^a-z0-9_]+/i', '_', strtolower($spec->persistence->entity->table)) ?? 'table';
 
@@ -159,7 +165,7 @@ final readonly class Naming
             return 'Migration';
         }
 
-        $stamp = ($timestamp ?? time());
+        $stamp = $timestamp ?? $this->deterministicMigrationStamp($spec);
         $table = preg_replace('/[^a-zA-Z0-9_]+/', '_', $spec->persistence->entity->table) ?? 'table';
 
         return 'M' . gmdate('YmdHis', $stamp) . 'Create' . $this->camelize($table) . 'Table';
@@ -193,6 +199,27 @@ final readonly class Naming
     public function handlerTestShortName(string $messageFqcn): string
     {
         return $this->shortNameOf($this->handlerFqcn($messageFqcn)) . 'Test';
+    }
+
+    /**
+     * Content-addressed migration stamp — same spec produces the same
+     * filename and class name across runs and machines (#74 determinism
+     * standard). The stamp falls inside a fixed ~10-year window starting
+     * 2000-01-01 UTC, so scaffolded CREATE TABLE migrations always sort
+     * before any later wall-clock migration written by migration-intelligence
+     * (#80) or hand-written by the host. Different entity tables get
+     * different stamps via the sha256 spread, so Cycle's filename-ordered
+     * migrator still runs them in a stable order.
+     */
+    private function deterministicMigrationStamp(Spec $spec): int
+    {
+        if (!$spec->persistence instanceof PersistenceSpec) {
+            return self::MIGRATION_STAMP_EPOCH;
+        }
+
+        $hash = hexdec(substr(hash('sha256', $spec->persistence->entity->table), 0, 8));
+
+        return self::MIGRATION_STAMP_EPOCH + $hash % self::MIGRATION_STAMP_WINDOW;
     }
 
     private function classFileRelativePath(string $fqcn): string
