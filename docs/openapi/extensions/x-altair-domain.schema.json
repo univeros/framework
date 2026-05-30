@@ -1,0 +1,21 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-domain.schema.json",
+    "title": "x-altair-domain",
+    "description": "Carries the FQCN of the domain service that handles this operation, so that openapi:import recovers the original spec's domain.class instead of synthesising one from the path + operationId.",
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["class"],
+    "properties": {
+        "class": {
+            "type": "string",
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*(\\\\[A-Za-z_][A-Za-z0-9_]*)+$",
+            "description": "Fully-qualified PHP class name of the domain service, e.g. App\\User\\CreateUser."
+        },
+        "invocation": {
+            "type": "string",
+            "default": "__invoke",
+            "description": "Method on the domain class to invoke; defaults to __invoke."
+        }
+    }
+}

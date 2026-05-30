@@ -88,6 +88,7 @@
 ## Tests as documentation
 
 - `tests/Scaffold/Cli/ImportReceiptTest.php`
+- `tests/Scaffold/Cli/OpenApiImportExtensionsTest.php`
 - `tests/Scaffold/Cli/OpenApiImportRunnerTest.php`
 - `tests/Scaffold/Cli/OpenApiImportScaffoldTest.php`
 - `tests/Scaffold/Cli/PersistenceInferrerTest.php`
@@ -106,6 +107,7 @@
 - `tests/Scaffold/Emitter/MessageEmitterTest.php`
 - `tests/Scaffold/Emitter/MigrationEmitterTest.php`
 - `tests/Scaffold/Emitter/NamingTest.php`
+- `tests/Scaffold/Emitter/OpenApiEmitterExtensionsTest.php`
 - `tests/Scaffold/Emitter/OpenApiEmitterTest.php`
 - `tests/Scaffold/Emitter/RepositoryEmitterTest.php`
 - `tests/Scaffold/Emitter/ResponderEmitterTest.php`
@@ -120,11 +122,13 @@
 - `tests/Scaffold/Sdk/CompileIntegrationTest.php`
 - `tests/Scaffold/Sdk/EmitSdkCommandTest.php`
 - `tests/Scaffold/Sdk/EmitterRegistryTest.php`
+- `tests/Scaffold/Sdk/OpenApiParserExtensionsTest.php`
 - `tests/Scaffold/Sdk/OpenApiParserTest.php`
 - `tests/Scaffold/Sdk/PythonEmitterTest.php`
 - `tests/Scaffold/Sdk/TypeScriptEmitterTest.php`
 - `tests/Scaffold/Spec/Emitter/EmittedSpecTest.php`
 - `tests/Scaffold/Spec/Emitter/EmitterTest.php`
+- `tests/Scaffold/Spec/Emitter/OperationMapperExtensionsTest.php`
 - `tests/Scaffold/Spec/Emitter/OperationMapperTest.php`
 - `tests/Scaffold/Spec/Emitter/PathDeriverTest.php`
 - `tests/Scaffold/Spec/Emitter/SchemaMapperTest.php`

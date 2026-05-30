@@ -136,7 +136,30 @@ final readonly class OpenApiParser
             requestBody: $requestBody,
             responses: $responses,
             summary: isset($operation['summary']) && \is_string($operation['summary']) ? $operation['summary'] : '',
+            extensions: $this->extractExtensions($operation),
         );
+    }
+
+    /**
+     * `x-altair-*` keys carried at the operation level are preserved
+     * verbatim so the import path can round-trip framework-specific
+     * concerns (domain class, persistence, queue) that OpenAPI itself
+     * cannot express. Unknown extension keys still ride along so a v2
+     * extension can't be stripped by a v1 parser.
+     *
+     * @param  array<string, mixed> $operation
+     * @return array<string, mixed>
+     */
+    private function extractExtensions(array $operation): array
+    {
+        $extensions = [];
+        foreach ($operation as $key => $value) {
+            if (\is_string($key) && str_starts_with($key, 'x-altair-')) {
+                $extensions[$key] = $value;
+            }
+        }
+
+        return $extensions;
     }
 
     /**

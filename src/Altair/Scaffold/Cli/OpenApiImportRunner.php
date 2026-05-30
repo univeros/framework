@@ -62,6 +62,21 @@ final readonly class OpenApiImportRunner
 
     private const int YAML_INDENT = 2;
 
+    /**
+     * Operation-level `x-altair-*` keys this release understands. Anything
+     * outside this list still rides along verbatim — the parser captures
+     * any `x-altair-*` key — but surfaces in the receipt's `warnings[]`
+     * so v1 imports do not silently drop a key a future release relies on.
+     */
+    private const array KNOWN_OPERATION_EXTENSIONS = [
+        'x-altair-domain',
+        'x-altair-persistence',
+        'x-altair-queue',
+        'x-altair-idempotency',
+        'x-altair-webhook',
+        'x-altair-input-location',
+    ];
+
     public function __construct(
         private OpenApiParser $parser = new OpenApiParser(),
         private OperationMapper $operationMapper = new OperationMapper(),
@@ -101,7 +116,7 @@ final readonly class OpenApiImportRunner
         }
 
         if ($options->dryRun) {
-            return $this->dryRunReceipt($options, $planned);
+            return $this->dryRunReceipt($options, $planned, $document);
         }
 
         $collector = new SnapshotCollector($options->projectRoot);
@@ -110,7 +125,7 @@ final readonly class OpenApiImportRunner
         $writtenSpecs = $this->writeSpecs($planned, $writer, $collector, $options->force);
         $scaffoldFiles = [];
         $rolledBack = [];
-        $warnings = $this->initialWarnings($options);
+        $warnings = [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document)];
 
         if ($options->scaffold && $writtenSpecs !== []) {
             try {
@@ -266,9 +281,41 @@ final readonly class OpenApiImportRunner
         $warnings = [];
         if ($options->queue !== null) {
             $warnings[] = \sprintf(
-                "queue=%s recorded but inert: x-altair-queue extension support lands in #163; the flag is preserved for forward compatibility.",
+                "queue=%s flag recorded; x-altair-queue blocks in the OpenAPI source still round-trip into spec.queue regardless of the flag.",
                 $options->queue,
             );
+        }
+
+        return $warnings;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function unknownExtensionWarnings(OpenApiDocument $document): array
+    {
+        $warnings = [];
+        $seen = [];
+        foreach ($document->operations as $operation) {
+            foreach ($operation->extensions as $key => $_value) {
+                if (!\is_string($key)) {
+                    continue;
+                }
+
+                if (isset($seen[$key])) {
+                    continue;
+                }
+
+                if (\in_array($key, self::KNOWN_OPERATION_EXTENSIONS, true)) {
+                    continue;
+                }
+
+                $seen[$key] = true;
+                $warnings[] = \sprintf(
+                    "unknown extension '%s' carried through unchanged; not interpreted by this release.",
+                    $key,
+                );
+            }
         }
 
         return $warnings;
@@ -362,9 +409,9 @@ final readonly class OpenApiImportRunner
     }
 
     /**
-     * @param  list<EmittedFile> $planned
+     * @param list<EmittedFile> $planned
      */
-    private function dryRunReceipt(OpenApiImportOptions $options, array $planned): ImportReceipt
+    private function dryRunReceipt(OpenApiImportOptions $options, array $planned, OpenApiDocument $document): ImportReceipt
     {
         return new ImportReceipt(
             ok: true,
@@ -374,7 +421,7 @@ final readonly class OpenApiImportRunner
             scaffolded: [],
             rolledBack: [],
             unmapped: [],
-            warnings: $this->initialWarnings($options),
+            warnings: [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document)],
             journalId: null,
             eventId: null,
             error: null,

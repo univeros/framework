@@ -12,6 +12,9 @@ declare(strict_types=1);
 namespace Altair\Scaffold\Emitter;
 
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
+use Altair\Scaffold\Spec\Ast\PersistenceSpec;
+use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 use Symfony\Component\Yaml\Yaml;
 
@@ -61,6 +64,10 @@ class OpenApiEmitter
             'summary' => $spec->endpoint->summary,
             'tags' => $spec->endpoint->tags,
         ];
+
+        foreach ($this->renderAltairExtensions($spec) as $key => $value) {
+            $operation[$key] = $value;
+        }
 
         if ($spec->inputs !== []) {
             $properties = [];
@@ -135,6 +142,110 @@ class OpenApiEmitter
         }
 
         return ['type' => 'object', 'properties' => $properties];
+    }
+
+    /**
+     * Round-trippable `x-altair-*` blocks carrying spec fields OpenAPI 3.1
+     * cannot natively express. Lets `openapi:import` recover the original
+     * `domain:`, `persistence:`, and `queue:` blocks byte-for-byte instead
+     * of having to re-infer them from the path + response shape.
+     *
+     * @return array<string, mixed>
+     */
+    private function renderAltairExtensions(Spec $spec): array
+    {
+        $extensions = [
+            'x-altair-domain' => [
+                'class' => $spec->domain->class,
+                'invocation' => $spec->domain->invocation,
+            ],
+        ];
+
+        if ($spec->persistence instanceof PersistenceSpec) {
+            $extensions['x-altair-persistence'] = $this->renderPersistence($spec->persistence);
+        }
+
+        if ($spec->queue !== []) {
+            $extensions['x-altair-queue'] = array_values(array_map(
+                $this->renderQueueDispatch(...),
+                $spec->queue,
+            ));
+        }
+
+        return $extensions;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function renderPersistence(PersistenceSpec $persistence): array
+    {
+        $fields = [];
+        foreach ($persistence->entity->fields as $field) {
+            $fields[$field->name] = $this->renderPersistenceField($field);
+        }
+
+        $block = [
+            'entity' => [
+                'class' => $persistence->entity->class,
+                'table' => $persistence->entity->table,
+                'fields' => $fields,
+            ],
+        ];
+
+        if ($persistence->repository !== '') {
+            $block['repository'] = $persistence->repository;
+        }
+
+        return $block;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function renderPersistenceField(PersistenceFieldSpec $field): array
+    {
+        $rendered = ['type' => $field->type];
+
+        if ($field->primary) {
+            $rendered['primary'] = true;
+        }
+
+        if ($field->nullable) {
+            $rendered['nullable'] = true;
+        }
+
+        if ($field->unique) {
+            $rendered['unique'] = true;
+        }
+
+        if ($field->hasDefault) {
+            $rendered['default'] = $field->default;
+        }
+
+        if ($field->of !== null) {
+            $rendered['of'] = $field->of;
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function renderQueueDispatch(QueueDispatchSpec $dispatch): array
+    {
+        $rendered = [
+            'name' => $dispatch->name,
+            'message' => $dispatch->message,
+            'fields' => $dispatch->fields,
+        ];
+
+        if ($dispatch->transport !== null) {
+            $rendered['transport'] = $dispatch->transport;
+        }
+
+        return $rendered;
     }
 
     /**
