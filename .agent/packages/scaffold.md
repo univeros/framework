@@ -47,6 +47,9 @@
 - `OpenApiImportOptions` _(final)_
 - `OpenApiImportRunner` _(final)_
 - `OpenApiParser` _(final)_
+- `OpenApiRoundtripCommand` _(final)_
+- `OpenApiRoundtripOptions` _(final)_
+- `OpenApiRoundtripRunner` _(final)_
 - `OperationKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `OperationMapper` _(final)_
 - `OperationModel` _(final)_
@@ -67,6 +70,8 @@
 - `ResponseModel` _(final)_
 - `RewindCommand` _(final)_
 - `RewindRefusedException` — implements `Stringable`, `Throwable`
+- `RoundtripDifference` _(final)_
+- `RoundtripReceipt` _(final)_
 - `RouteEmitter`
 - `ScaffoldCommand` _(final)_
 - `ScaffoldJournalConfiguration` _(final)_ — implements `ConfigurationInterface`
@@ -91,6 +96,7 @@
 - `tests/Scaffold/Cli/OpenApiImportExtensionsTest.php`
 - `tests/Scaffold/Cli/OpenApiImportRunnerTest.php`
 - `tests/Scaffold/Cli/OpenApiImportScaffoldTest.php`
+- `tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php`
 - `tests/Scaffold/Cli/PersistenceInferrerTest.php`
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
 - `tests/Scaffold/Determinism/EmitOpenApiDeterminismTest.php`
