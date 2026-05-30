@@ -23,7 +23,7 @@ use Altair\Examples\Library\Example;
  */
 #[Command(
     name: 'examples:test',
-    description: 'Run every example\'s linked `tested_by` test file via PHPUnit.',
+    description: "Run every example's linked `tested_by` test file via PHPUnit.",
 )]
 final readonly class TestCommand
 {
@@ -61,14 +61,16 @@ final readonly class TestCommand
 
                 continue;
             }
+
             $files[] = $absolute;
         }
 
         if ($missing !== [] && !$skipMissing) {
             echo "The following examples reference missing test files:\n";
             foreach ($missing as $example) {
-                echo "  - {$example->id} -> {$example->testedBy}\n";
+                echo \sprintf('  - %s -> %s%s', $example->id, $example->testedBy, PHP_EOL);
             }
+
             echo "Pass --skip-missing to run the remaining tests anyway.\n";
 
             return 1;
@@ -81,7 +83,7 @@ final readonly class TestCommand
         }
 
         $command = $this->buildCommand($binary, $files);
-        echo "Running: {$command}\n";
+        echo \sprintf('Running: %s%s', $command, PHP_EOL);
 
         passthru($command, $status);
 
@@ -98,7 +100,7 @@ final readonly class TestCommand
      */
     private function buildCommand(string $binary, array $files): string
     {
-        $args = array_map(static fn(string $f): string => escapeshellarg($f), $files);
+        $args = array_map(escapeshellarg(...), $files);
 
         return escapeshellarg($binary) . ' ' . implode(' ', $args);
     }

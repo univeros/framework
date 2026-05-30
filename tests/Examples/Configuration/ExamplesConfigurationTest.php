@@ -43,6 +43,7 @@ final class ExamplesConfigurationTest extends TestCase
             unset($_ENV[$key], $_SERVER[$key]);
             putenv($key);
         }
+
         $this->appliedKeys = [];
 
         @rmdir($this->tmpRoot);

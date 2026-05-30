@@ -58,8 +58,8 @@ final readonly class SearchCommand
 
         printf("%d match%s for '%s':\n\n", \count($results), \count($results) === 1 ? '' : 'es', $query);
         foreach ($results as $example) {
-            echo "{$example->id}\n";
-            echo "  {$example->title}\n";
+            echo $example->id . PHP_EOL;
+            echo \sprintf('  %s%s', $example->title, PHP_EOL);
             echo "  {$example->scenario}\n\n";
         }
 

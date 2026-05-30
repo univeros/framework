@@ -58,7 +58,10 @@ final class ExampleRepository implements ExampleRepositoryInterface
         $examples = [];
         foreach ($iterator as $fileInfo) {
             \assert($fileInfo instanceof SplFileInfo);
-            if (!$fileInfo->isFile() || $fileInfo->getExtension() !== 'md') {
+            if (!$fileInfo->isFile()) {
+                continue;
+            }
+            if ($fileInfo->getExtension() !== 'md') {
                 continue;
             }
 

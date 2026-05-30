@@ -19,7 +19,7 @@ use Override;
 
 #[McpTool(
     name: 'framework__list_examples',
-    description: 'List every idiomatic example in the project\'s `.altair/examples/` library. '
+    description: "List every idiomatic example in the project's `.altair/examples/` library. "
         . 'Pass `package` to narrow to one package; omit it for the whole catalogue.',
     inputSchema: __DIR__ . '/Schema/list-examples-input.json',
     outputSchema: __DIR__ . '/Schema/object-output.json',

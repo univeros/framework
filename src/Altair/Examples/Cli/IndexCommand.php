@@ -60,7 +60,7 @@ final readonly class IndexCommand
         }
 
         $this->builder->writeTo($path);
-        echo "Wrote {$path}\n";
+        echo \sprintf('Wrote %s%s', $path, PHP_EOL);
 
         return 0;
     }

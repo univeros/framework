@@ -66,6 +66,7 @@ final readonly class IndexBuilder
         if (file_put_contents($temp, $contents) === false) {
             throw new RuntimeException(\sprintf('Unable to write examples index to "%s".', $temp));
         }
+
         if (!rename($temp, $path)) {
             @unlink($temp);
 

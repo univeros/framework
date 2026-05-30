@@ -45,8 +45,8 @@ final readonly class ReadExampleTool implements McpToolInterface
 
         try {
             $example = $this->repository->findById($id);
-        } catch (ExampleNotFoundException $exception) {
-            throw new McpException($exception->getMessage());
+        } catch (ExampleNotFoundException $exampleNotFoundException) {
+            throw new McpException($exampleNotFoundException->getMessage(), $exampleNotFoundException->getCode(), $exampleNotFoundException);
         }
 
         $payload = $example->toIndexEntry();

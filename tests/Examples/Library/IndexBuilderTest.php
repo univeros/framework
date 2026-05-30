@@ -95,12 +95,12 @@ final class IndexBuilderTest extends TestCase
 /**
  * @internal
  */
-final class InMemoryExampleRepository implements ExampleRepositoryInterface
+final readonly class InMemoryExampleRepository implements ExampleRepositoryInterface
 {
     /**
      * @param list<Example> $examples
      */
-    public function __construct(private readonly array $examples) {}
+    public function __construct(private array $examples) {}
 
     #[Override]
     public function findAll(): array
@@ -117,7 +117,7 @@ final class InMemoryExampleRepository implements ExampleRepositoryInterface
             }
         }
 
-        throw new \RuntimeException("not found: {$id}");
+        throw new \RuntimeException('not found: ' . $id);
     }
 
     #[Override]

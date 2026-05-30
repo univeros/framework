@@ -27,7 +27,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 final readonly class ExampleParser
 {
-    private const REQUIRED_STRING_FIELDS = ['title', 'scenario', 'since', 'tested_by'];
+    private const array REQUIRED_STRING_FIELDS = ['title', 'scenario', 'since', 'tested_by'];
 
     /**
      * @param string $id     Stable identifier (e.g. `http/basic-endpoint`)
@@ -42,6 +42,7 @@ final readonly class ExampleParser
             if (!\array_key_exists($field, $frontmatter)) {
                 throw InvalidFrontmatterException::missingField($id, $field);
             }
+
             if (!\is_string($frontmatter[$field]) || trim($frontmatter[$field]) === '') {
                 throw InvalidFrontmatterException::wrongFieldType($id, $field, 'a non-empty string');
             }
@@ -61,6 +62,7 @@ final readonly class ExampleParser
             if (!\is_string($pkg) || trim($pkg) === '') {
                 throw InvalidFrontmatterException::wrongFieldType($id, 'packages', 'a list of strings');
             }
+
             $normalisedPackages[] = $pkg;
         }
 

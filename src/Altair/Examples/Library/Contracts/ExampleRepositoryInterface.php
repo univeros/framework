@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Examples\Library\Contracts;
 
 use Altair\Examples\Library\Example;
+use Altair\Examples\Library\Exception\ExampleNotFoundException;
 
 interface ExampleRepositoryInterface
 {
@@ -26,7 +27,7 @@ interface ExampleRepositoryInterface
      * Look up a single example by its identifier (the path relative to the
      * library root with the `.md` extension stripped, e.g. `http/basic-endpoint`).
      *
-     * @throws \Altair\Examples\Library\Exception\ExampleNotFoundException
+     * @throws ExampleNotFoundException
      */
     public function findById(string $id): Example;
 

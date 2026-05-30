@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Examples\Library;
 
+use Altair\Examples\Library\Example;
 use Altair\Examples\Library\ExampleRepository;
 use Altair\Examples\Library\Exception\ExampleNotFoundException;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -61,7 +62,7 @@ final class ExampleRepositoryTest extends TestCase
     {
         $repo = new ExampleRepository($this->root);
 
-        $ids = array_map(static fn($e) => $e->id, $repo->findAll());
+        $ids = array_map(static fn(Example $e): string => $e->id, $repo->findAll());
 
         self::assertSame([
             'http/basic-endpoint',
@@ -94,12 +95,12 @@ final class ExampleRepositoryTest extends TestCase
     {
         $repo = new ExampleRepository($this->root);
 
-        $ids = array_map(static fn($e) => $e->id, $repo->findByPackage('http'));
+        $ids = array_map(static fn(Example $e): string => $e->id, $repo->findByPackage('http'));
         sort($ids);
 
         self::assertSame(['http/basic-endpoint', 'http/endpoint-with-auth'], $ids);
         self::assertSame(['persistence/crud-repository'], array_map(
-            static fn($e) => $e->id,
+            static fn(Example $e): string => $e->id,
             $repo->findByPackage('persistence'),
         ));
         self::assertSame([], $repo->findByPackage('does-not-exist'));
@@ -150,14 +151,20 @@ final class ExampleRepositoryTest extends TestCase
         if (!is_dir($path)) {
             return;
         }
+
         $items = scandir($path) ?: [];
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
+            if ($item === '.') {
                 continue;
             }
+            if ($item === '..') {
+                continue;
+            }
+
             $full = $path . DIRECTORY_SEPARATOR . $item;
             is_dir($full) ? $this->rmrf($full) : @unlink($full);
         }
+
         @rmdir($path);
     }
 }

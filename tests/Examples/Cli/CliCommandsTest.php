@@ -30,7 +30,9 @@ use PHPUnit\Framework\TestCase;
 final class CliCommandsTest extends TestCase
 {
     private string $root;
+
     private ExampleRepository $repository;
+
     private ExamplesSettings $settings;
 
     protected function setUp(): void
@@ -232,14 +234,20 @@ final class CliCommandsTest extends TestCase
         if (!is_dir($path)) {
             return;
         }
+
         $items = scandir($path) ?: [];
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
+            if ($item === '.') {
                 continue;
             }
+            if ($item === '..') {
+                continue;
+            }
+
             $full = $path . DIRECTORY_SEPARATOR . $item;
             is_dir($full) ? $this->rmrf($full) : @unlink($full);
         }
+
         @rmdir($path);
     }
 }

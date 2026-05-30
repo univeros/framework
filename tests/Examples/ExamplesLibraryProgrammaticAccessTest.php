@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Examples;
 
+use Altair\Examples\Library\Example;
 use Altair\Examples\Library\ExampleParser;
 use Altair\Examples\Library\ExampleRepository;
 use Altair\Examples\Library\IndexBuilder;
@@ -54,7 +55,7 @@ final class ExamplesLibraryProgrammaticAccessTest extends TestCase
     {
         $repository = new ExampleRepository($this->libraryRoot, new ExampleParser());
 
-        $ids = array_map(static fn($e) => $e->id, $repository->findAll());
+        $ids = array_map(static fn(Example $e): string => $e->id, $repository->findAll());
 
         self::assertSame(['http/basic', 'persistence/outbox'], $ids);
     }
@@ -63,10 +64,10 @@ final class ExamplesLibraryProgrammaticAccessTest extends TestCase
     {
         $repository = new ExampleRepository($this->libraryRoot, new ExampleParser());
 
-        $httpOnly = array_map(static fn($e) => $e->id, $repository->findByPackage('http'));
+        $httpOnly = array_map(static fn(Example $e): string => $e->id, $repository->findByPackage('http'));
         self::assertSame(['http/basic'], $httpOnly);
 
-        $outbox = array_map(static fn($e) => $e->id, $repository->search('outbox'));
+        $outbox = array_map(static fn(Example $e): string => $e->id, $repository->search('outbox'));
         self::assertSame(['persistence/outbox'], $outbox);
 
         self::assertSame('Outbox pattern', $repository->findById('persistence/outbox')->title);
@@ -110,14 +111,20 @@ final class ExamplesLibraryProgrammaticAccessTest extends TestCase
         if (!is_dir($path)) {
             return;
         }
+
         $items = scandir($path) ?: [];
         foreach ($items as $item) {
-            if ($item === '.' || $item === '..') {
+            if ($item === '.') {
                 continue;
             }
+            if ($item === '..') {
+                continue;
+            }
+
             $full = $path . DIRECTORY_SEPARATOR . $item;
             is_dir($full) ? $this->rmrf($full) : @unlink($full);
         }
+
         @rmdir($path);
     }
 }

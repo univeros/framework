@@ -20,7 +20,7 @@ use Override;
 
 #[McpTool(
     name: 'framework__search_examples',
-    description: 'Free-text substring search (case-insensitive) across every example\'s id, title, scenario, and body.',
+    description: "Free-text substring search (case-insensitive) across every example's id, title, scenario, and body.",
     inputSchema: __DIR__ . '/Schema/search-examples-input.json',
     outputSchema: __DIR__ . '/Schema/object-output.json',
 )]

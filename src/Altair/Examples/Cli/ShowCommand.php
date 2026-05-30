@@ -38,8 +38,8 @@ final readonly class ShowCommand
     ): int {
         try {
             $example = $this->repository->findById($id);
-        } catch (ExampleNotFoundException $exception) {
-            echo $exception->getMessage(), "\n";
+        } catch (ExampleNotFoundException $exampleNotFoundException) {
+            echo $exampleNotFoundException->getMessage(), "\n";
 
             return 1;
         }
@@ -55,7 +55,7 @@ final readonly class ShowCommand
         echo "# {$example->title}\n\n";
         echo "> {$example->scenario}\n\n";
         echo "**Packages:** " . implode(', ', $example->packages) . "\n";
-        echo "**Since:** {$example->since}\n";
+        echo \sprintf('**Since:** %s%s', $example->since, PHP_EOL);
         echo "**Tested by:** {$example->testedBy}\n\n";
         echo "---\n\n";
         echo $example->body;
