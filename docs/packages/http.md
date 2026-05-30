@@ -209,7 +209,7 @@ $response = $relay->handle($request);
 
 ### Routing with FastRoute
 
-Routes are declared as a `RouteCollection` map. Each entry's key is a `"METHOD /path"` string; the value is an `Action` instance. `FastRouteConfiguration` registers a `FastRoute\Dispatcher` factory with the container using `simpleDispatcher` (no file-based cache).
+Routes are declared as a `RouteCollection` map. Each entry's key is a `"METHOD /path"` string; the value is an `Action` instance. `FastRouteConfiguration` registers a `FastRoute\Dispatcher` factory with the container. By default it uses `simpleDispatcher` (recompiles routes on every request — fine for dev). Pass an `Altair\Configuration\Support\Env` as the second constructor argument to opt into `cachedDispatcher`, then set `ROUTE_CACHE_FILE` in the environment to a writable file path; see the **Configuration** section below for the env-var contract.
 
 ```php
 use Altair\Http\Base\Action;
@@ -435,7 +435,14 @@ Each `Configuration` class implements `ConfigurationInterface` from `univeros/co
 
 **`RelayConfiguration`** wires `ContainerResolver` with the container instance and delegates `Relay\Relay` construction to a factory that reads `MiddlewareCollection` from the container. You must push your middleware into `MiddlewareCollection` before applying this configuration.
 
-**`FastRouteConfiguration`** registers a `FastRoute\Dispatcher` factory using `FastRoute\simpleDispatcher`. It iterates the `RouteCollection`, splits each key on the first space to get the HTTP method and path, and adds them to the FastRoute collector. There is no file-based route cache; if you need caching use `cachedDispatcher` and replace the factory.
+**`FastRouteConfiguration`** registers a `FastRoute\Dispatcher` factory. It iterates the `RouteCollection`, splits each key on the first space to get the HTTP method and path, and adds them to the FastRoute collector. The constructor takes an optional `Altair\Configuration\Support\Env` as a second argument; when omitted the factory uses `FastRoute\simpleDispatcher` (no file cache, recompiles every request — the dev default). When `Env` is provided the configuration reads these environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `ROUTE_CACHE_FILE` | unset | Absolute path to the compiled route-cache file. When unset or empty the configuration falls back to `simpleDispatcher`. The host must make the directory writable on deploy (pre-warm it in your build, or delete the file to bust the cache). |
+| `ROUTE_CACHE_DISABLED` | `false` | Kill switch. When truthy (`1`, `true`, `on`, `yes`) `simpleDispatcher` is used even if `ROUTE_CACHE_FILE` is set — useful for dev hosts that always export the cache path but want recompiles while editing routes. |
+
+`Action` implements `__set_state`, so the cached dispatch data round-trips through PHP's `var_export` correctly.
 
 **`PayloadConfiguration`** aliases `PayloadInterface` to `Payload`. This is required for the container to inject `PayloadInterface` automatically.
 
@@ -860,7 +867,7 @@ The Http package deliberately excludes several concerns:
 
 - **HTTP/2 server push** — Not supported, and largely moot (server push has been removed from major browsers); the package stays at the message-oriented PSR-7/PSR-15 level. Note that server-sent events *are* achievable over PSR-15 — Observatory's `ActivityStreamHandler` streams an SSE tail through an emit-and-close handler — they are simply not shipped as a built-in Http helper.
 - **WebSockets** — WebSocket connections require a protocol upgrade and persistent connection handling outside the PSR-15 request/response cycle.
-- **Route caching** — `FastRouteConfiguration` uses `simpleDispatcher`, which recompiles routes on every request. For high-traffic applications, replace the factory with `cachedDispatcher` and a file path.
+- **Route caching** — `FastRouteConfiguration` defaults to `simpleDispatcher` (recompiles every request, safe for dev). Set `ROUTE_CACHE_FILE` to a writable path to opt into FastRoute's `cachedDispatcher`; flip `ROUTE_CACHE_DISABLED=1` to force the simple path back on without un-setting the cache path. The cache file is a plain PHP file written via `var_export` — pre-warm it on deploy and delete it to bust the cache. See the **Configuration** section above.
 - **Rate limiting** — `RateLimitMiddleware` is a fixed-window PSR-15 limiter backed by any PSR-16 cache pool (`Altair\Cache` works out of the box). The default `IpKeyResolver` keys on the client IP, preferring the `ATTRIBUTE_IP_ADDRESS` attribute set by `IpAddressMiddleware` (so trusted-proxy resolution lives in one place — never trust `X-Forwarded-For` directly); pass a custom `KeyResolverInterface` for API-key or user-id keying. Under-limit requests pass through with informational `X-RateLimit-Limit / Remaining / Reset` headers; at-limit returns `429 Too Many Requests` with `Retry-After`. Fixed-window has the classic boundary burst (`2 × limit` across the window edge); layer a token-bucket on top if you need stricter accounting. Complements edge / reverse-proxy rate limiting; does not replace it.
 - **Request body streaming** — `JsonContentMiddleware` and `FormContentMiddleware` buffer the entire body string via `(string) $request->getBody()`. They are not suitable for very large request bodies.
 - **Multipart form data** — File upload parsing relies on PHP's built-in `$_FILES` superglobal via `ServerRequestFactory::fromGlobals()`. Complex multipart handling is outside the package's scope.
