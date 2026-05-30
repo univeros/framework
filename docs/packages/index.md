@@ -173,11 +173,11 @@ $container->make(UsageQuery::class);   // shared, against the configured project
 
 The published tests under `tests/Index/` double as worked examples:
 
-- [tests/Index/Parser/PhpFileWalkerTest.php](../../tests/Index/Parser/PhpFileWalkerTest.php) — golden tests for every symbol kind and every usage kind, including the deliberate non-linking of untyped instance calls.
-- [tests/Index/Parser/YamlSpecWalkerTest.php](../../tests/Index/Parser/YamlSpecWalkerTest.php) — `spec_endpoint`/`spec_entity` extraction.
-- [tests/Index/Query/QueryLayerTest.php](../../tests/Index/Query/QueryLayerTest.php) — find-usages, implementers, extenders, callers, unused (with a true-positive dead-code fixture), impact, and orphans over a hand-seeded database.
-- [tests/Index/Builder/IndexBuilderTest.php](../../tests/Index/Builder/IndexBuilderTest.php) — full build, incremental skip-on-unchanged, and deletion handling over a real temp project.
-- [tests/Index/Cli/CommandsTest.php](../../tests/Index/Cli/CommandsTest.php) — every command end-to-end, including exit codes and the `--no-build` bail.
+- [tests/Index/Parser/PhpFileWalkerTest.php](https://github.com/univeros/framework/blob/master/tests/Index/Parser/PhpFileWalkerTest.php) — golden tests for every symbol kind and every usage kind, including the deliberate non-linking of untyped instance calls.
+- [tests/Index/Parser/YamlSpecWalkerTest.php](https://github.com/univeros/framework/blob/master/tests/Index/Parser/YamlSpecWalkerTest.php) — `spec_endpoint`/`spec_entity` extraction.
+- [tests/Index/Query/QueryLayerTest.php](https://github.com/univeros/framework/blob/master/tests/Index/Query/QueryLayerTest.php) — find-usages, implementers, extenders, callers, unused (with a true-positive dead-code fixture), impact, and orphans over a hand-seeded database.
+- [tests/Index/Builder/IndexBuilderTest.php](https://github.com/univeros/framework/blob/master/tests/Index/Builder/IndexBuilderTest.php) — full build, incremental skip-on-unchanged, and deletion handling over a real temp project.
+- [tests/Index/Cli/CommandsTest.php](https://github.com/univeros/framework/blob/master/tests/Index/Cli/CommandsTest.php) — every command end-to-end, including exit codes and the `--no-build` bail.
 
 Walkers and queries are deterministic and need no Container, so tests hand-build source strings or seed the storage directly and assert on the result.
 

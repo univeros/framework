@@ -112,13 +112,13 @@ Now `$db` and `$now` are available alongside `$container` in the shell.
 
 Everything except the one interactive line is unit-tested — the PsySH seam keeps it that way:
 
-- [tests/Tinker/Repl/PsyConfigurationFactoryTest.php](../../tests/Tinker/Repl/PsyConfigurationFactoryTest.php) — history file and startup banner land on the `Psy\Configuration`.
-- [tests/Tinker/Repl/PsyShellReplTest.php](../../tests/Tinker/Repl/PsyShellReplTest.php) — `build()` produces a `Psy\Shell` with the scope variables set (no `run()`).
-- [tests/Tinker/Repl/ContainerCasterTest.php](../../tests/Tinker/Repl/ContainerCasterTest.php) — the container summary caster.
-- [tests/Tinker/Repl/ReplContextTest.php](../../tests/Tinker/Repl/ReplContextTest.php) — immutable scope-variable layering.
-- [tests/Tinker/Preamble/PreambleBuilderTest.php](../../tests/Tinker/Preamble/PreambleBuilderTest.php) — the banner with and without inspectors (graceful degradation).
-- [tests/Tinker/Cli/TinkerCommandTest.php](../../tests/Tinker/Cli/TinkerCommandTest.php) — with a `FakeRepl`: preamble passed through, history override, the PsySH-missing exit-2 path, fresh-container fallback.
-- [tests/Tinker/Configuration/TinkerConfigurationTest.php](../../tests/Tinker/Configuration/TinkerConfigurationTest.php) — the real container is captured into scope; preamble and REPL resolve.
+- [tests/Tinker/Repl/PsyConfigurationFactoryTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Repl/PsyConfigurationFactoryTest.php) — history file and startup banner land on the `Psy\Configuration`.
+- [tests/Tinker/Repl/PsyShellReplTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Repl/PsyShellReplTest.php) — `build()` produces a `Psy\Shell` with the scope variables set (no `run()`).
+- [tests/Tinker/Repl/ContainerCasterTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Repl/ContainerCasterTest.php) — the container summary caster.
+- [tests/Tinker/Repl/ReplContextTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Repl/ReplContextTest.php) — immutable scope-variable layering.
+- [tests/Tinker/Preamble/PreambleBuilderTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Preamble/PreambleBuilderTest.php) — the banner with and without inspectors (graceful degradation).
+- [tests/Tinker/Cli/TinkerCommandTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Cli/TinkerCommandTest.php) — with a `FakeRepl`: preamble passed through, history override, the PsySH-missing exit-2 path, fresh-container fallback.
+- [tests/Tinker/Configuration/TinkerConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Tinker/Configuration/TinkerConfigurationTest.php) — the real container is captured into scope; preamble and REPL resolve.
 
 The single uncovered line is `PsyShellRepl::run()`'s `$shell->run()`, which blocks on stdin and cannot be unit-tested.
 

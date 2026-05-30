@@ -200,15 +200,15 @@ Workers run via `WorkerFactory`, which builds a Symfony `Worker` with the config
 
 ## Test as documentation
 
-- [tests/Messaging/Attribute/AsHandlerTest.php](../../tests/Messaging/Attribute/AsHandlerTest.php) — reading the `#[AsHandler]` attribute.
-- [tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php](../../tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php) — filesystem scan + registry build.
-- [tests/Messaging/Discovery/HandlerRegistryTest.php](../../tests/Messaging/Discovery/HandlerRegistryTest.php) — priority ordering, transport filtering.
-- [tests/Messaging/HandlerLocatorTest.php](../../tests/Messaging/HandlerLocatorTest.php) — descriptor resolution through `Container`.
-- [tests/Messaging/MessageBusTest.php](../../tests/Messaging/MessageBusTest.php) — wrapping the Symfony bus.
-- [tests/Messaging/Configuration/TransportSettingsTest.php](../../tests/Messaging/Configuration/TransportSettingsTest.php) — env → settings parsing.
-- [tests/Messaging/Configuration/MessengerConfigurationTest.php](../../tests/Messaging/Configuration/MessengerConfigurationTest.php) — end-to-end container wiring.
-- [tests/Messaging/Integration/DispatchAndConsumeTest.php](../../tests/Messaging/Integration/DispatchAndConsumeTest.php) — sync dispatch + async InMemory transport + worker consume.
-- [tests/Messaging/Middleware/LoggingMiddlewareTest.php](../../tests/Messaging/Middleware/LoggingMiddlewareTest.php) — optional logging middleware.
+- [tests/Messaging/Attribute/AsHandlerTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Attribute/AsHandlerTest.php) — reading the `#[AsHandler]` attribute.
+- [tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php) — filesystem scan + registry build.
+- [tests/Messaging/Discovery/HandlerRegistryTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/HandlerRegistryTest.php) — priority ordering, transport filtering.
+- [tests/Messaging/HandlerLocatorTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/HandlerLocatorTest.php) — descriptor resolution through `Container`.
+- [tests/Messaging/MessageBusTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/MessageBusTest.php) — wrapping the Symfony bus.
+- [tests/Messaging/Configuration/TransportSettingsTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/TransportSettingsTest.php) — env → settings parsing.
+- [tests/Messaging/Configuration/MessengerConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/MessengerConfigurationTest.php) — end-to-end container wiring.
+- [tests/Messaging/Integration/DispatchAndConsumeTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Integration/DispatchAndConsumeTest.php) — sync dispatch + async InMemory transport + worker consume.
+- [tests/Messaging/Middleware/LoggingMiddlewareTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Middleware/LoggingMiddlewareTest.php) — optional logging middleware.
 
 ## Related packages
 

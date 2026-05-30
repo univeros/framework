@@ -1,12 +1,17 @@
 # Split publishing
 
-> Operator runbook for publishing every `src/Altair/*` sub-package as a standalone read-only repository at `github.com/univeros/<name>` and as `univeros/<name>` on Packagist. Driven by [`.github/workflows/split.yml`](../../.github/workflows/split.yml).
+> Operator runbook for publishing each `src/Altair/*` sub-package as `univeros/<name>`, plus the framework's `docs/` and starter (`src/Altair/Bootstrap/resources/skeleton/`) as the dedicated `univeros/docs` and `univeros/univeros` repos. Driven by [`.github/workflows/split.yml`](https://github.com/univeros/framework/blob/master/.github/workflows/split.yml).
 
-**Source of truth:** `src/Altair/<Package>/` in the [`univeros/framework`](https://github.com/univeros/framework) monorepo. Every directory under `src/Altair/` that ships a `composer.json` is automatically a publishable package; the workflow's drift guard fails if the matrix in `split.yml` falls out of sync with the filesystem.
+**Source of truth:** the [`univeros/framework`](https://github.com/univeros/framework) monorepo. The matrix has two kinds of entries:
+
+- **Package splits** — every `src/Altair/<Package>/` directory that ships a `composer.json`. The workflow's drift guard fails if any are missing from the matrix; new packages can't slip through unpublished.
+- **Non-package splits** — `docs` (from `docs/`) and `univeros` (from `src/Altair/Bootstrap/resources/skeleton/`). Managed by hand and excluded from the drift check.
+
+All three top-level repos — `univeros/univeros` (starter), `univeros/framework` (library), `univeros/docs` (documentation) — are visible on the org page; the package splits are read-only mirrors used by Composer.
 
 ## How the workflow works
 
-`splitsh/lite` rewrites the monorepo's history for a single subtree (`src/Altair/<Package>/`) into a synthetic commit graph whose root is that subtree. The resulting SHA is force-pushed to `master` (or the tag ref, on tag pushes) of `github.com/univeros/<name>`. Each sub-repo therefore looks like it had always lived at the top level of its own repository — `composer require univeros/cache` pulls the package alone, not the whole framework.
+`splitsh/lite` rewrites the monorepo's history for a single subtree (e.g. `src/Altair/Cache/` or `docs/`) into a synthetic commit graph whose root is that subtree. The resulting SHA is force-pushed to `master` (or the tag ref, on tag pushes) of `github.com/univeros/<name>`. Each sub-repo therefore looks like it had always lived at the top level of its own repository — `composer require univeros/cache` pulls the package alone, not the whole framework, and `composer create-project univeros/univeros myapp` materialises the starter.
 
 The split is reproducible: re-running it on the same commit produces the same SHA. The split SHAs are not the same as the monorepo's commit SHAs.
 
@@ -14,7 +19,7 @@ The split is reproducible: re-running it on the same commit produces the same SH
 
 Before the workflow can push anything, the following must exist:
 
-1. **GitHub repositories** for each of the 35 packages. The original 16 (`cache`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `filesystem`, `happen`, `http`, `middleware`, `sanitation`, `security`, `session`, `structure`, `validation`) already exist. The other 19 must be created:
+1. **GitHub repositories** for each of the 35 packages plus the three top-level repos (`univeros/univeros`, `univeros/framework`, `univeros/docs`). The original 16 sub-package repos (`cache`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `filesystem`, `happen`, `http`, `middleware`, `sanitation`, `security`, `session`, `structure`, `validation`) plus `univeros/univeros` and `univeros/framework` already exist. Create the remaining 19 sub-package repos and `univeros/docs`:
 
    ```bash
    for pkg in agent-spec bootstrap cli doctor eval events index introspection \
@@ -25,9 +30,15 @@ Before the workflow can push anything, the following must exist:
        --description "[READ ONLY] Subtree split of the Univeros $pkg component" \
        --homepage "https://univeros.io"
    done
+
+   # Plus the dedicated docs mirror
+   gh repo create univeros/docs \
+     --public \
+     --description "[READ ONLY] Subtree split of the Univeros framework documentation" \
+     --homepage "https://univeros.io"
    ```
 
-   Each new repo can be empty — the first workflow run will force-push the split contents.
+   `univeros/univeros` already exists from the 2017-era stub — the first workflow run will force-push the current starter contents over it. Other new repos can be empty; the first run creates `master`.
 
 2. **Delete stale repositories** that no longer correspond to a `src/Altair/*` directory:
 
@@ -35,7 +46,7 @@ Before the workflow can push anything, the following must exist:
    gh repo delete univeros/queue --yes   # replaced by univeros/messaging in 2026-05
    ```
 
-3. **Authentication token.** Generate a fine-grained personal access token with `Contents: write` on all 35 sub-repos (or a classic PAT with the `repo` scope). Store it on `univeros/framework` as the `SPLIT_TOKEN` repository secret:
+3. **Authentication token.** Generate a fine-grained personal access token with `Contents: write` on **all repositories under the `univeros` org** (35 sub-repos + `univeros/docs` + `univeros/univeros` = 37 push targets). Use "All repositories" rather than "Selected repositories" — the latter forgets to include each new sub-package until you remember to edit the token. Store it on `univeros/framework` as the `SPLIT_TOKEN` repository secret:
 
    ```bash
    gh secret set SPLIT_TOKEN --repo univeros/framework --body "<the-token>"
@@ -56,14 +67,16 @@ Before the workflow can push anything, the following must exist:
 Triggered manually via `workflow_dispatch` — the comment at the top of `split.yml` explains the rationale (the framework is not yet 1.0; auto-on-push will be enabled once it is).
 
 ```bash
-# Dry-run: compute splits for every package without pushing
+# Dry-run: compute splits for every entry without pushing
 gh workflow run split.yml -f dry_run=true
 
-# Real run: split + push all 35 packages
+# Real run: split + push all 37 entries (35 packages + docs + univeros)
 gh workflow run split.yml
 
-# Single package (matches the workflow_dispatch dropdown)
+# Single split (matches the workflow_dispatch dropdown)
 gh workflow run split.yml -f package=scaffold
+gh workflow run split.yml -f package=docs
+gh workflow run split.yml -f package=univeros
 ```
 
 Tail it:
@@ -128,7 +141,7 @@ Submit in dependency order so each upload finds its declared deps already presen
 | Symptom | Likely cause |
 |---|---|
 | `splitsh-lite produced an empty SHA` | The path in the matrix doesn't exist, or the subtree is empty at the chosen ref. |
-| `403 from github.com` when pushing | `SPLIT_TOKEN` doesn't have write access to that sub-repo, or it shadowed the GitHub Actions token (the workflow already disables `persist-credentials` for the main checkout and clears `extraheader` on push — don't re-enable those). |
-| `split.yml matrix is out of sync with src/Altair/*` | A package directory exists with a `composer.json` but is missing from the matrix, or the matrix references a path that no longer exists. The error message includes a diff. |
+| `403 from github.com` when pushing | `SPLIT_TOKEN` doesn't have write access to that target repo. Fine-grained PATs scoped to "Selected repositories" need every new sub-repo added explicitly — switch to "All repositories" to avoid this. Also check the workflow hasn't accidentally re-enabled `persist-credentials` or set `extraheader`. |
+| `split.yml matrix is out of sync with src/Altair/*` | A package directory exists with a `composer.json` but is missing from the matrix, or the matrix references a `src/Altair/<name>` path that no longer exists. The error message includes a diff. Non-package entries like `docs` and `univeros` are exempt — only `src/Altair/<name>` paths are checked. |
 | Tag propagated to some sub-repos but not others | `fail-fast: false` is set, so individual sub-repos can fail independently. Check the matrix job logs and re-run the failed jobs once the cause is fixed. |
 | Packagist shows an old version after a fresh tag | The GitHub webhook may not be wired up. Trigger a manual update at `https://packagist.org/packages/univeros/<name>` → "Update". |

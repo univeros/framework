@@ -347,15 +347,15 @@ An unknown `--format` raises a `DoctorException` listing the formats that are av
 
 The published tests under `tests/Doctor/` double as worked examples of every extension point:
 
-- [tests/Doctor/DoctorTest.php](../../tests/Doctor/DoctorTest.php) — the runner: `--only`/`--skip` filtering, dependency-skip behaviour, `--fix` re-run.
-- [tests/Doctor/Check/PureChecksTest.php](../../tests/Doctor/Check/PureChecksTest.php) — `php_version`, `extensions_loaded` (using the injectable probe).
-- [tests/Doctor/Check/ProcessChecksTest.php](../../tests/Doctor/Check/ProcessChecksTest.php) — the process-backed checks against the fake runner.
-- [tests/Doctor/Check/HostAppChecksTest.php](../../tests/Doctor/Check/HostAppChecksTest.php) — the host-hook checks, including the `skipped`-when-absent path.
-- [tests/Doctor/Output/RenderersTest.php](../../tests/Doctor/Output/RenderersTest.php) — human + JSON rendering, determinism of the JSON projection.
-- [tests/Doctor/Result/ResultObjectsTest.php](../../tests/Doctor/Result/ResultObjectsTest.php) — `CheckResult`/`Report`/`AgentAction` shape and `toArray()`.
-- [tests/Doctor/Configuration/DoctorConfigurationTest.php](../../tests/Doctor/Configuration/DoctorConfigurationTest.php) — env-derived requirements + Container wiring.
+- [tests/Doctor/DoctorTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/DoctorTest.php) — the runner: `--only`/`--skip` filtering, dependency-skip behaviour, `--fix` re-run.
+- [tests/Doctor/Check/PureChecksTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Check/PureChecksTest.php) — `php_version`, `extensions_loaded` (using the injectable probe).
+- [tests/Doctor/Check/ProcessChecksTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Check/ProcessChecksTest.php) — the process-backed checks against the fake runner.
+- [tests/Doctor/Check/HostAppChecksTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Check/HostAppChecksTest.php) — the host-hook checks, including the `skipped`-when-absent path.
+- [tests/Doctor/Output/RenderersTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Output/RenderersTest.php) — human + JSON rendering, determinism of the JSON projection.
+- [tests/Doctor/Result/ResultObjectsTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Result/ResultObjectsTest.php) — `CheckResult`/`Report`/`AgentAction` shape and `toArray()`.
+- [tests/Doctor/Configuration/DoctorConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Configuration/DoctorConfigurationTest.php) — env-derived requirements + Container wiring.
 
-The key testing tool is the in-memory `FakeProcessRunner` ([tests/Doctor/Support/FakeProcessRunner.php](../../tests/Doctor/Support/FakeProcessRunner.php)): you script a result per command and assert on the calls made, so a process-backed check is exercised end-to-end without ever spawning a subprocess.
+The key testing tool is the in-memory `FakeProcessRunner` ([tests/Doctor/Support/FakeProcessRunner.php](https://github.com/univeros/framework/blob/master/tests/Doctor/Support/FakeProcessRunner.php)): you script a result per command and assert on the calls made, so a process-backed check is exercised end-to-end without ever spawning a subprocess.
 
 ```php
 use Altair\Tests\Doctor\Support\FakeProcessRunner;

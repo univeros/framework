@@ -11,9 +11,17 @@ Nothing is yet published on composer, API is being defined as it goes and if you
 
 ## Univeros
 
+## Repositories
+
+Univeros is split across three top-level repositories — `univeros/univeros`, `univeros/framework`, `univeros/docs` — plus a read-only mirror per sub-package.
+
+- **[univeros/univeros](https://github.com/univeros/univeros)** — the create-project starter. `composer create-project univeros/univeros myapp` lays down a runnable Altair API.
+- **[univeros/framework](https://github.com/univeros/framework)** — this repo. The library you depend on (`composer require univeros/framework`).
+- **[univeros/docs](https://github.com/univeros/docs)** — read-only mirror of the [docs/](docs/) tree from this monorepo. Open issues and PRs against `univeros/framework`; the docs repo is the published surface only.
+
 ## Sub-packages
 
-The framework is composed of 35 standalone PHP packages under [src/Altair/](src/Altair/). Each is published as a read-only repository at `github.com/univeros/<name>` and registered on Packagist as `univeros/<name>`. Pull the whole framework via:
+The framework is composed of 35 standalone PHP packages under [src/Altair/](src/Altair/). Each is published as a read-only repository at `github.com/univeros/<name>`. Pull the whole framework via:
 
 ```bash
 composer require univeros/framework
@@ -33,7 +41,7 @@ Per-package documentation lives under [docs/packages/](docs/packages/). The comp
 
 `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
 
-Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
+Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; every split repo (including `univeros/univeros` and `univeros/docs`) is a read-only mirror.
 
 ## Learning Univeros
 
