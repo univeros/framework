@@ -18,6 +18,8 @@
 - `EmittedFile` _(final)_
 - `EmittedFileKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `EmittedSdk` _(final)_
+- `EmittedSpec` _(final)_
+- `Emitter` _(final)_
 - `EmitterRegistry` _(final)_
 - `EndpointSpec` _(final)_
 - `EntityEmitter` _(final)_
@@ -42,9 +44,11 @@
 - `OpenApiEmitter`
 - `OpenApiParser` _(final)_
 - `OperationKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
+- `OperationMapper` _(final)_
 - `OperationModel` _(final)_
 - `OutputResponseSpec` _(final)_
 - `Parser`
+- `PathDeriver` _(final)_
 - `PathResolver`
 - `PersistenceEntitySpec` _(final)_
 - `PersistenceFieldSpec` _(final)_
@@ -61,6 +65,7 @@
 - `RouteEmitter`
 - `ScaffoldCommand` _(final)_
 - `ScaffoldJournalConfiguration` _(final)_ — implements `ConfigurationInterface`
+- `SchemaMapper` _(final)_
 - `SchemaType` _(final)_
 - `SdkException` — implements `Stringable`, `Throwable`
 - `ShowCommand` _(final)_
@@ -70,6 +75,7 @@
 - `TestEmitter`
 - `TypeMapper` _(final)_
 - `TypeScriptEmitter` _(final)_ — implements `EmitterInterface`
+- `UnmappableSchemaException` _(final)_ — implements `Stringable`, `Throwable`
 - `Validator`
 - `WriteOutcome` _(final)_
 - `WriteStatus` _(final)_ — implements `BackedEnum`, `UnitEnum`
@@ -108,6 +114,11 @@
 - `tests/Scaffold/Sdk/OpenApiParserTest.php`
 - `tests/Scaffold/Sdk/PythonEmitterTest.php`
 - `tests/Scaffold/Sdk/TypeScriptEmitterTest.php`
+- `tests/Scaffold/Spec/Emitter/EmittedSpecTest.php`
+- `tests/Scaffold/Spec/Emitter/EmitterTest.php`
+- `tests/Scaffold/Spec/Emitter/OperationMapperTest.php`
+- `tests/Scaffold/Spec/Emitter/PathDeriverTest.php`
+- `tests/Scaffold/Spec/Emitter/SchemaMapperTest.php`
 - `tests/Scaffold/Spec/ParserTest.php`
 - `tests/Scaffold/Spec/PersistenceParserTest.php`
 - `tests/Scaffold/Spec/PersistenceValidatorTest.php`

@@ -1,0 +1,323 @@
+<?php
+
+declare(strict_types=1);
+
+/*
+ * This file is part of the univeros/framework
+ *
+ * For the full copyright and license information, please view
+ * the LICENSE file that was distributed with this source code.
+ */
+
+namespace Altair\Scaffold\Spec\Emitter;
+
+use Altair\Scaffold\Sdk\Model\OpenApiDocument;
+use Altair\Scaffold\Sdk\Model\OperationModel;
+use Altair\Scaffold\Sdk\Model\ResponseModel;
+use Altair\Scaffold\Sdk\Model\SchemaType;
+use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
+
+/**
+ * Translates the language-neutral {@see SchemaType} tree into the flat
+ * field-list shape Altair YAML specs use.
+ *
+ * Inputs are scalar-only by design (Altair's input layer maps to validated
+ * primitives), so nested objects and arrays of objects raise
+ * {@see UnmappableSchemaException}. Output bodies allow richer types
+ * (FQCN references, generics) because the scaffolder hands them through to
+ * the responder unchanged.
+ */
+final readonly class SchemaMapper
+{
+    /** Refs we have followed during the current resolution — guards against cycles. */
+    private const int MAX_REF_DEPTH = 8;
+
+    public function __construct(
+        private string $appNamespace = 'App',
+    ) {}
+
+    /**
+     * Combined path-parameter + request-body field list for an operation.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function inputFields(OpenApiDocument $document, OperationModel $operation): array
+    {
+        $fields = [];
+
+        foreach ($operation->pathParameters as $name) {
+            $fields[] = [
+                'name' => $name,
+                'type' => 'string',
+                'rules' => ['required'],
+            ];
+        }
+
+        $requestBody = $operation->requestBody;
+        if ($requestBody instanceof SchemaType) {
+            $pointer = $this->requestBodyPointer($operation);
+            $bodySchema = $this->resolveRef($document, $requestBody, $pointer);
+            foreach ($this->objectInputFields($document, $bodySchema, $pointer) as $field) {
+                $fields[] = $field;
+            }
+        }
+
+        return $fields;
+    }
+
+    /**
+     * Builds the `output:` map (status => body) for every response carrying a
+     * parseable schema. Statuses with no schema (e.g. 204 No Content, 404
+     * description-only) are skipped because Altair's output block can't
+     * represent an empty body.
+     *
+     * @return array<int, array<string, string>>
+     */
+    public function outputs(OpenApiDocument $document, OperationModel $operation): array
+    {
+        $outputs = [];
+
+        foreach ($operation->responses as $response) {
+            if (!$response->statusIsNumeric()) {
+                continue;
+            }
+
+            if (!$response->schema instanceof SchemaType) {
+                continue;
+            }
+
+            $status = (int) $response->status;
+            $outputs[$status] = $this->responseBody($document, $response, $this->responsePointer($operation, $response));
+        }
+
+        return $outputs;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function responseBody(OpenApiDocument $document, ResponseModel $response, string $pointer): array
+    {
+        \assert($response->schema instanceof SchemaType);
+
+        // Top-level $ref preserves the abstraction — wrap rather than inline.
+        if ($response->schema->kind === SchemaType::REF) {
+            $refName = (string) $response->schema->ref;
+
+            return [$this->lowercaseFirst($refName) => $this->refFqcn($refName)];
+        }
+
+        $schema = $this->resolveRef($document, $response->schema, $pointer);
+
+        if ($schema->kind === SchemaType::OBJECT) {
+            $body = [];
+            foreach ($schema->properties as $name => $property) {
+                $body[(string) $name] = $this->outputType($document, $property['schema'], $pointer . '/properties/' . $name);
+            }
+
+            return $body;
+        }
+
+        return ['result' => $this->outputType($document, $schema, $pointer)];
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function objectInputFields(OpenApiDocument $document, SchemaType $schema, string $pointer): array
+    {
+        if ($schema->kind !== SchemaType::OBJECT) {
+            throw new UnmappableSchemaException(
+                $pointer,
+                'request body must be an object (got ' . $schema->kind . ').',
+            );
+        }
+
+        $fields = [];
+        foreach ($schema->properties as $name => $property) {
+            $propertyPointer = $pointer . '/properties/' . $name;
+            $fields[] = $this->inputField($document, (string) $name, $property['schema'], $property['required'], $propertyPointer);
+        }
+
+        return $fields;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function inputField(OpenApiDocument $document, string $name, SchemaType $schema, bool $required, string $pointer): array
+    {
+        $rules = $required ? ['required'] : [];
+        $resolved = $this->resolveRef($document, $schema, $pointer);
+
+        return match ($resolved->kind) {
+            SchemaType::SCALAR => $this->scalarInputField($name, $resolved, $rules),
+            SchemaType::ENUM => $this->enumInputField($name, $resolved, $rules),
+            SchemaType::ARRAY => $this->arrayInputField($name, $resolved, $rules, $pointer),
+            SchemaType::OBJECT => throw new UnmappableSchemaException(
+                $pointer,
+                'nested objects in inputs are not yet supported.',
+            ),
+            default => throw new UnmappableSchemaException(
+                $pointer,
+                \sprintf("unsupported input kind '%s'.", $resolved->kind),
+            ),
+        };
+    }
+
+    /**
+     * @param  list<string>          $rules
+     * @return array<string, mixed>
+     */
+    private function scalarInputField(string $name, SchemaType $schema, array $rules): array
+    {
+        return [
+            'name' => $name,
+            'type' => $this->inputScalarType((string) $schema->scalarType),
+            'rules' => $rules,
+        ];
+    }
+
+    /**
+     * @param  list<string>          $rules
+     * @return array<string, mixed>
+     */
+    private function enumInputField(string $name, SchemaType $schema, array $rules): array
+    {
+        if ($schema->enumValues !== []) {
+            $rules[] = 'in:' . implode(',', $schema->enumValues);
+        }
+
+        return [
+            'name' => $name,
+            'type' => 'string',
+            'rules' => $rules,
+        ];
+    }
+
+    /**
+     * @param  list<string>          $rules
+     * @return array<string, mixed>
+     */
+    private function arrayInputField(string $name, SchemaType $schema, array $rules, string $pointer): array
+    {
+        if ($schema->items instanceof SchemaType && $schema->items->kind === SchemaType::OBJECT) {
+            throw new UnmappableSchemaException(
+                $pointer . '/items',
+                'arrays of objects are not yet supported in inputs.',
+            );
+        }
+
+        return [
+            'name' => $name,
+            'type' => 'array',
+            'rules' => $rules,
+        ];
+    }
+
+    private function outputType(OpenApiDocument $document, SchemaType $schema, string $pointer): string
+    {
+        if ($schema->kind === SchemaType::REF) {
+            $refName = (string) $schema->ref;
+            $resolved = $this->resolveRef($document, $schema, $pointer);
+
+            // Refs to objects keep the FQCN abstraction; refs to scalars/enums
+            // render as the underlying type so consumers see what's on the wire.
+            return $resolved->kind === SchemaType::OBJECT
+                ? $this->refFqcn($refName)
+                : $this->outputType($document, $resolved, $pointer);
+        }
+
+        return match ($schema->kind) {
+            SchemaType::SCALAR => $this->outputScalarType((string) $schema->scalarType),
+            SchemaType::ENUM => 'string',
+            SchemaType::ARRAY => $this->outputArrayType($document, $schema, $pointer),
+            SchemaType::OBJECT => 'array<string, mixed>',
+            SchemaType::MIXED => 'mixed',
+            default => throw new UnmappableSchemaException(
+                $pointer,
+                \sprintf("unsupported output kind '%s'.", $schema->kind),
+            ),
+        };
+    }
+
+    private function outputArrayType(OpenApiDocument $document, SchemaType $schema, string $pointer): string
+    {
+        if (!$schema->items instanceof SchemaType) {
+            return 'list<mixed>';
+        }
+
+        $inner = $this->outputType($document, $schema->items, $pointer . '/items');
+
+        return 'list<' . $inner . '>';
+    }
+
+    private function inputScalarType(string $scalarType): string
+    {
+        return match ($scalarType) {
+            'integer' => 'int',
+            'number' => 'float',
+            'boolean' => 'bool',
+            default => 'string',
+        };
+    }
+
+    private function outputScalarType(string $scalarType): string
+    {
+        return match ($scalarType) {
+            'integer' => 'int',
+            'number' => 'float',
+            'boolean' => 'bool',
+            default => 'string',
+        };
+    }
+
+    private function refFqcn(string $refName): string
+    {
+        return $this->appNamespace . '\\' . $refName . '\\' . $refName;
+    }
+
+    private function lowercaseFirst(string $value): string
+    {
+        return $value === '' ? $value : strtolower($value[0]) . substr($value, 1);
+    }
+
+    private function resolveRef(
+        OpenApiDocument $document,
+        SchemaType $schema,
+        string $pointer,
+        int $depth = 0,
+    ): SchemaType {
+        if ($schema->kind !== SchemaType::REF) {
+            return $schema;
+        }
+
+        if ($depth >= self::MAX_REF_DEPTH) {
+            throw new UnmappableSchemaException($pointer, 'ref cycle exceeded resolution depth.');
+        }
+
+        $refName = (string) $schema->ref;
+        if (!isset($document->namedSchemas[$refName])) {
+            throw new UnmappableSchemaException($pointer, \sprintf("ref '%s' is not defined in components/schemas.", $refName));
+        }
+
+        return $this->resolveRef($document, $document->namedSchemas[$refName], $pointer, $depth + 1);
+    }
+
+    private function requestBodyPointer(OperationModel $operation): string
+    {
+        return $this->operationPointer($operation) . '/requestBody/content/application~1json/schema';
+    }
+
+    private function responsePointer(OperationModel $operation, ResponseModel $response): string
+    {
+        return $this->operationPointer($operation) . '/responses/' . $response->status . '/content/application~1json/schema';
+    }
+
+    private function operationPointer(OperationModel $operation): string
+    {
+        $encodedPath = str_replace('/', '~1', $operation->path);
+
+        return '#/paths/' . $encodedPath . '/' . strtolower($operation->method);
+    }
+}
