@@ -51,6 +51,7 @@
 - `tests/AgentSpec/MarkdownPackageRendererTest.php`
 - `tests/AgentSpec/PackageManifestGeneratorTest.php`
 - `tests/AgentSpec/PackageScannerTest.php`
+- `tests/AgentSpec/Reflection/TypeStringRendererTest.php`
 
 ## Related packages
 

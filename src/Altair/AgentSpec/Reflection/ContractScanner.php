@@ -104,13 +104,13 @@ class ContractScanner
     {
         $parameterTypes = [];
         foreach ($method->getParameters() as $parameter) {
-            $parameterTypes[] = $this->types->render($parameter->getType());
+            $parameterTypes[] = $this->types->render($parameter->getType(), $method);
         }
 
         return new MethodSignature(
             name: $method->getName(),
             parameterTypes: $parameterTypes,
-            returnType: $this->types->render($method->getReturnType()),
+            returnType: $this->types->render($method->getReturnType(), $method),
         );
     }
 }

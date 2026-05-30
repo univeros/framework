@@ -26,7 +26,7 @@
 |  | `withArgument(string, mixed)` | `EventInterface` |  |
 |  | `withArguments(array)` | `EventInterface` |  |
 |  | `withName(string)` | `EventInterface` |  |
-| `EventStackInterface` | `addEvent(EventInterface\|string)` | `self` |  |
+| `EventStackInterface` | `addEvent(EventInterface\|string)` | `EventStackInterface` |  |
 |  | `getStack()` | `array` |  |
 | `EventSubscriberInterface` | `getSubscribedEvents()` | `array` |  |
 | `ListenerInterface` | `__invoke(EventInterface)` | `void` |  |
