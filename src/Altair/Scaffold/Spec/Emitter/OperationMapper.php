@@ -57,7 +57,37 @@ final readonly class OperationMapper
             $spec['queue'] = $this->renderQueue($queue);
         }
 
+        $idempotency = $this->idempotencyFromExtension($operation);
+        if ($idempotency !== null) {
+            $spec['idempotency'] = $idempotency;
+        }
+
         return $spec;
+    }
+
+    /**
+     * `x-altair-idempotency` carries `ttl` (required) and `scope`
+     * (defaults to `tenant`). `mode` is not part of the wire contract
+     * — it's a server-side enforcement concern — so the importer
+     * defaults it to `optional`, the same default the spec block uses
+     * when omitted.
+     *
+     * @return ?array{ttl: string, scope: string, mode: string}
+     */
+    private function idempotencyFromExtension(OperationModel $operation): ?array
+    {
+        $extension = $operation->extensions['x-altair-idempotency'] ?? null;
+        if (!\is_array($extension) || !isset($extension['ttl']) || !\is_string($extension['ttl']) || $extension['ttl'] === '') {
+            return null;
+        }
+
+        return [
+            'ttl' => $extension['ttl'],
+            'scope' => isset($extension['scope']) && \is_string($extension['scope']) && $extension['scope'] !== ''
+                ? $extension['scope']
+                : 'tenant',
+            'mode' => 'optional',
+        ];
     }
 
     /**

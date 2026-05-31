@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Emitter;
 
+use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
@@ -170,6 +171,15 @@ class OpenApiEmitter
                 $this->renderQueueDispatch(...),
                 $spec->queue,
             ));
+        }
+
+        if ($spec->idempotency instanceof IdempotencySpec) {
+            // `mode` is a server-side enforcement concern; not part of the
+            // wire contract, so it does not round-trip via the extension.
+            $extensions['x-altair-idempotency'] = [
+                'ttl' => $spec->idempotency->ttl,
+                'scope' => $spec->idempotency->scope,
+            ];
         }
 
         return $extensions;

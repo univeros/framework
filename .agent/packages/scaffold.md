@@ -94,6 +94,7 @@
 ## Tests as documentation
 
 - `tests/Scaffold/Cli/ImportReceiptTest.php`
+- `tests/Scaffold/Cli/OpenApiIdempotencyRoundtripTest.php`
 - `tests/Scaffold/Cli/OpenApiImportExtensionsTest.php`
 - `tests/Scaffold/Cli/OpenApiImportRunnerTest.php`
 - `tests/Scaffold/Cli/OpenApiImportScaffoldTest.php`
