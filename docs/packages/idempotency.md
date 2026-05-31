@@ -90,7 +90,7 @@ public static function idempotency(): array
 
 ### 3. Wire the middleware (host)
 
-In the host application's container Configuration chain, register `IdempotencyConfiguration` so `IdempotencyStoreInterface` resolves:
+Two lines. First, register `IdempotencyConfiguration` in the container chain so `IdempotencyStoreInterface` resolves:
 
 ```php
 // config/configurations.php
@@ -111,9 +111,24 @@ $container->bind(\Altair\Idempotency\Contracts\IdempotencyStoreInterface::class)
     });
 ```
 
-Then add `IdempotencyKeyMiddleware` to the middleware pipeline ahead of input validation:
+Second, add `ActionAwareIdempotencyMiddleware` to the middleware pipeline **after** `DispatcherMiddleware` (which publishes the resolved Action on the request) and **before** `ActionMiddleware` (which invokes it):
 
 ```php
+$middleware->add(new \Altair\Idempotency\Middleware\ActionAwareIdempotencyMiddleware(
+    store: $container->get(\Altair\Idempotency\Contracts\IdempotencyStoreInterface::class),
+    responseFactory: $container->get(\Psr\Http\Message\ResponseFactoryInterface::class),
+    streamFactory: $container->get(\Psr\Http\Message\StreamFactoryInterface::class),
+));
+```
+
+That's the entire host wiring. The middleware reads each request's resolved Action via the `altair:http:action` attribute, looks for the static `idempotency()` accessor the scaffolder emits when a spec carries the `idempotency:` block, and configures a per-request `IdempotencyKeyMiddleware` with the spec's TTL and mode. Endpoints without the block see no behaviour change — the middleware passes them through.
+
+#### Manual wiring (escape hatch)
+
+For endpoints that need a different policy than the spec declares — say, forcing `mode: required` globally even when individual specs say `optional` — use `IdempotencyKeyMiddleware` directly:
+
+```php
+// Manual per-route wiring — only when you need to override the spec-driven policy.
 $middleware->add(new \Altair\Idempotency\Middleware\IdempotencyKeyMiddleware(
     store: $container->get(\Altair\Idempotency\Contracts\IdempotencyStoreInterface::class),
     responseFactory: $container->get(\Psr\Http\Message\ResponseFactoryInterface::class),
@@ -122,8 +137,6 @@ $middleware->add(new \Altair\Idempotency\Middleware\IdempotencyKeyMiddleware(
     mode: \Altair\Idempotency\Middleware\IdempotencyKeyMiddleware::MODE_REQUIRED,
 ));
 ```
-
-For per-endpoint policy (different TTL / mode per route), the host's middleware factory reads the resolved Action's `idempotency()` accessor — Univeros's `DispatcherMiddleware` exposes the action via the `MiddlewareInterface::ATTRIBUTE_ACTION` request attribute, so the idempotency middleware can be a thin wrapper that introspects the action and configures itself per request.
 
 ### 4. Use it
 

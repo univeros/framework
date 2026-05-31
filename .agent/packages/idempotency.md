@@ -13,6 +13,7 @@
 
 ## Concrete classes
 
+- `ActionAwareIdempotencyMiddleware` _(final)_ — implements `MiddlewareInterface`
 - `ApcuStore` _(final)_ — implements `IdempotencyStoreInterface`
 - `IdempotencyConfiguration` _(final)_ — implements `ConfigurationInterface`
 - `IdempotencyKeyMiddleware` _(final)_ — implements `MiddlewareInterface`
@@ -20,10 +21,13 @@
 - `RedisStore` _(final)_ — implements `IdempotencyStoreInterface`
 - `RequestBodyHasher`
 - `StoredResponse` _(final)_
+- `TtlParser` _(final)_
 
 ## Tests as documentation
 
 - `tests/Idempotency/Hash/RequestBodyHasherTest.php`
+- `tests/Idempotency/Hash/TtlParserTest.php`
+- `tests/Idempotency/Middleware/ActionAwareIdempotencyMiddlewareTest.php`
 - `tests/Idempotency/Middleware/IdempotencyKeyMiddlewareTest.php`
 - `tests/Idempotency/Storage/ApcuStoreTest.php`
 - `tests/Idempotency/Storage/InMemoryStoreTest.php`
