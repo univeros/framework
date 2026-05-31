@@ -1,0 +1,22 @@
+{
+    "name": "univeros/idempotency",
+    "description": "Stripe-style Idempotency-Key primitive for Univeros: storage contract, adapters, and (in companion packages) PSR-15 middleware + spec block.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3"
+    },
+    "suggest": {
+        "ext-apcu": "Required for the single-host ApcuStore adapter.",
+        "ext-redis": "Required for the multi-host RedisStore adapter."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Idempotency\\": ""
+        }
+    }
+}
