@@ -22,6 +22,7 @@ use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -69,6 +70,9 @@ class Parser
             idempotency: isset($data['idempotency'])
                 ? $this->parseIdempotency($this->requireMap($data, 'idempotency', $sourcePath))
                 : null,
+            webhook: isset($data['webhook'])
+                ? $this->parseWebhook($this->requireMap($data, 'webhook', $sourcePath))
+                : null,
         );
     }
 
@@ -90,6 +94,76 @@ class Parser
                 ? $data['mode']
                 : IdempotencySpec::MODE_OPTIONAL,
         );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function parseWebhook(array $data): WebhookSpec
+    {
+        $direction = $data['direction'] ?? null;
+        $signing = $data['signing'] ?? null;
+        if (!\is_string($direction) || !\is_string($signing)) {
+            throw new SpecParseException("'webhook' requires string 'direction' and 'signing'.");
+        }
+
+        $retry = $data['retry'] ?? [];
+        if (!\is_array($retry)) {
+            throw new SpecParseException("'webhook.retry' must be a map.");
+        }
+
+        $maxAttempts = $retry['max_attempts'] ?? 5;
+        if (!\is_int($maxAttempts)) {
+            throw new SpecParseException("'webhook.retry.max_attempts' must be an integer.");
+        }
+
+        /** @var array<string, mixed> $retry */
+        return new WebhookSpec(
+            direction: $direction,
+            signing: $signing,
+            secretName: $this->webhookOptionalString($data, 'secret_name'),
+            signatureHeader: $this->webhookString($data, 'header', 'X-Signature'),
+            timestampHeader: $this->webhookString($data, 'timestamp_header', 'X-Timestamp'),
+            eventIdHeader: $this->webhookString($data, 'event_id_header', 'X-Event-Id'),
+            dedupeTtl: $this->webhookString($data, 'dedupe_ttl', '1h'),
+            timestampWindow: $this->webhookString($data, 'timestamp_window', '5m'),
+            retryMaxAttempts: $maxAttempts,
+            retryBackoff: $this->webhookString($retry, 'backoff', 'exponential'),
+            retryBaseDelay: $this->webhookString($retry, 'base_delay', '30s'),
+            deadLetterTransport: $this->webhookOptionalString($data, 'dead_letter'),
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function webhookString(array $data, string $key, string $default): string
+    {
+        if (!isset($data[$key])) {
+            return $default;
+        }
+
+        if (!\is_string($data[$key])) {
+            throw new SpecParseException(\sprintf("'webhook.%s' must be a string.", $key));
+        }
+
+        return $data[$key];
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function webhookOptionalString(array $data, string $key): ?string
+    {
+        if (!isset($data[$key])) {
+            return null;
+        }
+
+        if (!\is_string($data[$key])) {
+            throw new SpecParseException(\sprintf("'webhook.%s' must be a string.", $key));
+        }
+
+        return $data[$key];
     }
 
     /**

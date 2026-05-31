@@ -176,6 +176,21 @@ final readonly class Naming
         return $this->classFileRelativePath($messageFqcn);
     }
 
+    public function webhookDispatcherShortName(Spec $spec): string
+    {
+        return $spec->artifactName() . 'WebhookDispatcher';
+    }
+
+    public function webhookDispatcherFqcn(Spec $spec): string
+    {
+        return $this->appNamespace . '\\Webhooks\\' . $this->webhookDispatcherShortName($spec);
+    }
+
+    public function webhookDispatcherPath(Spec $spec): string
+    {
+        return $this->classFileRelativePath($this->webhookDispatcherFqcn($spec));
+    }
+
     public function handlerFqcn(string $messageFqcn): string
     {
         $namespace = $this->namespaceOf($messageFqcn);

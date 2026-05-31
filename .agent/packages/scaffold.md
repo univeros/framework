@@ -88,6 +88,8 @@
 - `TypeScriptEmitter` _(final)_ — implements `EmitterInterface`
 - `UnmappableSchemaException` _(final)_ — implements `Stringable`, `Throwable`
 - `Validator`
+- `WebhookDispatcherBindingEmitter`
+- `WebhookSpec` _(final)_
 - `WriteOutcome` _(final)_
 - `WriteStatus` _(final)_ — implements `BackedEnum`, `UnitEnum`
 
@@ -108,6 +110,7 @@
 - `tests/Scaffold/Determinism/SdkEmitterDeterminismTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterIdempotencyTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
+- `tests/Scaffold/Emitter/ActionEmitterWebhookTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
 - `tests/Scaffold/Emitter/EntityEmitterTest.php`
 - `tests/Scaffold/Emitter/HandlerEmitterTest.php`
@@ -122,6 +125,7 @@
 - `tests/Scaffold/Emitter/ResponderEmitterTest.php`
 - `tests/Scaffold/Emitter/RouteEmitterTest.php`
 - `tests/Scaffold/Emitter/TestEmitterTest.php`
+- `tests/Scaffold/Emitter/WebhookDispatcherBindingEmitterTest.php`
 - `tests/Scaffold/Journal/Cli/CommandsTest.php`
 - `tests/Scaffold/Journal/Differ/FileDifferTest.php`
 - `tests/Scaffold/Journal/JournalEntryTest.php`
@@ -146,6 +150,7 @@
 - `tests/Scaffold/Spec/PersistenceParserTest.php`
 - `tests/Scaffold/Spec/PersistenceValidatorTest.php`
 - `tests/Scaffold/Spec/ValidatorTest.php`
+- `tests/Scaffold/Spec/WebhookParserTest.php`
 
 ## Related packages
 

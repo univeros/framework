@@ -30,6 +30,7 @@ final readonly class Spec
         public ?PersistenceSpec $persistence = null,
         public array $queue = [],
         public ?IdempotencySpec $idempotency = null,
+        public ?WebhookSpec $webhook = null,
     ) {}
 
     /**

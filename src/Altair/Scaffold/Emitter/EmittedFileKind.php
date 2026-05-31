@@ -27,4 +27,5 @@ enum EmittedFileKind: string
     case Handler = 'handler';
     case HandlerTest = 'handler-test';
     case Spec = 'spec';
+    case WebhookDispatcher = 'webhook-dispatcher';
 }

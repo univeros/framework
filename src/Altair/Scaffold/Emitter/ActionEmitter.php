@@ -13,6 +13,7 @@ namespace Altair\Scaffold\Emitter;
 
 use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 use Altair\Scaffold\Templating\PhpHeader;
 
 /**
@@ -39,6 +40,7 @@ class ActionEmitter
         $responderFqcn = $this->naming->responderFqcn($spec);
         $domainFqcn = $spec->domain->class;
         $idempotencyAccessor = $this->renderIdempotencyAccessor($spec->idempotency);
+        $webhookAccessor = $this->renderWebhookAccessor($spec->webhook);
 
         $header = PhpHeader::render($namespace);
         $body = <<<PHP
@@ -60,7 +62,7 @@ class ActionEmitter
                         input: \\{$inputFqcn}::class,
                     );
                 }
-            {$idempotencyAccessor}}
+            {$idempotencyAccessor}{$webhookAccessor}}
 
             PHP;
 
@@ -105,6 +107,43 @@ class ActionEmitter
                 public static function idempotency(): array
                 {
                     return ['ttl' => {$ttl}, 'scope' => {$scope}, 'mode' => {$mode}];
+                }
+
+            PHP;
+    }
+
+    /**
+     * Renders the static `webhook()` accessor for inbound specs so the host
+     * application's ActionAwareWebhookVerifyMiddleware can configure
+     * verification from spec metadata. Empty string for outbound or absent
+     * blocks so unrelated scaffolds stay byte-for-byte identical.
+     */
+    private function renderWebhookAccessor(?WebhookSpec $webhook): string
+    {
+        if (!$webhook instanceof WebhookSpec || $webhook->direction !== WebhookSpec::DIRECTION_IN) {
+            return '';
+        }
+
+        $direction = var_export($webhook->direction, true);
+        $signing = var_export($webhook->signing, true);
+        $secret = var_export($webhook->secretName, true);
+        $signatureHeader = var_export($webhook->signatureHeader, true);
+        $timestampHeader = var_export($webhook->timestampHeader, true);
+        $eventIdHeader = var_export($webhook->eventIdHeader, true);
+        $dedupeTtl = var_export($webhook->dedupeTtl, true);
+        $timestampWindow = var_export($webhook->timestampWindow, true);
+
+        return <<<PHP
+
+                /**
+                 * Inbound webhook policy for this endpoint. Consumed by the host
+                 * application's ActionAwareWebhookVerifyMiddleware.
+                 *
+                 * @return array{direction: string, signing: string, secret_name: string, signature_header: string, timestamp_header: string, event_id_header: string, dedupe_ttl: string, timestamp_window: string}
+                 */
+                public static function webhook(): array
+                {
+                    return ['direction' => {$direction}, 'signing' => {$signing}, 'secret_name' => {$secret}, 'signature_header' => {$signatureHeader}, 'timestamp_header' => {$timestampHeader}, 'event_id_header' => {$eventIdHeader}, 'dedupe_ttl' => {$dedupeTtl}, 'timestamp_window' => {$timestampWindow}];
                 }
 
             PHP;
