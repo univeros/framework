@@ -8,7 +8,11 @@
         "source": "https://github.com/univeros/framework"
     },
     "require": {
-        "php": ">=8.3"
+        "php": ">=8.3",
+        "psr/http-factory": "^1.1",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0"
     },
     "suggest": {
         "ext-apcu": "Required for the single-host ApcuStore adapter.",

@@ -14,13 +14,24 @@
 ## Concrete classes
 
 - `ApcuStore` _(final)_ — implements `IdempotencyStoreInterface`
+- `IdempotencyKeyMiddleware` _(final)_ — implements `MiddlewareInterface`
 - `InMemoryStore` _(final)_ — implements `IdempotencyStoreInterface`
 - `RedisStore` _(final)_ — implements `IdempotencyStoreInterface`
+- `RequestBodyHasher`
 - `StoredResponse` _(final)_
 
 ## Tests as documentation
 
+- `tests/Idempotency/Hash/RequestBodyHasherTest.php`
+- `tests/Idempotency/Middleware/IdempotencyKeyMiddlewareTest.php`
 - `tests/Idempotency/Storage/ApcuStoreTest.php`
 - `tests/Idempotency/Storage/InMemoryStoreTest.php`
 - `tests/Idempotency/Storage/RedisStoreTest.php`
 - `tests/Idempotency/Storage/StoredResponseTest.php`
+
+## Related packages
+
+- `psr/http-factory`
+- `psr/http-message`
+- `psr/http-server-handler`
+- `psr/http-server-middleware`
