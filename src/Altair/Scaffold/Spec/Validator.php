@@ -17,6 +17,7 @@ use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 
 /**
  * Performs semantic validation on a parsed spec.
@@ -95,6 +96,10 @@ class Validator
             array_push($errors, ...$this->validateIdempotency($spec->idempotency));
         }
 
+        if ($spec->webhook instanceof WebhookSpec) {
+            array_push($errors, ...$this->validateWebhook($spec->webhook));
+        }
+
         return $errors;
     }
 
@@ -125,6 +130,48 @@ class Validator
         $validModes = [IdempotencySpec::MODE_OPTIONAL, IdempotencySpec::MODE_REQUIRED];
         if (!\in_array($idempotency->mode, $validModes, true)) {
             $errors[] = \sprintf("idempotency.mode '%s' must be 'optional' or 'required'.", $idempotency->mode);
+        }
+
+        return $errors;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validateWebhook(WebhookSpec $webhook): array
+    {
+        $errors = [];
+
+        if (!\in_array($webhook->direction, [WebhookSpec::DIRECTION_IN, WebhookSpec::DIRECTION_OUT], true)) {
+            $errors[] = \sprintf("webhook.direction '%s' must be 'in' or 'out'.", $webhook->direction);
+        }
+
+        $validSigners = ['hmac-sha256', 'hmac-sha512', 'ed25519'];
+        if (!\in_array($webhook->signing, $validSigners, true)) {
+            $errors[] = \sprintf('webhook.signing %s must be one of: %s.', $webhook->signing, implode(', ', $validSigners));
+        }
+
+        if ($webhook->direction === WebhookSpec::DIRECTION_IN && ($webhook->secretName === null || $webhook->secretName === '')) {
+            $errors[] = "webhook.secret_name is required when direction is 'in'.";
+        }
+
+        $durations = [
+            'dedupe_ttl' => $webhook->dedupeTtl,
+            'timestamp_window' => $webhook->timestampWindow,
+            'retry.base_delay' => $webhook->retryBaseDelay,
+        ];
+        foreach ($durations as $label => $value) {
+            if (preg_match('/^\d+(ms|s|m|h|d)$/', $value) !== 1) {
+                $errors[] = \sprintf("webhook.%s '%s' must match '<number><ms|s|m|h|d>'.", $label, $value);
+            }
+        }
+
+        if ($webhook->retryMaxAttempts < 1) {
+            $errors[] = 'webhook.retry.max_attempts must be a positive integer.';
+        }
+
+        if (!\in_array($webhook->retryBackoff, [WebhookSpec::BACKOFF_EXPONENTIAL, WebhookSpec::BACKOFF_LINEAR], true)) {
+            $errors[] = \sprintf("webhook.retry.backoff '%s' must be 'exponential' or 'linear'.", $webhook->retryBackoff);
         }
 
         return $errors;

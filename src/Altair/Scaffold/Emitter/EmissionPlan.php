@@ -13,6 +13,7 @@ namespace Altair\Scaffold\Emitter;
 
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 
 /**
  * Runs every emitter against a Spec and returns the list of EmittedFile
@@ -37,6 +38,7 @@ class EmissionPlan
         private readonly MessageEmitter $messageEmitter = new MessageEmitter(),
         private readonly HandlerEmitter $handlerEmitter = new HandlerEmitter(),
         private readonly HandlerTestEmitter $handlerTestEmitter = new HandlerTestEmitter(),
+        private readonly WebhookDispatcherBindingEmitter $webhookDispatcherBindingEmitter = new WebhookDispatcherBindingEmitter(),
     ) {}
 
     /**
@@ -67,6 +69,10 @@ class EmissionPlan
             $files[] = $this->messageEmitter->emit($queue);
             $files[] = $this->handlerEmitter->emit($queue);
             $files[] = $this->handlerTestEmitter->emit($queue);
+        }
+
+        if ($spec->webhook instanceof WebhookSpec && $spec->webhook->isOutbound()) {
+            $files[] = $this->webhookDispatcherBindingEmitter->emit($spec);
         }
 
         return $files;
