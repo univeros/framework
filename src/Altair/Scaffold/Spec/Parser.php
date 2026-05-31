@@ -14,6 +14,7 @@ namespace Altair\Scaffold\Spec;
 use Altair\Scaffold\Exception\SpecParseException;
 use Altair\Scaffold\Spec\Ast\DomainSpec;
 use Altair\Scaffold\Spec\Ast\EndpointSpec;
+use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
@@ -65,6 +66,29 @@ class Parser
                 ? $this->parsePersistence($this->requireMap($data, 'persistence', $sourcePath))
                 : null,
             queue: $this->parseQueue($this->optionalMap($data, 'queue')),
+            idempotency: isset($data['idempotency'])
+                ? $this->parseIdempotency($this->requireMap($data, 'idempotency', $sourcePath))
+                : null,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    private function parseIdempotency(array $data): IdempotencySpec
+    {
+        if (!isset($data['ttl']) || !\is_string($data['ttl']) || $data['ttl'] === '') {
+            throw new SpecParseException("'idempotency.ttl' is required and must be a non-empty string (e.g. '24h').");
+        }
+
+        return new IdempotencySpec(
+            ttl: $data['ttl'],
+            scope: isset($data['scope']) && \is_string($data['scope']) && $data['scope'] !== ''
+                ? $data['scope']
+                : IdempotencySpec::DEFAULT_SCOPE,
+            mode: isset($data['mode']) && \is_string($data['mode']) && $data['mode'] !== ''
+                ? $data['mode']
+                : IdempotencySpec::MODE_OPTIONAL,
         );
     }
 

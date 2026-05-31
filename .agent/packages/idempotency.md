@@ -14,6 +14,7 @@
 ## Concrete classes
 
 - `ApcuStore` _(final)_ — implements `IdempotencyStoreInterface`
+- `IdempotencyConfiguration` _(final)_ — implements `ConfigurationInterface`
 - `IdempotencyKeyMiddleware` _(final)_ — implements `MiddlewareInterface`
 - `InMemoryStore` _(final)_ — implements `IdempotencyStoreInterface`
 - `RedisStore` _(final)_ — implements `IdempotencyStoreInterface`
@@ -35,3 +36,5 @@
 - `psr/http-message`
 - `psr/http-server-handler`
 - `psr/http-server-middleware`
+- `univeros/configuration`
+- `univeros/container`

@@ -6,6 +6,7 @@ namespace Altair\Tests\Scaffold\Support;
 
 use Altair\Scaffold\Spec\Ast\DomainSpec;
 use Altair\Scaffold\Spec\Ast\EndpointSpec;
+use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceEntitySpec;
@@ -57,6 +58,24 @@ final class SpecFixture
                     transport: 'default',
                 ),
             ],
+        );
+    }
+
+    public static function createUserWithIdempotency(): Spec
+    {
+        $base = self::createUser();
+
+        return new Spec(
+            endpoint: $base->endpoint,
+            inputs: $base->inputs,
+            outputs: $base->outputs,
+            domain: $base->domain,
+            sourcePath: $base->sourcePath,
+            idempotency: new IdempotencySpec(
+                ttl: '24h',
+                scope: 'tenant',
+                mode: IdempotencySpec::MODE_REQUIRED,
+            ),
         );
     }
 

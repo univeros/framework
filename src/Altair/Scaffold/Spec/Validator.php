@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Scaffold\Spec;
 
 use Altair\Scaffold\Exception\SpecValidationException;
+use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
@@ -90,6 +91,10 @@ class Validator
             array_push($errors, ...$this->validateQueue($queue));
         }
 
+        if ($spec->idempotency instanceof IdempotencySpec) {
+            array_push($errors, ...$this->validateIdempotency($spec->idempotency));
+        }
+
         return $errors;
     }
 
@@ -100,6 +105,29 @@ class Validator
         if ($errors !== []) {
             throw new SpecValidationException($errors);
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function validateIdempotency(IdempotencySpec $idempotency): array
+    {
+        $errors = [];
+
+        if (preg_match('/^\d+(ms|s|m|h|d)$/', $idempotency->ttl) !== 1) {
+            $errors[] = \sprintf("idempotency.ttl '%s' must match the pattern '<number><ms|s|m|h|d>' (e.g. '24h').", $idempotency->ttl);
+        }
+
+        if ($idempotency->scope === '') {
+            $errors[] = 'idempotency.scope must not be empty.';
+        }
+
+        $validModes = [IdempotencySpec::MODE_OPTIONAL, IdempotencySpec::MODE_REQUIRED];
+        if (!\in_array($idempotency->mode, $validModes, true)) {
+            $errors[] = \sprintf("idempotency.mode '%s' must be 'optional' or 'required'.", $idempotency->mode);
+        }
+
+        return $errors;
     }
 
     /**

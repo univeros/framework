@@ -31,6 +31,7 @@
 - `HandlerEmitter`
 - `HandlerTestEmitter`
 - `HistoryCommand` _(final)_
+- `IdempotencySpec` _(final)_
 - `ImportReceipt` _(final)_
 - `InputEmitter`
 - `InputFieldSpec` _(final)_
@@ -104,6 +105,7 @@
 - `tests/Scaffold/Determinism/PersistenceEmitterDeterminismTest.php`
 - `tests/Scaffold/Determinism/ScaffoldCommandDeterminismTest.php`
 - `tests/Scaffold/Determinism/SdkEmitterDeterminismTest.php`
+- `tests/Scaffold/Emitter/ActionEmitterIdempotencyTest.php`
 - `tests/Scaffold/Emitter/ActionEmitterTest.php`
 - `tests/Scaffold/Emitter/DomainStubEmitterTest.php`
 - `tests/Scaffold/Emitter/EntityEmitterTest.php`
@@ -138,6 +140,7 @@
 - `tests/Scaffold/Spec/Emitter/OperationMapperTest.php`
 - `tests/Scaffold/Spec/Emitter/PathDeriverTest.php`
 - `tests/Scaffold/Spec/Emitter/SchemaMapperTest.php`
+- `tests/Scaffold/Spec/IdempotencyParserTest.php`
 - `tests/Scaffold/Spec/ParserTest.php`
 - `tests/Scaffold/Spec/PersistenceParserTest.php`
 - `tests/Scaffold/Spec/PersistenceValidatorTest.php`

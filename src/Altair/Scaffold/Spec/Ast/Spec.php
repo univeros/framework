@@ -29,6 +29,7 @@ final readonly class Spec
         public string $sourcePath = '',
         public ?PersistenceSpec $persistence = null,
         public array $queue = [],
+        public ?IdempotencySpec $idempotency = null,
     ) {}
 
     /**
@@ -46,5 +47,10 @@ final readonly class Spec
     public function hasPersistence(): bool
     {
         return $this->persistence instanceof PersistenceSpec;
+    }
+
+    public function hasIdempotency(): bool
+    {
+        return $this->idempotency instanceof IdempotencySpec;
     }
 }

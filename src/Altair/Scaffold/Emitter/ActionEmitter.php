@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Emitter;
 
+use Altair\Scaffold\Spec\Ast\IdempotencySpec;
 use Altair\Scaffold\Spec\Ast\Spec;
 use Altair\Scaffold\Templating\PhpHeader;
 
@@ -19,6 +20,12 @@ use Altair\Scaffold\Templating\PhpHeader;
  *
  * The output extends `Altair\Http\Base\Action`; configuration is done in
  * the constructor body so the action stays self-contained and discoverable.
+ *
+ * When the spec carries an `idempotency:` block, the emitted class
+ * exposes a static `idempotency()` accessor with the configured TTL,
+ * scope, and mode so the host application's
+ * `Altair\Idempotency\Middleware\IdempotencyKeyMiddleware` can be
+ * configured from spec metadata.
  */
 class ActionEmitter
 {
@@ -31,6 +38,7 @@ class ActionEmitter
         $inputFqcn = $this->naming->inputFqcn($spec);
         $responderFqcn = $this->naming->responderFqcn($spec);
         $domainFqcn = $spec->domain->class;
+        $idempotencyAccessor = $this->renderIdempotencyAccessor($spec->idempotency);
 
         $header = PhpHeader::render($namespace);
         $body = <<<PHP
@@ -52,7 +60,7 @@ class ActionEmitter
                         input: \\{$inputFqcn}::class,
                     );
                 }
-            }
+            {$idempotencyAccessor}}
 
             PHP;
 
@@ -68,5 +76,37 @@ class ActionEmitter
         $pos = strrpos($fqcn, '\\');
 
         return $pos === false ? '' : substr($fqcn, 0, $pos);
+    }
+
+    /**
+     * Renders the static `idempotency()` accessor that surfaces the
+     * spec's idempotency policy to the host application's middleware
+     * stack. Returns an empty string when the spec omits the block so
+     * pre-existing scaffolds stay byte-for-byte identical.
+     */
+    private function renderIdempotencyAccessor(?IdempotencySpec $idempotency): string
+    {
+        if (!$idempotency instanceof IdempotencySpec) {
+            return '';
+        }
+
+        $ttl = var_export($idempotency->ttl, true);
+        $scope = var_export($idempotency->scope, true);
+        $mode = var_export($idempotency->mode, true);
+
+        return <<<PHP
+
+                /**
+                 * Idempotency-Key policy for this endpoint. Consumed by the host
+                 * application's IdempotencyKeyMiddleware via IdempotencyConfiguration.
+                 *
+                 * @return array{ttl: string, scope: string, mode: string}
+                 */
+                public static function idempotency(): array
+                {
+                    return ['ttl' => {$ttl}, 'scope' => {$scope}, 'mode' => {$mode}];
+                }
+
+            PHP;
     }
 }
