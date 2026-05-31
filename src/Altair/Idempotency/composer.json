@@ -12,7 +12,9 @@
         "psr/http-factory": "^1.1",
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0",
-        "psr/http-server-middleware": "^1.0"
+        "psr/http-server-middleware": "^1.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
     },
     "suggest": {
         "ext-apcu": "Required for the single-host ApcuStore adapter.",
