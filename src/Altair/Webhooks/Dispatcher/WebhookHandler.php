@@ -70,8 +70,6 @@ final readonly class WebhookHandler
             $status = $this->httpClient->sendRequest($request)->getStatusCode();
         } catch (ClientExceptionInterface $clientException) {
             $this->onTransientFailure($delivery, $attempt, $now, 'network: ' . $clientException->getMessage());
-
-            return;
         }
 
         if ($status >= 200 && $status < 300) {
@@ -82,8 +80,6 @@ final readonly class WebhookHandler
 
         if ($status >= 500) {
             $this->onTransientFailure($delivery, $attempt, $now, 'HTTP ' . $status);
-
-            return;
         }
 
         // 4xx — the subscriber rejected the payload; retrying will not help.
@@ -117,12 +113,10 @@ final readonly class WebhookHandler
         );
     }
 
-    private function onTransientFailure(Delivery $delivery, int $attempt, int $now, string $response): void
+    private function onTransientFailure(Delivery $delivery, int $attempt, int $now, string $response): never
     {
         if ($attempt >= $this->retryPolicy->maxAttempts) {
             $this->deadLetter($delivery, $attempt, $now, $response);
-
-            return;
         }
 
         $this->deliveries->update(
