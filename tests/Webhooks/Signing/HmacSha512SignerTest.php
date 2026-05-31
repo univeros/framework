@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Webhooks\Signing;
 
+use Altair\Webhooks\Signing\AbstractHmacSigner;
 use Altair\Webhooks\Signing\HmacSha512Signer;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(HmacSha512Signer::class)]
-#[CoversClass(\Altair\Webhooks\Signing\AbstractHmacSigner::class)]
+#[CoversClass(AbstractHmacSigner::class)]
 final class HmacSha512SignerTest extends TestCase
 {
     private const string SECRET = 'whsec_test_secret';
+
     private const string PAYLOAD = '{"id":"evt_1"}';
 
     public function testNameIsWireScheme(): void

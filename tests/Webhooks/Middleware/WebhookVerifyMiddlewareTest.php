@@ -25,7 +25,9 @@ use RuntimeException;
 final class WebhookVerifyMiddlewareTest extends TestCase
 {
     private const string SECRET = 'whsec_test';
+
     private const string SECRET_NAME = 'stripe';
+
     private const string BODY = '{"id":"evt_1","type":"order.created"}';
 
     public function testRejectsWhenSignatureHeaderAbsent(): void

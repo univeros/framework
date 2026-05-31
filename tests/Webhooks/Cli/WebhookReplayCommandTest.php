@@ -22,6 +22,7 @@ final class WebhookReplayCommandTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->deadLettered('01HZZZAAAA0000000000000001'));
+
         $bus = new RecordingMessageBus();
         $tester = new CommandTester(new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store)));
 
@@ -36,6 +37,7 @@ final class WebhookReplayCommandTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->deadLettered('01HZZZAAAA0000000000000001'));
+
         $bus = new RecordingMessageBus();
         $tester = new CommandTester(new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store)));
 

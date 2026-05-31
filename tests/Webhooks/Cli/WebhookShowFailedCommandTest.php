@@ -31,6 +31,7 @@ final class WebhookShowFailedCommandTest extends TestCase
         $store = new InMemoryDeliveryStore();
         $store->record($this->deadLettered('dlv_old', 1_000));
         $store->record($this->deadLettered('dlv_new', 2_000));
+
         $tester = new CommandTester(new WebhookShowFailedCommand($store));
 
         $exit = $tester->execute([]);

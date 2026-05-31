@@ -24,7 +24,7 @@ final class RetryPolicyTest extends TestCase
     #[DataProvider('exponentialCases')]
     public function testExponentialBackoff(int $attempt, int $expected): void
     {
-        $policy = new RetryPolicy(baseDelaySeconds: 30, backoff: RetryPolicy::EXPONENTIAL);
+        $policy = new RetryPolicy(backoff: RetryPolicy::EXPONENTIAL, baseDelaySeconds: 30);
 
         self::assertSame($expected, $policy->delayFor($attempt));
     }
@@ -42,7 +42,7 @@ final class RetryPolicyTest extends TestCase
 
     public function testLinearBackoff(): void
     {
-        $policy = new RetryPolicy(baseDelaySeconds: 10, backoff: RetryPolicy::LINEAR);
+        $policy = new RetryPolicy(backoff: RetryPolicy::LINEAR, baseDelaySeconds: 10);
 
         self::assertSame(10, $policy->delayFor(1));
         self::assertSame(20, $policy->delayFor(2));
@@ -51,7 +51,7 @@ final class RetryPolicyTest extends TestCase
 
     public function testDelayForClampsAttemptToAtLeastOne(): void
     {
-        $policy = new RetryPolicy(baseDelaySeconds: 30, backoff: RetryPolicy::EXPONENTIAL);
+        $policy = new RetryPolicy(backoff: RetryPolicy::EXPONENTIAL, baseDelaySeconds: 30);
 
         self::assertSame(30, $policy->delayFor(0));
     }

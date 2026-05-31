@@ -20,6 +20,7 @@ final class EnvSecretResolverTest extends TestCase
         foreach ($this->touchedKeys as $key) {
             putenv($key);
         }
+
         $this->touchedKeys = [];
     }
 

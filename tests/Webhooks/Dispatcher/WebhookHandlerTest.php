@@ -25,12 +25,14 @@ use Symfony\Component\Messenger\Exception\UnrecoverableMessageHandlingException;
 final class WebhookHandlerTest extends TestCase
 {
     private const string SECRET = 'whsec_test';
+
     private const string PAYLOAD = '{"id":"order_1"}';
 
     public function testSuccessfulPostMarksDelivered(): void
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->pendingDelivery());
+
         $client = FakeHttpClient::returning(200);
 
         ($this->handler($client, $store))(($this->message()));
@@ -46,6 +48,7 @@ final class WebhookHandlerTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->pendingDelivery());
+
         $handler = $this->handler(FakeHttpClient::returning(503), $store, new RetryPolicy(maxAttempts: 3));
 
         try {
@@ -66,6 +69,7 @@ final class WebhookHandlerTest extends TestCase
         $store = new InMemoryDeliveryStore();
         // Already attempted twice; with maxAttempts=3 the next failure dead-letters.
         $store->record($this->pendingDelivery()->withAttempts(2));
+
         $handler = $this->handler(FakeHttpClient::returning(500), $store, new RetryPolicy(maxAttempts: 3));
 
         try {
@@ -84,6 +88,7 @@ final class WebhookHandlerTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->pendingDelivery());
+
         $handler = $this->handler(FakeHttpClient::networkError(), $store, new RetryPolicy(maxAttempts: 3));
 
         $this->expectException(RecoverableMessageHandlingException::class);
@@ -99,6 +104,7 @@ final class WebhookHandlerTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->pendingDelivery());
+
         $handler = $this->handler(FakeHttpClient::returning(400), $store);
 
         try {
@@ -124,6 +130,7 @@ final class WebhookHandlerTest extends TestCase
     {
         $store = new InMemoryDeliveryStore();
         $store->record($this->pendingDelivery());
+
         $client = FakeHttpClient::returning(200);
 
         ($this->handler($client, $store))($this->message());

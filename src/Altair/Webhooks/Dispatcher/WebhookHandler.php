@@ -68,8 +68,8 @@ final readonly class WebhookHandler
 
         try {
             $status = $this->httpClient->sendRequest($request)->getStatusCode();
-        } catch (ClientExceptionInterface $exception) {
-            $this->onTransientFailure($delivery, $attempt, $now, 'network: ' . $exception->getMessage());
+        } catch (ClientExceptionInterface $clientException) {
+            $this->onTransientFailure($delivery, $attempt, $now, 'network: ' . $clientException->getMessage());
 
             return;
         }
@@ -143,7 +143,7 @@ final readonly class WebhookHandler
         ));
     }
 
-    private function deadLetter(Delivery $delivery, int $attempt, int $now, string $response): void
+    private function deadLetter(Delivery $delivery, int $attempt, int $now, string $response): never
     {
         $this->deliveries->update(
             $delivery

@@ -13,7 +13,6 @@ use Altair\Webhooks\Storage\InMemoryDeduplicator;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequest;
 use Laminas\Diactoros\StreamFactory;
-use Override;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
@@ -22,6 +21,7 @@ use Psr\Http\Message\ServerRequestInterface;
 final class ActionAwareWebhookVerifyMiddlewareTest extends TestCase
 {
     private const string SECRET = 'whsec_test';
+
     private const string BODY = '{"id":"evt_1"}';
 
     public function testPassesThroughWhenNoActionAttribute(): void
@@ -134,6 +134,7 @@ final class ActionAwareWebhookVerifyMiddlewareTest extends TestCase
         if ($action !== null) {
             $request = $request->withAttribute('altair:http:action', $action);
         }
+
         foreach ($headers as $name => $value) {
             $request = $request->withHeader($name, $value);
         }

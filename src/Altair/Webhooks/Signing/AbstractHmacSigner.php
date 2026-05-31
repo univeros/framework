@@ -41,6 +41,7 @@ abstract class AbstractHmacSigner implements SignerInterface
         // partial match, which is the whole point for HMAC verification.
         return hash_equals($this->sign($payload, $secret), $provided);
     }
+
     abstract protected function algo(): string;
 
     /**

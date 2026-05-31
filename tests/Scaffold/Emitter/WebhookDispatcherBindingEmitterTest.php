@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Altair\Tests\Scaffold\Emitter;
 
+use Altair\Scaffold\Spec\Ast\Spec;
 use Altair\Scaffold\Emitter\EmittedFileKind;
 use Altair\Scaffold\Emitter\WebhookDispatcherBindingEmitter;
 use Altair\Scaffold\Spec\Parser;
@@ -31,7 +32,7 @@ final class WebhookDispatcherBindingEmitterTest extends TestCase
 
         // base_delay: 2m -> 120 seconds, max_attempts: 4, backoff: linear
         self::assertStringContainsString(
-            'new RetryPolicy(maxAttempts: 4, backoff: \'linear\', baseDelaySeconds: 120)',
+            "new RetryPolicy(maxAttempts: 4, backoff: 'linear', baseDelaySeconds: 120)",
             $file->contents,
         );
     }
@@ -44,7 +45,7 @@ final class WebhookDispatcherBindingEmitterTest extends TestCase
         self::assertSame($first->contents, $second->contents);
     }
 
-    private function outboundSpec(): \Altair\Scaffold\Spec\Ast\Spec
+    private function outboundSpec(): Spec
     {
         return (new Parser())->parseString(<<<'YAML'
             endpoint:
