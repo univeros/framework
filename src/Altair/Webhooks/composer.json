@@ -1,0 +1,30 @@
+{
+    "name": "univeros/webhooks",
+    "description": "First-class webhook framework for Univeros: signing primitives, inbound verify middleware, and an outbound dispatcher with retry / dead-letter / replay.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.1",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/messaging": "self.version"
+    },
+    "suggest": {
+        "ext-sodium": "Required for the Ed25519Signer.",
+        "ext-redis": "Required for the multi-host RedisDeduplicator / RedisDeliveryStore adapters."
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Webhooks\\": ""
+        }
+    }
+}
