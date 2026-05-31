@@ -90,6 +90,7 @@
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",
         "univeros/http": "self.version",
+        "univeros/idempotency": "self.version",
         "univeros/index": "self.version",
         "univeros/introspection": "self.version",
         "univeros/mcp": "self.version",
