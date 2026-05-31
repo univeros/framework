@@ -17,6 +17,7 @@ use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -182,7 +183,87 @@ class OpenApiEmitter
             ];
         }
 
+        if ($spec->webhook instanceof WebhookSpec) {
+            $extensions['x-altair-webhook'] = $this->renderWebhook($spec->webhook);
+        }
+
         return $extensions;
+    }
+
+    /**
+     * `direction` + `signing` always travel; every other field is omitted
+     * when it equals its WebhookSpec default. That keeps the extension
+     * minimal and — because the importer re-applies the same defaults and
+     * the re-emit drops them again — byte-stable across the round-trip
+     * gate. Insertion order is fixed: the gate compares extension blocks
+     * with strict `===`, so the order here must match the order a fixture
+     * lists them.
+     *
+     * @return array<string, mixed>
+     */
+    private function renderWebhook(WebhookSpec $webhook): array
+    {
+        $rendered = [
+            'direction' => $webhook->direction,
+            'signing' => $webhook->signing,
+        ];
+
+        if ($webhook->secretName !== null) {
+            $rendered['secret_name'] = $webhook->secretName;
+        }
+
+        if ($webhook->signatureHeader !== WebhookSpec::DEFAULT_SIGNATURE_HEADER) {
+            $rendered['header'] = $webhook->signatureHeader;
+        }
+
+        if ($webhook->timestampHeader !== WebhookSpec::DEFAULT_TIMESTAMP_HEADER) {
+            $rendered['timestamp_header'] = $webhook->timestampHeader;
+        }
+
+        if ($webhook->eventIdHeader !== WebhookSpec::DEFAULT_EVENT_ID_HEADER) {
+            $rendered['event_id_header'] = $webhook->eventIdHeader;
+        }
+
+        if ($webhook->dedupeTtl !== WebhookSpec::DEFAULT_DEDUPE_TTL) {
+            $rendered['dedupe_ttl'] = $webhook->dedupeTtl;
+        }
+
+        if ($webhook->timestampWindow !== WebhookSpec::DEFAULT_TIMESTAMP_WINDOW) {
+            $rendered['timestamp_window'] = $webhook->timestampWindow;
+        }
+
+        $retry = $this->renderWebhookRetry($webhook);
+        if ($retry !== []) {
+            $rendered['retry'] = $retry;
+        }
+
+        if ($webhook->deadLetterTransport !== null) {
+            $rendered['dead_letter'] = $webhook->deadLetterTransport;
+        }
+
+        return $rendered;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function renderWebhookRetry(WebhookSpec $webhook): array
+    {
+        $retry = [];
+
+        if ($webhook->retryMaxAttempts !== WebhookSpec::DEFAULT_RETRY_MAX_ATTEMPTS) {
+            $retry['max_attempts'] = $webhook->retryMaxAttempts;
+        }
+
+        if ($webhook->retryBackoff !== WebhookSpec::BACKOFF_EXPONENTIAL) {
+            $retry['backoff'] = $webhook->retryBackoff;
+        }
+
+        if ($webhook->retryBaseDelay !== WebhookSpec::DEFAULT_RETRY_BASE_DELAY) {
+            $retry['base_delay'] = $webhook->retryBaseDelay;
+        }
+
+        return $retry;
     }
 
     /**

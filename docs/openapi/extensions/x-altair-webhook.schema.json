@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://univeros.io/openapi/extensions/x-altair-webhook.schema.json",
     "title": "x-altair-webhook",
-    "description": "Reserved key for the webhook primitive arriving with the dedicated framework work. Marks an operation as an inbound (in) or outbound (out) webhook endpoint and carries the verification settings the framework will need at runtime. This release does not yet wire the runtime.",
+    "description": "Marks an operation as an inbound (in) or outbound (out) webhook endpoint and carries the verification / dispatch policy the framework wires at runtime. Inbound operations verify signature + timestamp window + dedupe; outbound operations sign and dispatch with retry + dead-letter. direction and signing always round-trip; every other field round-trips only when it differs from its default, so a key present here is always a non-default value.",
     "type": "object",
     "additionalProperties": false,
     "required": ["direction", "signing"],
@@ -16,14 +16,57 @@
             "description": "Signing scheme expected on inbound requests / applied to outbound dispatches.",
             "enum": ["hmac-sha256", "hmac-sha512", "ed25519"]
         },
+        "secret_name": {
+            "type": "string",
+            "description": "Lookup key the SecretResolverInterface uses to fetch the shared secret. The secret value itself never appears in OpenAPI — only this key."
+        },
         "header": {
             "type": "string",
-            "description": "Header name carrying the signature (inbound). Defaults to X-Signature."
+            "description": "Header name carrying the signature. Defaults to X-Signature; only emitted when overridden."
+        },
+        "timestamp_header": {
+            "type": "string",
+            "description": "Header name carrying the signed timestamp (inbound replay protection). Defaults to X-Timestamp; only emitted when overridden."
+        },
+        "event_id_header": {
+            "type": "string",
+            "description": "Header name carrying the event id used for dedupe. Defaults to X-Event-Id; only emitted when overridden."
         },
         "dedupe_ttl": {
             "type": "string",
             "pattern": "^[0-9]+(ms|s|m|h|d)$",
-            "description": "How long to remember the request ID for replay protection."
+            "description": "How long to remember the event id for replay protection (inbound). Defaults to 1h; only emitted when overridden."
+        },
+        "timestamp_window": {
+            "type": "string",
+            "pattern": "^[0-9]+(ms|s|m|h|d)$",
+            "description": "Maximum age of a signed timestamp before the request is rejected (inbound). Defaults to 5m; only emitted when overridden."
+        },
+        "retry": {
+            "type": "object",
+            "additionalProperties": false,
+            "description": "Outbound retry policy. Only emitted when at least one sub-field differs from its default.",
+            "properties": {
+                "max_attempts": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "description": "Attempts before dead-lettering. Defaults to 5."
+                },
+                "backoff": {
+                    "type": "string",
+                    "enum": ["exponential", "linear"],
+                    "description": "Backoff curve between attempts. Defaults to exponential."
+                },
+                "base_delay": {
+                    "type": "string",
+                    "pattern": "^[0-9]+(ms|s|m|h|d)$",
+                    "description": "Delay before the first retry. Defaults to 30s."
+                }
+            }
+        },
+        "dead_letter": {
+            "type": "string",
+            "description": "Transport name a delivery is routed to after max_attempts is exhausted (outbound)."
         }
     }
 }
