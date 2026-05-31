@@ -35,7 +35,7 @@ All keys live at the **operation** level (under
 | `x-altair-domain` | Yes — `spec.domain.{class, invocation}` | [x-altair-domain.schema.json](./extensions/x-altair-domain.schema.json) |
 | `x-altair-persistence` | Yes — `spec.persistence` | [x-altair-persistence.schema.json](./extensions/x-altair-persistence.schema.json) |
 | `x-altair-queue` | Yes — `spec.queue` | [x-altair-queue.schema.json](./extensions/x-altair-queue.schema.json) |
-| `x-altair-idempotency` | Carried through; runtime ships later | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |
+| `x-altair-idempotency` | Yes — `spec.idempotency` (ttl, scope) | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |
 | `x-altair-webhook` | Carried through; runtime ships later | [x-altair-webhook.schema.json](./extensions/x-altair-webhook.schema.json) |
 | `x-altair-input-location` | Carried through; needs parameters-parser support | [x-altair-input-location.schema.json](./extensions/x-altair-input-location.schema.json) |
 
@@ -151,11 +151,15 @@ The schemas in [`docs/openapi/extensions/`](./extensions/) are Draft
   the location annotation has nowhere to land on the reverse path. The
   forward emitter does not yet write this key either — both halves
   land together when the parser gains `parameters[]` support.
-- **`x-altair-idempotency`** / **`x-altair-webhook`**. The framework
-  pieces these refer to (idempotency middleware, the webhook
-  receiver / dispatcher) ship under separate issues. The keys are
-  reserved and the schemas are published so the wire format stays
+- **`x-altair-webhook`**. The framework pieces this refers to (webhook
+  receiver / dispatcher) ship under a separate epic. The key is
+  reserved and the schema is published so the wire format stays
   stable across releases.
+
+`x-altair-idempotency` now round-trips end to end (see
+[idempotency.md](./../packages/idempotency.md)) — the `ttl` and
+`scope` carry through the OpenAPI extension; `mode` is a server-side
+enforcement concern and defaults to `optional` on the reverse path.
 
 ## See also
 
