@@ -10,20 +10,16 @@ use Altair\Webhooks\Storage\DeliveryStatus;
 use Altair\Webhooks\Storage\InMemoryDeliveryStore;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
 
 #[CoversClass(WebhookShowFailedCommand::class)]
 final class WebhookShowFailedCommandTest extends TestCase
 {
     public function testReportsWhenNoDeadLetteredDeliveries(): void
     {
-        $tester = new CommandTester(new WebhookShowFailedCommand(new InMemoryDeliveryStore()));
+        [$exit, $output] = $this->invoke(new WebhookShowFailedCommand(new InMemoryDeliveryStore()));
 
-        $exit = $tester->execute([]);
-
-        self::assertSame(Command::SUCCESS, $exit);
-        self::assertStringContainsString('No dead-lettered deliveries.', $tester->getDisplay());
+        self::assertSame(0, $exit);
+        self::assertStringContainsString('No dead-lettered deliveries.', $output);
     }
 
     public function testListsDeadLetteredDeliveries(): void
@@ -32,14 +28,23 @@ final class WebhookShowFailedCommandTest extends TestCase
         $store->record($this->deadLettered('dlv_old', 1_000));
         $store->record($this->deadLettered('dlv_new', 2_000));
 
-        $tester = new CommandTester(new WebhookShowFailedCommand($store));
+        [$exit, $output] = $this->invoke(new WebhookShowFailedCommand($store));
 
-        $exit = $tester->execute([]);
-        $display = $tester->getDisplay();
+        self::assertSame(0, $exit);
+        self::assertStringContainsString('dlv_old', $output);
+        self::assertStringContainsString('dlv_new', $output);
+        self::assertStringContainsString('HTTP 500', $output);
+    }
 
-        self::assertSame(Command::SUCCESS, $exit);
-        self::assertStringContainsString('dlv_old', $display);
-        self::assertStringContainsString('dlv_new', $display);
+    /**
+     * @return array{int, string}
+     */
+    private function invoke(WebhookShowFailedCommand $command): array
+    {
+        ob_start();
+        $exit = $command();
+
+        return [$exit, (string) ob_get_clean()];
     }
 
     private function deadLettered(string $id, int $createdAt): Delivery

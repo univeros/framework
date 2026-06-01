@@ -1,0 +1,60 @@
+openapi: 3.1.0
+info:
+  title: Posts API (outbound webhook)
+  version: 1.0.0
+paths:
+  /posts:
+    post:
+      operationId: createPost
+      summary: Create a post and emit a signed post.created webhook
+      # Outbound: after a successful create, sign + dispatch a
+      # post.created webhook with retry + dead-letter. Field order mirrors
+      # OpenApiEmitter::renderWebhook so openapi:roundtrip is clean (only
+      # non-default retry values are carried, otherwise they would be
+      # dropped on re-emit and the gate would flag drift).
+      x-altair-webhook:
+        direction: out
+        signing: hmac-sha256
+        retry:
+          max_attempts: 8
+          backoff: linear
+          base_delay: 60s
+        dead_letter: webhook.deadletter
+      x-altair-domain:
+        class: App\Post\CreatePost
+        invocation: __invoke
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, body]
+              properties:
+                title: { type: string }
+                body: { type: string }
+      responses:
+        '201':
+          description: Created (a post.created webhook is dispatched)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: object
+components:
+  schemas:
+    Post:
+      type: object
+      required: [id, title, body]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        body: { type: string }
