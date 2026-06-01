@@ -37,14 +37,16 @@
 - `WebhookDispatcher` _(final)_
 - `WebhookHandler` _(final)_
 - `WebhookMessage` _(final)_
-- `WebhookReplayCommand` _(final)_ — implements `SignalableCommandInterface`
-- `WebhookShowFailedCommand` _(final)_ — implements `SignalableCommandInterface`
+- `WebhookReplayCommand` _(final)_
+- `WebhookShowFailedCommand` _(final)_
 - `WebhookVerifyMiddleware` _(final)_ — implements `MiddlewareInterface`
+- `WebhooksConfiguration` _(final)_ — implements `ConfigurationInterface`
 
 ## Tests as documentation
 
 - `tests/Webhooks/Cli/WebhookReplayCommandTest.php`
 - `tests/Webhooks/Cli/WebhookShowFailedCommandTest.php`
+- `tests/Webhooks/Configuration/WebhooksConfigurationTest.php`
 - `tests/Webhooks/Dispatcher/RetryPolicyTest.php`
 - `tests/Webhooks/Dispatcher/WebhookDispatcherTest.php`
 - `tests/Webhooks/Dispatcher/WebhookHandlerTest.php`

@@ -11,52 +11,45 @@ declare(strict_types=1);
 
 namespace Altair\Webhooks\Cli;
 
+use Altair\Cli\Attribute\Argument;
+use Altair\Cli\Attribute\Command;
 use Altair\Webhooks\Contracts\DeliveryStoreInterface;
 use Altair\Webhooks\Dispatcher\WebhookDispatcher;
 use Altair\Webhooks\Storage\Delivery;
-use Override;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'webhook:replay', description: 'Re-dispatch a failed / dead-lettered webhook delivery')]
-final class WebhookReplayCommand extends Command
+/**
+ * `bin/altair webhook:replay <delivery-id>` — re-dispatch a dead-lettered
+ * delivery. Resets the delivery to pending (attempts 0) and puts a fresh
+ * {@see \Altair\Webhooks\Dispatcher\WebhookMessage} back on the bus.
+ *
+ * Exit code is `1` when no delivery matches the id (or prefix), otherwise `0`.
+ */
+#[Command(
+    name: 'webhook:replay',
+    description: 'Re-dispatch a failed / dead-lettered webhook delivery.',
+)]
+final readonly class WebhookReplayCommand
 {
     public function __construct(
-        private readonly DeliveryStoreInterface $deliveries,
-        private readonly WebhookDispatcher $dispatcher,
-    ) {
-        parent::__construct();
-    }
+        private DeliveryStoreInterface $deliveries,
+        private WebhookDispatcher $dispatcher,
+    ) {}
 
-    #[Override]
-    protected function configure(): void
-    {
-        $this->addArgument('delivery-id', InputArgument::REQUIRED, 'Delivery id (or an unambiguous prefix)');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $style = new SymfonyStyle($input, $output);
-
-        $argument = $input->getArgument('delivery-id');
-        $id = \is_string($argument) ? $argument : '';
-
-        $delivery = $this->resolve($id);
+    public function __invoke(
+        #[Argument(description: 'Delivery id (or an unambiguous prefix).')]
+        string $deliveryId = '',
+    ): int {
+        $delivery = $this->resolve($deliveryId);
         if (!$delivery instanceof Delivery) {
-            $style->error(\sprintf('No delivery matching "%s".', $id));
+            echo \sprintf("No delivery matching \"%s\".\n", $deliveryId);
 
-            return Command::FAILURE;
+            return 1;
         }
 
         $reset = $this->dispatcher->redispatch($delivery);
-        $style->success(\sprintf('Re-dispatched delivery %s (reset to pending).', $reset->id));
+        echo \sprintf("Re-dispatched delivery %s (reset to pending).\n", $reset->id);
 
-        return Command::SUCCESS;
+        return 0;
     }
 
     private function resolve(string $id): ?Delivery

@@ -15,6 +15,8 @@ The request/response lifecycle and everything that runs inside it.
 - [Session](./packages/session.md) — server-side session storage with File / Mongo / PDO / Predis handlers, paired with the cookie envelope and HTTP cache limiters.
 - [Sanitation](./packages/sanitation.md) — sixteen input filters (Alpha, Boolean, Integer, Regex, …) that normalise raw values into safe canonical forms before validation runs.
 - [Validation](./packages/validation.md) — eighteen rule-based input validators (Email, IBAN, ZipCode, …) composable into rule collections and runnable through a `Validator`.
+- [Idempotency](./packages/idempotency.md) — Stripe-style `Idempotency-Key` primitive: a PSR-15 middleware that hashes the body, claims the key in a pluggable store (InMemory / APCu / Redis), replays the captured response on retry, and refuses 409 on payload drift. Spec-driven via an `idempotency:` block and an `x-altair-idempotency` OpenAPI extension that round-trips.
+- [Webhooks](./packages/webhooks.md) — first-class webhook primitive, both directions: inbound signature verification (HMAC-SHA256/512, Ed25519) + timestamp window + event-id dedupe as PSR-15 middleware, and an outbound signed dispatcher over Symfony Messenger with retry, dead-letter, and `bin/altair webhook:replay`. Spec-driven via a `webhook:` block and an `x-altair-webhook` OpenAPI extension that round-trips.
 
 ### Application core
 

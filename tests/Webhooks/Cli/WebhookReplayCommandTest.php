@@ -12,8 +12,6 @@ use Altair\Webhooks\Storage\DeliveryStatus;
 use Altair\Webhooks\Storage\InMemoryDeliveryStore;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
 
 #[CoversClass(WebhookReplayCommand::class)]
 final class WebhookReplayCommandTest extends TestCase
@@ -24,11 +22,11 @@ final class WebhookReplayCommandTest extends TestCase
         $store->record($this->deadLettered('01HZZZAAAA0000000000000001'));
 
         $bus = new RecordingMessageBus();
-        $tester = new CommandTester(new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store)));
+        $command = new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store));
 
-        $exit = $tester->execute(['delivery-id' => '01HZZZAAAA0000000000000001']);
+        [$exit] = $this->invoke($command, '01HZZZAAAA0000000000000001');
 
-        self::assertSame(Command::SUCCESS, $exit);
+        self::assertSame(0, $exit);
         self::assertSame(DeliveryStatus::Pending, $store->findById('01HZZZAAAA0000000000000001')?->status);
         self::assertSame('01HZZZAAAA0000000000000001', $bus->lastWebhookMessage()?->deliveryId);
     }
@@ -39,23 +37,34 @@ final class WebhookReplayCommandTest extends TestCase
         $store->record($this->deadLettered('01HZZZAAAA0000000000000001'));
 
         $bus = new RecordingMessageBus();
-        $tester = new CommandTester(new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store)));
+        $command = new WebhookReplayCommand($store, new WebhookDispatcher($bus, $store));
 
-        $exit = $tester->execute(['delivery-id' => '01HZZZAAAA']);
+        [$exit] = $this->invoke($command, '01HZZZAAAA');
 
-        self::assertSame(Command::SUCCESS, $exit);
+        self::assertSame(0, $exit);
         self::assertSame('01HZZZAAAA0000000000000001', $bus->lastWebhookMessage()?->deliveryId);
     }
 
     public function testFailsForUnknownDelivery(): void
     {
         $store = new InMemoryDeliveryStore();
-        $tester = new CommandTester(new WebhookReplayCommand($store, new WebhookDispatcher(new RecordingMessageBus(), $store)));
+        $command = new WebhookReplayCommand($store, new WebhookDispatcher(new RecordingMessageBus(), $store));
 
-        $exit = $tester->execute(['delivery-id' => 'nope']);
+        [$exit, $output] = $this->invoke($command, 'nope');
 
-        self::assertSame(Command::FAILURE, $exit);
-        self::assertStringContainsString('No delivery matching', $tester->getDisplay());
+        self::assertSame(1, $exit);
+        self::assertStringContainsString('No delivery matching', $output);
+    }
+
+    /**
+     * @return array{int, string}
+     */
+    private function invoke(WebhookReplayCommand $command, string $deliveryId): array
+    {
+        ob_start();
+        $exit = $command($deliveryId);
+
+        return [$exit, (string) ob_get_clean()];
     }
 
     private function deadLettered(string $id): Delivery

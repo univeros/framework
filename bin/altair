@@ -50,6 +50,7 @@ $builtIn = [
     __DIR__ . '/../src/Altair/Scaffold/Cli',
     __DIR__ . '/../src/Altair/Suggest/Cli',
     __DIR__ . '/../src/Altair/Tinker/Cli',
+    __DIR__ . '/../src/Altair/Webhooks/Cli',
 ];
 foreach ($builtIn as $entry) {
     if (is_dir($entry)) {
