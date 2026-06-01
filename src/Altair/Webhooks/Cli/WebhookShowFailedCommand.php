@@ -11,60 +11,81 @@ declare(strict_types=1);
 
 namespace Altair\Webhooks\Cli;
 
+use Altair\Cli\Attribute\Command;
+use Altair\Cli\Attribute\Option;
 use Altair\Webhooks\Contracts\DeliveryStoreInterface;
 use Altair\Webhooks\Storage\Delivery;
-use Override;
-use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-#[AsCommand(name: 'webhook:show-failed', description: 'List dead-lettered webhook deliveries')]
-final class WebhookShowFailedCommand extends Command
+/**
+ * `bin/altair webhook:show-failed` — list dead-lettered webhook deliveries,
+ * oldest first, so an operator (or agent) can pick a `delivery-id` to feed
+ * `webhook:replay`. Read-only; always exits `0`.
+ */
+#[Command(
+    name: 'webhook:show-failed',
+    description: 'List dead-lettered webhook deliveries.',
+)]
+final readonly class WebhookShowFailedCommand
 {
     public function __construct(
-        private readonly DeliveryStoreInterface $deliveries,
-    ) {
-        parent::__construct();
-    }
+        private DeliveryStoreInterface $deliveries,
+    ) {}
 
-    #[Override]
-    protected function configure(): void
-    {
-        $this->addOption('limit', null, InputOption::VALUE_REQUIRED, 'Maximum number of deliveries to list', '100');
-    }
-
-    #[Override]
-    protected function execute(InputInterface $input, OutputInterface $output): int
-    {
-        $style = new SymfonyStyle($input, $output);
-
-        $limitOption = $input->getOption('limit');
-        $limit = is_numeric($limitOption) ? max(1, (int) $limitOption) : 100;
-
-        $failed = $this->deliveries->findFailed($limit);
+    public function __invoke(
+        #[Option(description: 'Maximum number of deliveries to list.')]
+        int $limit = 100,
+    ): int {
+        $failed = $this->deliveries->findFailed(max(1, $limit));
         if ($failed === []) {
-            $style->success('No dead-lettered deliveries.');
+            echo "No dead-lettered deliveries.\n";
 
-            return Command::SUCCESS;
+            return 0;
         }
 
-        $style->table(
-            ['Delivery', 'Event', 'Subscriber', 'Attempts', 'Last response'],
-            array_map(
-                static fn(Delivery $delivery): array => [
-                    $delivery->id,
-                    $delivery->eventName,
-                    $delivery->subscriberUrl,
-                    (string) $delivery->attempts,
-                    $delivery->lastResponse ?? '',
-                ],
-                $failed,
-            ),
+        $rows = array_map(
+            static fn(Delivery $delivery): array => [
+                $delivery->id,
+                $delivery->eventName,
+                $delivery->subscriberUrl,
+                (string) $delivery->attempts,
+                $delivery->lastResponse ?? '',
+            ],
+            $failed,
         );
 
-        return Command::SUCCESS;
+        echo $this->renderTable(['Delivery', 'Event', 'Subscriber', 'Attempts', 'Last response'], $rows);
+
+        return 0;
+    }
+
+    /**
+     * @param list<string>       $headers
+     * @param list<list<string>> $rows
+     */
+    private function renderTable(array $headers, array $rows): string
+    {
+        $widths = array_map(strlen(...), $headers);
+        foreach ($rows as $row) {
+            foreach ($row as $i => $cell) {
+                $widths[$i] = max($widths[$i], \strlen($cell));
+            }
+        }
+
+        $line = static function (array $cells) use ($widths): string {
+            $padded = [];
+            foreach ($cells as $i => $cell) {
+                $padded[] = str_pad((string) $cell, $widths[$i]);
+            }
+
+            return rtrim(implode('  ', $padded)) . "\n";
+        };
+
+        $out = $line($headers);
+        $out .= $line(array_map(static fn(int $w): string => str_repeat('-', $w), $widths));
+        foreach ($rows as $row) {
+            $out .= $line($row);
+        }
+
+        return $out;
     }
 }
