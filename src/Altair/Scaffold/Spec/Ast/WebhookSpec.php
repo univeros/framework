@@ -28,18 +28,32 @@ final readonly class WebhookSpec
 
     public const string BACKOFF_LINEAR = 'linear';
 
+    public const string DEFAULT_SIGNATURE_HEADER = 'X-Signature';
+
+    public const string DEFAULT_TIMESTAMP_HEADER = 'X-Timestamp';
+
+    public const string DEFAULT_EVENT_ID_HEADER = 'X-Event-Id';
+
+    public const string DEFAULT_DEDUPE_TTL = '1h';
+
+    public const string DEFAULT_TIMESTAMP_WINDOW = '5m';
+
+    public const int DEFAULT_RETRY_MAX_ATTEMPTS = 5;
+
+    public const string DEFAULT_RETRY_BASE_DELAY = '30s';
+
     public function __construct(
         public string $direction,
         public string $signing,
         public ?string $secretName = null,
-        public string $signatureHeader = 'X-Signature',
-        public string $timestampHeader = 'X-Timestamp',
-        public string $eventIdHeader = 'X-Event-Id',
-        public string $dedupeTtl = '1h',
-        public string $timestampWindow = '5m',
-        public int $retryMaxAttempts = 5,
+        public string $signatureHeader = self::DEFAULT_SIGNATURE_HEADER,
+        public string $timestampHeader = self::DEFAULT_TIMESTAMP_HEADER,
+        public string $eventIdHeader = self::DEFAULT_EVENT_ID_HEADER,
+        public string $dedupeTtl = self::DEFAULT_DEDUPE_TTL,
+        public string $timestampWindow = self::DEFAULT_TIMESTAMP_WINDOW,
+        public int $retryMaxAttempts = self::DEFAULT_RETRY_MAX_ATTEMPTS,
         public string $retryBackoff = self::BACKOFF_EXPONENTIAL,
-        public string $retryBaseDelay = '30s',
+        public string $retryBaseDelay = self::DEFAULT_RETRY_BASE_DELAY,
         public ?string $deadLetterTransport = null,
     ) {}
 

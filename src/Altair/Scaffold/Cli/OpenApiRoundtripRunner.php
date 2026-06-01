@@ -173,6 +173,7 @@ final readonly class OpenApiRoundtripRunner
                     'x-altair-persistence' => $operation['x-altair-persistence'] ?? null,
                     'x-altair-queue' => $operation['x-altair-queue'] ?? null,
                     'x-altair-idempotency' => $operation['x-altair-idempotency'] ?? null,
+                    'x-altair-webhook' => $operation['x-altair-webhook'] ?? null,
                     'response_statuses_with_schema' => $this->responseStatusesWithSchema($operation),
                 ];
             }
@@ -253,7 +254,7 @@ final readonly class OpenApiRoundtripRunner
                 );
             }
 
-            foreach (['x-altair-domain', 'x-altair-persistence', 'x-altair-queue', 'x-altair-idempotency'] as $extension) {
+            foreach (['x-altair-domain', 'x-altair-persistence', 'x-altair-queue', 'x-altair-idempotency', 'x-altair-webhook'] as $extension) {
                 // Tolerate enrichment: drift only fires when the source carried the
                 // extension and the round-trip changed or dropped it. A source
                 // doc without x-altair-domain that gets a synthesised one back

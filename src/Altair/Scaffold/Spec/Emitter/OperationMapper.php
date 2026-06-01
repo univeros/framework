@@ -62,7 +62,74 @@ final readonly class OperationMapper
             $spec['idempotency'] = $idempotency;
         }
 
+        $webhook = $this->webhookFromExtension($operation);
+        if ($webhook !== null) {
+            $spec['webhook'] = $webhook;
+        }
+
         return $spec;
+    }
+
+    /**
+     * `x-altair-webhook` requires `direction` + `signing`; the remaining
+     * keys are optional and copied through verbatim when present. Absent
+     * keys stay absent so the spec Parser re-applies the WebhookSpec
+     * defaults, which is what keeps the round-trip byte-stable: the forward
+     * emitter only writes a field when it differs from its default, so a
+     * key reaching the importer is always a meaningful (non-default) value.
+     *
+     * @return ?array<string, mixed>
+     */
+    private function webhookFromExtension(OperationModel $operation): ?array
+    {
+        $extension = $operation->extensions['x-altair-webhook'] ?? null;
+        if (!\is_array($extension)
+            || !isset($extension['direction'], $extension['signing'])
+            || !\is_string($extension['direction']) || $extension['direction'] === ''
+            || !\is_string($extension['signing']) || $extension['signing'] === '') {
+            return null;
+        }
+
+        $webhook = [
+            'direction' => $extension['direction'],
+            'signing' => $extension['signing'],
+        ];
+
+        foreach (['secret_name', 'header', 'timestamp_header', 'event_id_header', 'dedupe_ttl', 'timestamp_window', 'dead_letter'] as $key) {
+            if (isset($extension[$key]) && \is_string($extension[$key]) && $extension[$key] !== '') {
+                $webhook[$key] = $extension[$key];
+            }
+        }
+
+        $retry = $this->webhookRetryFromExtension($extension['retry'] ?? null);
+        if ($retry !== []) {
+            $webhook['retry'] = $retry;
+        }
+
+        return $webhook;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function webhookRetryFromExtension(mixed $retry): array
+    {
+        if (!\is_array($retry)) {
+            return [];
+        }
+
+        $result = [];
+        if (isset($retry['max_attempts']) && \is_int($retry['max_attempts'])) {
+            $result['max_attempts'] = $retry['max_attempts'];
+        }
+
+        foreach (['backoff', 'base_delay'] as $key) {
+            if (isset($retry[$key]) && \is_string($retry[$key]) && $retry[$key] !== '') {
+                $result[$key] = $retry[$key];
+            }
+        }
+
+        return $result;
     }
 
     /**

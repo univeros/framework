@@ -112,7 +112,7 @@ class Parser
             throw new SpecParseException("'webhook.retry' must be a map.");
         }
 
-        $maxAttempts = $retry['max_attempts'] ?? 5;
+        $maxAttempts = $retry['max_attempts'] ?? WebhookSpec::DEFAULT_RETRY_MAX_ATTEMPTS;
         if (!\is_int($maxAttempts)) {
             throw new SpecParseException("'webhook.retry.max_attempts' must be an integer.");
         }
@@ -122,14 +122,14 @@ class Parser
             direction: $direction,
             signing: $signing,
             secretName: $this->webhookOptionalString($data, 'secret_name'),
-            signatureHeader: $this->webhookString($data, 'header', 'X-Signature'),
-            timestampHeader: $this->webhookString($data, 'timestamp_header', 'X-Timestamp'),
-            eventIdHeader: $this->webhookString($data, 'event_id_header', 'X-Event-Id'),
-            dedupeTtl: $this->webhookString($data, 'dedupe_ttl', '1h'),
-            timestampWindow: $this->webhookString($data, 'timestamp_window', '5m'),
+            signatureHeader: $this->webhookString($data, 'header', WebhookSpec::DEFAULT_SIGNATURE_HEADER),
+            timestampHeader: $this->webhookString($data, 'timestamp_header', WebhookSpec::DEFAULT_TIMESTAMP_HEADER),
+            eventIdHeader: $this->webhookString($data, 'event_id_header', WebhookSpec::DEFAULT_EVENT_ID_HEADER),
+            dedupeTtl: $this->webhookString($data, 'dedupe_ttl', WebhookSpec::DEFAULT_DEDUPE_TTL),
+            timestampWindow: $this->webhookString($data, 'timestamp_window', WebhookSpec::DEFAULT_TIMESTAMP_WINDOW),
             retryMaxAttempts: $maxAttempts,
-            retryBackoff: $this->webhookString($retry, 'backoff', 'exponential'),
-            retryBaseDelay: $this->webhookString($retry, 'base_delay', '30s'),
+            retryBackoff: $this->webhookString($retry, 'backoff', WebhookSpec::BACKOFF_EXPONENTIAL),
+            retryBaseDelay: $this->webhookString($retry, 'base_delay', WebhookSpec::DEFAULT_RETRY_BASE_DELAY),
             deadLetterTransport: $this->webhookOptionalString($data, 'dead_letter'),
         );
     }

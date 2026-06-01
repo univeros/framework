@@ -55,9 +55,9 @@ For every `(method, path)` operation the gate compares:
 
 - **`summary`** — exact string match (drift surfaces in plain text).
 - **`x-altair-domain`** / **`x-altair-persistence`** / **`x-altair-queue`** /
-  **`x-altair-idempotency`** — full deep equality of any block the
-  source carried. (See [extensions.md](./extensions.md) for the keys
-  themselves.)
+  **`x-altair-idempotency`** / **`x-altair-webhook`** — full deep equality
+  of any block the source carried. (See [extensions.md](./extensions.md)
+  for the keys themselves.)
 - **Response status set** — limited to statuses that carry an
   `application/json` schema (see normalization below).
 
@@ -169,10 +169,11 @@ proves the gate fails on a regression.
   lands when `OpenApiParser` learns to preserve `parameters[]` and
   `components/schemas` on the reverse path; the gate gains a
   `--strict` flag at that point.
-- `x-altair-input-location` and `x-altair-webhook` are reserved keys —
-  they ride along verbatim but the gate does not yet have a
-  corresponding spec field to compare against. Drift would surface as
-  a warning in the import receipt rather than in this gate's diff.
+- `x-altair-input-location` is a reserved key — it rides along verbatim
+  but the gate does not yet have a corresponding spec field to compare
+  against. Drift would surface as a warning in the import receipt rather
+  than in this gate's diff. (`x-altair-webhook` is now fully compared —
+  see the list above.)
 - Component schema names are not preserved through the round-trip
   even when the wire shape is identical, so a `$ref` to
   `components/schemas/User` becomes an inlined object on the

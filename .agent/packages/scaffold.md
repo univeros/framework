@@ -101,6 +101,7 @@
 - `tests/Scaffold/Cli/OpenApiImportRunnerTest.php`
 - `tests/Scaffold/Cli/OpenApiImportScaffoldTest.php`
 - `tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php`
+- `tests/Scaffold/Cli/OpenApiWebhookRoundtripTest.php`
 - `tests/Scaffold/Cli/PersistenceInferrerTest.php`
 - `tests/Scaffold/Cli/ScaffoldCommandIntegrationTest.php`
 - `tests/Scaffold/Determinism/EmitOpenApiDeterminismTest.php`

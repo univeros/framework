@@ -36,7 +36,7 @@ All keys live at the **operation** level (under
 | `x-altair-persistence` | Yes — `spec.persistence` | [x-altair-persistence.schema.json](./extensions/x-altair-persistence.schema.json) |
 | `x-altair-queue` | Yes — `spec.queue` | [x-altair-queue.schema.json](./extensions/x-altair-queue.schema.json) |
 | `x-altair-idempotency` | Yes — `spec.idempotency` (ttl, scope) | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |
-| `x-altair-webhook` | Carried through; runtime ships later | [x-altair-webhook.schema.json](./extensions/x-altair-webhook.schema.json) |
+| `x-altair-webhook` | Yes — `spec.webhook` (direction + signing always; other fields when non-default) | [x-altair-webhook.schema.json](./extensions/x-altair-webhook.schema.json) |
 | `x-altair-input-location` | Carried through; needs parameters-parser support | [x-altair-input-location.schema.json](./extensions/x-altair-input-location.schema.json) |
 
 "Carried through" means the parser preserves the key on the
@@ -151,15 +151,20 @@ The schemas in [`docs/openapi/extensions/`](./extensions/) are Draft
   the location annotation has nowhere to land on the reverse path. The
   forward emitter does not yet write this key either — both halves
   land together when the parser gains `parameters[]` support.
-- **`x-altair-webhook`**. The framework pieces this refers to (webhook
-  receiver / dispatcher) ship under a separate epic. The key is
-  reserved and the schema is published so the wire format stays
-  stable across releases.
-
 `x-altair-idempotency` now round-trips end to end (see
 [idempotency.md](./../packages/idempotency.md)) — the `ttl` and
 `scope` carry through the OpenAPI extension; `mode` is a server-side
 enforcement concern and defaults to `optional` on the reverse path.
+
+`x-altair-webhook` now round-trips end to end (see
+[webhooks.md](./../packages/webhooks.md)). `direction` and `signing`
+always travel; every other field (`secret_name`, custom header names,
+`dedupe_ttl` / `timestamp_window`, the outbound `retry` block,
+`dead_letter`) is written only when it differs from its default. The
+importer re-applies the same defaults and the re-emit drops them again,
+which is what keeps the block byte-stable through the round-trip gate.
+The shared secret itself never appears in OpenAPI — only `secret_name`,
+the resolver lookup key, carries through.
 
 ## See also
 

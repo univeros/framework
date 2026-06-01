@@ -14,6 +14,7 @@ use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
 use Altair\Scaffold\Spec\Ast\QueueDispatchSpec;
 use Altair\Scaffold\Spec\Ast\Spec;
+use Altair\Scaffold\Spec\Ast\WebhookSpec;
 
 final class SpecFixture
 {
@@ -75,6 +76,46 @@ final class SpecFixture
                 ttl: '24h',
                 scope: 'tenant',
                 mode: IdempotencySpec::MODE_REQUIRED,
+            ),
+        );
+    }
+
+    public static function createUserWithInboundWebhook(): Spec
+    {
+        $base = self::createUser();
+
+        return new Spec(
+            endpoint: $base->endpoint,
+            inputs: $base->inputs,
+            outputs: $base->outputs,
+            domain: $base->domain,
+            sourcePath: $base->sourcePath,
+            webhook: new WebhookSpec(
+                direction: WebhookSpec::DIRECTION_IN,
+                signing: 'hmac-sha256',
+                secretName: 'stripe',
+                signatureHeader: 'Stripe-Signature',
+                dedupeTtl: '24h',
+            ),
+        );
+    }
+
+    public static function createUserWithOutboundWebhook(): Spec
+    {
+        $base = self::createUser();
+
+        return new Spec(
+            endpoint: $base->endpoint,
+            inputs: $base->inputs,
+            outputs: $base->outputs,
+            domain: $base->domain,
+            sourcePath: $base->sourcePath,
+            webhook: new WebhookSpec(
+                direction: WebhookSpec::DIRECTION_OUT,
+                signing: 'ed25519',
+                retryMaxAttempts: 8,
+                retryBackoff: WebhookSpec::BACKOFF_LINEAR,
+                deadLetterTransport: 'webhook.deadletter',
             ),
         );
     }
