@@ -252,3 +252,33 @@ jobs:
             echo "Pushing $sha to univeros/${{ matrix.package.name }} master"
             git_push "$remote" "${sha}:refs/heads/master" --force
           fi
+
+      # Auto-update Packagist. The univeros/* repos are read-only mirrors that
+      # only change when this workflow pushes to them, so pinging Packagist's
+      # update-package endpoint here is the canonical auto-update path — no
+      # per-repo webhooks to maintain. 'docs' is not a Composer package, so it
+      # is skipped. Best-effort: a failed ping warns but never fails the split.
+      - name: Notify Packagist
+        if: github.event.inputs.dry_run != 'true' && matrix.package.name != 'docs'
+        env:
+          PACKAGIST_AUTH: ${{ secrets.PACKAGIST_AUTH }}
+        run: |
+          set -uo pipefail
+          if [[ -z "${PACKAGIST_AUTH:-}" ]]; then
+            echo "::warning::PACKAGIST_AUTH secret not set — skipping Packagist auto-update for ${{ matrix.package.name }}"
+            exit 0
+          fi
+          # PACKAGIST_AUTH is "username:apiToken". update-package is a SAFE
+          # operation, so a safe token works here (the main token also works).
+          # Pass the bearer credential via a curl --config fd so it never lands
+          # in the process argv or the run log.
+          code=$(curl -s -o /tmp/packagist-resp.json -w '%{http_code}' \
+            --config <(printf 'header = "Authorization: Bearer %s"\nheader = "Content-Type: application/json"\n' "$PACKAGIST_AUTH") \
+            -X POST 'https://packagist.org/api/update-package' \
+            -d "{\"repository\":\"https://github.com/univeros/${{ matrix.package.name }}\"}")
+          body=$(tr -d '\n' < /tmp/packagist-resp.json | cut -c1-200)
+          if [[ "$code" == "200" || "$code" == "202" ]]; then
+            echo "Packagist update OK for univeros/${{ matrix.package.name }} (HTTP $code): $body"
+          else
+            echo "::warning::Packagist update for univeros/${{ matrix.package.name }} returned HTTP $code: $body"
+          fi
