@@ -1,6 +1,6 @@
 {
     "name": "univeros/configuration",
-    "description": "The Altair Configuration package.",
+    "description": "Composable, container-aware configuration: loads .env via phpdotenv 5 and wires dependency bindings through a unified interface.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

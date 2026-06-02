@@ -1,6 +1,6 @@
 {
     "name": "univeros/validation",
-    "description": "The Altair Validation package.",
+    "description": "Rule-based input validation that rejects values not conforming to declared constraints — the gatekeeping counterpart to sanitation.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

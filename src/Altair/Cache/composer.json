@@ -1,6 +1,6 @@
 {
     "name": "univeros/cache",
-    "description": "The Altair Cache package.",
+    "description": "PSR-6 and PSR-16 caching with pluggable storage backends for filesystem, Redis, Predis, and Memcached.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

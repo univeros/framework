@@ -1,6 +1,6 @@
 {
     "name": "univeros/http",
-    "description": "The Altair Http package.",
+    "description": "PSR-15 HTTP foundation with the Action/Domain/Input/Responder lifecycle, FastRoute routing, content negotiation, and JWT authentication.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

@@ -1,6 +1,6 @@
 {
     "name": "univeros/security",
-    "description": "The Altair Security package.",
+    "description": "Cryptographic primitives for key derivation (HKDF, PBKDF2), symmetric encryption, and timing-safe MAC verification.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

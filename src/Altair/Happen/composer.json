@@ -1,6 +1,6 @@
 {
     "name": "univeros/happen",
-    "description": "The Altair Event package.",
+    "description": "PSR-14 event dispatcher with priority ordering, subscriber grouping, provider-based registration, wildcard listeners, and batch dispatch.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

@@ -1,6 +1,6 @@
 {
     "name": "univeros/container",
-    "description": "The Altair Container package.",
+    "description": "Reflection-backed PSR-11 dependency-injection container with auto-wiring, contextual bindings, tagged services, decorators, and child scopes.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

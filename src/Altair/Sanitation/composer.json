@@ -1,6 +1,6 @@
 {
     "name": "univeros/sanitation",
-    "description": "The Altair Sanitation package.",
+    "description": "Composable input sanitation that transforms untrusted input into a safe, canonical form before it reaches your domain logic.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

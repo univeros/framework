@@ -1,6 +1,6 @@
 {
     "name": "univeros/courier",
-    "description": "The Altair Courier package.",
+    "description": "Synchronous command bus that routes immutable message objects to their handlers through a configurable middleware pipeline.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

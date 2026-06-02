@@ -1,6 +1,6 @@
 {
     "name": "univeros/filesystem",
-    "description": "The Altair Filesystem package.",
+    "description": "Flysystem v3 wrapper offering one swap-friendly API for local, S3, SFTP, FTP, and Dropbox storage, wired to the Altair container.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

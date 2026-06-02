@@ -1,6 +1,6 @@
 {
     "name": "univeros/session",
-    "description": "The Altair Session package.",
+    "description": "Server-side session storage with pluggable handlers for the filesystem, MongoDB, PDO databases (MySQL/PostgreSQL/SQLite), and Redis.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

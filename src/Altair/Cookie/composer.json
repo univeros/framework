@@ -1,6 +1,6 @@
 {
     "name": "univeros/cookie",
-    "description": "The Altair Cookie package.",
+    "description": "Immutable value objects for HTTP cookies, plus a manager that reads, writes, and modifies them on PSR-7 requests and responses.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

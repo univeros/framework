@@ -1,6 +1,6 @@
 {
     "name": "univeros/common",
-    "description": "The Altair Common package.",
+    "description": "Pure PHP utilities — string helpers, array manipulation, and a key-value registry — shared across every Altair package.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

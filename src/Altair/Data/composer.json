@@ -1,6 +1,6 @@
 {
     "name": "univeros/data",
-    "description": "The Altair Data package.",
+    "description": "Trait-composed, immutable-by-default data objects with JSON serialization, Serializable support, and Carbon-powered date mutators.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

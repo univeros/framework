@@ -1,6 +1,6 @@
 {
     "name": "univeros/structure",
-    "description": "The Altair Structure package.",
+    "description": "Typed data structures — Map, Set, Vector, Deque, Queue, Stack, PriorityQueue — inspired by ext-ds, in pure PHP with no C extension.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {

@@ -1,6 +1,6 @@
 {
     "name": "univeros/middleware",
-    "description": "The Altair Middleware package.",
+    "description": "Generic, domain-agnostic middleware pipeline: a typed Payload flows through an ordered stack driven by a Runner (distinct from PSR-15 HTTP middleware).",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
