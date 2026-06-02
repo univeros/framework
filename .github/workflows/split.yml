@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single split to publish (leave blank to publish all 38: 36 packages + docs + univeros starter)'
+        description: 'Single split to publish (leave blank to publish all 40: 38 packages + docs + univeros starter)'
         required: false
         type: choice
         default: ''
@@ -39,6 +39,7 @@ on:
           - filesystem
           - happen
           - http
+          - idempotency
           - index
           - introspection
           - mcp
@@ -59,6 +60,7 @@ on:
           - tinker
           - univeros
           - validation
+          - webhooks
       dry_run:
         description: 'Compute splits but skip pushing to sub-repos'
         required: false
@@ -124,6 +126,7 @@ jobs:
             {"name":"filesystem",             "path":"src/Altair/Filesystem"},
             {"name":"happen",                 "path":"src/Altair/Happen"},
             {"name":"http",                   "path":"src/Altair/Http"},
+            {"name":"idempotency",            "path":"src/Altair/Idempotency"},
             {"name":"index",                  "path":"src/Altair/Index"},
             {"name":"introspection",          "path":"src/Altair/Introspection"},
             {"name":"mcp",                    "path":"src/Altair/Mcp"},
@@ -143,7 +146,8 @@ jobs:
             {"name":"test-reporter",          "path":"src/Altair/TestReporter"},
             {"name":"tinker",                 "path":"src/Altair/Tinker"},
             {"name":"univeros",               "path":"src/Altair/Bootstrap/resources/skeleton"},
-            {"name":"validation",             "path":"src/Altair/Validation"}
+            {"name":"validation",             "path":"src/Altair/Validation"},
+            {"name":"webhooks",               "path":"src/Altair/Webhooks"}
           ]'
 
           # Drift guard: every src/Altair/* directory that ships a composer.json

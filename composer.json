@@ -84,9 +84,11 @@
         "univeros/container": "self.version",
         "univeros/cookie": "self.version",
         "univeros/courier": "self.version",
+        "univeros/data": "self.version",
         "univeros/doctor": "self.version",
         "univeros/eval": "self.version",
         "univeros/events": "self.version",
+        "univeros/examples": "self.version",
         "univeros/filesystem": "self.version",
         "univeros/happen": "self.version",
         "univeros/http": "self.version",
@@ -101,7 +103,6 @@
         "univeros/observatory": "self.version",
         "univeros/persistence": "self.version",
         "univeros/profiling": "self.version",
-        "univeros/queue": "self.version",
         "univeros/sanitation": "self.version",
         "univeros/scaffold": "self.version",
         "univeros/security": "self.version",
@@ -110,7 +111,8 @@
         "univeros/suggest": "self.version",
         "univeros/test-reporter": "self.version",
         "univeros/tinker": "self.version",
-        "univeros/validation": "self.version"
+        "univeros/validation": "self.version",
+        "univeros/webhooks": "self.version"
     },
     "autoload-dev": {
         "psr-4": {
