@@ -1,0 +1,22 @@
+{
+    "name": "univeros/logging",
+    "description": "PSR-3 application logging for Altair, backed by Monolog and wired from LOG_* env vars. JSON-lines to stderr by default.",
+    "license": "MIT",
+    "homepage": "https://univeros.io",
+    "support": {
+        "issues": "https://github.com/univeros/framework/issues",
+        "source": "https://github.com/univeros/framework"
+    },
+    "require": {
+        "php": ">=8.3",
+        "monolog/monolog": "^3.0",
+        "psr/log": "^3.0",
+        "univeros/configuration": "^2.0",
+        "univeros/container": "^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Altair\\Logging\\": ""
+        }
+    }
+}
