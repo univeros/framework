@@ -7,7 +7,7 @@
 > change silently degrades the round-trip.
 
 **Command:** `bin/altair openapi:roundtrip`
-**Source:** [src/Altair/Scaffold/Cli/OpenApiRoundtripCommand.php](../../src/Altair/Scaffold/Cli/OpenApiRoundtripCommand.php)
+**Source:** [src/Altair/Scaffold/Cli/OpenApiRoundtripCommand.php](../../../src/Altair/Scaffold/Cli/OpenApiRoundtripCommand.php)
 **Issue:** [#164](https://github.com/univeros/framework/issues/164) ·
 epic [#160](https://github.com/univeros/framework/issues/160)
 
@@ -38,11 +38,11 @@ bin/altair openapi:roundtrip openapi.yaml --format=json
 ```
 
 The `openapi.yaml` argument is the source document. The runner reads
-it, parses it through [`OpenApiParser`](../../src/Altair/Scaffold/Sdk/Model/OpenApiParser.php),
-emits Altair specs through [#161's emitter](../../src/Altair/Scaffold/Spec/Emitter/Emitter.php),
-re-parses each spec through [`Parser`](../../src/Altair/Scaffold/Spec/Parser.php),
+it, parses it through [`OpenApiParser`](../../../src/Altair/Scaffold/Sdk/Model/OpenApiParser.php),
+emits Altair specs through [#161's emitter](../../../src/Altair/Scaffold/Spec/Emitter/Emitter.php),
+re-parses each spec through [`Parser`](../../../src/Altair/Scaffold/Spec/Parser.php),
 re-emits each as an OpenAPI fragment through
-[`OpenApiEmitter`](../../src/Altair/Scaffold/Emitter/OpenApiEmitter.php),
+[`OpenApiEmitter`](../../../src/Altair/Scaffold/Emitter/OpenApiEmitter.php),
 merges the fragments back into one document, projects both sides into
 the comparison view documented below, and diffs them.
 
@@ -155,10 +155,10 @@ Exit 1 means either an unrecoverable parse error (the doc itself is
 broken) or drift was detected. Both should block a merge.
 
 For framework CI, the gate runs against
-[`benchmarks/tokens-to-ship/fixtures/posts.openapi.yaml`](../../benchmarks/tokens-to-ship/fixtures/posts.openapi.yaml)
+[`benchmarks/tokens-to-ship/fixtures/posts.openapi.yaml`](../../../benchmarks/tokens-to-ship/fixtures/posts.openapi.yaml)
 as a representative real-world Petstore-class document; the
 deliberately-broken-emitter test in
-[`tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php`](../../tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php)
+[`tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php`](../../../tests/Scaffold/Cli/OpenApiRoundtripRunnerTest.php)
 proves the gate fails on a regression.
 
 ## Known limitations (today)

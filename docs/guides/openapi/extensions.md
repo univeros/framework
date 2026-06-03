@@ -152,12 +152,12 @@ The schemas in [`docs/openapi/extensions/`](./extensions/) are Draft
   forward emitter does not yet write this key either — both halves
   land together when the parser gains `parameters[]` support.
 `x-altair-idempotency` now round-trips end to end (see
-[idempotency.md](./../packages/idempotency.md)) — the `ttl` and
+[idempotency.md](../../packages/idempotency.md)) — the `ttl` and
 `scope` carry through the OpenAPI extension; `mode` is a server-side
 enforcement concern and defaults to `optional` on the reverse path.
 
 `x-altair-webhook` now round-trips end to end (see
-[webhooks.md](./../packages/webhooks.md)). `direction` and `signing`
+[webhooks.md](../../packages/webhooks.md)). `direction` and `signing`
 always travel; every other field (`secret_name`, custom header names,
 `dedupe_ttl` / `timestamp_window`, the outbound `retry` block,
 `dead_letter`) is written only when it differs from its default. The

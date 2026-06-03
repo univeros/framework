@@ -41,7 +41,7 @@ Four pieces make the design honest:
 1. **Multi-scheme signing.** `SignerInterface` has three operations — `name`, `sign`, `verify` — and the package ships `HmacSha256Signer`, `HmacSha512Signer` and `Ed25519Signer`. HMAC signatures are hex-encoded to match Stripe / GitHub; `verify()` is constant-time (`hash_equals` / libsodium) and tolerantly parses the Stripe `t=<ts>,v1=<hex>` header format as well as a bare hex digest.
 2. **Pluggable storage.** Inbound dedupe (`InboundDeduplicatorInterface`) and outbound delivery state (`DeliveryStoreInterface`) each ship an `InMemory` adapter for tests and a `Redis` adapter for production. The inbound dedupe primitive is `SET key value NX EX ttl` — concurrent identical deliveries see exactly one handler invocation.
 3. **No hand-rolled dispatcher.** `WebhookDispatcher` records a `Delivery`, dispatches a `WebhookMessage` over Symfony Messenger, and `WebhookHandler` performs the signed POST with retry + dead-letter. Delivery state (id, attempts, last response, status) is persisted so `webhook:replay` works.
-4. **Round-trips through OpenAPI.** The `x-altair-webhook` extension carries the policy through OpenAPI 3.1 (see [docs/openapi/extensions.md](../openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
+4. **Round-trips through OpenAPI.** The `x-altair-webhook` extension carries the policy through OpenAPI 3.1 (see [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
 
 What this package deliberately does **not** do:
 
@@ -283,7 +283,7 @@ When a spec carries `webhook:`, the forward emitter (`spec:emit-openapi`) writes
 
 The drift gate (`openapi:roundtrip`) compares `x-altair-webhook` on both sides; a regression that drops or changes the block produces a `kind: extension_drift` entry and fails CI in `--check` mode.
 
-See [docs/openapi/extensions.md](../openapi/extensions.md) for the extension contract and [docs/openapi/roundtrip.md](../openapi/roundtrip.md) for the gate.
+See [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) for the extension contract and [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) for the gate.
 
 ## What is not yet supported
 
@@ -300,5 +300,5 @@ See [docs/openapi/extensions.md](../openapi/extensions.md) for the extension con
 - [#187](https://github.com/univeros/framework/issues/187) — outbound dispatcher + retry / dead-letter / replay
 - [#188](https://github.com/univeros/framework/issues/188) — `webhook:` spec block + scaffolder
 - [#189](https://github.com/univeros/framework/issues/189) — `x-altair-webhook` round-trip activation
-- [docs/openapi/extensions.md](../openapi/extensions.md) — the OpenAPI extension family
-- [docs/openapi/roundtrip.md](../openapi/roundtrip.md) — the drift gate
+- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) — the OpenAPI extension family
+- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) — the drift gate

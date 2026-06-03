@@ -84,7 +84,7 @@ bin/altair module:new --dir=user-management --name=acme/user-management   # scaf
 bin/altair module:new --name=acme/billing --namespace='Acme\Billing'      # explicit namespace
 ```
 
-When building an extension for Univeros, **scaffold it with `module:new`** and fill in the generated `Module.php` — don't hand-roll the wiring. Routes and migrations are picked up automatically; module entities need the host to bind `SchemaProviderInterface` to `ModuleAwareSchemaProvider`. Use your own vendor namespace — never `Altair\*` or a `univeros/*` name. Full guide: [docs/extending.md](docs/extending.md).
+When building an extension for Univeros, **scaffold it with `module:new`** and fill in the generated `Module.php` — don't hand-roll the wiring. Routes and migrations are picked up automatically; module entities need the host to bind `SchemaProviderInterface` to `ModuleAwareSchemaProvider`. Use your own vendor namespace — never `Altair\*` or a `univeros/*` name. Full guide: [docs/guides/extending.md](docs/guides/extending.md).
 
 ### Client SDK emitters
 

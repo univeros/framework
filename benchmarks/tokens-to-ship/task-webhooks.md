@@ -76,7 +76,7 @@ and scaffold a working project through
 non-default field values, matching the v1 wire contract: `direction`
 and `signing` always travel; other fields round-trip only when they
 differ from their default (see
-[docs/openapi/extensions.md](../../docs/openapi/extensions.md)).
+[docs/guides/openapi/extensions.md](../../docs/guides/openapi/extensions.md)).
 
 ## Acceptance criteria
 

@@ -26,7 +26,7 @@ Three pieces make the design honest:
 
 1. **Pluggable storage.** The `IdempotencyStoreInterface` has three contract operations — `claim`, `complete`, `release` — and the package ships three adapters: `InMemoryStore` for tests, `ApcuStore` for single-host production, `RedisStore` for multi-host. The atomic primitives are `apcu_add` and `SET key NX EX ttl` respectively; concurrent identical requests for the same key see exactly one execute and the others replay.
 2. **No hand-rolled middleware.** The PSR-15 middleware (`IdempotencyKeyMiddleware`) handles the entire behaviour matrix — header presence + validation, body hash, claim coordination, in-progress wait, replay, conflict, error rollback, streaming skip — in one place. The spec-driven scaffolder reaches it via the static accessor on the generated Action.
-3. **Round-trips through OpenAPI.** The `x-altair-idempotency` extension carries `ttl` and `scope` through OpenAPI 3.1 (see [docs/openapi/extensions.md](../openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
+3. **Round-trips through OpenAPI.** The `x-altair-idempotency` extension carries `ttl` and `scope` through OpenAPI 3.1 (see [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
 
 What this package deliberately does **not** do:
 
@@ -235,7 +235,7 @@ on the corresponding operation. The reverse importer (`openapi:import`) reads it
 
 The drift gate (`openapi:roundtrip`) compares the extension on both sides; a regression that drops the block produces a `kind: extension_drift` entry and fails CI in `--check` mode.
 
-See [docs/openapi/extensions.md](../openapi/extensions.md) for the full extension contract and [docs/openapi/roundtrip.md](../openapi/roundtrip.md) for the gate.
+See [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) for the full extension contract and [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) for the gate.
 
 ## What does not round-trip yet
 
@@ -275,5 +275,5 @@ The framework's own test suite (e.g. `tests/Idempotency/Middleware/IdempotencyKe
 - [#173](https://github.com/univeros/framework/issues/173) — middleware
 - [#174](https://github.com/univeros/framework/issues/174) — spec block + scaffolder
 - [#175](https://github.com/univeros/framework/issues/175) — `x-altair-idempotency` round-trip activation
-- [docs/openapi/extensions.md](../openapi/extensions.md) — the OpenAPI extension family
-- [docs/openapi/roundtrip.md](../openapi/roundtrip.md) — the drift gate
+- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) — the OpenAPI extension family
+- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) — the drift gate

@@ -43,7 +43,7 @@ composer require univeros/events        # Append-only mutation event log for age
 
 The complete published list: `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `examples`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
 
-Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/packages/split-publish.md](docs/packages/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
+Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/guides/split-publish.md](docs/guides/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
 
 ## Repositories
 

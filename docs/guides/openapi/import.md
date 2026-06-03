@@ -7,7 +7,7 @@
 > source-of-truth.
 
 **Command:** `bin/altair openapi:import`
-**Source:** [src/Altair/Scaffold/Cli/OpenApiImportCommand.php](../../src/Altair/Scaffold/Cli/OpenApiImportCommand.php)
+**Source:** [src/Altair/Scaffold/Cli/OpenApiImportCommand.php](../../../src/Altair/Scaffold/Cli/OpenApiImportCommand.php)
 **Issue:** [#162](https://github.com/univeros/framework/issues/162) · epic [#160](https://github.com/univeros/framework/issues/160)
 
 ## When to reach for it
@@ -28,7 +28,7 @@ The headline use cases:
   `petstore.yaml`; you want a server stub by lunch.
 - **Agent-driven scaffolding.** An agent that has the OpenAPI doc in
   context skips the spec-authoring step entirely. See the
-  [`tokens-to-ship` benchmark](../benchmarks/tokens-to-ship.md) variant.
+  [`tokens-to-ship` benchmark](../../benchmarks/tokens-to-ship.md) variant.
 
 ## Usage
 
@@ -218,4 +218,4 @@ documented normalization.
 - [#161](https://github.com/univeros/framework/issues/161) — spec emitter (library)
 - [#163](https://github.com/univeros/framework/issues/163) — `x-altair-*` extensions
 - [#164](https://github.com/univeros/framework/issues/164) — round-trip drift gate
-- [docs/packages/scaffold.md](../packages/scaffold.md) — the scaffold sub-package overall
+- [docs/packages/scaffold.md](../../packages/scaffold.md) — the scaffold sub-package overall
