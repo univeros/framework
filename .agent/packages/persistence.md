@@ -45,10 +45,14 @@
 - `MigrationConfigFactory` _(final)_
 - `MigrationPathResolver` _(final)_
 - `MigratorFactory` _(final)_
+- `ModuleAwareSchemaProvider` _(final)_ — implements `SchemaProviderInterface`
+- `ModuleEntityDirectories` _(final)_
+- `ModuleMigrationDirectories` _(final)_
 - `SchemaSyncCommand` _(final)_
 
 ## Tests as documentation
 
+- `tests/Persistence/Cli/ModuleMigrateCommandTest.php`
 - `tests/Persistence/Configuration/DatabaseConnectionFactoryTest.php`
 - `tests/Persistence/Configuration/DatabaseSettingsTest.php`
 - `tests/Persistence/Cycle/CycleEntityManagerTest.php`
@@ -56,6 +60,8 @@
 - `tests/Persistence/Cycle/CycleReadModelRepositoryTest.php`
 - `tests/Persistence/Cycle/CycleRepositoryTest.php`
 - `tests/Persistence/Dto/DataObjectHydratorTest.php`
+- `tests/Persistence/Module/ModuleDirectoriesTest.php`
+- `tests/Persistence/Schema/ModuleAwareSchemaProviderTest.php`
 
 ## Related packages
 
@@ -69,3 +75,4 @@
 - `univeros/configuration`
 - `univeros/container`
 - `univeros/data`
+- `univeros/module`

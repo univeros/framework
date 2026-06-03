@@ -1,6 +1,6 @@
 # univeros/courier  ·  Altair\Courier
 
-**Purpose:** The Altair Courier package.
+**Purpose:** Synchronous command bus that routes immutable message objects to their handlers through a configurable middleware pipeline.
 
 ## Public contracts
 

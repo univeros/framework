@@ -1,6 +1,6 @@
 # univeros/common  ·  Altair\Common
 
-**Purpose:** The Altair Common package.
+**Purpose:** Pure PHP utilities — string helpers, array manipulation, and a key-value registry — shared across every Altair package.
 
 ## Public contracts
 

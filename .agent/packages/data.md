@@ -1,6 +1,6 @@
 # univeros/data  ·  Altair\Data
 
-**Purpose:** The Altair Data package.
+**Purpose:** Trait-composed, immutable-by-default data objects with JSON serialization, Serializable support, and Carbon-powered date mutators.
 
 ## Public contracts
 

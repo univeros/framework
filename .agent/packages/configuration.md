@@ -1,6 +1,6 @@
 # univeros/configuration  ·  Altair\Configuration
 
-**Purpose:** The Altair Configuration package.
+**Purpose:** Composable, container-aware configuration: loads .env via phpdotenv 5 and wires dependency bindings through a unified interface.
 
 ## Public contracts
 

@@ -1,6 +1,6 @@
 # univeros/container  ·  Altair\Container
 
-**Purpose:** The Altair Container package.
+**Purpose:** Reflection-backed PSR-11 dependency-injection container with auto-wiring, contextual bindings, tagged services, decorators, and child scopes.
 
 ## Public contracts
 

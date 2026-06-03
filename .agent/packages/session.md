@@ -1,6 +1,6 @@
 # univeros/session  ·  Altair\Session
 
-**Purpose:** The Altair Session package.
+**Purpose:** Server-side session storage with pluggable handlers for the filesystem, MongoDB, PDO databases (MySQL/PostgreSQL/SQLite), and Redis.
 
 ## Public contracts
 
