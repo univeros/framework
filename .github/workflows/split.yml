@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single split to publish (leave blank to publish all 41: 39 packages + docs + univeros starter)'
+        description: 'Single split to publish (leave blank to publish all 42: 40 packages + docs + univeros starter)'
         required: false
         type: choice
         default: ''
@@ -42,6 +42,7 @@ on:
           - idempotency
           - index
           - introspection
+          - logging
           - mcp
           - messaging
           - middleware
@@ -130,6 +131,7 @@ jobs:
             {"name":"idempotency",            "path":"src/Altair/Idempotency"},
             {"name":"index",                  "path":"src/Altair/Index"},
             {"name":"introspection",          "path":"src/Altair/Introspection"},
+            {"name":"logging",                "path":"src/Altair/Logging"},
             {"name":"mcp",                    "path":"src/Altair/Mcp"},
             {"name":"messaging",              "path":"src/Altair/Messaging"},
             {"name":"middleware",             "path":"src/Altair/Middleware"},
