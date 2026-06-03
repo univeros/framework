@@ -14,6 +14,7 @@
 
 - `FullPreset` _(final)_ — implements `PresetInterface`
 - `GenerateEnvStep` _(final)_
+- `MakeModuleCommand` _(final)_
 - `MinimalPreset` _(final)_ — implements `PresetInterface`
 - `NewCommand` _(final)_
 - `PresetRegistry` _(final)_
@@ -24,9 +25,11 @@
 
 - `tests/Bootstrap/GenerateEnvStepTest.php`
 - `tests/Bootstrap/GeneratedPingTest.php`
+- `tests/Bootstrap/MakeModuleCommandTest.php`
 - `tests/Bootstrap/NewCommandTest.php`
 - `tests/Bootstrap/PresetRegistryTest.php`
 - `tests/Bootstrap/SkeletonGeneratorTest.php`
+- `tests/Bootstrap/SkeletonGeneratorTokensTest.php`
 
 ## Related packages
 

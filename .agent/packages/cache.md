@@ -1,6 +1,6 @@
 # univeros/cache  ·  Altair\Cache
 
-**Purpose:** The Altair Cache package.
+**Purpose:** PSR-6 and PSR-16 caching with pluggable storage backends for filesystem, Redis, Predis, and Memcached.
 
 ## Public contracts
 

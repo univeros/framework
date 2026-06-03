@@ -1,6 +1,6 @@
 # univeros/filesystem  ·  Altair\Filesystem
 
-**Purpose:** The Altair Filesystem package.
+**Purpose:** Flysystem v3 wrapper offering one swap-friendly API for local, S3, SFTP, FTP, and Dropbox storage, wired to the Altair container.
 
 ## Public contracts
 

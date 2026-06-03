@@ -1,6 +1,6 @@
 # univeros/cookie  ·  Altair\Cookie
 
-**Purpose:** The Altair Cookie package.
+**Purpose:** Immutable value objects for HTTP cookies, plus a manager that reads, writes, and modifies them on PSR-7 requests and responses.
 
 ## Public contracts
 

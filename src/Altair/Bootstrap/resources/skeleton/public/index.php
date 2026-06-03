@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Altair\Container\Container;
 use Altair\Http\Middleware\ActionMiddleware;
 use Altair\Http\Middleware\DispatcherMiddleware;
+use Altair\Http\Support\ModuleRoutes;
 use FastRoute\RouteCollector;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequestFactory;
@@ -20,6 +21,9 @@ $container = require dirname(__DIR__) . '/config/container.php';
 
 /** @var list<array{0: string, 1: string, 2: class-string}> $routes */
 $routes = require dirname(__DIR__) . '/config/routes.php';
+
+// Merge in routes contributed by registered modules (config/modules.php).
+$routes = ModuleRoutes::collect($container, $routes);
 
 $dispatcher = simpleDispatcher(static function (RouteCollector $collector) use ($routes, $container): void {
     foreach ($routes as [$method, $path, $action]) {

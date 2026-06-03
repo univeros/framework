@@ -8,6 +8,7 @@ use Altair\Bootstrap\SkeletonGenerator;
 use Altair\Container\Container;
 use Altair\Http\Middleware\ActionMiddleware;
 use Altair\Http\Middleware\DispatcherMiddleware;
+use Altair\Http\Support\ModuleRoutes;
 use FastRoute\RouteCollector;
 use Laminas\Diactoros\ResponseFactory;
 use Laminas\Diactoros\ServerRequest;
@@ -86,6 +87,23 @@ final class GeneratedPingTest extends TestCase
         } finally {
             spl_autoload_unregister($autoloader);
         }
+    }
+
+    public function testGeneratedContainerBootsWithModuleWiring(): void
+    {
+        (new SkeletonGenerator())->generate($this->dir);
+
+        // Boot the generated container factory, which applies the configuration
+        // chain AND the (empty) module chain from config/modules.php.
+        /** @var Container $container */
+        $container = require $this->dir . '/config/container.php';
+        self::assertInstanceOf(Container::class, $container);
+
+        // With no modules registered, route collection returns the host routes
+        // unchanged — proving the new ModuleRoutes merge is a safe no-op.
+        /** @var list<array{0: string, 1: string, 2: class-string}> $routes */
+        $routes = require $this->dir . '/config/routes.php';
+        self::assertSame($routes, ModuleRoutes::collect($container, $routes));
     }
 
     private function removeDir(string $dir): void

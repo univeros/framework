@@ -41,6 +41,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 │   ├── Introspection/ ← "What's wired into this project right now?" CLI inspectors (container:inspect, routes:list, listeners:list, middleware:list, manifest:diff, spec:list/show, config:dump)
 │   ├── Messaging/     ← MessageBus + worker over Symfony Messenger, attribute-driven handlers, scaffold queue: block
 │   ├── Middleware/    ← PSR-15 middleware primitives
+│   ├── Module/        ← Pluggable extension modules: one class self-registers a feature's routes/entities/migrations (bin/altair module:new)
 │   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
 │   ├── Sanitation/    ← Input sanitation rules
 │   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: and queue: blocks; Journal sub-feature (journal:*) for rewindable scaffold ops; SDK emitters (spec:emit-sdk typescript|python) for typed clients

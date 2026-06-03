@@ -1,6 +1,6 @@
 # univeros/happen  ·  Altair\Happen
 
-**Purpose:** The Altair Event package.
+**Purpose:** PSR-14 event dispatcher with priority ordering, subscriber grouping, provider-based registration, wildcard listeners, and batch dispatch.
 
 ## Public contracts
 

@@ -1,6 +1,6 @@
 # univeros/middleware  ·  Altair\Middleware
 
-**Purpose:** The Altair Middleware package.
+**Purpose:** Generic, domain-agnostic middleware pipeline: a typed Payload flows through an ordered stack driven by a Runner (distinct from PSR-15 HTTP middleware).
 
 ## Public contracts
 

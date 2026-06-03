@@ -1,6 +1,6 @@
 # univeros/validation  ·  Altair\Validation
 
-**Purpose:** The Altair Validation package.
+**Purpose:** Rule-based input validation that rejects values not conforming to declared constraints — the gatekeeping counterpart to sanitation.
 
 ## Public contracts
 

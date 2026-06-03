@@ -1,6 +1,6 @@
 # univeros/http  ·  Altair\Http
 
-**Purpose:** The Altair Http package.
+**Purpose:** PSR-15 HTTP foundation with the Action/Domain/Input/Responder lifecycle, FastRoute routing, content negotiation, and JWT authentication.
 
 ## Public contracts
 
@@ -106,6 +106,7 @@
 - `LcobucciTokenParser` — implements `TokenParserInterface`
 - `MiddlewareCollection` — implements `ArrayAccess`, `CapacityInterface`, `CollectionInterface`, `Countable`, `IteratorAggregate`, `JsonSerializable`, `QueueInterface`, `Stringable`, `Traversable`
 - `MimeType`
+- `ModuleRoutes` _(final)_
 - `NoCacheLimiter` — implements `CacheLimiterInterface`
 - `Payload` — implements `HttpStatusInterface`, `PayloadInterface`
 - `PayloadConfiguration` — implements `ConfigurationInterface`
@@ -177,6 +178,7 @@
 - `tests/Http/Support/HeaderTokenExtractorTest.php`
 - `tests/Http/Support/HttpCacheTest.php`
 - `tests/Http/Support/MimeTypeTest.php`
+- `tests/Http/Support/ModuleRoutesTest.php`
 - `tests/Http/Support/QueryParamsTokenExtractorTest.php`
 - `tests/Http/Validator/DigestSignatureValidatorTest.php`
 - `tests/Http/Validator/RepositoryIdentityValidatorTest.php`
@@ -196,6 +198,7 @@
 - `relay/relay`
 - `univeros/cache`
 - `univeros/configuration`
+- `univeros/module`
 - `univeros/session`
 - `univeros/structure`
 - `willdurand/negotiation`

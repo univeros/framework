@@ -11,6 +11,9 @@ parameters:
         # Skeleton template emitted by `bin/altair new`; App-namespaced project
         # code, not framework source.
         - src/Altair/Bootstrap/resources/skeleton/*
+        # Module skeleton emitted by `bin/altair module:new`; VendorModule-namespaced
+        # template code, not framework source.
+        - src/Altair/Bootstrap/resources/module-skeleton/*
     treatPhpDocTypesAsCertain: false
     reportUnmatchedIgnoredErrors: false
     tmpDir: .phpstan-cache

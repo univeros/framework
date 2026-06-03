@@ -1,6 +1,6 @@
 # univeros/structure  ·  Altair\Structure
 
-**Purpose:** The Altair Structure package.
+**Purpose:** Typed data structures — Map, Set, Vector, Deque, Queue, Stack, PriorityQueue — inspired by ext-ds, in pure PHP with no C extension.
 
 ## Public contracts
 

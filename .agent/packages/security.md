@@ -1,6 +1,6 @@
 # univeros/security  ·  Altair\Security
 
-**Purpose:** The Altair Security package.
+**Purpose:** Cryptographic primitives for key derivation (HKDF, PBKDF2), symmetric encryption, and timing-safe MAC verification.
 
 ## Public contracts
 

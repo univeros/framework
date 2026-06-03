@@ -1,6 +1,6 @@
 # univeros/sanitation  ·  Altair\Sanitation
 
-**Purpose:** The Altair Sanitation package.
+**Purpose:** Composable input sanitation that transforms untrusted input into a safe, canonical form before it reaches your domain logic.
 
 ## Public contracts
 
