@@ -18,7 +18,8 @@
         "univeros/cli": "^2.0",
         "univeros/configuration": "^2.0",
         "univeros/container": "^2.0",
-        "univeros/data": "^2.0"
+        "univeros/data": "^2.0",
+        "univeros/module": "^2.0"
     },
     "autoload": {
         "psr-4": {

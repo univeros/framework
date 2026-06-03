@@ -22,6 +22,7 @@
         "relay/relay": "^2.1",
         "univeros/cache": "^2.0",
         "univeros/configuration": "^2.0",
+        "univeros/module": "^2.0",
         "univeros/session": "^2.0",
         "univeros/structure": "^2.0",
         "willdurand/negotiation": "^3.1"

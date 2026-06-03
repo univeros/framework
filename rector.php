@@ -26,6 +26,9 @@ return RectorConfig::configure()
         // Skeleton template emitted by `bin/altair new` — App-namespaced project
         // code, not framework source.
         __DIR__ . '/src/Altair/Bootstrap/resources/skeleton',
+        // Module skeleton emitted by `bin/altair module:new` — VendorModule-namespaced
+        // template code, not framework source.
+        __DIR__ . '/src/Altair/Bootstrap/resources/module-skeleton',
         // Scope boundary for #93: making params explicitly `?Type` lets Rector
         // collapse `?? new X()` bodies into promoted `= new X()` defaults. That
         // narrows the constructor contract (an explicit `null` arg becomes a

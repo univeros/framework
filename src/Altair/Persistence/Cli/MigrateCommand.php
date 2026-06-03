@@ -13,8 +13,10 @@ namespace Altair\Persistence\Cli;
 
 use Altair\Cli\Attribute\Command;
 use Altair\Cli\Attribute\Option;
+use Altair\Container\Container;
 use Altair\Persistence\Migrations\MigrationConfigFactory;
 use Altair\Persistence\Migrations\MigratorFactory;
+use Altair\Persistence\Migrations\ModuleMigrationDirectories;
 use Cycle\Database\DatabaseProviderInterface;
 use Cycle\Migrations\MigrationInterface;
 use Cycle\Migrations\State;
@@ -37,6 +39,7 @@ final readonly class MigrateCommand
         private MigrationConfigFactory $configs = new MigrationConfigFactory(),
         private MigratorFactory $migrators = new MigratorFactory(),
         private MigrationPathResolver $paths = new MigrationPathResolver(),
+        private ?Container $container = null,
     ) {}
 
     public function __invoke(
@@ -50,7 +53,10 @@ final readonly class MigrateCommand
         $projectRoot = $this->paths->resolveProjectRoot($root);
         $directory = $this->paths->resolveMigrationsDirectory($projectRoot, $dir);
 
-        $config = $this->configs->create($directory);
+        $config = $this->configs->create(
+            $directory,
+            vendorDirectories: ModuleMigrationDirectories::existingFor($this->container),
+        );
         $migrator = $this->migrators->create($this->databases, $config);
 
         $pending = array_filter(

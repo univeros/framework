@@ -23,17 +23,24 @@ use Cycle\Migrations\Config\MigrationConfig;
  */
 final class MigrationConfigFactory
 {
+    /**
+     * @param list<string> $vendorDirectories Extra migration directories (e.g. from
+     *                                         modules) scanned by the same migrator as
+     *                                         `$directory`, sharing the tracking table.
+     */
     public function create(
         string $directory,
         string $namespace = 'Database\\Migrations',
         string $table = 'cycle_migrations',
         bool $safe = false,
+        array $vendorDirectories = [],
     ): MigrationConfig {
         return new MigrationConfig([
             'directory' => $directory,
             'table' => $table,
             'namespace' => $namespace,
             'safe' => $safe,
+            'vendorDirectories' => $vendorDirectories,
         ]);
     }
 }

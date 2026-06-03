@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
     inputs:
       package:
-        description: 'Single split to publish (leave blank to publish all 40: 38 packages + docs + univeros starter)'
+        description: 'Single split to publish (leave blank to publish all 41: 39 packages + docs + univeros starter)'
         required: false
         type: choice
         default: ''
@@ -46,6 +46,7 @@ on:
           - messaging
           - middleware
           - migration-intelligence
+          - module
           - observability
           - observatory
           - persistence
@@ -133,6 +134,7 @@ jobs:
             {"name":"messaging",              "path":"src/Altair/Messaging"},
             {"name":"middleware",             "path":"src/Altair/Middleware"},
             {"name":"migration-intelligence", "path":"src/Altair/MigrationIntelligence"},
+            {"name":"module",                 "path":"src/Altair/Module"},
             {"name":"observability",          "path":"src/Altair/Observability"},
             {"name":"observatory",            "path":"src/Altair/Observatory"},
             {"name":"persistence",            "path":"src/Altair/Persistence"},

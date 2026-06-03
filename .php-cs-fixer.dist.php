@@ -11,7 +11,7 @@ EOF;
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
-    ->exclude(['.github', 'build', 'tests', 'runtime', 'vendor', 'skeleton']);
+    ->exclude(['.github', 'build', 'tests', 'runtime', 'vendor', 'skeleton', 'module-skeleton']);
 
 return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)

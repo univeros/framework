@@ -4,6 +4,8 @@ Per-package guides for the sub-packages bundled in `univeros/framework`. Each pa
 
 The framework targets PHP 8.3+, follows PSR-7/15/14/6/16 where applicable, and is composed of independently usable packages. You can install the meta-package (`composer require univeros/framework`) or pick the pieces you need (`composer require univeros/cookie`, etc.).
 
+**Building a pluggable feature?** See [Extending Altair](./extending.md) — how to scaffold a module that self-registers its routes, entities, and migrations into a host app.
+
 ## Packages
 
 ### HTTP stack
@@ -27,6 +29,7 @@ Cross-cutting building blocks the rest of the framework — and your app — wir
 - [Happen](./packages/happen.md) — PSR-14 event dispatcher with priorities, subscribers, named and wildcard listeners, and stoppable events.
 - [Courier](./packages/courier.md) — command bus with a middleware pipeline, container-backed handler resolution, and re-entrant dispatch handling.
 - [Middleware](./packages/middleware.md) — the framework's generic (non-HTTP) middleware contract — `Payload` + `Runner` + `MiddlewareManager` — used internally by Sanitation, Validation, and Courier.
+- [Module](./packages/module.md) — pluggable extension modules: a host registers one class in `config/modules.php` and the module self-registers its HTTP routes, Cycle entities, and migrations. Scaffold one with `bin/altair module:new`.
 
 ### Data & types
 

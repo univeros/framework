@@ -75,6 +75,17 @@ bin/altair spec:lint                                    # drift check
 
 When you add a new HTTP endpoint, write the YAML spec first and scaffold it — don't hand-write the Action/Input/Responder triple. After hand-editing generated files, run `bin/altair spec:lint` so drift surfaces in CI.
 
+### Modules (pluggable extensions)
+
+The `univeros/module` sub-package lets a third-party package self-register a whole feature into a host app. A module is a class implementing `Altair\Module\Contracts\ModuleInterface` (a `ConfigurationInterface` + `name()`); it opts into capabilities by also implementing `RoutesProviderInterface`, `EntityDirectoriesProviderInterface`, and/or `MigrationDirectoriesProviderInterface`. The host registers it in `config/modules.php`; `ModuleConfiguration` tags each module `altair.module`, and the front controller (`Altair\Http\Support\ModuleRoutes`), the schema provider (`ModuleAwareSchemaProvider`), and the `db:migrate` commands (Cycle `vendorDirectories`) pick the contributions up.
+
+```bash
+bin/altair module:new --dir=user-management --name=acme/user-management   # scaffold a module package
+bin/altair module:new --name=acme/billing --namespace='Acme\Billing'      # explicit namespace
+```
+
+When building an extension for Univeros, **scaffold it with `module:new`** and fill in the generated `Module.php` — don't hand-roll the wiring. Routes and migrations are picked up automatically; module entities need the host to bind `SchemaProviderInterface` to `ModuleAwareSchemaProvider`. Use your own vendor namespace — never `Altair\*` or a `univeros/*` name. Full guide: [docs/extending.md](docs/extending.md).
+
 ### Client SDK emitters
 
 `bin/altair spec:emit-sdk typescript|python` turns the merged OpenAPI 3.1 document into a typed client SDK — no external code-gen runtime (the doc is parsed with `symfony/yaml` into a neutral model under `Altair\Scaffold\Sdk\Model`, then each emitter walks it).
