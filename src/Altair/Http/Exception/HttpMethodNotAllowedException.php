@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Http\Exception;
 
+use Override;
 use Psr\Http\Message\ResponseInterface;
 use Throwable;
 
@@ -26,6 +27,17 @@ class HttpMethodNotAllowedException extends HttpBadRequestException
         ?Throwable $previous = null,
     ) {
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    #[Override]
+    public function getHeaders(): array
+    {
+        return $this->allowed === []
+            ? []
+            : ['Allow' => implode(',', $this->allowed)];
     }
 
     public function withResponse(ResponseInterface $response): ResponseInterface

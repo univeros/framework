@@ -7,6 +7,8 @@ namespace Altair\Tests\Http\Middleware;
 use Altair\Http\Contracts\ErrorHandlerInterface;
 use Altair\Http\Contracts\HttpStatusCodeInterface;
 use Altair\Http\Contracts\MiddlewareInterface;
+use Altair\Http\Exception\HttpMethodNotAllowedException;
+use Altair\Http\Exception\HttpNotFoundException;
 use Altair\Http\Middleware\ExceptionHandlerMiddleware;
 use Laminas\Diactoros\Response;
 use Laminas\Diactoros\ResponseFactory;
@@ -15,7 +17,10 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface as PsrMiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
 use RuntimeException;
+use Stringable;
 
 class ExceptionHandlerMiddlewareTest extends AbstractMiddlewareTest
 {
@@ -84,6 +89,95 @@ class ExceptionHandlerMiddlewareTest extends AbstractMiddlewareTest
         $this->assertSame(HttpStatusCodeInterface::HTTP_INTERNAL_SERVER_ERROR, $response->getStatusCode());
         $this->assertInstanceOf(RuntimeException::class,
             $errorHandler->seen->getAttribute(MiddlewareInterface::ATTRIBUTE_EXCEPTION));
+    }
+
+    public function testThrownHttpExceptionRendersItsOwnStatus(): void
+    {
+        $middleware = new ExceptionHandlerMiddleware(new ResponseFactory(), $this->passthroughHandler(), capture: true);
+
+        $response = $this->dispatch(
+            [$middleware, $this->handlerThrowing(new HttpNotFoundException('/'))],
+            new ServerRequest(),
+        );
+
+        $this->assertSame(HttpStatusCodeInterface::HTTP_NOT_FOUND, $response->getStatusCode());
+    }
+
+    public function testThrownMethodNotAllowedAppliesAllowHeader(): void
+    {
+        $middleware = new ExceptionHandlerMiddleware(new ResponseFactory(), $this->passthroughHandler(), capture: true);
+
+        $response = $this->dispatch(
+            [$middleware, $this->handlerThrowing(new HttpMethodNotAllowedException(['GET', 'POST'], 'nope', 405))],
+            new ServerRequest(),
+        );
+
+        $this->assertSame(HttpStatusCodeInterface::HTTP_METHOD_NOT_ALLOWED, $response->getStatusCode());
+        $this->assertSame('GET,POST', $response->getHeaderLine('Allow'));
+    }
+
+    public function testServerErrorsAreLogged(): void
+    {
+        $logger = $this->spyLogger();
+        $middleware = new ExceptionHandlerMiddleware(
+            new ResponseFactory(),
+            $this->passthroughHandler(),
+            capture: true,
+            logger: $logger,
+        );
+
+        $this->dispatch(
+            [$middleware, $this->handlerThrowing(new RuntimeException('boom'))],
+            new ServerRequest(),
+        );
+
+        $this->assertCount(1, $logger->records);
+        $this->assertSame('boom', $logger->records[0]['message']);
+        $this->assertSame(500, $logger->records[0]['context']['status']);
+    }
+
+    public function testClientErrorsAreNotLogged(): void
+    {
+        $logger = $this->spyLogger();
+        $middleware = new ExceptionHandlerMiddleware(
+            new ResponseFactory(),
+            $this->passthroughHandler(),
+            capture: true,
+            logger: $logger,
+        );
+
+        $this->dispatch(
+            [$middleware, $this->handlerThrowing(new HttpNotFoundException('/'))],
+            new ServerRequest(),
+        );
+
+        $this->assertSame([], $logger->records);
+    }
+
+    private function passthroughHandler(): ErrorHandlerInterface
+    {
+        return new class () implements ErrorHandlerInterface {
+            public function __invoke(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+            {
+                return $response;
+            }
+        };
+    }
+
+    /**
+     * @return AbstractLogger&object{records: list<array{message: string, context: array<string, mixed>}>}
+     */
+    private function spyLogger(): LoggerInterface
+    {
+        return new class () extends AbstractLogger {
+            /** @var list<array{message: string, context: array<string, mixed>}> */
+            public array $records = [];
+
+            public function log($level, string|Stringable $message, array $context = []): void
+            {
+                $this->records[] = ['message' => (string) $message, 'context' => $context];
+            }
+        };
     }
 
     private function handlerReturning(int $code): PsrMiddlewareInterface

@@ -11,4 +11,18 @@ declare(strict_types=1);
 
 namespace Altair\Http\Exception;
 
-class HttpBadRequestException extends HttpException {}
+use Altair\Http\Contracts\HttpStatusCodeInterface;
+use Override;
+
+class HttpBadRequestException extends HttpException
+{
+    /**
+     * A bad-request and its subclasses are client errors: fall back to 400
+     * (not the base class's 500) when no explicit code was supplied.
+     */
+    #[Override]
+    protected function defaultStatusCode(): int
+    {
+        return HttpStatusCodeInterface::HTTP_BAD_REQUEST;
+    }
+}

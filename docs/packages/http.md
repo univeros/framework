@@ -363,7 +363,7 @@ You can change the list of inner responders by passing a custom `$responders` ar
 
 ### Built-in middleware
 
-**`ExceptionHandlerMiddleware`** wraps the rest of the pipeline in a try/catch. In capture mode (`$capture = true`) it converts any `Throwable` into an error response via the `ErrorHandlerInterface`. In non-capture mode it re-throws. It also intercepts 4xx/5xx responses from the pipeline and routes them through the error handler. Use `DefaultErrorHandler` for development; replace it with a custom implementation for production.
+**`ExceptionHandlerMiddleware`** wraps the rest of the pipeline in a try/catch. In capture mode (`$capture = true`) it converts any `Throwable` into an error response via the `ErrorHandlerInterface`. In non-capture mode it re-throws. It also intercepts 4xx/5xx responses from the pipeline and routes them through the error handler. A thrown exception that implements `HttpExceptionInterface` is rendered with **its own** status code and headers (so a thrown `HttpNotFoundException` is a 404, not a 500); any other `Throwable` becomes a 500. Pass an optional PSR-3 `LoggerInterface` and every 5xx is logged with the request method/path — wire it to `EventRecordingLogger` (Events package) to record `http_error` events. Use `ProblemDetailsErrorHandler` (RFC 7807) for both development and production; the legacy `DefaultErrorHandler` is dev-only.
 
 **`DispatcherMiddleware`** calls the FastRoute dispatcher with the request method and path. On `FOUND`, it sets the `Action` on the request attribute `ATTRIBUTE_ACTION` and adds route segment variables as individual attributes. On `NOT_FOUND` or `METHOD_NOT_ALLOWED`, it throws a typed `HttpException`.
 
@@ -410,20 +410,29 @@ All three authentication middleware enforce HTTPS by default. Requests over plai
 
 ### Error handling
 
-Position `ExceptionHandlerMiddleware` as the outermost middleware in the queue. It wraps the rest of the pipeline:
+The `bin/altair new` skeleton wires this for you — `ExceptionHandlerMiddleware` is the outermost entry in `public/index.php`, so a fresh app never leaks a raw PHP fatal. To wire it by hand, position it first in the queue:
 
 ```php
-// Capture mode: converts all Throwable to error responses.
 $queue->push(new ExceptionHandlerMiddleware(
     responseFactory: new ResponseFactory(),
-    handler: new MyProductionErrorHandler(),
+    handler: new ProblemDetailsErrorHandler(debug: $debug),
     capture: true,
+    logger: $errorLogger, // optional PSR-3 logger; null to disable
 ));
 ```
 
-The `ErrorHandlerInterface` receives the request (with the exception stored as `ATTRIBUTE_EXCEPTION`) and a pre-built response at the appropriate status code. `DefaultErrorHandler` content-negotiates the error format (HTML, JSON, XML, plain text, or an image) from the response's `Content-Type` header; it is suitable for development but uses `echo` internally and is not appropriate for production JSON APIs.
+**Status mapping.** Exceptions carry their own status via `HttpExceptionInterface::getStatusCode()` (and `getHeaders()` for things like the `Allow` header on a 405). The framework's `HttpException` hierarchy implements it — `HttpNotFoundException` is 404, `HttpMethodNotAllowedException` is 405 with an `Allow` header, `InputValidationException` is 422, the auth exceptions are 401/403. A bare `HttpBadRequestException` falls back to 400 and any non-HTTP `Throwable` to 500. In capture mode the middleware reads that status off the thrown exception, so a thrown 404 renders as 404. Userland exceptions can implement `HttpExceptionInterface` to opt a domain error into a specific status without subclassing the framework's exceptions.
 
-`HttpNotFoundException` and `HttpMethodNotAllowedException` carry HTTP status codes (404 and 405 respectively) and are thrown by `DispatcherMiddleware`. When `ExceptionHandlerMiddleware` is in capture mode, these are caught and forwarded to the error handler with the correct status.
+**`ProblemDetailsErrorHandler`** (recommended, dev and prod) renders an RFC 7807 `application/problem+json` document by default, negotiating down to a safe HTML page or plain text from the request's `Accept` header. It writes to the PSR-7 body (never `echo`) and escapes every interpolated value. It distinguishes environments via its `debug` flag:
+
+- **production** (`debug: false`): generic `detail` for 5xx, and never the exception class, message, or stack trace — no internal information leaks to the client.
+- **debug** (`debug: true`): the exception class, `file:line`, and stack trace are attached to the problem document.
+
+An exception implementing `ProblemExtensionInterface` contributes extra members to the document — `InputValidationException`, for example, adds `"errors": {"field": "message"}` to its 422 problem (reserved members `type`/`title`/`status`/`instance` can't be overwritten).
+
+**`DefaultErrorHandler`** is the legacy dev-only handler. It content-negotiates HTML/JSON/XML/plain-text/image from the response `Content-Type`, but uses `echo` internally and is not appropriate for production JSON APIs. Prefer `ProblemDetailsErrorHandler`.
+
+**Recording failures for agents.** Pass a PSR-3 `LoggerInterface` and the middleware logs every 5xx with the request method, path, and exception. Wire it to `Altair\Events\EventRecordingLogger` (bound by `EventsConfiguration` when the Events package is enabled) and each server-side failure becomes an `http_error` event in `.altair/events.jsonl`, queryable across sessions with `bin/altair events:filter --kind=http_error`. Client errors (4xx) are intentionally not recorded — they are expected and would only add noise. The skeleton picks the logger up automatically when Events is enabled.
 
 ---
 

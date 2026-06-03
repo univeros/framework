@@ -16,6 +16,7 @@ use Altair\Configuration\Support\Env;
 use Altair\Container\Container;
 use Altair\Events\Contracts\EventStorageInterface;
 use Altair\Events\Contracts\RecorderInterface;
+use Altair\Events\EventRecordingLogger;
 use Altair\Events\NullRecorder;
 use Altair\Events\Reader;
 use Altair\Events\Recorder;
@@ -89,6 +90,13 @@ final readonly class EventsConfiguration implements ConfigurationInterface
             ): RecorderInterface => $settings->enabled
                 ? new Recorder($storage, $scrubber)
                 : new NullRecorder(),
+        )->shared();
+
+        // PSR-3 bridge: lets the HTTP front controller record server-side
+        // failures as `http_error` events without depending on this package.
+        $container->factory(
+            EventRecordingLogger::class,
+            static fn(RecorderInterface $recorder): EventRecordingLogger => new EventRecordingLogger($recorder),
         )->shared();
     }
 }
