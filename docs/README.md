@@ -4,7 +4,7 @@ Per-package guides for the sub-packages bundled in `univeros/framework`. Each pa
 
 The framework targets PHP 8.3+, follows PSR-7/15/14/6/16 where applicable, and is composed of independently usable packages. You can install the meta-package (`composer require univeros/framework`) or pick the pieces you need (`composer require univeros/cookie`, etc.).
 
-**Building a pluggable feature?** See [Extending Altair](./extending.md) — how to scaffold a module that self-registers its routes, entities, and migrations into a host app.
+**Building a pluggable feature?** See [Extending Altair](./guides/extending.md) — how to scaffold a module that self-registers its routes, entities, and migrations into a host app.
 
 ## Packages
 

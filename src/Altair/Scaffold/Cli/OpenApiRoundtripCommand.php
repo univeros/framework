@@ -23,7 +23,7 @@ use Altair\Scaffold\Exception\ScaffoldException;
  *
  * Mirrors the contract style of `spec:emit-sdk --check`: human or JSON
  * report, exit code 1 on drift in `--check` mode so CI gates can refuse
- * to merge. See [docs/openapi/roundtrip.md](../../docs/openapi/roundtrip.md)
+ * to merge. See [docs/guides/openapi/roundtrip.md](../../docs/guides/openapi/roundtrip.md)
  * for the normalization rules.
  */
 #[Command(

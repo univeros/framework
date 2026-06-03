@@ -104,4 +104,4 @@ The package's own tests construct a `Container`, apply a `ModuleConfiguration`, 
 - [Http](./http.md) — the route list a module contributes to.
 - [Persistence](./persistence.md) — the schema provider and `db:migrate` commands that pick up module entities and migrations.
 - [Bootstrap](./bootstrap.md) — `bin/altair module:new`, which scaffolds a module package (and `bin/altair new`, which scaffolds the host).
-- [Extending Altair](../extending.md) — the end-to-end guide to building an extension.
+- [Extending Altair](../guides/extending.md) — the end-to-end guide to building an extension.

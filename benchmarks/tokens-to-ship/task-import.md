@@ -35,7 +35,7 @@
   as the bootstrap step. The receipt names every artifact written;
   the agent's remaining work is to fill in the domain service bodies
   and assert against the supplied tests. The
-  [`x-altair-*` extensions](../../docs/openapi/extensions.md) — when
+  [`x-altair-*` extensions](../../docs/guides/openapi/extensions.md) — when
   [#163](https://github.com/univeros/framework/issues/163) ships — let
   the persistence and (eventually) the queue / webhook contracts
   round-trip through the doc rather than being inferred.

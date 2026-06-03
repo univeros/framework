@@ -2,7 +2,7 @@
 
 A **module** is a pluggable, installable feature for a Univeros app — analogous to a Laravel package with a service provider or a Symfony bundle. A host `composer require`s it, adds one line to `config/modules.php`, and the module's HTTP routes, Cycle entities, and migrations are wired in. Nothing else in the host changes.
 
-This guide shows how to build one. The mechanism is intentionally small: it reuses [`ConfigurationInterface`](./packages/configuration.md), the container's [tagging](./packages/container.md), the [Http](./packages/http.md) route list, the multi-directory schema provider, and Cycle's shared migration table. See [the Module package reference](./packages/module.md) for the contract details.
+This guide shows how to build one. The mechanism is intentionally small: it reuses [`ConfigurationInterface`](../packages/configuration.md), the container's [tagging](../packages/container.md), the [Http](../packages/http.md) route list, the multi-directory schema provider, and Cycle's shared migration table. See [the Module package reference](../packages/module.md) for the contract details.
 
 ## 1. Scaffold
 
@@ -129,6 +129,6 @@ Registration is explicit — there is no composer-`extra` auto-discovery scannin
 
 ## See also
 
-- [Module package reference](./packages/module.md) — the contracts in detail.
-- [Bootstrap](./packages/bootstrap.md) — `module:new` and `new` scaffolders.
-- [Http](./packages/http.md) · [Persistence](./packages/persistence.md) · [Container](./packages/container.md) · [Configuration](./packages/configuration.md).
+- [Module package reference](../packages/module.md) — the contracts in detail.
+- [Bootstrap](../packages/bootstrap.md) — `module:new` and `new` scaffolders.
+- [Http](../packages/http.md) · [Persistence](../packages/persistence.md) · [Container](../packages/container.md) · [Configuration](../packages/configuration.md).
