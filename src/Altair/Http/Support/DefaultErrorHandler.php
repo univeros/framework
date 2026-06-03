@@ -94,6 +94,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
      */
     protected function svg(int $statusCode, string $message): void
     {
+        $message = $this->escape($message);
+
         echo <<<EOT
             <svg xmlns="http://www.w3.org/2000/svg" width="200" height="50" viewBox="0 0 200 50">
                 <text x="20" y="30" font-family="sans-serif" title="{$message}">
@@ -108,6 +110,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
      */
     protected function html(int $statusCode, string $message): void
     {
+        $message = $this->escape($message);
+
         echo <<<EOT
             <!DOCTYPE html>
             <html>
@@ -143,6 +147,8 @@ class DefaultErrorHandler implements ErrorHandlerInterface
      */
     protected function xml(int $statusCode, string $message): void
     {
+        $message = $this->escape($message);
+
         echo <<<EOT
             <?xml version="1.0" encoding="UTF-8"?>
             <error>
@@ -150,6 +156,16 @@ class DefaultErrorHandler implements ErrorHandlerInterface
                 <message>{$message}</message>
             </error>
             EOT;
+    }
+
+    /**
+     * Escape a message before interpolating it into markup, so a reflected
+     * value (e.g. the request path on a 404) cannot inject scripts or break
+     * out of the surrounding element/attribute.
+     */
+    protected function escape(string $message): string
+    {
+        return htmlspecialchars($message, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
     }
 
     /**

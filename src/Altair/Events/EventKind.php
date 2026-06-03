@@ -23,6 +23,7 @@ enum EventKind: string
 {
     case CsFix = 'cs_fix';
     case Eval = 'eval';
+    case HttpError = 'http_error';
     case IndexBuild = 'index_build';
     case ManifestGenerate = 'manifest_generate';
     case ManualEdit = 'manual_edit';
