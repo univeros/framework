@@ -24,6 +24,7 @@
 - `CompactCommand` _(final)_
 - `Event` _(final)_
 - `EventKind` _(final)_ — implements `BackedEnum`, `UnitEnum`
+- `EventRecordingLogger` _(final)_ — implements `LoggerInterface`
 - `EventStatus` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `EventsConfiguration` _(final)_ — implements `ConfigurationInterface`
 - `EventsSettings` _(final)_
@@ -47,6 +48,7 @@
 - `tests/Events/Cli/CommandsTest.php`
 - `tests/Events/Configuration/EventsConfigurationTest.php`
 - `tests/Events/Configuration/EventsSettingsTest.php`
+- `tests/Events/EventRecordingLoggerTest.php`
 - `tests/Events/EventTest.php`
 - `tests/Events/Integration/ConcurrentWriteTest.php`
 - `tests/Events/ReaderTest.php`

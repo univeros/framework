@@ -17,6 +17,8 @@
 |  | `getFromServerRequestHeaderLine(ServerRequestInterface)` | `string\|null` |  |
 |  | `getFromServerRequestUriPath(ServerRequestInterface)` | `string\|null` |  |
 | `HttpAuthRuleInterface` | `__invoke(ServerRequestInterface)` | `bool` |  |
+| `HttpExceptionInterface` | `getHeaders()` | `array` |  |
+|  | `getStatusCode()` | `int` |  |
 | `HttpStatusCodeInterface` | _(marker)_ |  | constants: `HTTP_ACCEPTED`, `HTTP_ALREADY_REPORTED`, `HTTP_BAD_GATEWAY`, `HTTP_BAD_REQUEST`, `HTTP_CONFLICT`, `HTTP_CONTINUE`, `HTTP_CREATED`, `HTTP_EXPECTATION_FAILED`, `HTTP_FAILED_DEPENDENCY`, `HTTP_FORBIDDEN`, `HTTP_FOUND`, `HTTP_GATEWAY_TIMEOUT`, `HTTP_GONE`, `HTTP_IM_A_TEAPOT`, `HTTP_IM_USED`, `HTTP_INSUFFICIENT_STORAGE`, `HTTP_INTERNAL_SERVER_ERROR`, `HTTP_LENGTH_REQUIRED`, `HTTP_LOCKED`, `HTTP_LOOP_DETECTED`, `HTTP_MAX_RANGE`, `HTTP_METHOD_NOT_ALLOWED`, `HTTP_MIN_RANGE`, `HTTP_MISDIRECTED_REQUEST`, `HTTP_MOVED_PERMANENTLY`, `HTTP_MULTIPLE_CHOICES`, `HTTP_MULTI_STATUS`, `HTTP_NETWORK_AUTHENTICATION_REQUIRED`, `HTTP_NON_AUTHORITATIVE_INFORMATION`, `HTTP_NOT_ACCEPTABLE`, `HTTP_NOT_EXTENDED`, `HTTP_NOT_FOUND`, `HTTP_NOT_IMPLEMENTED`, `HTTP_NOT_MODIFIED`, `HTTP_NO_CONTENT`, `HTTP_OK`, `HTTP_PARTIAL_CONTENT`, `HTTP_PAYLOAD_TOO_LARGE`, `HTTP_PAYMENT_REQUIRED`, `HTTP_PERMANENT_REDIRECT`, `HTTP_PRECONDITION_FAILED`, `HTTP_PRECONDITION_REQUIRED`, `HTTP_PROCESSING`, `HTTP_PROXY_AUTHENTICATION_REQUIRED`, `HTTP_RANGE_NOT_SATISFIABLE`, `HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE`, `HTTP_REQUEST_TIMEOUT`, `HTTP_RESERVED`, `HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL`, `HTTP_RESET_CONTENT`, `HTTP_SEE_OTHER`, `HTTP_SERVICE_UNAVAILABLE`, `HTTP_SWITCHING_PROTOCOLS`, `HTTP_TEMPORARY_REDIRECT`, `HTTP_TOO_MANY_REQUESTS`, `HTTP_UNAUTHORIZED`, `HTTP_UNAVAILABLE_FOR_LEGAL_REASONS`, `HTTP_UNPROCESSABLE_ENTITY`, `HTTP_UNSUPPORTED_MEDIA_TYPE`, `HTTP_UPGRADE_REQUIRED`, `HTTP_URI_TOO_LONG`, `HTTP_USE_PROXY`, `HTTP_VARIANT_ALSO_NEGOTIATES`, `HTTP_VERSION_NOT_SUPPORTED`, `RESPONSE_CLASS_CLIENT_ERROR`, `RESPONSE_CLASS_INFORMATIONAL`, `RESPONSE_CLASS_REDIRECTION`, `RESPONSE_CLASS_SERVER_ERROR`, `RESPONSE_CLASS_SUCCESS` |
 | `HttpStatusInterface` | _(marker)_ |  | constants: `HTTP_ACCEPTED`, `HTTP_ALREADY_REPORTED`, `HTTP_BAD_GATEWAY`, `HTTP_BAD_REQUEST`, `HTTP_CONFLICT`, `HTTP_CONTINUE`, `HTTP_CREATED`, `HTTP_EXPECTATION_FAILED`, `HTTP_FAILED_DEPENDENCY`, `HTTP_FORBIDDEN`, `HTTP_FOUND`, `HTTP_GATEWAY_TIMEOUT`, `HTTP_GONE`, `HTTP_IM_A_TEAPOT`, `HTTP_IM_USED`, `HTTP_INSUFFICIENT_STORAGE`, `HTTP_INTERNAL_SERVER_ERROR`, `HTTP_LENGTH_REQUIRED`, `HTTP_LOCKED`, `HTTP_LOOP_DETECTED`, `HTTP_METHOD_NOT_ALLOWED`, `HTTP_MISDIRECTED_REQUEST`, `HTTP_MOVED_PERMANENTLY`, `HTTP_MULTIPLE_CHOICES`, `HTTP_MULTI_STATUS`, `HTTP_NETWORK_AUTHENTICATION_REQUIRED`, `HTTP_NON_AUTHORITATIVE_INFORMATION`, `HTTP_NOT_ACCEPTABLE`, `HTTP_NOT_EXTENDED`, `HTTP_NOT_FOUND`, `HTTP_NOT_IMPLEMENTED`, `HTTP_NOT_MODIFIED`, `HTTP_NO_CONTENT`, `HTTP_OK`, `HTTP_PARTIAL_CONTENT`, `HTTP_PAYLOAD_TOO_LARGE`, `HTTP_PAYMENT_REQUIRED`, `HTTP_PERMANENT_REDIRECT`, `HTTP_PRECONDITION_FAILED`, `HTTP_PRECONDITION_REQUIRED`, `HTTP_PROCESSING`, `HTTP_PROXY_AUTHENTICATION_REQUIRED`, `HTTP_RANGE_NOT_SATISFIABLE`, `HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE`, `HTTP_REQUEST_TIMEOUT`, `HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL`, `HTTP_RESET_CONTENT`, `HTTP_SEE_OTHER`, `HTTP_SERVICE_UNAVAILABLE`, `HTTP_SWITCHING_PROTOCOLS`, `HTTP_TEMPORARY_REDIRECT`, `HTTP_TOO_MANY_REQUESTS`, `HTTP_UNAUTHORIZED`, `HTTP_UNAVAILABLE_FOR_LEGAL_REASONS`, `HTTP_UNPROCESSABLE_ENTITY`, `HTTP_UNSUPPORTED_MEDIA_TYPE`, `HTTP_UPGRADE_REQUIRED`, `HTTP_URI_TOO_LONG`, `HTTP_USE_PROXY`, `HTTP_VARIANT_ALSO_NEGOTIATES`, `HTTP_VERSION_NOT_SUPPORTED` |
 | `IdentityProviderInterface` | `findOneBy(array)` | `array\|null` |  |
@@ -39,6 +41,7 @@
 |  | `withSettingsCollection(SettingsCollection)` | `PayloadInterface` |  |
 |  | `withStatus(int)` | `PayloadInterface` |  |
 |  | `withoutSetting(string)` | `PayloadInterface` |  |
+| `ProblemExtensionInterface` | `getProblemExtensions()` | `array` |  |
 | `ResponderInterface` | `__invoke(ServerRequestInterface, ResponseInterface, PayloadInterface)` | `ResponseInterface` |  |
 | `RouteInterface` | `getDomain()` | `mixed` |  |
 |  | `getInput()` | `mixed` |  |
@@ -114,6 +117,7 @@
 - `PhpViewFormatter` — implements `OutputFormatterInterface`
 - `PrivateCacheLimiter` — implements `CacheLimiterInterface`
 - `PrivateNoExpireCacheLimiter` — implements `CacheLimiterInterface`
+- `ProblemDetailsErrorHandler` _(final)_ — implements `ErrorHandlerInterface`
 - `PublicCacheLimiter` — implements `CacheLimiterInterface`
 - `QueryParamsTokenExtractor` — implements `TokenExtractorInterface`
 - `RateLimit` _(final)_
@@ -151,6 +155,7 @@
 
 - `tests/Http/Base/PayloadTest.php`
 - `tests/Http/Configuration/FastRouteConfigurationTest.php`
+- `tests/Http/Exception/HttpExceptionStatusTest.php`
 - `tests/Http/Formatter/JsonFormatterTest.php`
 - `tests/Http/Input/DtoInputHydratorTest.php`
 - `tests/Http/Jwt/LcobucciTokenGeneratorTest.php`
@@ -179,6 +184,7 @@
 - `tests/Http/Support/HttpCacheTest.php`
 - `tests/Http/Support/MimeTypeTest.php`
 - `tests/Http/Support/ModuleRoutesTest.php`
+- `tests/Http/Support/ProblemDetailsErrorHandlerTest.php`
 - `tests/Http/Support/QueryParamsTokenExtractorTest.php`
 - `tests/Http/Validator/DigestSignatureValidatorTest.php`
 - `tests/Http/Validator/RepositoryIdentityValidatorTest.php`
