@@ -32,6 +32,7 @@
 - `HandlerTestEmitter`
 - `HistoryCommand` _(final)_
 - `IdempotencySpec` _(final)_
+- `ImportPlan` _(final)_
 - `ImportReceipt` _(final)_
 - `InputEmitter`
 - `InputFieldSpec` _(final)_
