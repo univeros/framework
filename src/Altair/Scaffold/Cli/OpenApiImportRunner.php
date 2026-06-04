@@ -103,7 +103,7 @@ final readonly class OpenApiImportRunner
 
         try {
             $document = $this->parser->parseYaml($sourceContents);
-            $planned = $this->planSpecs($document, $options);
+            $plan = $this->planSpecs($document, $options);
         } catch (UnmappableSchemaException $unmappableSchemaException) {
             return $this->failure(
                 $options,
@@ -116,16 +116,16 @@ final readonly class OpenApiImportRunner
         }
 
         if ($options->dryRun) {
-            return $this->dryRunReceipt($options, $planned, $document);
+            return $this->dryRunReceipt($options, $plan, $document);
         }
 
         $collector = new SnapshotCollector($options->projectRoot);
         $writer = new FileWriter($options->projectRoot);
 
-        $writtenSpecs = $this->writeSpecs($planned, $writer, $collector, $options->force);
+        $writtenSpecs = $this->writeSpecs($plan->files, $writer, $collector, $options->force);
         $scaffoldFiles = [];
         $rolledBack = [];
-        $warnings = [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document)];
+        $warnings = [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$plan->warnings];
 
         if ($options->scaffold && $writtenSpecs !== []) {
             try {
@@ -161,7 +161,7 @@ final readonly class OpenApiImportRunner
             scaffoldRequested: $options->scaffold,
             scaffolded: $scaffoldFiles,
             rolledBack: $rolledBack,
-            unmapped: [],
+            unmapped: $plan->unmapped,
             warnings: $warnings,
             journalId: $journalId,
             eventId: $eventId,
@@ -170,19 +170,49 @@ final readonly class OpenApiImportRunner
     }
 
     /**
-     * @return list<EmittedFile>
+     * Map every operation to a spec file. An operation whose schema cannot be
+     * expressed in Altair's spec is skipped (recorded in the returned plan)
+     * when `--skip-unmappable` is set; otherwise its {@see UnmappableSchemaException}
+     * propagates and aborts the whole import.
+     *
+     * Mapping happens before the filename-collision check so a skipped
+     * operation never reserves a filename — only operations that actually
+     * emit a spec can collide.
      */
-    private function planSpecs(OpenApiDocument $document, OpenApiImportOptions $options): array
+    private function planSpecs(OpenApiDocument $document, OpenApiImportOptions $options): ImportPlan
     {
         $deriver = $options->outDir !== null
             ? new PathDeriver(specRoot: $options->outDir)
             : $this->pathDeriver;
 
         $files = [];
+        $unmapped = [];
+        $warnings = [];
         $seen = [];
         foreach ($document->operations as $operation) {
-            $filename = $deriver->filename($operation);
+            try {
+                $structure = $this->operationMapper->map($document, $operation);
+            } catch (UnmappableSchemaException $unmappableSchemaException) {
+                if (!$options->skipUnmappable) {
+                    throw $unmappableSchemaException;
+                }
 
+                $label = strtoupper($operation->method) . ' ' . $operation->path;
+                $unmapped[] = [
+                    'pointer' => $unmappableSchemaException->jsonPointer,
+                    'message' => $unmappableSchemaException->getMessage(),
+                ];
+                $warnings[] = \sprintf(
+                    'skipped %s: %s (at %s)',
+                    $label,
+                    $unmappableSchemaException->reason,
+                    $unmappableSchemaException->jsonPointer,
+                );
+
+                continue;
+            }
+
+            $filename = $deriver->filename($operation);
             if (isset($seen[$filename])) {
                 throw new ScaffoldException(\sprintf(
                     "Filename collision: '%s' is also emitted by '%s %s'. Set distinct operationIds to disambiguate.",
@@ -192,7 +222,6 @@ final readonly class OpenApiImportRunner
                 ));
             }
 
-            $structure = $this->operationMapper->map($document, $operation);
             if ($options->persistence === 'cycle') {
                 $structure = $this->persistenceInferrer->apply($operation, $structure);
             }
@@ -202,7 +231,13 @@ final readonly class OpenApiImportRunner
             $seen[$filename] = ['method' => $operation->method, 'path' => $operation->path];
         }
 
-        return $files;
+        // Every operation was skipped: a bare exit 0 would otherwise read as
+        // "imported successfully", so make the empty outcome explicit.
+        if ($files === [] && $unmapped !== []) {
+            $warnings[] = 'every operation was unmappable — no specs were emitted.';
+        }
+
+        return new ImportPlan($files, $unmapped, $warnings);
     }
 
     /**
@@ -394,6 +429,10 @@ final readonly class OpenApiImportRunner
             $parts[] = '--force';
         }
 
+        if ($options->skipUnmappable) {
+            $parts[] = '--skip-unmappable';
+        }
+
         return implode(' ', $parts);
     }
 
@@ -408,20 +447,17 @@ final readonly class OpenApiImportRunner
         return $contents === false ? null : $contents;
     }
 
-    /**
-     * @param list<EmittedFile> $planned
-     */
-    private function dryRunReceipt(OpenApiImportOptions $options, array $planned, OpenApiDocument $document): ImportReceipt
+    private function dryRunReceipt(OpenApiImportOptions $options, ImportPlan $plan, OpenApiDocument $document): ImportReceipt
     {
         return new ImportReceipt(
             ok: true,
             input: $options->documentPath,
-            specsWritten: \array_values(array_map(static fn(EmittedFile $f): string => $f->relativePath, $planned)),
+            specsWritten: \array_values(array_map(static fn(EmittedFile $f): string => $f->relativePath, $plan->files)),
             scaffoldRequested: $options->scaffold,
             scaffolded: [],
             rolledBack: [],
-            unmapped: [],
-            warnings: [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document)],
+            unmapped: $plan->unmapped,
+            warnings: [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$plan->warnings],
             journalId: null,
             eventId: null,
             error: null,

@@ -53,6 +53,9 @@ bin/altair openapi:import openapi.yaml --dry-run
 
 # Overwrite existing files
 bin/altair openapi:import openapi.yaml --force
+
+# Import what maps; skip (don't abort on) operations the emitter can't express
+bin/altair openapi:import openapi.yaml --skip-unmappable
 ```
 
 ## Flags
@@ -64,6 +67,7 @@ bin/altair openapi:import openapi.yaml --force
 | `--scaffold` | bool | After writing specs, run `spec:scaffold` on each. |
 | `--dry-run` | bool | Report planned changes; write nothing. |
 | `--force` | bool | Overwrite existing files (specs and scaffolded). |
+| `--skip-unmappable` | bool | Skip operations whose schema the emitter cannot express (recording them in `unmapped[]` and `warnings[]`) instead of aborting the whole import. |
 | `--format=human\|json` | enum | Output format. Default `human`. |
 | `--persistence=cycle` | enum | Inject a `persistence:` block for each POST-to-collection endpoint. |
 | `--queue=<transport>` | string | Reserved for the `x-altair-queue` extension in [#163](https://github.com/univeros/framework/issues/163); currently a no-op that surfaces a warning. |
@@ -102,7 +106,9 @@ parsing prose:
   produced.
 - `unmapped` carries `{pointer, message}` entries for any schema the
   emitter could not express — the JSON pointer is the location inside
-  the source document.
+  the source document. On a fail-fast run it holds the single schema
+  that aborted the import; under `--skip-unmappable` it lists every
+  skipped operation while `ok` stays `true`.
 - `journal_id` / `event_id` are populated only when a `Journal` and
   `RecorderInterface` are bound, respectively. Under a `NullRecorder`
   they stay null, which keeps the receipt byte-stable for the same
@@ -134,8 +140,23 @@ The mapping rules ship in `Altair\Scaffold\Spec\Emitter\*` (see
 
 Anything the emitter cannot express — nested objects in inputs, arrays
 of objects, ref cycles, dangling refs — surfaces as an entry in
-`unmapped[]` with a JSON pointer to the offending node. The run fails
-fast.
+`unmapped[]` with a JSON pointer to the offending node. By default the
+run **fails fast** on the first such schema (exit 1, nothing written).
+
+Pass `--skip-unmappable` to import everything that *does* map and skip
+the rest: each skipped operation lands in `unmapped[]` (with its JSON
+pointer) and as a `skipped <METHOD> <path>: …` line in `warnings[]`, the
+run succeeds (exit 0), and the mappable specs are written. This is the
+pragmatic mode for real-world documents — e.g. the Swagger Petstore,
+whose `Pet` body nests a `category` object and a `tags` array-of-objects
+that Altair's scalar-only input layer cannot yet represent. The
+remaining ~17 operations still import.
+
+> Nested objects and arrays-of-objects in **inputs** are a current
+> limitation of the input layer, not a parser bug — support for them
+> (in both `openapi:import` and `spec:emit-openapi`) is planned. Until
+> then, `--skip-unmappable` keeps the rest of the document usable, or
+> flatten the offending request bodies to scalars by hand.
 
 ## Persistence inference
 

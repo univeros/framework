@@ -53,6 +53,8 @@ final readonly class OpenApiImportCommand
         bool $dryRun = false,
         #[Option(description: 'Overwrite existing files instead of skipping.')]
         bool $force = false,
+        #[Option(description: 'Skip operations whose schema cannot be mapped instead of aborting the whole import.', name: 'skip-unmappable')]
+        bool $skipUnmappable = false,
         #[Option(description: 'Emit JSON receipt (human|json).')]
         string $format = 'human',
         #[Option(description: 'Persistence binding to infer for each spec (cycle).')]
@@ -82,6 +84,7 @@ final readonly class OpenApiImportCommand
             scaffold: $scaffold,
             dryRun: $dryRun,
             force: $force,
+            skipUnmappable: $skipUnmappable,
             persistence: $persistence,
             queue: $queue,
         );
@@ -123,6 +126,13 @@ final readonly class OpenApiImportCommand
         echo \sprintf('Wrote %d spec file(s):%s', \count($receipt->specsWritten), PHP_EOL);
         foreach ($receipt->specsWritten as $path) {
             echo '  - ' . $path . PHP_EOL;
+        }
+
+        if ($receipt->unmapped !== []) {
+            echo \sprintf('Skipped %d unmappable operation(s):%s', \count($receipt->unmapped), PHP_EOL);
+            foreach ($receipt->unmapped as $unmapped) {
+                echo \sprintf('  at %s: %s%s', $unmapped['pointer'], $unmapped['message'], PHP_EOL);
+            }
         }
 
         if ($receipt->scaffoldRequested) {
