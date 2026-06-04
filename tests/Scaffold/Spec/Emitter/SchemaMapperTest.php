@@ -145,6 +145,53 @@ final class SchemaMapperTest extends TestCase
         ], $fields);
     }
 
+    public function testTopLevelArrayRequestBodyBecomesItemsField(): void
+    {
+        // The real Petstore's POST /user/createWithList: a bare array of User.
+        // Altair inputs are a named field list, so the array becomes one `items`
+        // field carrying the element shape.
+        $body = SchemaType::arrayOf(SchemaType::object([
+            'id' => ['schema' => SchemaType::scalar('integer'), 'required' => false],
+            'name' => ['schema' => SchemaType::scalar('string'), 'required' => true],
+        ]));
+        $operation = $this->operation('POST', '/users/createWithList', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            [
+                'name' => 'items',
+                'type' => 'array',
+                'rules' => [],
+                'fields' => [
+                    ['name' => 'id', 'type' => 'int', 'rules' => []],
+                    ['name' => 'name', 'type' => 'string', 'rules' => ['required']],
+                ],
+            ],
+        ], $fields);
+    }
+
+    public function testTopLevelArrayOfScalarsBecomesItemsField(): void
+    {
+        $body = SchemaType::arrayOf(SchemaType::scalar('string'));
+        $operation = $this->operation('POST', '/tags/bulk', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            ['name' => 'items', 'type' => 'array', 'rules' => []],
+        ], $fields);
+    }
+
+    public function testScalarRequestBodyIsUnmappable(): void
+    {
+        $operation = $this->operation('POST', '/ping', requestBody: SchemaType::scalar('string'));
+
+        $this->expectException(UnmappableSchemaException::class);
+        $this->expectExceptionMessage('request body must be an object or array');
+        (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+    }
+
     public function testDeeplyNestedInlineObjectRaisesInsteadOfStackOverflow(): void
     {
         // Build an inline object nested far deeper than MAX_NESTING_DEPTH so the

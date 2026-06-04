@@ -65,7 +65,7 @@ final readonly class SchemaMapper
         if ($requestBody instanceof SchemaType) {
             $pointer = $this->requestBodyPointer($operation);
             $bodySchema = $this->resolveRef($document, $requestBody, $pointer);
-            foreach ($this->objectInputFields($document, $bodySchema, $pointer) as $field) {
+            foreach ($this->bodyInputFields($document, $bodySchema, $pointer) as $field) {
                 $fields[] = $field;
             }
         }
@@ -130,18 +130,25 @@ final readonly class SchemaMapper
     }
 
     /**
+     * Maps a request body to input fields. An object body becomes one field per
+     * property. A top-level **array** body — e.g. the Petstore's
+     * `POST /user/createWithList`, a bare array of `User` — becomes a single
+     * `items` array field carrying the element shape, since Altair inputs are a
+     * named field list and the list needs a name. Any other root kind is
+     * unmappable.
+     *
      * @return list<array<string, mixed>>
      */
-    private function objectInputFields(OpenApiDocument $document, SchemaType $schema, string $pointer): array
+    private function bodyInputFields(OpenApiDocument $document, SchemaType $schema, string $pointer): array
     {
-        if ($schema->kind !== SchemaType::OBJECT) {
-            throw new UnmappableSchemaException(
+        return match ($schema->kind) {
+            SchemaType::OBJECT => $this->mapProperties($document, $schema, $pointer),
+            SchemaType::ARRAY => [$this->arrayInputField($document, 'items', $schema, [], $pointer)],
+            default => throw new UnmappableSchemaException(
                 $pointer,
-                'request body must be an object (got ' . $schema->kind . ').',
-            );
-        }
-
-        return $this->mapProperties($document, $schema, $pointer);
+                'request body must be an object or array (got ' . $schema->kind . ').',
+            ),
+        };
     }
 
     /**
