@@ -68,27 +68,97 @@ final class SchemaMapperTest extends TestCase
         ], $fields);
     }
 
-    public function testNestedObjectInputRaises(): void
+    public function testNestedObjectInputMapsToRecursiveFields(): void
     {
         $body = SchemaType::object([
-            'address' => ['schema' => SchemaType::object([]), 'required' => true],
+            'category' => ['schema' => SchemaType::object([
+                'id' => ['schema' => SchemaType::scalar('integer'), 'required' => false],
+                'name' => ['schema' => SchemaType::scalar('string'), 'required' => true],
+            ]), 'required' => true],
         ]);
-        $operation = $this->operation('POST', '/users', requestBody: $body);
+        $operation = $this->operation('POST', '/pets', requestBody: $body);
 
-        $this->expectException(UnmappableSchemaException::class);
-        $this->expectExceptionMessage('nested objects in inputs are not yet supported');
-        (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            [
+                'name' => 'category',
+                'type' => 'object',
+                'rules' => ['required'],
+                'fields' => [
+                    ['name' => 'id', 'type' => 'int', 'rules' => []],
+                    ['name' => 'name', 'type' => 'string', 'rules' => ['required']],
+                ],
+            ],
+        ], $fields);
     }
 
-    public function testArrayOfObjectsInputRaises(): void
+    public function testArrayOfObjectsInputMapsToItemFields(): void
     {
         $body = SchemaType::object([
-            'items' => ['schema' => SchemaType::arrayOf(SchemaType::object([])), 'required' => true],
+            'tags' => ['schema' => SchemaType::arrayOf(SchemaType::object([
+                'id' => ['schema' => SchemaType::scalar('integer'), 'required' => false],
+            ])), 'required' => false],
         ]);
-        $operation = $this->operation('POST', '/users', requestBody: $body);
+        $operation = $this->operation('POST', '/pets', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            [
+                'name' => 'tags',
+                'type' => 'array',
+                'rules' => [],
+                'fields' => [
+                    ['name' => 'id', 'type' => 'int', 'rules' => []],
+                ],
+            ],
+        ], $fields);
+    }
+
+    public function testArrayOfObjectsResolvesItemRef(): void
+    {
+        $body = SchemaType::object([
+            'tags' => ['schema' => SchemaType::arrayOf(SchemaType::ref('Tag')), 'required' => false],
+        ]);
+        $operation = $this->operation('POST', '/pets', requestBody: $body);
+        $document = new OpenApiDocument(
+            title: 'X',
+            version: '1.0',
+            operations: [],
+            namedSchemas: ['Tag' => SchemaType::object([
+                'id' => ['schema' => SchemaType::scalar('integer'), 'required' => false],
+            ])],
+        );
+
+        $fields = (new SchemaMapper())->inputFields($document, $operation);
+
+        self::assertSame([
+            [
+                'name' => 'tags',
+                'type' => 'array',
+                'rules' => [],
+                'fields' => [
+                    ['name' => 'id', 'type' => 'int', 'rules' => []],
+                ],
+            ],
+        ], $fields);
+    }
+
+    public function testDeeplyNestedInlineObjectRaisesInsteadOfStackOverflow(): void
+    {
+        // Build an inline object nested far deeper than MAX_NESTING_DEPTH so the
+        // mapper raises a clean exception rather than exhausting the call stack.
+        $leaf = SchemaType::scalar('string');
+        $schema = SchemaType::object(['leaf' => ['schema' => $leaf, 'required' => false]]);
+        for ($i = 0; $i < 64; $i++) {
+            $schema = SchemaType::object(['child' => ['schema' => $schema, 'required' => false]]);
+        }
+
+        $operation = $this->operation('POST', '/deep', requestBody: $schema);
 
         $this->expectException(UnmappableSchemaException::class);
-        $this->expectExceptionMessage('arrays of objects are not yet supported');
+        $this->expectExceptionMessage('nesting exceeds the maximum depth');
         (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
     }
 
@@ -214,8 +284,10 @@ final class SchemaMapperTest extends TestCase
 
     public function testJsonPointerLocatesOffendingProperty(): void
     {
+        // A dangling $ref nested in a property is still unmappable; the pointer
+        // must locate the offending property inside the request body.
         $body = SchemaType::object([
-            'address' => ['schema' => SchemaType::object([]), 'required' => true],
+            'address' => ['schema' => SchemaType::ref('Missing'), 'required' => true],
         ]);
         $operation = $this->operation('POST', '/users', requestBody: $body);
 

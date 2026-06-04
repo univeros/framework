@@ -131,32 +131,36 @@ The mapping rules ship in `Altair\Scaffold\Spec\Emitter\*` (see
 - **Path parameters** become required string inputs.
 - **Request-body object properties** become inputs; the OpenAPI
   `required` array maps to the Altair `required` rule.
+- **Nested objects** become an `input` field with `type: object` and a
+  recursive `fields:` map; the generated Input DTO types them as `array`
+  with a PHPDoc `array{…}` shape. **Arrays of objects** become
+  `type: array` with a `fields:` map describing the item, typed
+  `list<array{…}>`. Both directions round-trip (`openapi:roundtrip`).
 - **Enums** without an FQCN render as `type: string` plus an `in:` rule.
 - **Refs**: scalars/enums resolve through `components.schemas` to the
-  underlying type; object refs render as `App\<Ref>\<Ref>` so the
-  responder gets a typed payload.
+  underlying type. In **inputs**, object refs (and nested object/array
+  items) resolve and inline as nested `fields:`. In **responses**, object
+  refs render as `App\<Ref>\<Ref>` so the responder gets a typed payload.
 - **Top-level `$ref` responses** wrap as
   `{<refLowerCamel>: App\<Ref>\<Ref>}` to preserve the abstraction.
 
-Anything the emitter cannot express — nested objects in inputs, arrays
-of objects, ref cycles, dangling refs — surfaces as an entry in
-`unmapped[]` with a JSON pointer to the offending node. By default the
-run **fails fast** on the first such schema (exit 1, nothing written).
+Anything the emitter still cannot express — ref cycles, dangling refs, a
+non-object request-body root, `oneOf`/`anyOf` polymorphism — surfaces as
+an entry in `unmapped[]` with a JSON pointer to the offending node. By
+default the run **fails fast** on the first such schema (exit 1, nothing
+written).
 
 Pass `--skip-unmappable` to import everything that *does* map and skip
 the rest: each skipped operation lands in `unmapped[]` (with its JSON
 pointer) and as a `skipped <METHOD> <path>: …` line in `warnings[]`, the
-run succeeds (exit 0), and the mappable specs are written. This is the
-pragmatic mode for real-world documents — e.g. the Swagger Petstore,
-whose `Pet` body nests a `category` object and a `tags` array-of-objects
-that Altair's scalar-only input layer cannot yet represent. The
-remaining ~17 operations still import.
+run succeeds (exit 0), and the mappable specs are written.
 
-> Nested objects and arrays-of-objects in **inputs** are a current
-> limitation of the input layer, not a parser bug — support for them
-> (in both `openapi:import` and `spec:emit-openapi`) is planned. Until
-> then, `--skip-unmappable` keeps the rest of the document usable, or
-> flatten the offending request bodies to scalars by hand.
+> The canonical **Swagger Petstore** imports with **zero** skips: its
+> `Pet` body nests a `category` object and a `tags` array-of-objects,
+> both of which now map to recursive `fields:`. Deep per-field
+> *validation rules* for nested members are not generated yet (the
+> nested shape and the object's own `required` flag are); add them by
+> hand if you need them.
 
 ## Persistence inference
 

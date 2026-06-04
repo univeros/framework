@@ -33,7 +33,7 @@ class Validator
 {
     private const array HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
-    private const array SCALAR_TYPES = ['string', 'int', 'integer', 'float', 'bool', 'boolean', 'enum', 'array'];
+    private const array ALLOWED_INPUT_TYPES = ['string', 'int', 'integer', 'float', 'bool', 'boolean', 'enum', 'array', 'object'];
 
     /**
      * Column types accepted in `persistence.entity.fields[].type`. Mirrors
@@ -231,7 +231,7 @@ class Validator
     {
         $errors = [];
 
-        if (!\in_array($input->type, self::SCALAR_TYPES, true)) {
+        if (!\in_array($input->type, self::ALLOWED_INPUT_TYPES, true)) {
             $errors[] = \sprintf("input '%s' has unknown type '%s'.", $input->name, $input->type);
         }
 
@@ -244,6 +244,12 @@ class Validator
             if (!\in_array($ruleName, self::KNOWN_RULES, true)) {
                 $errors[] = \sprintf("input '%s' uses unknown validation rule '%s'.", $input->name, $rule);
             }
+        }
+
+        // Nested objects / arrays of objects validate their child fields the
+        // same way, so a bad type or rule deep in the tree still surfaces.
+        foreach ($input->fields as $child) {
+            array_push($errors, ...$this->validateInput($child));
         }
 
         return $errors;

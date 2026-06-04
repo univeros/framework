@@ -31,7 +31,7 @@ final class TypeMapper
             'int', 'integer' => 'int',
             'float'          => 'float',
             'bool', 'boolean' => 'bool',
-            'array'          => 'array',
+            'array', 'object' => 'array',
             default          => 'string',
         };
     }
@@ -49,7 +49,8 @@ final class TypeMapper
             'int', 'integer' => ['type' => 'integer'],
             'float'          => ['type' => 'number', 'format' => 'float'],
             'bool', 'boolean' => ['type' => 'boolean'],
-            'array'          => ['type' => 'array', 'items' => ['type' => 'string']],
+            'object'         => $this->objectSchema($field),
+            'array'          => $this->arraySchema($field),
             default          => ['type' => 'string'],
         };
     }
@@ -60,5 +61,45 @@ final class TypeMapper
     public function isRequired(InputFieldSpec $field): bool
     {
         return $field->isRequired() && !$field->hasDefault;
+    }
+
+    /**
+     * A nested object: recurse into child fields for `properties`, carrying
+     * the per-child `required` flags into the OpenAPI `required` array.
+     *
+     * @return array<string, mixed>
+     */
+    private function objectSchema(InputFieldSpec $field): array
+    {
+        $properties = [];
+        $required = [];
+        foreach ($field->fields as $child) {
+            $properties[$child->name] = $this->toOpenApiSchema($child);
+            if ($this->isRequired($child)) {
+                $required[] = $child->name;
+            }
+        }
+
+        $schema = ['type' => 'object', 'properties' => $properties];
+        if ($required !== []) {
+            $schema['required'] = $required;
+        }
+
+        return $schema;
+    }
+
+    /**
+     * An array: object items when the field declares `fields` (array of
+     * objects), otherwise the existing scalar-item default.
+     *
+     * @return array<string, mixed>
+     */
+    private function arraySchema(InputFieldSpec $field): array
+    {
+        $items = $field->fields !== []
+            ? $this->objectSchema($field)
+            : ['type' => 'string'];
+
+        return ['type' => 'array', 'items' => $items];
     }
 }

@@ -242,6 +242,50 @@ final class OpenApiRoundtripRunnerTest extends TestCase
         self::assertSame('status_drift', RoundtripDifference::KIND_STATUS_DRIFT);
     }
 
+    public function testCleanRoundtripWithNestedObjectAndArrayOfObjects(): void
+    {
+        // OpenAPI -> Altair spec (recursive fields) -> OpenAPI must keep the
+        // operation; the nested body exercises the reverse mapper, the parser,
+        // and the forward emitter end to end without erroring or dropping it.
+        $documentPath = $this->writeDocument(<<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [name]
+                          properties:
+                            name: { type: string }
+                            category:
+                              type: object
+                              properties:
+                                id: { type: integer }
+                                name: { type: string }
+                            tags:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  id: { type: integer }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiRoundtripRunner())->run(new OpenApiRoundtripOptions($documentPath));
+
+        self::assertTrue($receipt->clean, 'differences: ' . $receipt->toJson());
+        self::assertSame(1, $receipt->operationsCompared);
+        self::assertNull($receipt->error);
+    }
+
     private function writeDocument(string $yaml): string
     {
         $path = $this->sandbox . '/openapi-' . bin2hex(random_bytes(4)) . '.yaml';

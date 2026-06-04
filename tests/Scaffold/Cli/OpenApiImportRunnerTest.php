@@ -160,7 +160,7 @@ final class OpenApiImportRunnerTest extends TestCase
                           type: object
                           properties:
                             address:
-                              type: object
+                              $ref: '#/components/schemas/Missing'
                           required: [address]
                   responses:
                     '201': { description: ok }
@@ -221,14 +221,57 @@ final class OpenApiImportRunnerTest extends TestCase
         $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
             documentPath: $documentPath,
             projectRoot: $this->sandbox,
-            skipUnmappable: true,
             dryRun: true,
+            skipUnmappable: true,
         ));
 
         self::assertTrue($receipt->ok);
         self::assertSame(['api/users/create.yaml'], $receipt->specsWritten);
         self::assertNotEmpty($receipt->unmapped);
         self::assertFileDoesNotExist($this->sandbox . '/api/users/create.yaml');
+    }
+
+    public function testNestedObjectBodyImportsToRecursiveFieldsSpec(): void
+    {
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [name]
+                          properties:
+                            name: { type: string }
+                            category:
+                              type: object
+                              properties:
+                                id: { type: integer }
+                                name: { type: string }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertSame([], $receipt->unmapped);
+
+        $spec = Yaml::parseFile($this->sandbox . '/api/pets/create.yaml');
+        self::assertSame('object', $spec['input']['category']['type']);
+        self::assertArrayHasKey('id', $spec['input']['category']['fields']);
+        self::assertArrayHasKey('name', $spec['input']['category']['fields']);
     }
 
     public function testSkipUnmappableWarnsWhenEveryOperationIsUnmappable(): void
@@ -249,7 +292,7 @@ final class OpenApiImportRunnerTest extends TestCase
                           type: object
                           required: [category]
                           properties:
-                            category: { type: object }
+                            category: { $ref: '#/components/schemas/Missing' }
                   responses:
                     '201': { description: ok }
             YAML);
@@ -370,8 +413,8 @@ final class OpenApiImportRunnerTest extends TestCase
 
     /**
      * A document mixing one fully-mappable operation (POST /users, scalar body)
-     * with one that cannot be expressed in Altair's scalar-only input layer
-     * (POST /pets, whose body carries a nested `category` object).
+     * with one that cannot be expressed as an Altair spec (POST /pets, whose
+     * body carries a dangling `$ref` to an undefined schema).
      */
     private function writeMixedOpenApi(): string
     {
@@ -411,10 +454,7 @@ final class OpenApiImportRunnerTest extends TestCase
                           properties:
                             name: { type: string }
                             category:
-                              type: object
-                              properties:
-                                id: { type: integer }
-                                name: { type: string }
+                              $ref: '#/components/schemas/Missing'
                   responses:
                     '201': { description: Created }
             YAML);

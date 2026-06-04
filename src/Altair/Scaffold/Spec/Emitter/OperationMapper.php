@@ -237,8 +237,8 @@ final readonly class OperationMapper
      * Render the field list as a map keyed by name so the YAML reads naturally
      * and the Parser's "input is a map" expectation is met.
      *
-     * @param  list<array<string, mixed>>  $fields
-     * @return array<string, array<string, mixed>>
+     * @param  list<array<int|string, mixed>>            $fields
+     * @return array<string, array<int|string, mixed>>
      */
     private function inputBlock(array $fields): array
     {
@@ -246,10 +246,36 @@ final readonly class OperationMapper
         foreach ($fields as $field) {
             $name = (string) $field['name'];
             unset($field['name']);
+
+            // Nested objects / arrays of objects carry a `fields` list that must
+            // itself become a name-keyed map so the YAML reads like the top level.
+            if (isset($field['fields']) && \is_array($field['fields'])) {
+                $field['fields'] = $this->inputBlock($this->fieldList($field['fields']));
+            }
+
             $block[$name] = $field;
         }
 
         return $block;
+    }
+
+    /**
+     * Narrows an untyped nested `fields` value back to the list-of-field-arrays
+     * shape {@see inputBlock} consumes, dropping any non-array entries.
+     *
+     * @param  array<mixed, mixed>             $raw
+     * @return list<array<int|string, mixed>>
+     */
+    private function fieldList(array $raw): array
+    {
+        $list = [];
+        foreach ($raw as $entry) {
+            if (\is_array($entry)) {
+                $list[] = $entry;
+            }
+        }
+
+        return $list;
     }
 
     /**

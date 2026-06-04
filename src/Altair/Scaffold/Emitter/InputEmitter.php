@@ -64,7 +64,8 @@ class InputEmitter
             return "    public function __construct() {}\n";
         }
 
-        $lines = ['    public function __construct('];
+        $lines = $this->renderConstructorDocblock($spec);
+        $lines[] = '    public function __construct(';
         $last = \count($spec->inputs) - 1;
         foreach ($spec->inputs as $i => $field) {
             $type = $this->typeMapper->toPhpType($field);
@@ -77,6 +78,63 @@ class InputEmitter
         $lines[] = '    ) {}';
 
         return implode("\n", $lines);
+    }
+
+    /**
+     * Constructor-level PHPDoc lines describing the array shape of nested-object
+     * and array-of-object params — the one case CLAUDE.md warrants PHPDoc (a
+     * shape PHP's `array` type can't express). Empty for scalar-only inputs, so
+     * those DTOs stay byte-identical to before nesting existed.
+     *
+     * @return list<string>
+     */
+    private function renderConstructorDocblock(Spec $spec): array
+    {
+        $params = [];
+        foreach ($spec->inputs as $field) {
+            $shape = $this->arrayShape($field);
+            if ($shape !== null) {
+                $params[] = \sprintf('     * @param %s $%s', $shape, $field->name);
+            }
+        }
+
+        if ($params === []) {
+            return [];
+        }
+
+        return ['    /**', ...$params, '     */'];
+    }
+
+    private function arrayShape(InputFieldSpec $field): ?string
+    {
+        if ($field->isObject()) {
+            return $this->objectShape($field);
+        }
+
+        if ($field->isArrayOfObjects()) {
+            return 'list<' . $this->objectShape($field) . '>';
+        }
+
+        return null;
+    }
+
+    private function objectShape(InputFieldSpec $field): string
+    {
+        $parts = [];
+        foreach ($field->fields as $child) {
+            $parts[] = $child->name . ': ' . $this->shapeType($child);
+        }
+
+        return 'array{' . implode(', ', $parts) . '}';
+    }
+
+    private function shapeType(InputFieldSpec $field): string
+    {
+        return match (true) {
+            $field->isObject() => $this->objectShape($field),
+            $field->isArrayOfObjects() => 'list<' . $this->objectShape($field) . '>',
+            default => $this->typeMapper->toPhpType($field),
+        };
     }
 
     private function renderDefault(InputFieldSpec $field): string

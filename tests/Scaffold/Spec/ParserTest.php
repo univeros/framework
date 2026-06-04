@@ -62,6 +62,42 @@ final class ParserTest extends TestCase
         self::assertSame('App\\User\\CreateUser', $spec->domain->class);
     }
 
+    public function testParsesNestedObjectAndArrayOfObjectInputs(): void
+    {
+        $yaml = <<<'YAML'
+            endpoint: { method: POST, path: /pets, summary: Create pet }
+            input:
+              category:
+                type: object
+                rules: [required]
+                fields:
+                  id: { type: int }
+                  name: { type: string, rules: [required] }
+              tags:
+                type: array
+                fields:
+                  id: { type: int }
+            domain: { class: App\Pet\CreatePet }
+            YAML;
+
+        $spec = (new Parser())->parseString($yaml);
+
+        self::assertCount(2, $spec->inputs);
+
+        $category = $spec->inputs[0];
+        self::assertSame('category', $category->name);
+        self::assertTrue($category->isObject());
+        self::assertTrue($category->isRequired());
+        self::assertCount(2, $category->fields);
+        self::assertSame('id', $category->fields[0]->name);
+        self::assertSame('int', $category->fields[0]->type);
+        self::assertTrue($category->fields[1]->isRequired());
+
+        $tags = $spec->inputs[1];
+        self::assertTrue($tags->isArrayOfObjects());
+        self::assertSame('id', $tags->fields[0]->name);
+    }
+
     public function testMissingEndpointKeyRaises(): void
     {
         $this->expectException(SpecParseException::class);
