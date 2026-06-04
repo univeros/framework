@@ -46,12 +46,12 @@ final class TypeMapper
         }
 
         return match (strtolower($field->type)) {
-            'int', 'integer' => ['type' => 'integer'],
-            'float'          => ['type' => 'number', 'format' => 'float'],
+            'int', 'integer' => $this->applyConstraints(['type' => 'integer'], $field),
+            'float'          => $this->applyConstraints(['type' => 'number', 'format' => 'float'], $field),
             'bool', 'boolean' => ['type' => 'boolean'],
             'object'         => $this->objectSchema($field),
             'array'          => $this->arraySchema($field),
-            default          => ['type' => 'string'],
+            default          => $this->applyConstraints(['type' => 'string'], $field),
         };
     }
 
@@ -61,6 +61,49 @@ final class TypeMapper
     public function isRequired(InputFieldSpec $field): bool
     {
         return $field->isRequired() && !$field->hasDefault;
+    }
+
+    /**
+     * Adds the JSON-Schema constraints encoded in a field's validation rules —
+     * the inverse of the import-side rule mapping, so the two round-trip:
+     * `email`→`format: email`, `regex:p`→`pattern: p`, `in:a,b`→`enum`,
+     * `min`/`max`→`minLength`/`maxLength` (strings) or `minimum`/`maximum`.
+     *
+     * @param  array<string, mixed> $schema
+     * @return array<string, mixed>
+     */
+    private function applyConstraints(array $schema, InputFieldSpec $field): array
+    {
+        $isString = ($schema['type'] ?? '') === 'string';
+        foreach ($field->rules as $rule) {
+            $schema = [...$schema, ...$this->constraintFromRule($rule, $isString)];
+        }
+
+        return $schema;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function constraintFromRule(string $rule, bool $isString): array
+    {
+        [$name, $arg] = array_pad(explode(':', $rule, 2), 2, '');
+
+        return match ($name) {
+            'email'    => ['format' => 'email'],
+            'url'      => ['format' => 'uri'],
+            'datetime' => ['format' => 'date-time'],
+            'regex'    => $arg !== '' ? ['pattern' => $arg] : [],
+            'in'       => $arg !== '' ? ['enum' => explode(',', $arg)] : [],
+            'min'      => $isString ? ['minLength' => (int) $arg] : ['minimum' => $this->numericArg($arg)],
+            'max'      => $isString ? ['maxLength' => (int) $arg] : ['maximum' => $this->numericArg($arg)],
+            default    => [],
+        };
+    }
+
+    private function numericArg(string $arg): int|float
+    {
+        return str_contains($arg, '.') ? (float) $arg : (int) $arg;
     }
 
     /**

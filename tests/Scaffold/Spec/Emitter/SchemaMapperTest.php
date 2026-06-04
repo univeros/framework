@@ -86,6 +86,22 @@ final class SchemaMapperTest extends TestCase
         ], $fields);
     }
 
+    public function testFormatAndConstraintsBecomeRules(): void
+    {
+        $body = SchemaType::object([
+            'email' => ['schema' => SchemaType::scalar('string', 'email', false, ['minLength' => 3, 'maxLength' => 80, 'pattern' => '.+@.+']), 'required' => true],
+            'age' => ['schema' => SchemaType::scalar('integer', null, false, ['minimum' => 0, 'maximum' => 120]), 'required' => false],
+        ]);
+        $operation = $this->operation('POST', '/users', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            ['name' => 'email', 'type' => 'string', 'rules' => ['required', 'email', 'min:3', 'max:80', 'regex:.+@.+']],
+            ['name' => 'age', 'type' => 'int', 'rules' => ['min:0', 'max:120']],
+        ], $fields);
+    }
+
     public function testNestedObjectInputMapsToRecursiveFields(): void
     {
         $body = SchemaType::object([

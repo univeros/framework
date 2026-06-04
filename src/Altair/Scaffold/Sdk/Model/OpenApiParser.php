@@ -325,12 +325,35 @@ final readonly class OpenApiParser
                 $nullable,
             ),
             'object' => SchemaType::object($this->parseProperties($schema), $nullable),
-            'integer' => SchemaType::scalar('integer', $this->formatOf($schema), $nullable),
-            'number' => SchemaType::scalar('number', $this->formatOf($schema), $nullable),
+            'integer' => SchemaType::scalar('integer', $this->formatOf($schema), $nullable, $this->constraintsOf($schema)),
+            'number' => SchemaType::scalar('number', $this->formatOf($schema), $nullable, $this->constraintsOf($schema)),
             'boolean' => SchemaType::scalar('boolean', null, $nullable),
-            'string' => SchemaType::scalar('string', $this->formatOf($schema), $nullable),
+            'string' => SchemaType::scalar('string', $this->formatOf($schema), $nullable, $this->constraintsOf($schema)),
             default => $this->fallbackSchema($schema, $nullable),
         };
+    }
+
+    /**
+     * The JSON-Schema validation keywords the importer maps to Altair rules.
+     *
+     * @param  array<string, mixed>            $schema
+     * @return array<string, int|float|string>
+     */
+    private function constraintsOf(array $schema): array
+    {
+        $out = [];
+        foreach (['minLength', 'maxLength', 'minimum', 'maximum'] as $keyword) {
+            $value = $schema[$keyword] ?? null;
+            if (\is_int($value) || \is_float($value)) {
+                $out[$keyword] = $value;
+            }
+        }
+
+        if (isset($schema['pattern']) && \is_string($schema['pattern'])) {
+            $out['pattern'] = $schema['pattern'];
+        }
+
+        return $out;
     }
 
     /**

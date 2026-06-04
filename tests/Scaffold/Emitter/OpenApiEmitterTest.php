@@ -14,6 +14,32 @@ use Symfony\Component\Yaml\Yaml;
 
 final class OpenApiEmitterTest extends TestCase
 {
+    public function testValidationRulesBecomeSchemaConstraints(): void
+    {
+        $yaml = <<<'YAML'
+            endpoint: { method: POST, path: /users, summary: Create }
+            input:
+              email: { type: string, rules: [required, email] }
+              name: { type: string, rules: ['min:2', 'max:50', 'regex:^[a-z]+$'] }
+              age: { type: int, rules: ['min:0', 'max:120'] }
+              role: { type: string, rules: ['in:admin,user'] }
+            domain: { class: App\User\CreateUser }
+            YAML;
+        $spec = (new Parser())->parseString($yaml);
+
+        $parsed = Yaml::parse((new OpenApiEmitter())->emit($spec)->contents);
+        self::assertIsArray($parsed);
+        $props = $parsed['paths']['/users']['post']['requestBody']['content']['application/json']['schema']['properties'];
+
+        self::assertSame('email', $props['email']['format']);
+        self::assertSame(2, $props['name']['minLength']);
+        self::assertSame(50, $props['name']['maxLength']);
+        self::assertSame('^[a-z]+$', $props['name']['pattern']);
+        self::assertSame(0, $props['age']['minimum']);
+        self::assertSame(120, $props['age']['maximum']);
+        self::assertSame(['admin', 'user'], $props['role']['enum']);
+    }
+
     public function testEmitsNonBodyInputsAsParameters(): void
     {
         $yaml = <<<'YAML'

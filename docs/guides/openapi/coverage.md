@@ -19,6 +19,7 @@ closes the gaps.
 - **Parameters** — path / query / header / cookie become inputs tagged with their `in:` location (with type + `required`; enums → `in:` rule). *Phase 2.*
 - Request + response bodies in **`application/json`**.
 - Schema types: `object` (incl. **nested objects**), `array`, **arrays of objects**, **top-level array bodies**, scalars (`integer`→`int`, `number`→`float`, `boolean`→`bool`, `string`), `enum`→`in:` rule.
+- **Validation constraints** ↔ rules (Phase 3): `format` (`email`/`uri`/`ip`/`date-time`)→`email`/`url`/`ip`/`datetime`; `minLength`/`maxLength`→`min`/`max`; `minimum`/`maximum`→`min`/`max`; `pattern`→`regex:`. Round-trips (the forward emitter writes the inverse).
 - Internal `$ref` (`#/components/schemas/<Name>`), `properties` + `required`.
 - `x-altair-*` extensions (domain/persistence/queue/idempotency/webhook round-trip).
 
@@ -39,16 +40,17 @@ closes the gaps.
 
 ### Not yet mapped or warned (later phases)
 
-- Validation constraints: `format`, `min/maxLength`, `pattern`, `minimum/maximum`, `multipleOf`, `min/maxItems` (Phase 3 → `Altair\Validation` rules).
+- Remaining constraints: `multipleOf`, `min/maxItems`, `uniqueItems` (no Altair rule yet).
 - requestBody `required` flag; `additionalProperties`, `const`, `discriminator`, `not`, `prefixItems`, `nullable`; `deprecated`, `default`, `example(s)`, `title`/`description`; response `headers`/`links`; non-JSON responses.
 
 ## Export (Altair spec → OpenAPI)
 
 `spec:emit-openapi` emits operations, responses from `output:`, an
-`application/json` request body from body inputs, and **OpenAPI `parameters`**
-for inputs tagged `in: path|query|header|cookie` (Phase 2). Not yet emitted
-(tracked in #214): validation rules → schema constraints (`email`→`format`,
-`min:3`→`minLength`, `in:`→`enum`, `regex`→`pattern`), `security`, `servers`.
+`application/json` request body from body inputs, **OpenAPI `parameters`** for
+inputs tagged `in: path|query|header|cookie` (Phase 2), and **schema
+constraints** from validation rules — `email`→`format`, `min:3`→`minLength`,
+`in:`→`enum`, `regex`→`pattern` (Phase 3). Not yet emitted (tracked in #214):
+`security`, `servers`.
 
 ## Roadmap
 
