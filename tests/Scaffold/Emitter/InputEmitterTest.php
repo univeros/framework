@@ -13,6 +13,37 @@ use PHPUnit\Framework\TestCase;
 
 final class InputEmitterTest extends TestCase
 {
+    public function testOrdersRequiredConstructorParamsBeforeOptional(): void
+    {
+        // Spec lists an optional field before a required one — the generated
+        // constructor must still emit required (no-default) params first, or PHP
+        // raises a "required parameter after optional" deprecation.
+        $yaml = <<<'YAML'
+            endpoint: { method: POST, path: /users, summary: Create user }
+            input:
+              nickname: { type: string }
+              email: { type: string, rules: [required] }
+              age: { type: int }
+            domain: { class: App\User\CreateUser }
+            YAML;
+        $spec = (new Parser())->parseString($yaml);
+
+        $file = (new InputEmitter())->emit($spec);
+
+        $emailPos = strpos($file->contents, 'public string $email');
+        $nicknamePos = strpos($file->contents, 'public ?string $nickname = null');
+        $agePos = strpos($file->contents, 'public ?int $age = null');
+
+        self::assertNotFalse($emailPos);
+        self::assertNotFalse($nicknamePos);
+        self::assertNotFalse($agePos);
+        // Required first.
+        self::assertLessThan($nicknamePos, $emailPos, 'required $email must precede optional $nickname');
+        self::assertLessThan($agePos, $emailPos, 'required $email must precede optional $age');
+        // Optionals keep their relative spec order (nickname before age).
+        self::assertLessThan($agePos, $nicknamePos);
+    }
+
     public function testEmitsArrayWithShapePhpdocForNestedObject(): void
     {
         $yaml = <<<'YAML'
