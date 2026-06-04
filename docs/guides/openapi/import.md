@@ -239,6 +239,8 @@ documented normalization.
 
 ## See also
 
+- [coverage.md](coverage.md) — exactly which OpenAPI 3.1 features import maps, warns on, or errors on
+- [#214](https://github.com/univeros/framework/issues/214) — bidirectional OpenAPI fidelity (epic)
 - [#160](https://github.com/univeros/framework/issues/160) — epic
 - [#161](https://github.com/univeros/framework/issues/161) — spec emitter (library)
 - [#163](https://github.com/univeros/framework/issues/163) — `x-altair-*` extensions

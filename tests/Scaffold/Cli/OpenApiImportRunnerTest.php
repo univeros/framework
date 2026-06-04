@@ -309,6 +309,36 @@ final class OpenApiImportRunnerTest extends TestCase
         self::assertStringContainsString('every operation was unmappable', implode("\n", $receipt->warnings));
     }
 
+    public function testSurfacesDroppedConstructsAsWarnings(): void
+    {
+        // The import succeeds, but must warn about the query parameter it drops
+        // rather than losing it silently.
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0.0 }
+            paths:
+              /pets:
+                get:
+                  operationId: listPets
+                  parameters:
+                    - { name: status, in: query, required: true, schema: { type: string } }
+                  responses: { '200': { description: ok } }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+            dryRun: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertStringContainsString(
+            'query parameter `status` on GET /pets is dropped.',
+            implode("\n", $receipt->warnings),
+        );
+    }
+
     public function testReportsMissingDocument(): void
     {
         $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(

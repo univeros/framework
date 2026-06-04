@@ -5,6 +5,7 @@
 ## Concrete classes
 
 - `ActionEmitter`
+- `CoverageScanner` _(final)_
 - `DiffCommand` _(final)_
 - `DomainSpec` _(final)_
 - `DomainStubEmitter`
@@ -137,6 +138,7 @@
 - `tests/Scaffold/Sdk/CompileIntegrationTest.php`
 - `tests/Scaffold/Sdk/EmitSdkCommandTest.php`
 - `tests/Scaffold/Sdk/EmitterRegistryTest.php`
+- `tests/Scaffold/Sdk/Model/CoverageScannerTest.php`
 - `tests/Scaffold/Sdk/OpenApiParserExtensionsTest.php`
 - `tests/Scaffold/Sdk/OpenApiParserTest.php`
 - `tests/Scaffold/Sdk/PythonEmitterTest.php`

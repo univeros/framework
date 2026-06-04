@@ -23,6 +23,7 @@ use Altair\Scaffold\Emitter\EmittedFileKind;
 use Altair\Scaffold\Journal\Journal;
 use Altair\Scaffold\Journal\JournalEntry;
 use Altair\Scaffold\Journal\SnapshotCollector;
+use Altair\Scaffold\Sdk\Model\CoverageScanner;
 use Altair\Scaffold\Sdk\Model\OpenApiDocument;
 use Altair\Scaffold\Sdk\Model\OpenApiParser;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
@@ -84,6 +85,7 @@ final readonly class OpenApiImportRunner
         private Parser $specParser = new Parser(),
         private Validator $specValidator = new Validator(),
         private PersistenceInferrer $persistenceInferrer = new PersistenceInferrer(),
+        private CoverageScanner $coverageScanner = new CoverageScanner(),
         private ?Journal $journal = null,
         private ?RecorderInterface $events = null,
     ) {}
@@ -114,8 +116,10 @@ final readonly class OpenApiImportRunner
             return $this->failure($options, $throwable->getMessage(), $startedAt);
         }
 
+        $coverageWarnings = $this->coverageWarnings($sourceContents);
+
         if ($options->dryRun) {
-            return $this->dryRunReceipt($options, $plan, $document);
+            return $this->dryRunReceipt($options, $plan, $document, $coverageWarnings);
         }
 
         $collector = new SnapshotCollector($options->projectRoot);
@@ -124,7 +128,7 @@ final readonly class OpenApiImportRunner
         $writtenSpecs = $this->writeSpecs($plan->files, $writer, $collector, $options->force);
         $scaffoldFiles = [];
         $rolledBack = [];
-        $warnings = [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$plan->warnings];
+        $warnings = [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$coverageWarnings, ...$plan->warnings];
 
         if ($options->scaffold && $writtenSpecs !== []) {
             try {
@@ -440,7 +444,10 @@ final readonly class OpenApiImportRunner
         return $contents === false ? null : $contents;
     }
 
-    private function dryRunReceipt(OpenApiImportOptions $options, ImportPlan $plan, OpenApiDocument $document): ImportReceipt
+    /**
+     * @param list<string> $coverageWarnings
+     */
+    private function dryRunReceipt(OpenApiImportOptions $options, ImportPlan $plan, OpenApiDocument $document, array $coverageWarnings): ImportReceipt
     {
         return new ImportReceipt(
             ok: true,
@@ -450,11 +457,29 @@ final readonly class OpenApiImportRunner
             scaffolded: [],
             rolledBack: [],
             unmapped: $plan->unmapped,
-            warnings: [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$plan->warnings],
+            warnings: [...$this->initialWarnings($options), ...$this->unknownExtensionWarnings($document), ...$coverageWarnings, ...$plan->warnings],
             journalId: null,
             eventId: null,
             error: null,
         );
+    }
+
+    /**
+     * Warnings for every OpenAPI construct the importer drops — so nothing is
+     * lost silently. Best-effort: a document that no longer parses as YAML
+     * simply yields no coverage warnings (the parse failure surfaces elsewhere).
+     *
+     * @return list<string>
+     */
+    private function coverageWarnings(string $sourceContents): array
+    {
+        try {
+            $raw = Yaml::parse($sourceContents);
+        } catch (Throwable) {
+            return [];
+        }
+
+        return \is_array($raw) ? $this->coverageScanner->scan($raw) : [];
     }
 
     /**
