@@ -113,8 +113,8 @@ final readonly class CoverageScanner
     }
 
     /**
-     * Path parameters are mapped (as strings); query/header/cookie parameters
-     * and `$ref` parameters are dropped, so each is warned.
+     * Path/query/header/cookie parameters are imported (as inputs tagged with
+     * their `in` location). A parameter `$ref` is not resolved, so it is warned.
      *
      * @param list<string> $warnings
      */
@@ -125,20 +125,8 @@ final readonly class CoverageScanner
         }
 
         foreach ($parameters as $parameter) {
-            if (!\is_array($parameter)) {
-                continue;
-            }
-
-            if (isset($parameter['$ref'])) {
+            if (\is_array($parameter) && isset($parameter['$ref'])) {
                 $warnings[] = \sprintf('parameter `$ref` on %s is not imported.', $where);
-
-                continue;
-            }
-
-            $in = $parameter['in'] ?? null;
-            if (\in_array($in, ['query', 'header', 'cookie'], true)) {
-                $name = isset($parameter['name']) && \is_string($parameter['name']) ? $parameter['name'] : '?';
-                $warnings[] = \sprintf('%s parameter `%s` on %s is dropped.', $in, $name, $where);
             }
         }
     }

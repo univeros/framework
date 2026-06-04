@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Altair\Scaffold\Emitter;
 
 use Altair\Scaffold\Spec\Ast\IdempotencySpec;
+use Altair\Scaffold\Spec\Ast\InputFieldSpec;
 use Altair\Scaffold\Spec\Ast\OutputResponseSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceFieldSpec;
 use Altair\Scaffold\Spec\Ast\PersistenceSpec;
@@ -71,10 +72,17 @@ class OpenApiEmitter
             $operation[$key] = $value;
         }
 
-        if ($spec->inputs !== []) {
+        $parameterInputs = array_values(array_filter($spec->inputs, static fn(InputFieldSpec $f): bool => $f->isParameter()));
+        $bodyInputs = array_values(array_filter($spec->inputs, static fn(InputFieldSpec $f): bool => !$f->isParameter()));
+
+        if ($parameterInputs !== []) {
+            $operation['parameters'] = array_map($this->renderParameter(...), $parameterInputs);
+        }
+
+        if ($bodyInputs !== []) {
             $properties = [];
             $required = [];
-            foreach ($spec->inputs as $field) {
+            foreach ($bodyInputs as $field) {
                 $properties[$field->name] = $this->typeMapper->toOpenApiSchema($field);
                 if ($this->typeMapper->isRequired($field)) {
                     $required[] = $field->name;
@@ -97,6 +105,22 @@ class OpenApiEmitter
         $operation['responses'] = $this->renderResponses($spec->outputs);
 
         return $operation;
+    }
+
+    /**
+     * A non-body input renders as an OpenAPI `parameters` entry at its `in`
+     * location (path/query/header/cookie).
+     *
+     * @return array<string, mixed>
+     */
+    private function renderParameter(InputFieldSpec $field): array
+    {
+        return [
+            'name' => $field->name,
+            'in' => $field->location,
+            'required' => $this->typeMapper->isRequired($field),
+            'schema' => $this->typeMapper->toOpenApiSchema($field),
+        ];
     }
 
     /**

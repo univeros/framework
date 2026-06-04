@@ -311,8 +311,35 @@ final class OpenApiImportRunnerTest extends TestCase
 
     public function testSurfacesDroppedConstructsAsWarnings(): void
     {
-        // The import succeeds, but must warn about the query parameter it drops
-        // rather than losing it silently.
+        // The import succeeds, but must warn about constructs it drops (here:
+        // operation security) rather than losing them silently.
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0.0 }
+            paths:
+              /pets:
+                get:
+                  operationId: listPets
+                  security: [{ apiKey: [] }]
+                  responses: { '200': { description: ok } }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+            dryRun: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertStringContainsString(
+            'operation `security` on GET /pets is not imported.',
+            implode("\n", $receipt->warnings),
+        );
+    }
+
+    public function testQueryParametersAreImportedAsInputs(): void
+    {
         $documentPath = $this->sandbox . '/openapi.yaml';
         file_put_contents($documentPath, <<<'YAML'
             openapi: 3.1.0
@@ -329,14 +356,13 @@ final class OpenApiImportRunnerTest extends TestCase
         $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
             documentPath: $documentPath,
             projectRoot: $this->sandbox,
-            dryRun: true,
         ));
 
-        self::assertTrue($receipt->ok);
-        self::assertStringContainsString(
-            'query parameter `status` on GET /pets is dropped.',
-            implode("\n", $receipt->warnings),
-        );
+        self::assertTrue($receipt->ok, (string) $receipt->error);
+        $spec = Yaml::parseFile($this->sandbox . '/api/pets/list.yaml');
+        self::assertSame('query', $spec['input']['status']['in']);
+        self::assertSame('string', $spec['input']['status']['type']);
+        self::assertContains('required', $spec['input']['status']['rules']);
     }
 
     public function testReportsMissingDocument(): void

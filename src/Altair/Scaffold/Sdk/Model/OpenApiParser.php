@@ -26,6 +26,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 final readonly class OpenApiParser
 {
+    private const array HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
+
     public function parseYaml(string $yaml): OpenApiDocument
     {
         try {
@@ -54,13 +56,21 @@ final readonly class OpenApiParser
         $namedSchemas = $this->parseComponents($doc);
         $operations = [];
 
-        foreach ($paths as $path => $methods) {
-            if (!\is_array($methods)) {
+        foreach ($paths as $path => $item) {
+            if (!\is_array($item)) {
                 continue;
             }
 
-            foreach ($methods as $method => $operation) {
+            // Path-item-level `parameters` apply to every operation under the path.
+            $pathLevelParams = \is_array($item['parameters'] ?? null) ? $item['parameters'] : [];
+
+            foreach ($item as $method => $operation) {
+                // Skip non-operation keys (parameters, summary, description, $ref).
                 if (!\is_string($method)) {
+                    continue;
+                }
+
+                if (!\in_array(strtolower($method), self::HTTP_METHODS, true)) {
                     continue;
                 }
 
@@ -68,7 +78,7 @@ final readonly class OpenApiParser
                     continue;
                 }
 
-                $operations[] = $this->parseOperation((string) $path, strtolower($method), $operation);
+                $operations[] = $this->parseOperation((string) $path, strtolower($method), $operation, $pathLevelParams);
             }
         }
 
@@ -101,11 +111,13 @@ final readonly class OpenApiParser
     }
 
     /**
-     * @param array<string, mixed> $operation
+     * @param array<string, mixed>    $operation
+     * @param array<int|string, mixed> $pathLevelParams
      */
-    private function parseOperation(string $path, string $method, array $operation): OperationModel
+    private function parseOperation(string $path, string $method, array $operation, array $pathLevelParams = []): OperationModel
     {
         $pathParams = $this->extractPathParameters($path);
+        $parameters = $this->parseParameters($pathParams, $pathLevelParams, $operation['parameters'] ?? null);
 
         $requestBody = null;
         $schema = $this->requestBodySchema($operation);
@@ -137,7 +149,85 @@ final readonly class OpenApiParser
             responses: $responses,
             summary: isset($operation['summary']) && \is_string($operation['summary']) ? $operation['summary'] : '',
             extensions: $this->extractExtensions($operation),
+            parameters: $parameters,
         );
+    }
+
+    /**
+     * Merges path-template params (as required path strings) with declared
+     * path-level then operation-level `parameters`, deduped by `in:name` with
+     * the most specific (operation-level) winning. Parameter `$ref`s are not
+     * resolved (the {@see CoverageScanner} warns about them).
+     *
+     * @param  list<string>            $templateParams Path-template `{name}`s.
+     * @param  array<int|string,mixed> $pathLevelParams
+     * @return list<ParameterModel>
+     */
+    private function parseParameters(array $templateParams, array $pathLevelParams, mixed $operationParams): array
+    {
+        /** @var array<string, ParameterModel> $byKey */
+        $byKey = [];
+        /** @var list<string> $order */
+        $order = [];
+        $add = static function (ParameterModel $parameter) use (&$byKey, &$order): void {
+            $key = $parameter->in . ':' . $parameter->name;
+            if (!isset($byKey[$key])) {
+                $order[] = $key;
+            }
+
+            $byKey[$key] = $parameter;
+        };
+
+        foreach ($templateParams as $name) {
+            $add(new ParameterModel($name, ParameterModel::IN_PATH, true));
+        }
+
+        foreach ($this->toParameterModels($pathLevelParams) as $parameter) {
+            $add($parameter);
+        }
+
+        foreach ($this->toParameterModels(\is_array($operationParams) ? $operationParams : []) as $parameter) {
+            $add($parameter);
+        }
+
+        return array_values(array_map(static fn(string $key): ParameterModel => $byKey[$key], $order));
+    }
+
+    /**
+     * @param  array<int|string, mixed> $raw
+     * @return list<ParameterModel>
+     */
+    private function toParameterModels(array $raw): array
+    {
+        $out = [];
+        foreach ($raw as $param) {
+            if (!\is_array($param)) {
+                continue;
+            }
+
+            if (isset($param['$ref'])) {
+                continue;
+            }
+
+            $name = $param['name'] ?? null;
+            $in = $param['in'] ?? null;
+            if (!\is_string($name)) {
+                continue;
+            }
+
+            if (!\is_string($in)) {
+                continue;
+            }
+
+            $out[] = new ParameterModel(
+                name: $name,
+                in: $in,
+                required: ($param['required'] ?? false) === true || $in === ParameterModel::IN_PATH,
+                schema: \is_array($param['schema'] ?? null) ? $this->parseSchema($param['schema']) : null,
+            );
+        }
+
+        return $out;
     }
 
     /**

@@ -57,6 +57,7 @@
 - `OperationMapper` _(final)_
 - `OperationModel` _(final)_
 - `OutputResponseSpec` _(final)_
+- `ParameterModel` _(final)_
 - `Parser`
 - `PathDeriver` _(final)_
 - `PathResolver`

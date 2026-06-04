@@ -16,7 +16,7 @@ closes the gaps.
 ### Mapped
 
 - Paths + operations; `operationId` (or synthesised), `summary`.
-- **Path parameters** (currently always typed `string` — declared schema ignored).
+- **Parameters** — path / query / header / cookie become inputs tagged with their `in:` location (with type + `required`; enums → `in:` rule). *Phase 2.*
 - Request + response bodies in **`application/json`**.
 - Schema types: `object` (incl. **nested objects**), `array`, **arrays of objects**, **top-level array bodies**, scalars (`integer`→`int`, `number`→`float`, `boolean`→`bool`, `string`), `enum`→`in:` rule.
 - Internal `$ref` (`#/components/schemas/<Name>`), `properties` + `required`.
@@ -26,7 +26,7 @@ closes the gaps.
 
 `openapi:import` warns about each of these in its receipt (`warnings[]`) and human output:
 
-- **query / header / cookie parameters** and parameter `$ref`.
+- parameter `$ref` (not resolved).
 - **non-`application/json` request bodies** (multipart, form-urlencoded, xml, octet-stream).
 - requestBody **`$ref`** (body dropped).
 - operation + global **`security`**, `components.securitySchemes`.
@@ -44,12 +44,11 @@ closes the gaps.
 
 ## Export (Altair spec → OpenAPI)
 
-`spec:emit-openapi` emits operations, an `application/json` request body from the
-`input:` block, and responses from `output:`. Not yet emitted (mirror of the
-import gaps, tracked in #214): OpenAPI `parameters` (all inputs become a JSON
-body — path/query/header distinction is lost), validation rules → schema
-constraints (`email`→`format`, `min:3`→`minLength`, `in:`→`enum`, `regex`→`pattern`),
-`security`, `servers`.
+`spec:emit-openapi` emits operations, responses from `output:`, an
+`application/json` request body from body inputs, and **OpenAPI `parameters`**
+for inputs tagged `in: path|query|header|cookie` (Phase 2). Not yet emitted
+(tracked in #214): validation rules → schema constraints (`email`→`format`,
+`min:3`→`minLength`, `in:`→`enum`, `regex`→`pattern`), `security`, `servers`.
 
 ## Roadmap
 
