@@ -9,7 +9,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 ## 1. Project at a glance
 
 - **Name:** `univeros/framework` — PHP framework, MIT licensed.
-- **Root namespace:** `Altair\*` (legacy reasons; the Composer package is `univeros/*` and 18 sub-packages are bundled via `replace`).
+- **Root namespace:** `Altair\*` (legacy reasons; the Composer package is `univeros/*` and 40 sub-packages are bundled via `replace`).
 - **Origin:** Started ~7 years ago as a learning vehicle. Originally targeted PHP 7.0-7.2 and PSR-3/6/7/11/15/16 v1.
 - **Current target:** PHP **8.3+** (modernization started 2026-05).
 - **Architecture style:** Library-first / framework-agnostic — every sub-package is meant to be usable standalone behind PSR interfaces.
@@ -23,33 +23,50 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 ├── .github/workflows/ci.yml      ← CI (PHP 8.3 + 8.4 matrix, PHPStan, CS-Fixer, Rector, Codecov)
 ├── .php-cs-fixer.dist.php        ← PHP-CS-Fixer v3 config (@PER-CS2.0, @PHP83Migration)
 ├── phpunit.xml.dist              ← PHPUnit 11 config
-├── phpstan.neon.dist             ← PHPStan config (start at level 5, raise gradually)
+├── phpstan.neon.dist             ← PHPStan config (level 8, no baseline)
 ├── rector.php                    ← Rector config (PHP 8.3 + code-quality + dead-code sets)
 ├── composer.json                 ← Root manifest (monorepo via `replace`)
 ├── src/Altair/
-│   ├── Cache/         ← PSR-6 + PSR-16 cache; storage adapters for filesystem/Memcached/Redis/Predis
-│   ├── Common/        ← Cross-cutting helpers (intl, primitives)
-│   ├── Configuration/ ← Dotenv-based config + container bindings
-│   ├── Container/     ← DI container (PSR-11)
-│   ├── Cookie/        ← Cookie value objects (PSR-7 aware)
-│   ├── Courier/       ← Mail/transport abstraction
-│   ├── Data/          ← Entity/DTO base + attribute mutators
-│   ├── Events/        ← Append-only mutation event log (.altair/events.jsonl) + CLI (events:tail/show/since/checkpoint/compact)
-│   ├── Filesystem/    ← Flysystem v3 adapters & configuration
-│   ├── Happen/        ← Event dispatcher
-│   ├── Http/          ← PSR-7/15 stack: routing (FastRoute), middleware, CORS, JWT, content negotiation
-│   ├── Introspection/ ← "What's wired into this project right now?" CLI inspectors (container:inspect, routes:list, listeners:list, middleware:list, manifest:diff, spec:list/show, config:dump)
-│   ├── Messaging/     ← MessageBus + worker over Symfony Messenger, attribute-driven handlers, scaffold queue: block
-│   ├── Middleware/    ← PSR-15 middleware primitives
-│   ├── Module/        ← Pluggable extension modules: one class self-registers a feature's routes/entities/migrations (bin/altair module:new)
-│   ├── Persistence/   ← Repository/UnitOfWork over Cycle ORM v2 + migration CLI
-│   ├── Sanitation/    ← Input sanitation rules
-│   ├── Scaffold/      ← YAML-spec-to-code generator (bin/altair spec:scaffold), with optional persistence: and queue: blocks; Journal sub-feature (journal:*) for rewindable scaffold ops; SDK emitters (spec:emit-sdk typescript|python) for typed clients
-│   ├── Security/      ← Hashing, encryption, CSRF tokens
-│   ├── Session/       ← Session handlers (file, Redis, Mongo)
-│   ├── Structure/     ← Collection primitives (Map, Set, etc.)
-│   ├── TestReporter/  ← AI-native PHPUnit Extension: JSON output with failures mapped to source-under-test (`bin/altair test --format=json`)
-│   └── Validation/    ← Validation rules + middleware
+│   ├── AgentSpec/     ← AI-readable manifests describing every package + the host app (.agent/, manifest:generate)
+│   ├── Bootstrap/     ← bin/altair new — materialises a runnable API from the skeleton template
+│   ├── Cache/         ← PSR-6 + PSR-16 cache; filesystem/Redis/Predis/Memcached backends
+│   ├── Cli/           ← Attribute-driven CLI on top of Symfony Console
+│   ├── Common/        ← Pure-PHP utilities (string/array helpers, key-value registry) shared everywhere
+│   ├── Configuration/ ← Container-aware config; loads .env (phpdotenv 5) + wires bindings
+│   ├── Container/     ← Reflection-backed PSR-11 DI: auto-wiring, contextual bindings, tags, decorators, scopes
+│   ├── Cookie/        ← Immutable HTTP cookie value objects + PSR-7 read/write manager
+│   ├── Courier/       ← Synchronous command bus routing immutable messages to handlers via middleware
+│   ├── Data/          ← Immutable-by-default data objects: JSON/Serializable, Carbon date mutators
+│   ├── Doctor/        ← bin/altair doctor — health checks; agent-actionable JSON + human text
+│   ├── Eval/          ← bin/altair eval — sandboxed PHP-snippet runner inside the project container
+│   ├── Events/        ← Append-only mutation event log (.altair/events.jsonl) — session memory; events:*
+│   ├── Examples/      ← Curated idiomatic-pattern library + CLI/MCP discovery tools
+│   ├── Filesystem/    ← Flysystem v3 wrapper: local/S3/SFTP/FTP/Dropbox behind one API
+│   ├── Happen/        ← PSR-14 event dispatcher: priorities, subscribers, wildcards, batch dispatch
+│   ├── Http/          ← PSR-15 stack: Action/Domain/Input/Responder, FastRoute, content negotiation, JWT
+│   ├── Idempotency/   ← Stripe-style Idempotency-Key primitive: storage contract + adapters
+│   ├── Index/         ← bin/altair index — AST+spec symbol index (find-usages, callers, dead-code); SQLite, JSON
+│   ├── Introspection/ ← "What's wired right now?" inspectors: container/routes/listeners/middleware/specs/config
+│   ├── Logging/       ← PSR-3 logging backed by Monolog, wired from LOG_*; JSON-lines to stderr by default
+│   ├── Mcp/           ← Model Context Protocol server exposing the framework as MCP tools for agents
+│   ├── Messaging/     ← MessageBus + worker bridge over Symfony Messenger; scaffold queue: block
+│   ├── Middleware/    ← Generic typed-Payload pipeline driven by a Runner (NOT PSR-15 HTTP middleware)
+│   ├── MigrationIntelligence/ ← bin/altair db:migration-plan — safe Cycle migration plans from spec/entity diffs
+│   ├── Module/        ← Pluggable extensions: one class self-registers routes/entities/migrations (module:new)
+│   ├── Observability/ ← observability:* — native OTel-compatible spans/metrics (OTLP-JSON) + per-request middleware
+│   ├── Observatory/   ← Dev-only web monitoring panel over introspection/doctor/events/messaging/persistence
+│   ├── Persistence/   ← Repository + UnitOfWork over Cycle ORM v2 + migration CLI (db:migrate*)
+│   ├── Profiling/     ← bin/altair profile — sampling profiler (excimer/xdebug): call tree, flamegraph, diff
+│   ├── Sanitation/    ← Composable input sanitation: untrusted input → safe canonical form
+│   ├── Scaffold/      ← YAML-spec-to-code: Action/Input/Responder + OpenAPI + tests; journal, SDK emitters, openapi:import
+│   ├── Security/      ← Crypto primitives: key derivation (HKDF/PBKDF2), symmetric encryption, timing-safe MAC
+│   ├── Session/       ← Server-side sessions: file, MongoDB, PDO (MySQL/Postgres/SQLite), Redis handlers
+│   ├── Structure/     ← Typed structures (Map, Set, Vector, Deque, Queue, Stack, PriorityQueue) in pure PHP
+│   ├── Suggest/       ← bin/altair suggest — proposes refactors (dead bindings, fat ctors, routes w/o specs)
+│   ├── TestReporter/  ← AI-native PHPUnit reporter: JSON failures mapped to source-under-test
+│   ├── Tinker/        ← bin/altair tinker — PsySH REPL with the container in scope (dev tool, not an agent surface)
+│   ├── Validation/    ← Rule-based input validation — the gatekeeping counterpart to Sanitation
+│   └── Webhooks/      ← Signing, inbound-verify middleware, outbound dispatcher (retry/dead-letter/replay)
 └── tests/             ← Mirrors `src/Altair` layout. Suffix `Test.php`. Fixtures: `tests/{pkg}/fixtures.php`.
 ```
 
@@ -86,39 +103,41 @@ CI runs the same scripts on every push/PR (see `.github/workflows/ci.yml`).
 
 **PHP:** `>=8.3`. We use 8.3 features (typed class constants, `json_validate`, `#[\Override]`, readonly classes, enums, first-class callables, `match`, nullsafe, intersection/DNF types).
 
-**Core deps (current majors):**
+**Core runtime deps (current majors):**
 
-| Package | Version | Notes |
+| Package | Version | Used by / notes |
 |---|---|---|
-| `nikic/php-parser` | ^5 | Used by `univeros/scaffold` drift linter to re-parse emitted code |
-| `symfony/yaml` | ^7 | Spec parsing in `univeros/scaffold` |
-| `psr/log` | ^3 | Typed signatures |
-| `psr/container` | ^2 | Typed `get`/`has` |
-| `psr/cache` | ^3 | |
-| `psr/simple-cache` | ^3 | |
-| `psr/http-message` | ^2 | PSR-7 with return types |
-| `psr/http-server-middleware` / `psr/http-server-handler` | ^1 | PSR-15 (single-pass) |
-| `psr/http-factory` | ^1.1 | |
-| `laminas/laminas-diactoros` | ^3.5 | Replaces abandoned `zendframework/zend-diactoros` |
-| `nikic/fast-route` | ^1.3 | |
-| `relay/relay` | ^2.1 | **PSR-15** single-pass dispatcher (v1 used double-pass + `RelayBuilder` — both gone) |
-| `vlucas/phpdotenv` | ^5.6 | API changed: `Dotenv::createImmutable($path)->load()` |
-| `nesbot/carbon` | ^3.8 | |
-| `neomerx/cors-psr7` | ^3 | |
-| `willdurand/negotiation` | ^3.1 | |
-| `league/flysystem` | ^3.29 | **Major rewrite** — see §7 |
-| `micheh/psr7-cache` | ^0.5 | No newer release; review if it falls behind |
+| `psr/log` ^3 · `psr/container` ^2 · `psr/cache` ^3 · `psr/simple-cache` ^3 · `psr/clock` ^1 · `psr/event-dispatcher` ^1 | | PSR interfaces the framework implements |
+| `psr/http-message` ^2 · `psr/http-factory` ^1.1 · `psr/http-server-middleware` / `psr/http-server-handler` ^1 | | PSR-7 + PSR-15 (single-pass) |
+| `laminas/laminas-diactoros` | ^3.5 | PSR-7 implementation (replaced abandoned `zend-diactoros`) |
+| `relay/relay` | ^2.1 | PSR-15 single-pass dispatcher |
+| `nikic/fast-route` | ^1.3 | HTTP routing |
+| `neomerx/cors-psr7` ^3 · `willdurand/negotiation` ^3.1 | | CORS + content negotiation |
+| `lcobucci/jwt` | ^5.3 | HTTP JWT authentication |
+| `monolog/monolog` | ^3 | backs `univeros/logging` (PSR-3) |
+| `symfony/console` | ^7 | the `bin/altair` CLI (`univeros/cli`) |
+| `symfony/messenger` | ^7 | `univeros/messaging` bus + worker |
+| `symfony/serializer` · `symfony/uid` · `symfony/yaml` | ^7 | serialization · ULIDs (events/journal) · spec parsing |
+| `cycle/orm` + `cycle/database` `cycle/migrations` `cycle/annotated` `cycle/schema-builder` | ^2 / ^4 | `univeros/persistence` ORM bridge + migrations |
+| `nikic/php-parser` ^5 · `spiral/tokenizer` ^3.13 | | AST parsing for the scaffold drift linter + `univeros/index` |
+| `opis/json-schema` | ^2.4 | OpenAPI / spec schema validation |
+| `vlucas/phpdotenv` | ^5.6 | `.env` loading |
+| `nesbot/carbon` | ^3.8 | date mutators in `univeros/data` |
+| `league/flysystem` | ^3.29 | `univeros/filesystem` (v3) |
 
 **Dev tooling:**
 
-| Tool | Version |
-|---|---|
-| `phpunit/phpunit` | ^11.4 |
-| `phpstan/phpstan` | ^1.12 |
-| `rector/rector` | ^1.2 |
-| `friendsofphp/php-cs-fixer` | ^3.64 |
-| `squizlabs/php_codesniffer` | ^3.10 |
-| `roave/security-advisories` | dev-latest (pinned via `prefer-stable`) |
+| Tool | Version | Notes |
+|---|---|---|
+| `phpunit/phpunit` | ^11.4 | |
+| `phpstan/phpstan` | ^2.1 | level 8, **no baseline** |
+| `rector/rector` | ^2.0 | dry-run in CI's `static-analysis` job, not in `composer qa` |
+| `friendsofphp/php-cs-fixer` | ^3.64 | `@PER-CS2.0` + `@PHP83Migration` |
+| `squizlabs/php_codesniffer` | ^3.10 | |
+| `psy/psysh` | ^0.12 | powers `bin/altair tinker` |
+| `roave/security-advisories` | dev-latest | |
+
+Optional test deps gated behind extensions/services (skipped when absent): `mongodb/mongodb`, `predis/predis`, `pda/pheanstalk`, the `league/flysystem-*` adapters, and `ext-{mongodb,redis,memcached,intl,openssl}`.
 
 ---
 
@@ -228,7 +247,7 @@ vendor/bin/phpunit --testsuite "Univeros Test Suite"
 
 ## 7. Modernization status (started 2026-05)
 
-The codebase is mid-migration from PHP 7.2 / abandoned deps to PHP 8.3. Phases 1, 2, 3a–3c are **done**; Phase 3d is all but PSR-14 (tracked in [#97](https://github.com/univeros/framework/issues/97)); Phase 4 is in progress (PHPStan at level 6, burn-down tracked in [#96](https://github.com/univeros/framework/issues/96); PHPUnit attribute migration done).
+The migration from PHP 7.2 / abandoned deps to PHP 8.3 is **complete** — all phases (1, 2, 3a–3d, 4) are done. The tree targets PHP 8.3+, runs a PHP 8.3 + 8.4 CI matrix, and passes **PHPStan level 8 with no baseline**. The section below is kept as a record of what each phase changed; there is no outstanding modernization work. New work is tracked in the open issues, not here.
 
 ### Phase 1 — COMPLETE
 
@@ -279,18 +298,18 @@ Decorator middleware that depend on the next response (CORS, cache headers) must
 - `FilesystemAdapterConfiguration` no longer wires a `CachedAdapter` — Flysystem v3 removed caching from core. Wrap with a caching decorator separately if needed.
 - The `FlysystemAdapter.php` exclusion from PHPUnit coverage, PHPStan, and Rector is removed — the new implementation is testable.
 
-### Phase 3d — MOSTLY COMPLETE (targeted modern idioms)
+### Phase 3d — COMPLETE (targeted modern idioms)
 
-- Value objects → `readonly` — **done** (148 `readonly` classes in `src/`).
-- Sentinel `class const` → **enums** — **done** (8 enums in `src/`).
+- Value objects → `readonly` — **done**.
+- Sentinel `class const` → **enums** — **done**.
 - Rector-driven cleanup of PHPDoc-only types — **done** (`TYPE_DECLARATION` set applied; `rector --dry-run` clean).
-- **Remaining:** `Altair\Happen\*` PSR-14. The dep + `StoppableEventInterface` are already wired, but the dispatcher/provider are name-based, not PSR-14's object-based interfaces — tracked in [#97](https://github.com/univeros/framework/issues/97) (it's a design choice, deferred deliberately).
+- `Altair\Happen\*` PSR-14 — **done** ([#97](https://github.com/univeros/framework/issues/97)): the dispatcher/provider now implement PSR-14's object-based interfaces alongside the original name-based API.
 
-### Phase 4 — IN PROGRESS (static analysis + test attribute migration)
+### Phase 4 — COMPLETE (static analysis + test attribute migration)
 
-1. **PHPStan level 5 → 8.** Now at **level 6** (raised in [#95](https://github.com/univeros/framework/pull/95)) with a regenerated `phpstan-baseline.neon` grandfathering 746 errors (mostly missing `array<K,V>` value-type shapes). Burn-down of the baseline and the 6 → 7 → 8 raises are tracked in [#96](https://github.com/univeros/framework/issues/96). Don't hand-edit the baseline — regenerate with `vendor/bin/phpstan analyse --generate-baseline`.
-2. PHPUnit annotation → attribute migration — **done**. The suite already uses `#[DataProvider]` (157 files) / `#[CoversClass]` (43 files); the only remaining `@covers` is `tests/TestReporter/Fixtures/LegacyCoversAnnotationTest.php`, an intentional fixture exercising the test-reporter's legacy-annotation fallback.
-3. Verify coverage ≥ 80% per sub-package. (Still a standing goal.)
+1. **PHPStan level 5 → 8 — done** ([#96](https://github.com/univeros/framework/issues/96)). The tree analyses at **level 8 with no `phpstan-baseline.neon`** — the original 746-error baseline was fully burned down. The only remaining suppressions are a handful of inline `ignoreErrors` in `phpstan.neon.dist`, each with a comment explaining why (optional ext-* stubs, intentional collection-trait variance, etc.). Keep it that way: fix at root cause, and never reintroduce a baseline.
+2. PHPUnit annotation → attribute migration — **done**. The suite uses `#[DataProvider]` / `#[CoversClass]`; the only remaining `@covers` is `tests/TestReporter/Fixtures/LegacyCoversAnnotationTest.php`, an intentional fixture exercising the test-reporter's legacy-annotation fallback.
+3. Per-sub-package coverage ≥ 80% remains a standing quality goal (not a migration blocker).
 
 ---
 
@@ -316,9 +335,9 @@ If Rector or PHPStan find new issues your change introduced, fix at root cause �
 
 ### What's risky in this codebase
 
-- **Middleware signature mismatch:** Phase 3 is incomplete. Some classes still implement `Altair\Http\Contracts\MiddlewareInterface` (old double-pass). Treat as in-flight.
-- **Flysystem configurations:** Several `*AdapterConfiguration` classes reference removed adapters and will throw at runtime until Phase 3c lands.
-- **No working `composer.lock`** until the user runs `composer update` post-Phase-1.
+- **Env-/service-backed tests only run where the extension or service exists.** Tests needing `ext-mongodb`, `ext-redis`, `ext-memcached`, `ext-apcu`, `ext-excimer`, or a live database skip (or error in `setUp`) on a machine without them — and the SDK compile tests need `tsc` / `mypy`. A green run with those skipped is expected; don't read the skips as failures. Parallel + container-backed infra to make them runnable everywhere is tracked in [#129](https://github.com/univeros/framework/issues/129).
+- **Rector is a CI gate but is NOT in `composer qa`.** CI's `static-analysis` job runs `rector process --dry-run` over the whole tree (PHP 8.3); `composer qa` is only cs + stan + test. Run `composer rector` manually before pushing or CI will catch drift you didn't see locally.
+- **`composer.lock` is gitignored.** `composer install` regenerates it; don't commit one.
 
 ---
 
