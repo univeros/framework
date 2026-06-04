@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Altair\Scaffold\Spec\Emitter;
 
 use Altair\Scaffold\Sdk\Model\OpenApiDocument;
-use Altair\Scaffold\Sdk\Model\OperationModel;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
 use Symfony\Component\Yaml\Yaml;
 
@@ -43,24 +42,12 @@ final readonly class Emitter
      */
     public function emit(OpenApiDocument $document): array
     {
+        // Filenames are resolved across the whole document so distinct operations
+        // that derive the same short name are disambiguated rather than colliding.
+        $filenames = $this->pathDeriver->resolveFilenames($document->operations);
+
         $emitted = [];
-        $seen = [];
-
         foreach ($document->operations as $operation) {
-            $filename = $this->pathDeriver->filename($operation);
-
-            if (isset($seen[$filename])) {
-                throw new UnmappableSchemaException(
-                    $this->operationPointer($operation),
-                    \sprintf(
-                        "filename collision: '%s' is also emitted by '%s %s'. Set distinct operationIds to disambiguate.",
-                        $filename,
-                        $seen[$filename]['method'],
-                        $seen[$filename]['path'],
-                    ),
-                );
-            }
-
             $structure = $this->operationMapper->map($document, $operation);
             $contents = Yaml::dump(
                 $structure,
@@ -69,17 +56,12 @@ final readonly class Emitter
                 Yaml::DUMP_OBJECT_AS_MAP,
             );
 
-            $emitted[] = new EmittedSpec(relativePath: $filename, contents: $contents);
-            $seen[$filename] = ['method' => $operation->method, 'path' => $operation->path];
+            $emitted[] = new EmittedSpec(
+                relativePath: $filenames[$this->pathDeriver->operationKey($operation)],
+                contents: $contents,
+            );
         }
 
         return $emitted;
-    }
-
-    private function operationPointer(OperationModel $operation): string
-    {
-        $encodedPath = str_replace('/', '~1', $operation->path);
-
-        return '#/paths/' . $encodedPath . '/' . strtolower($operation->method);
     }
 }

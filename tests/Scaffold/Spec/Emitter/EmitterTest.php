@@ -9,6 +9,7 @@ use Altair\Scaffold\Sdk\Model\OpenApiParser;
 use Altair\Scaffold\Sdk\Model\OperationModel;
 use Altair\Scaffold\Sdk\Model\ResponseModel;
 use Altair\Scaffold\Sdk\Model\SchemaType;
+use Altair\Scaffold\Spec\Emitter\EmittedSpec;
 use Altair\Scaffold\Spec\Emitter\Emitter;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
 use Altair\Scaffold\Spec\Parser;
@@ -30,8 +31,10 @@ final class EmitterTest extends TestCase
         self::assertSame('api/pets/get.yaml', $emitted[2]->relativePath);
     }
 
-    public function testFilenameCollisionRaises(): void
+    public function testCollidingShortNamesAreDisambiguated(): void
     {
+        // Two distinct operations that derive the same short name (api/users/list)
+        // must each get a unique filename rather than colliding.
         $document = new OpenApiDocument(
             title: 'X',
             version: '1.0',
@@ -41,9 +44,12 @@ final class EmitterTest extends TestCase
             ],
         );
 
-        $this->expectException(UnmappableSchemaException::class);
-        $this->expectExceptionMessage('filename collision');
-        (new Emitter())->emit($document);
+        $paths = array_map(static fn(EmittedSpec $s): string => $s->relativePath, (new Emitter())->emit($document));
+
+        self::assertCount(2, $paths);
+        self::assertCount(2, array_unique($paths), 'filenames must be distinct');
+        self::assertContains('api/users/list-get.yaml', $paths);
+        self::assertContains('api/users/list-users.yaml', $paths);
     }
 
     public function testEmittedYamlIsParsedByExistingParser(): void

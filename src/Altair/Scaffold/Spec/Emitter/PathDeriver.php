@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Spec\Emitter;
 
+use Altair\Scaffold\Exception\ScaffoldException;
 use Altair\Scaffold\Sdk\Model\OperationModel;
 
 /**
@@ -28,6 +29,55 @@ final readonly class PathDeriver
     public function filename(OperationModel $operation): string
     {
         return $this->specRoot . '/' . $this->resourceDir($operation) . '/' . $this->verb($operation) . '.yaml';
+    }
+
+    /**
+     * Collision-free filename for every operation, resolved in one pass.
+     *
+     * The clean `api/<resource>/<verb>.yaml` name is kept when unique; when two
+     * distinct operations would derive the same name — e.g. the Swagger
+     * Petstore's `PUT /pet` (updatePet) and `POST /pet/{petId}`
+     * (updatePetWithForm), both "update pet" — each falls back to its
+     * operationId, which OpenAPI guarantees unique. Two operations sharing one
+     * operationId is rejected: it is an invalid spec whose generated domain
+     * classes would collide too.
+     *
+     * @param  list<OperationModel>   $operations
+     * @return array<string, string>  {@see operationKey} => relative filename
+     */
+    public function resolveFilenames(array $operations): array
+    {
+        $this->assertUniqueOperationIds($operations);
+
+        $frequency = [];
+        foreach ($operations as $operation) {
+            $name = $this->filename($operation);
+            $frequency[$name] = ($frequency[$name] ?? 0) + 1;
+        }
+
+        $result = [];
+        $used = [];
+        foreach ($operations as $operation) {
+            $name = $this->filename($operation);
+            if (($frequency[$name] ?? 0) > 1) {
+                $name = $this->specRoot . '/' . $this->resourceDir($operation) . '/' . $this->disambiguator($operation) . '.yaml';
+            }
+
+            $name = $this->ensureUnique($name, $used);
+            $used[$name] = true;
+            $result[$this->operationKey($operation)] = $name;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Stable identity for an operation (unique within a valid OpenAPI document):
+     * the key {@see resolveFilenames} maps to a filename.
+     */
+    public function operationKey(OperationModel $operation): string
+    {
+        return strtoupper($operation->method) . ' ' . $operation->path;
     }
 
     public function domainFqcn(OperationModel $operation): string
@@ -123,6 +173,66 @@ final readonly class PathDeriver
         }
 
         return $value;
+    }
+
+    /**
+     * @param list<OperationModel> $operations
+     */
+    private function assertUniqueOperationIds(array $operations): void
+    {
+        $seen = [];
+        foreach ($operations as $operation) {
+            $id = $operation->operationId;
+            if ($id === '') {
+                continue;
+            }
+
+            if (isset($seen[$id])) {
+                throw new ScaffoldException(\sprintf(
+                    "Duplicate operationId '%s' on '%s' and '%s'. operationIds must be unique — each maps to one domain class.",
+                    $id,
+                    $seen[$id],
+                    $this->operationKey($operation),
+                ));
+            }
+
+            $seen[$id] = $this->operationKey($operation);
+        }
+    }
+
+    private function disambiguator(OperationModel $operation): string
+    {
+        if ($operation->operationId !== '') {
+            return $this->kebabCase($operation->operationId);
+        }
+
+        return $this->verb($operation) . '-' . strtolower($operation->method);
+    }
+
+    /**
+     * @param array<string, true> $used
+     */
+    private function ensureUnique(string $name, array $used): string
+    {
+        if (!isset($used[$name])) {
+            return $name;
+        }
+
+        $base = substr($name, 0, -\strlen('.yaml'));
+        $suffix = 2;
+        while (isset($used[$base . '-' . $suffix . '.yaml'])) {
+            $suffix++;
+        }
+
+        return $base . '-' . $suffix . '.yaml';
+    }
+
+    private function kebabCase(string $value): string
+    {
+        $words = preg_split('/[^A-Za-z0-9]+|(?<=[a-z])(?=[A-Z])/', $value) ?: [];
+        $words = array_filter($words, static fn(string $w): bool => $w !== '');
+
+        return implode('-', array_map(strtolower(...), $words));
     }
 
     private function pascalCase(string $value): string
