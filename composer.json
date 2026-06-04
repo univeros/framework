@@ -53,6 +53,7 @@
         "ext-mongodb": "*",
         "ext-openssl": "*",
         "ext-redis": "*",
+        "brianium/paratest": "^7",
         "friendsofphp/php-cs-fixer": "^3.64",
         "lcobucci/jwt": "^5.3",
         "league/flysystem-aws-s3-v3": "^3.29",
@@ -130,6 +131,7 @@
     },
     "scripts": {
         "test": "phpunit",
+        "test:par": "paratest --no-coverage",
         "test:coverage": "phpunit --coverage-html build/coverage",
         "cs": "php-cs-fixer fix --dry-run --diff",
         "cs:fix": "php-cs-fixer fix",
