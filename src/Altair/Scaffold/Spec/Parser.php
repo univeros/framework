@@ -316,6 +316,7 @@ class Parser
             default: $raw['default'] ?? null,
             hasDefault: \array_key_exists('default', $raw),
             fields: $fields,
+            location: isset($raw['in']) ? (string) $raw['in'] : InputFieldSpec::IN_BODY,
         );
     }
 

@@ -13,11 +13,16 @@ namespace Altair\Scaffold\Spec\Ast;
 
 final readonly class InputFieldSpec
 {
+    public const string IN_BODY = 'body';
+
     /**
      * @param list<string> $rules
-     * @param list<self>   $fields Child fields for a nested object (`type: object`)
-     *                             or the item shape of an array of objects
-     *                             (`type: array` with `fields`). Empty for scalars.
+     * @param list<self>   $fields   Child fields for a nested object (`type: object`)
+     *                               or the item shape of an array of objects
+     *                               (`type: array` with `fields`). Empty for scalars.
+     * @param string       $location Where the value comes from: `body` (default),
+     *                               `path`, `query`, `header`, or `cookie`. Non-body
+     *                               inputs export as OpenAPI `parameters`.
      */
     public function __construct(
         public string $name,
@@ -28,7 +33,13 @@ final readonly class InputFieldSpec
         public mixed $default = null,
         public bool $hasDefault = false,
         public array $fields = [],
+        public string $location = self::IN_BODY,
     ) {}
+
+    public function isParameter(): bool
+    {
+        return $this->location !== self::IN_BODY;
+    }
 
     public function isRequired(): bool
     {

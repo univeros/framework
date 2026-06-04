@@ -6,6 +6,7 @@ namespace Altair\Tests\Scaffold\Spec\Emitter;
 
 use Altair\Scaffold\Sdk\Model\OpenApiDocument;
 use Altair\Scaffold\Sdk\Model\OperationModel;
+use Altair\Scaffold\Sdk\Model\ParameterModel;
 use Altair\Scaffold\Sdk\Model\ResponseModel;
 use Altair\Scaffold\Sdk\Model\SchemaType;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
@@ -20,7 +21,24 @@ final class SchemaMapperTest extends TestCase
         $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
 
         self::assertSame([
-            ['name' => 'id', 'type' => 'string', 'rules' => ['required']],
+            ['name' => 'id', 'type' => 'string', 'in' => 'path', 'rules' => ['required']],
+        ], $fields);
+    }
+
+    public function testQueryHeaderAndEnumParametersBecomeInputs(): void
+    {
+        $operation = $this->operation('GET', '/pets', parameters: [
+            new ParameterModel('status', ParameterModel::IN_QUERY, true, SchemaType::enum(['available', 'sold'])),
+            new ParameterModel('limit', ParameterModel::IN_QUERY, false, SchemaType::scalar('integer')),
+            new ParameterModel('x-tenant', ParameterModel::IN_HEADER, false, SchemaType::scalar('string')),
+        ]);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            ['name' => 'status', 'type' => 'string', 'in' => 'query', 'rules' => ['required', 'in:available,sold']],
+            ['name' => 'limit', 'type' => 'int', 'in' => 'query', 'rules' => []],
+            ['name' => 'x-tenant', 'type' => 'string', 'in' => 'header', 'rules' => []],
         ], $fields);
     }
 
@@ -347,8 +365,9 @@ final class SchemaMapperTest extends TestCase
     }
 
     /**
-     * @param list<string>        $pathParameters
-     * @param list<ResponseModel> $responses
+     * @param list<string>          $pathParameters
+     * @param list<ResponseModel>   $responses
+     * @param list<ParameterModel>  $parameters
      */
     private function operation(
         string $method,
@@ -357,6 +376,7 @@ final class SchemaMapperTest extends TestCase
         array $pathParameters = [],
         ?SchemaType $requestBody = null,
         array $responses = [],
+        array $parameters = [],
     ): OperationModel {
         return new OperationModel(
             operationId: $operationId,
@@ -365,6 +385,7 @@ final class SchemaMapperTest extends TestCase
             pathParameters: $pathParameters,
             requestBody: $requestBody,
             responses: $responses,
+            parameters: $parameters,
         );
     }
 

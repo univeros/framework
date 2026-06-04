@@ -22,9 +22,10 @@ namespace Altair\Scaffold\Sdk\Model;
 final readonly class OperationModel
 {
     /**
-     * @param list<string>        $pathParameters Names of `{param}` path segments, in order.
-     * @param list<ResponseModel> $responses
-     * @param array<string, mixed> $extensions    `x-altair-*` keys carried verbatim from the OpenAPI document.
+     * @param list<string>          $pathParameters Names of `{param}` path segments, in order.
+     * @param list<ResponseModel>   $responses
+     * @param array<string, mixed>  $extensions     `x-altair-*` keys carried verbatim from the OpenAPI document.
+     * @param list<ParameterModel>  $parameters     Declared parameters (path/query/header/cookie) with schema + required.
      */
     public function __construct(
         public string $operationId,
@@ -35,6 +36,7 @@ final readonly class OperationModel
         public array $responses,
         public string $summary = '',
         public array $extensions = [],
+        public array $parameters = [],
     ) {}
 
     public function hasRequestBody(): bool

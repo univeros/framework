@@ -27,8 +27,10 @@ final class CoverageScannerTest extends TestCase
         self::assertSame([], $warnings);
     }
 
-    public function testWarnsOnQueryHeaderAndCookieParametersButNotPath(): void
+    public function testParametersAreImportedSoOnlyRefParametersWarn(): void
     {
+        // path/query/header/cookie parameters are now mapped (Phase 2); only an
+        // unresolved parameter `$ref` is still dropped.
         $warnings = (new CoverageScanner())->scan([
             'paths' => [
                 '/pets/{id}' => [
@@ -38,6 +40,7 @@ final class CoverageScannerTest extends TestCase
                             ['name' => 'status', 'in' => 'query', 'schema' => ['type' => 'string']],
                             ['name' => 'x-api', 'in' => 'header', 'schema' => ['type' => 'string']],
                             ['name' => 'sid', 'in' => 'cookie', 'schema' => ['type' => 'string']],
+                            ['$ref' => '#/components/parameters/Tenant'],
                         ],
                         'responses' => ['200' => ['description' => 'ok']],
                     ],
@@ -46,9 +49,7 @@ final class CoverageScannerTest extends TestCase
         ]);
 
         self::assertSame([
-            'query parameter `status` on GET /pets/{id} is dropped.',
-            'header parameter `x-api` on GET /pets/{id} is dropped.',
-            'cookie parameter `sid` on GET /pets/{id} is dropped.',
+            'parameter `$ref` on GET /pets/{id} is not imported.',
         ], $warnings);
     }
 

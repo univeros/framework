@@ -13,6 +13,7 @@ namespace Altair\Scaffold\Spec\Emitter;
 
 use Altair\Scaffold\Sdk\Model\OpenApiDocument;
 use Altair\Scaffold\Sdk\Model\OperationModel;
+use Altair\Scaffold\Sdk\Model\ParameterModel;
 use Altair\Scaffold\Sdk\Model\ResponseModel;
 use Altair\Scaffold\Sdk\Model\SchemaType;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
@@ -53,12 +54,8 @@ final readonly class SchemaMapper
     {
         $fields = [];
 
-        foreach ($operation->pathParameters as $name) {
-            $fields[] = [
-                'name' => $name,
-                'type' => 'string',
-                'rules' => ['required'],
-            ];
+        foreach ($this->operationParameters($operation) as $parameter) {
+            $fields[] = $this->parameterField($parameter);
         }
 
         $requestBody = $operation->requestBody;
@@ -99,6 +96,57 @@ final readonly class SchemaMapper
         }
 
         return $outputs;
+    }
+
+    /**
+     * Declared parameters, falling back to bare path-parameter names for an
+     * {@see OperationModel} built without a `parameters` list (older callers).
+     *
+     * @return list<ParameterModel>
+     */
+    private function operationParameters(OperationModel $operation): array
+    {
+        if ($operation->parameters !== []) {
+            return $operation->parameters;
+        }
+
+        return array_map(
+            static fn(string $name): ParameterModel => new ParameterModel($name, ParameterModel::IN_PATH, true),
+            $operation->pathParameters,
+        );
+    }
+
+    /**
+     * A path/query/header/cookie parameter becomes an input field tagged with
+     * its `in` location (so it exports back to an OpenAPI parameter). Parameters
+     * are scalars/enums/arrays in practice; anything richer falls back to string.
+     *
+     * @return array<string, mixed>
+     */
+    private function parameterField(ParameterModel $parameter): array
+    {
+        $rules = $parameter->required ? ['required'] : [];
+        $type = 'string';
+        $schema = $parameter->schema;
+
+        if ($schema instanceof SchemaType) {
+            if ($schema->kind === SchemaType::ENUM && $schema->enumValues !== []) {
+                $rules[] = 'in:' . implode(',', $schema->enumValues);
+            } else {
+                $type = match ($schema->kind) {
+                    SchemaType::ARRAY => 'array',
+                    SchemaType::SCALAR => $this->inputScalarType((string) $schema->scalarType),
+                    default => 'string',
+                };
+            }
+        }
+
+        return [
+            'name' => $parameter->name,
+            'type' => $type,
+            'in' => $parameter->in,
+            'rules' => $rules,
+        ];
     }
 
     /**
