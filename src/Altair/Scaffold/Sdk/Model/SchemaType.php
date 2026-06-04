@@ -35,8 +35,10 @@ final readonly class SchemaType
     public const string MIXED = 'mixed';
 
     /**
-     * @param array<string, PropertyShape> $properties Object properties (OBJECT kind).
-     * @param list<string>                  $enumValues Allowed values (ENUM kind).
+     * @param array<string, PropertyShape>      $properties  Object properties (OBJECT kind).
+     * @param list<string>                       $enumValues  Allowed values (ENUM kind).
+     * @param array<string, int|float|string>    $constraints JSON-Schema validation keywords kept verbatim
+     *                                                        (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`).
      */
     public function __construct(
         public string $kind,
@@ -47,11 +49,15 @@ final readonly class SchemaType
         public array $enumValues = [],
         public ?string $format = null,
         public bool $nullable = false,
+        public array $constraints = [],
     ) {}
 
-    public static function scalar(string $scalarType, ?string $format = null, bool $nullable = false): self
+    /**
+     * @param array<string, int|float|string> $constraints
+     */
+    public static function scalar(string $scalarType, ?string $format = null, bool $nullable = false, array $constraints = []): self
     {
-        return new self(kind: self::SCALAR, scalarType: $scalarType, format: $format, nullable: $nullable);
+        return new self(kind: self::SCALAR, scalarType: $scalarType, format: $format, nullable: $nullable, constraints: $constraints);
     }
 
     public static function mixed(): self

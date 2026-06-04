@@ -138,6 +138,7 @@ final readonly class SchemaMapper
                     SchemaType::SCALAR => $this->inputScalarType((string) $schema->scalarType),
                     default => 'string',
                 };
+                $rules = [...$rules, ...$this->constraintRules($schema)];
             }
         }
 
@@ -271,8 +272,55 @@ final readonly class SchemaMapper
         return [
             'name' => $name,
             'type' => $this->inputScalarType((string) $schema->scalarType),
-            'rules' => $rules,
+            'rules' => [...$rules, ...$this->constraintRules($schema)],
         ];
+    }
+
+    /**
+     * Translates a scalar schema's `format` + JSON-Schema validation keywords
+     * into Altair validation rules. The inverse of the forward
+     * {@see \Altair\Scaffold\Emitter\TypeMapper}'s rule → constraint mapping, so
+     * the pair round-trips.
+     *
+     * @return list<string>
+     */
+    private function constraintRules(SchemaType $schema): array
+    {
+        $rules = [];
+
+        $formatRule = match (strtolower((string) $schema->format)) {
+            'email' => 'email',
+            'uri', 'url' => 'url',
+            'ipv4', 'ipv6', 'ip' => 'ip',
+            'date-time', 'date', 'time' => 'datetime',
+            default => null,
+        };
+        if ($formatRule !== null) {
+            $rules[] = $formatRule;
+        }
+
+        $constraints = $schema->constraints;
+        if (isset($constraints['minLength'])) {
+            $rules[] = 'min:' . $constraints['minLength'];
+        }
+
+        if (isset($constraints['maxLength'])) {
+            $rules[] = 'max:' . $constraints['maxLength'];
+        }
+
+        if (isset($constraints['minimum'])) {
+            $rules[] = 'min:' . $constraints['minimum'];
+        }
+
+        if (isset($constraints['maximum'])) {
+            $rules[] = 'max:' . $constraints['maximum'];
+        }
+
+        if (isset($constraints['pattern'])) {
+            $rules[] = 'regex:' . $constraints['pattern'];
+        }
+
+        return $rules;
     }
 
     /**
