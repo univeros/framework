@@ -64,10 +64,11 @@ class InputEmitter
             return "    public function __construct() {}\n";
         }
 
-        $lines = $this->renderConstructorDocblock($spec);
+        $fields = $this->orderedInputs($spec);
+        $lines = $this->renderConstructorDocblock($fields);
         $lines[] = '    public function __construct(';
-        $last = \count($spec->inputs) - 1;
-        foreach ($spec->inputs as $i => $field) {
+        $last = \count($fields) - 1;
+        foreach ($fields as $i => $field) {
             $type = $this->typeMapper->toPhpType($field);
             $nullable = $field->isRequired() ? '' : '?';
             $default = $this->renderDefault($field);
@@ -81,17 +82,43 @@ class InputEmitter
     }
 
     /**
+     * Orders fields so required (no-default) params precede optional ones,
+     * preserving spec order within each group. PHP raises a deprecation when a
+     * required parameter follows an optional one, which happens whenever an
+     * imported spec lists an optional field before a required one. This only
+     * reorders the generated PHP signature — the spec, OpenAPI `properties`,
+     * and round-trip order are unaffected.
+     *
+     * @return list<InputFieldSpec>
+     */
+    private function orderedInputs(Spec $spec): array
+    {
+        $required = [];
+        $optional = [];
+        foreach ($spec->inputs as $field) {
+            if ($field->isRequired() && !$field->hasDefault) {
+                $required[] = $field;
+            } else {
+                $optional[] = $field;
+            }
+        }
+
+        return [...$required, ...$optional];
+    }
+
+    /**
      * Constructor-level PHPDoc lines describing the array shape of nested-object
      * and array-of-object params — the one case CLAUDE.md warrants PHPDoc (a
      * shape PHP's `array` type can't express). Empty for scalar-only inputs, so
      * those DTOs stay byte-identical to before nesting existed.
      *
+     * @param  list<InputFieldSpec> $fields
      * @return list<string>
      */
-    private function renderConstructorDocblock(Spec $spec): array
+    private function renderConstructorDocblock(array $fields): array
     {
         $params = [];
-        foreach ($spec->inputs as $field) {
+        foreach ($fields as $field) {
             $shape = $this->arrayShape($field);
             if ($shape !== null) {
                 $params[] = \sprintf('     * @param %s $%s', $shape, $field->name);
