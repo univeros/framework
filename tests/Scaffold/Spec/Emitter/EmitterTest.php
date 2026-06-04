@@ -116,8 +116,9 @@ final class EmitterTest extends TestCase
                     method: 'POST',
                     path: '/users',
                     pathParameters: [],
+                    // Nested objects now map; a dangling $ref is still unmappable.
                     requestBody: SchemaType::object([
-                        'address' => ['schema' => SchemaType::object([]), 'required' => true],
+                        'address' => ['schema' => SchemaType::ref('Missing'), 'required' => true],
                     ]),
                     responses: [],
                 ),

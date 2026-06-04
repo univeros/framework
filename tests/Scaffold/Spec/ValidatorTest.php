@@ -52,6 +52,42 @@ final class ValidatorTest extends TestCase
         self::assertStringContainsString('definitely-not-a-rule', $errors[0]);
     }
 
+    public function testNestedObjectInputYieldsNoErrors(): void
+    {
+        $spec = new Spec(
+            endpoint: new EndpointSpec('POST', '/pets', '', []),
+            inputs: [
+                new InputFieldSpec('category', 'object', ['required'], fields: [
+                    new InputFieldSpec('id', 'int'),
+                    new InputFieldSpec('name', 'string', ['required']),
+                ]),
+            ],
+            outputs: [],
+            domain: new DomainSpec('App\\Pet\\CreatePet'),
+        );
+
+        self::assertSame([], (new Validator())->collectErrors($spec));
+    }
+
+    public function testNestedFieldUnknownTypeReported(): void
+    {
+        $spec = new Spec(
+            endpoint: new EndpointSpec('POST', '/pets', '', []),
+            inputs: [
+                new InputFieldSpec('category', 'object', fields: [
+                    new InputFieldSpec('id', 'definitely-not-a-type'),
+                ]),
+            ],
+            outputs: [],
+            domain: new DomainSpec('App\\Pet\\CreatePet'),
+        );
+
+        $errors = (new Validator())->collectErrors($spec);
+
+        self::assertNotEmpty($errors);
+        self::assertStringContainsString('definitely-not-a-type', $errors[0]);
+    }
+
     public function testNonClassDomainReported(): void
     {
         $spec = new Spec(

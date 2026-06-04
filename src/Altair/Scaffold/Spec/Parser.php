@@ -275,27 +275,48 @@ class Parser
     {
         $inputs = [];
         foreach ($data as $name => $raw) {
-            if (!\is_array($raw)) {
-                throw new SpecParseException(\sprintf("Input field '%s' must be a map.", $name));
-            }
-
-            $rules = $raw['rules'] ?? [];
-            if (!\is_array($rules)) {
-                throw new SpecParseException(\sprintf("Input field '%s' rules must be a list.", $name));
-            }
-
-            $inputs[] = new InputFieldSpec(
-                name: (string) $name,
-                type: (string) ($raw['type'] ?? 'string'),
-                rules: array_values(array_map(strval(...), $rules)),
-                sensitive: (bool) ($raw['sensitive'] ?? false),
-                of: isset($raw['of']) ? (string) $raw['of'] : null,
-                default: $raw['default'] ?? null,
-                hasDefault: \array_key_exists('default', $raw),
-            );
+            $inputs[] = $this->parseInputField((string) $name, $raw);
         }
 
         return $inputs;
+    }
+
+    /**
+     * Parses one input field, recursing into `fields:` for nested objects and
+     * arrays of objects so the whole input tree becomes {@see InputFieldSpec}s.
+     */
+    private function parseInputField(string $name, mixed $raw): InputFieldSpec
+    {
+        if (!\is_array($raw)) {
+            throw new SpecParseException(\sprintf("Input field '%s' must be a map.", $name));
+        }
+
+        $rules = $raw['rules'] ?? [];
+        if (!\is_array($rules)) {
+            throw new SpecParseException(\sprintf("Input field '%s' rules must be a list.", $name));
+        }
+
+        $fields = [];
+        if (isset($raw['fields'])) {
+            if (!\is_array($raw['fields'])) {
+                throw new SpecParseException(\sprintf("Input field '%s' fields must be a map.", $name));
+            }
+
+            foreach ($raw['fields'] as $childName => $childRaw) {
+                $fields[] = $this->parseInputField((string) $childName, $childRaw);
+            }
+        }
+
+        return new InputFieldSpec(
+            name: $name,
+            type: (string) ($raw['type'] ?? 'string'),
+            rules: array_values(array_map(strval(...), $rules)),
+            sensitive: (bool) ($raw['sensitive'] ?? false),
+            of: isset($raw['of']) ? (string) $raw['of'] : null,
+            default: $raw['default'] ?? null,
+            hasDefault: \array_key_exists('default', $raw),
+            fields: $fields,
+        );
     }
 
     /**

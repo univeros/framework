@@ -26,6 +26,7 @@ final readonly class OpenApiImportOptions
         public bool $scaffold = false,
         public bool $dryRun = false,
         public bool $force = false,
+        public bool $skipUnmappable = false,
         public ?string $persistence = null,
         public ?string $queue = null,
     ) {}

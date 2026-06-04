@@ -160,7 +160,7 @@ final class OpenApiImportRunnerTest extends TestCase
                           type: object
                           properties:
                             address:
-                              type: object
+                              $ref: '#/components/schemas/Missing'
                           required: [address]
                   responses:
                     '201': { description: ok }
@@ -174,6 +174,139 @@ final class OpenApiImportRunnerTest extends TestCase
         self::assertFalse($receipt->ok);
         self::assertNotEmpty($receipt->unmapped);
         self::assertStringContainsString('address', $receipt->unmapped[0]['pointer']);
+    }
+
+    public function testSkipUnmappableImportsMappableOperationsAndSkipsRest(): void
+    {
+        $documentPath = $this->writeMixedOpenApi();
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+            skipUnmappable: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertSame(['api/users/create.yaml'], $receipt->specsWritten);
+        self::assertFileExists($this->sandbox . '/api/users/create.yaml');
+        self::assertFileDoesNotExist($this->sandbox . '/api/pets/create.yaml');
+
+        self::assertNotEmpty($receipt->unmapped);
+        self::assertStringContainsString('category', $receipt->unmapped[0]['pointer']);
+        // The skipped operation is surfaced as a human-readable warning naming the method+path.
+        self::assertNotEmpty($receipt->warnings);
+        self::assertStringContainsString('POST /pets', implode("\n", $receipt->warnings));
+    }
+
+    public function testWithoutSkipUnmappableMixedDocumentFailsAndWritesNothing(): void
+    {
+        $documentPath = $this->writeMixedOpenApi();
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertFalse($receipt->ok);
+        self::assertSame([], $receipt->specsWritten);
+        // Fail-fast: the mappable spec must not be written when an unmappable one aborts the run.
+        self::assertFileDoesNotExist($this->sandbox . '/api/users/create.yaml');
+        self::assertStringContainsString('category', $receipt->unmapped[0]['pointer']);
+    }
+
+    public function testSkipUnmappableDryRunReportsPlannedAndUnmappedWithoutWriting(): void
+    {
+        $documentPath = $this->writeMixedOpenApi();
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+            dryRun: true,
+            skipUnmappable: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertSame(['api/users/create.yaml'], $receipt->specsWritten);
+        self::assertNotEmpty($receipt->unmapped);
+        self::assertFileDoesNotExist($this->sandbox . '/api/users/create.yaml');
+    }
+
+    public function testNestedObjectBodyImportsToRecursiveFieldsSpec(): void
+    {
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [name]
+                          properties:
+                            name: { type: string }
+                            category:
+                              type: object
+                              properties:
+                                id: { type: integer }
+                                name: { type: string }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertSame([], $receipt->unmapped);
+
+        $spec = Yaml::parseFile($this->sandbox . '/api/pets/create.yaml');
+        self::assertSame('object', $spec['input']['category']['type']);
+        self::assertArrayHasKey('id', $spec['input']['category']['fields']);
+        self::assertArrayHasKey('name', $spec['input']['category']['fields']);
+    }
+
+    public function testSkipUnmappableWarnsWhenEveryOperationIsUnmappable(): void
+    {
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: AllBad, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [category]
+                          properties:
+                            category: { $ref: '#/components/schemas/Missing' }
+                  responses:
+                    '201': { description: ok }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+            skipUnmappable: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertSame([], $receipt->specsWritten);
+        self::assertNotEmpty($receipt->unmapped);
+        self::assertStringContainsString('every operation was unmappable', implode("\n", $receipt->warnings));
     }
 
     public function testReportsMissingDocument(): void
@@ -273,6 +406,57 @@ final class OpenApiImportRunnerTest extends TestCase
                             properties:
                               id: { type: string }
                               email: { type: string }
+            YAML);
+
+        return $path;
+    }
+
+    /**
+     * A document mixing one fully-mappable operation (POST /users, scalar body)
+     * with one that cannot be expressed as an Altair spec (POST /pets, whose
+     * body carries a dangling `$ref` to an undefined schema).
+     */
+    private function writeMixedOpenApi(): string
+    {
+        $path = $this->sandbox . '/openapi.yaml';
+        file_put_contents($path, <<<'YAML'
+            openapi: 3.1.0
+            info:
+              title: Mixed API
+              version: 1.0.0
+            paths:
+              /users:
+                post:
+                  operationId: createUser
+                  summary: Create a new user
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [email]
+                          properties:
+                            email: { type: string }
+                  responses:
+                    '201': { description: Created }
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a new pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          type: object
+                          required: [category]
+                          properties:
+                            name: { type: string }
+                            category:
+                              $ref: '#/components/schemas/Missing'
+                  responses:
+                    '201': { description: Created }
             YAML);
 
         return $path;

@@ -19,14 +19,16 @@ use Altair\Scaffold\Exception\ScaffoldException;
  * cycle, or a schema kind the framework does not yet handle.
  *
  * The JSON pointer locates the offending node inside the source document so
- * the caller can surface it verbatim to the user (or agent).
+ * the caller can surface it verbatim to the user (or agent). {@see $reason}
+ * holds the bare explanation without the pointer prefix, for callers that
+ * render the location separately and would otherwise repeat it.
  */
 final class UnmappableSchemaException extends ScaffoldException
 {
     public function __construct(
         public readonly string $jsonPointer,
-        string $message,
+        public readonly string $reason,
     ) {
-        parent::__construct(\sprintf('Unmappable schema at %s: %s', $jsonPointer, $message));
+        parent::__construct(\sprintf('Unmappable schema at %s: %s', $jsonPointer, $reason));
     }
 }

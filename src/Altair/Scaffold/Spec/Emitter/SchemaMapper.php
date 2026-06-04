@@ -32,6 +32,14 @@ final readonly class SchemaMapper
     /** Refs we have followed during the current resolution — guards against cycles. */
     private const int MAX_REF_DEPTH = 8;
 
+    /**
+     * Inline object-nesting ceiling. `resolveRef` already bounds `$ref` chains;
+     * this bounds *inline* nesting so a hostile or pathological document raises
+     * a clean {@see UnmappableSchemaException} (which `--skip-unmappable` can
+     * absorb) instead of exhausting the PHP call stack.
+     */
+    private const int MAX_NESTING_DEPTH = 32;
+
     public function __construct(
         private string $appNamespace = 'App',
     ) {}
@@ -133,10 +141,29 @@ final readonly class SchemaMapper
             );
         }
 
+        return $this->mapProperties($document, $schema, $pointer);
+    }
+
+    /**
+     * Maps every property of an object schema into the flat field-array shape,
+     * recursing through {@see inputField} so nested objects nest. Shared by the
+     * top-level request body and nested objects.
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function mapProperties(OpenApiDocument $document, SchemaType $schema, string $pointer, int $depth = 0): array
+    {
+        if ($depth > self::MAX_NESTING_DEPTH) {
+            throw new UnmappableSchemaException(
+                $pointer,
+                \sprintf('input object nesting exceeds the maximum depth of %d.', self::MAX_NESTING_DEPTH),
+            );
+        }
+
         $fields = [];
         foreach ($schema->properties as $name => $property) {
             $propertyPointer = $pointer . '/properties/' . $name;
-            $fields[] = $this->inputField($document, (string) $name, $property['schema'], $property['required'], $propertyPointer);
+            $fields[] = $this->inputField($document, (string) $name, $property['schema'], $property['required'], $propertyPointer, $depth);
         }
 
         return $fields;
@@ -145,7 +172,7 @@ final readonly class SchemaMapper
     /**
      * @return array<string, mixed>
      */
-    private function inputField(OpenApiDocument $document, string $name, SchemaType $schema, bool $required, string $pointer): array
+    private function inputField(OpenApiDocument $document, string $name, SchemaType $schema, bool $required, string $pointer, int $depth = 0): array
     {
         $rules = $required ? ['required'] : [];
         $resolved = $this->resolveRef($document, $schema, $pointer);
@@ -153,16 +180,31 @@ final readonly class SchemaMapper
         return match ($resolved->kind) {
             SchemaType::SCALAR => $this->scalarInputField($name, $resolved, $rules),
             SchemaType::ENUM => $this->enumInputField($name, $resolved, $rules),
-            SchemaType::ARRAY => $this->arrayInputField($name, $resolved, $rules, $pointer),
-            SchemaType::OBJECT => throw new UnmappableSchemaException(
-                $pointer,
-                'nested objects in inputs are not yet supported.',
-            ),
+            SchemaType::ARRAY => $this->arrayInputField($document, $name, $resolved, $rules, $pointer, $depth),
+            SchemaType::OBJECT => $this->objectInputField($document, $name, $resolved, $rules, $pointer, $depth),
             default => throw new UnmappableSchemaException(
                 $pointer,
                 \sprintf("unsupported input kind '%s'.", $resolved->kind),
             ),
         };
+    }
+
+    /**
+     * A nested object becomes `{type: object, rules, fields: [...]}` where
+     * `fields` is the recursively-mapped child property list. Symmetric with
+     * the forward {@see \Altair\Scaffold\Emitter\TypeMapper::objectSchema()}.
+     *
+     * @param  list<string>          $rules
+     * @return array<string, mixed>
+     */
+    private function objectInputField(OpenApiDocument $document, string $name, SchemaType $schema, array $rules, string $pointer, int $depth = 0): array
+    {
+        return [
+            'name' => $name,
+            'type' => 'object',
+            'rules' => $rules,
+            'fields' => $this->mapProperties($document, $schema, $pointer, $depth + 1),
+        ];
     }
 
     /**
@@ -199,13 +241,19 @@ final readonly class SchemaMapper
      * @param  list<string>          $rules
      * @return array<string, mixed>
      */
-    private function arrayInputField(string $name, SchemaType $schema, array $rules, string $pointer): array
+    private function arrayInputField(OpenApiDocument $document, string $name, SchemaType $schema, array $rules, string $pointer, int $depth = 0): array
     {
-        if ($schema->items instanceof SchemaType && $schema->items->kind === SchemaType::OBJECT) {
-            throw new UnmappableSchemaException(
-                $pointer . '/items',
-                'arrays of objects are not yet supported in inputs.',
-            );
+        if ($schema->items instanceof SchemaType) {
+            $items = $this->resolveRef($document, $schema->items, $pointer . '/items');
+            if ($items->kind === SchemaType::OBJECT) {
+                // Array of objects: carry the item object's properties as `fields`.
+                return [
+                    'name' => $name,
+                    'type' => 'array',
+                    'rules' => $rules,
+                    'fields' => $this->mapProperties($document, $items, $pointer . '/items', $depth + 1),
+                ];
+            }
         }
 
         return [
