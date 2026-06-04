@@ -235,13 +235,29 @@ Enforcement is layered and live:
 - Bootstrap: `tests/bootstrap.php`. Per-package fixtures in `tests/{Container,Courier,Sanitation,Validation}/fixtures.php`.
 - Suffix `Test.php`, mirror the `src/Altair/<Pkg>` layout under `tests/<Pkg>/`.
 - Coverage target: **80%+** for new code (unit + integration).
-- Integration tests against Redis/Memcached/MongoDB use real services. CI starts containers; locally use Docker.
 
 ```bash
-vendor/bin/phpunit                              # full suite
+vendor/bin/phpunit                              # full suite (canonical gate)
 vendor/bin/phpunit --filter CookieManagerTest   # one test class
-vendor/bin/phpunit --testsuite "Univeros Test Suite"
+composer test:par                               # parallel run via paratest — fast local loop
 ```
+
+### Running the integration suite
+
+Some packages talk to a real service (Redis, MongoDB, Memcached, Beanstalk, a SQL database). Those tests resolve their endpoint in this order, and **skip gracefully** when none is available — so `composer test` stays green and Docker-free on a bare machine:
+
+1. an explicit env endpoint (e.g. `REDIS_HOST` / `REDIS_PORT`);
+2. a service already listening on the conventional local port (a CI service container, or a locally-running server) — reused as-is;
+3. a throwaway container booted via the `docker` CLI ([tests/Support/Integration/DockerContainer.php](tests/Support/Integration/DockerContainer.php)), torn down on shutdown;
+4. otherwise the test is skipped.
+
+So with Docker running you get the integration coverage locally with **no global service install and no PHP client extension** — provided the client is pure-PHP (`predis/predis`, `pda/pheanstalk`, PDO). Tests using `ext-redis` / `ext-mongodb` / `ext-memcached` still need that extension loaded in the CLI runtime even with a container, so they skip without it. `PredisCacheItemStorageTest` is the reference port; resolve new ones through a small per-service helper like [`RedisServer`](tests/Support/Integration/RedisServer.php).
+
+> We deliberately do **not** use testcontainers-php: its Docker client requires `psr/http-message ^2`, which conflicts with this tree's `relay/relay ~1.0` and `neomerx/cors-psr7 ^1.0`. The dependency-free `docker`-CLI helper does the same job.
+
+### Parallel runs (`composer test:par`)
+
+`paratest` runs the suite across CPU cores for a fast local loop. **`composer test` (single-process) remains the canonical gate** (CI uses it): a few suites that share an on-disk fixture path (`tests/Cache/tmp` for the filesystem cache, the events log under `Events\ReaderTest`) are not yet isolated per worker, so they can collide under `test:par`. Making every service/file-backed test parallel-safe (per-worker container / per-test keyspace, DB name, or temp dir keyed off `TEST_TOKEN`) is tracked in [#129](https://github.com/univeros/framework/issues/129).
 
 ---
 
