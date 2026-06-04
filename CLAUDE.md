@@ -9,9 +9,9 @@ Claude Code entry point for the **Univeros / Altair Framework** (`univeros/frame
 
 ## 1. Quick orientation
 
-- **What it is:** A monorepo PHP framework with 18 sub-packages under `src/Altair/*`, bundled via composer `replace`.
+- **What it is:** A monorepo PHP framework with 40 sub-packages under `src/Altair/*`, bundled via composer `replace`.
 - **Where conventions live:** [AGENT.md](AGENT.md) §5 (coding style), §6 (testing).
-- **Where the modernization roadmap lives:** [AGENT.md](AGENT.md) §7. Phase 1 done; Phases 2-4 pending.
+- **Modernization is complete:** [AGENT.md](AGENT.md) §7 records the (finished) PHP 7.2 → 8.3 migration — Phases 1–4 all done, PHPStan level 8 with no baseline. There is no pending modernization work; new work lives in the open GitHub issues.
 
 If you're being asked to make a change, read the relevant sub-package's `Contracts/` directory before its concrete classes.
 
@@ -44,7 +44,7 @@ CI mirrors these: `.github/workflows/ci.yml`.
 
 | Situation | Subagent |
 |---|---|
-| Bulk search across the 388 source files | `Explore` |
+| Bulk search across the ~1,100 source files | `Explore` |
 | Designing a new sub-package or refactor spanning several files | `architect` then `planner` |
 | Writing new code or fixing bugs | `tdd-guide` (write the failing test first) |
 | Immediately after code changes | `code-reviewer` |
@@ -58,7 +58,7 @@ CI mirrors these: `.github/workflows/ci.yml`.
 - `/code-review` after writing code (security + quality + style)
 - `/security-review` before committing anything touching `Altair\Security\*`, `Altair\Session\*`, `Altair\Http\Middleware\Csrf*`, `Altair\Cookie\*`, or JWT handling
 - `/verify` to run the full QA pipeline (cs + stan + test)
-- `/refactor-clean` for dead-code passes (esp. after Phase 2 Rector run)
+- `/refactor-clean` for dead-code passes
 - `/tdd` for new features — tests first, implementation second
 
 ### Generating HTTP endpoints
@@ -192,11 +192,14 @@ When writing new tests, **don't fight the resolver** — name the test class `<C
 
 Output is deterministic for the same outcomes — golden-file-safe for CI. `build/test-results.json` is gitignored.
 
-### Plan/Skill choices for the open work
+### Plan/Skill choices for new work
 
-- **Phase 2 (Rector):** Don't `Plan` it — just run `composer rector:fix`, then `composer cs:fix && composer test`. Triage failures one at a time.
-- **Phase 3 (manual breaking changes):** Use `planner` first. Each item in [AGENT.md §7](AGENT.md#phase-3--pending-manual-breaking-change-migrations) is independently scoped — do one at a time, run tests between.
-- **Phase 4 (PHPStan + PHPUnit attributes):** Raise PHPStan level one notch at a time. Use `phpstan.neon.dist`'s `ignoreErrors` only with a comment explaining why.
+The PHP 7.2 → 8.3 modernization is finished (see [AGENT.md §7](AGENT.md)); there is no phase backlog. For new work:
+
+- **New feature spanning several files:** `architect` then `planner`, then TDD.
+- **New HTTP endpoint:** write the YAML spec and `bin/altair spec:scaffold` — don't hand-write the Action/Input/Responder triple.
+- **Static analysis:** PHPStan is at **level 8 with no baseline**. Keep it there — fix at root cause; only add an inline `ignoreErrors` entry in `phpstan.neon.dist` with a `// reason:` comment. Never regenerate a `phpstan-baseline.neon`.
+- **Before pushing:** run `composer rector` (whole-tree dry-run) — it's a CI gate but not part of `composer qa`.
 
 ---
 
@@ -206,7 +209,7 @@ These are stricter than what other agents need because of past patterns in this 
 
 - **Immutability — required.** Never mutate value objects. New copies via `withFoo()` methods. See `Altair\Cookie\Cookie` as the reference implementation.
 - **Many small files > few big ones.** 200-400 LOC typical, 800 hard cap. Extract aggressively.
-- **`declare(strict_types=1)` is non-negotiable** — every file, every time. Currently 388/388 source files comply; don't be the one who breaks it.
+- **`declare(strict_types=1)` is non-negotiable** — every file, every time. Currently every source file under `src/` complies; don't be the one who breaks it.
 - **Native types beat PHPDoc.** Add PHPDoc only for `array<K, V>` shapes or unions PHP can't express natively. Don't write `@param string $foo` next to `string $foo` — Rector deletes those anyway.
 - **No emojis** in source files, commit messages, or docs unless the user explicitly asks for them.
 - **No new code without tests.** TDD per [AGENT.md §6](AGENT.md#6-testing). 80%+ coverage on new code.
@@ -218,9 +221,9 @@ These are stricter than what other agents need because of past patterns in this 
 
 When you encounter these, **stop and surface them** instead of working around:
 
-1. **Composer install fails:** likely a version conflict from Phase 1. Don't relax constraints — diagnose with `composer why-not <pkg> <version>` and report.
-2. **A file still uses `Zend\Diactoros\*`:** Phase 1 swap missed it. Fix the import and report which file.
-3. **A test uses `Relay\RelayBuilder` or `$next($req, $res)`:** double-pass middleware leak. Belongs to Phase 3a — flag for batched work, don't fix in isolation unless asked.
+1. **Composer install fails:** a version conflict. Don't relax constraints — diagnose with `composer why-not <pkg> <version>` and report.
+2. **A file uses `Zend\Diactoros\*`** (or any abandoned dep from [AGENT.md §4](AGENT.md#4-php--dependency-baseline)): that's a regression — the migration removed these. Fix the import to `Laminas\Diactoros\*` and report which file.
+3. **A test uses `Relay\RelayBuilder` or double-pass `$next($req, $res)`:** a PSR-15 regression — middleware is single-pass now. Flag it.
 4. **PHPStan finds an issue you'd ignore:** add to `ignoreErrors` only with an inline `// reason: …` comment.
 5. **A change requires editing 10+ files mechanically:** stop, suggest Rector or a one-off transform script instead.
 
@@ -235,10 +238,10 @@ When you encounter these, **stop and surface them** instead of working around:
 
 ---
 
-## 7. State at last update (2026-05)
+## 7. State at last update (2026-06)
 
-- Working tree may contain uncommitted Phase 1 changes. Run `git status` first.
-- `composer.lock` is gitignored and will be regenerated by the user.
-- Open items: see [AGENT.md §7](AGENT.md#7-modernization-status-started-2026-05) Phases 2-4.
+- The PHP 7.2 → 8.3 modernization is **complete** (Phases 1–4). PHPStan runs at **level 8 with no baseline**; the 8.3 + 8.4 CI matrix is green. Don't reintroduce a `phpstan-baseline.neon`.
+- `composer.lock` is gitignored and will be regenerated by the user. Run `git status` first regardless.
+- Open work is tracked in GitHub issues, not in AGENT.md §7 (which is now a historical record of the finished migration).
 
 When in doubt, **read [AGENT.md](AGENT.md) first**, then ask the user before making architectural choices.
