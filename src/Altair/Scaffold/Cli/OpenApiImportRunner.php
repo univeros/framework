@@ -20,7 +20,6 @@ use Altair\Events\EventStatus;
 use Altair\Scaffold\Emitter\EmissionPlan;
 use Altair\Scaffold\Emitter\EmittedFile;
 use Altair\Scaffold\Emitter\EmittedFileKind;
-use Altair\Scaffold\Exception\ScaffoldException;
 use Altair\Scaffold\Journal\Journal;
 use Altair\Scaffold\Journal\JournalEntry;
 use Altair\Scaffold\Journal\SnapshotCollector;
@@ -185,10 +184,15 @@ final readonly class OpenApiImportRunner
             ? new PathDeriver(specRoot: $options->outDir)
             : $this->pathDeriver;
 
+        // Resolve every filename up front so distinct operations that derive the
+        // same short name (e.g. Petstore's two "update pet" operations) get
+        // disambiguated instead of colliding. Throws only on a duplicate
+        // operationId, which is an invalid spec.
+        $filenames = $deriver->resolveFilenames($document->operations);
+
         $files = [];
         $unmapped = [];
         $warnings = [];
-        $seen = [];
         foreach ($document->operations as $operation) {
             try {
                 $structure = $this->operationMapper->map($document, $operation);
@@ -212,23 +216,12 @@ final readonly class OpenApiImportRunner
                 continue;
             }
 
-            $filename = $deriver->filename($operation);
-            if (isset($seen[$filename])) {
-                throw new ScaffoldException(\sprintf(
-                    "Filename collision: '%s' is also emitted by '%s %s'. Set distinct operationIds to disambiguate.",
-                    $filename,
-                    $seen[$filename]['method'],
-                    $seen[$filename]['path'],
-                ));
-            }
-
             if ($options->persistence === 'cycle') {
                 $structure = $this->persistenceInferrer->apply($operation, $structure);
             }
 
             $contents = Yaml::dump($structure, self::YAML_INLINE_LEVEL, self::YAML_INDENT, Yaml::DUMP_OBJECT_AS_MAP);
-            $files[] = new EmittedFile(relativePath: $filename, contents: $contents, kind: EmittedFileKind::Spec);
-            $seen[$filename] = ['method' => $operation->method, 'path' => $operation->path];
+            $files[] = new EmittedFile(relativePath: $filenames[$deriver->operationKey($operation)], contents: $contents, kind: EmittedFileKind::Spec);
         }
 
         // Every operation was skipped: a bare exit 0 would otherwise read as

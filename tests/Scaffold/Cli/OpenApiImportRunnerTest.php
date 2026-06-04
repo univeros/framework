@@ -335,8 +335,10 @@ final class OpenApiImportRunnerTest extends TestCase
         self::assertSame($first, $second);
     }
 
-    public function testFilenameCollisionFails(): void
+    public function testDuplicateOperationIdFails(): void
     {
+        // Two operations sharing one operationId is an invalid spec — their
+        // generated domain classes would collide — so it is rejected outright.
         $documentPath = $this->sandbox . '/openapi.yaml';
         file_put_contents($documentPath, <<<'YAML'
             openapi: 3.1.0
@@ -357,7 +359,42 @@ final class OpenApiImportRunnerTest extends TestCase
         ));
 
         self::assertFalse($receipt->ok);
-        self::assertStringContainsString('collision', (string) $receipt->error);
+        self::assertStringContainsString('Duplicate operationId', (string) $receipt->error);
+        self::assertStringContainsString('listUsers', (string) $receipt->error);
+    }
+
+    public function testCollidingShortNamesAreDisambiguated(): void
+    {
+        // The real Swagger Petstore case: PUT /pet (updatePet) and
+        // POST /pet/{petId} (updatePetWithForm) both derive api/pet/update.yaml.
+        // Distinct operationIds => disambiguate to unique files, not a collision.
+        $documentPath = $this->sandbox . '/openapi.yaml';
+        file_put_contents($documentPath, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets, version: 1.0.0 }
+            paths:
+              /pet:
+                put:
+                  operationId: updatePet
+                  summary: Update an existing pet
+                  responses: { '200': { description: ok } }
+              /pet/{petId}:
+                post:
+                  operationId: updatePetWithForm
+                  summary: Update a pet with form data
+                  responses: { '200': { description: ok } }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $documentPath,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok, (string) $receipt->error);
+        self::assertCount(2, $receipt->specsWritten);
+        self::assertCount(2, array_unique($receipt->specsWritten));
+        self::assertContains('api/pet/update-pet.yaml', $receipt->specsWritten);
+        self::assertContains('api/pet/update-pet-with-form.yaml', $receipt->specsWritten);
     }
 
     private function writeOpenApi(): string
