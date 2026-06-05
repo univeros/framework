@@ -60,6 +60,50 @@ final class OpenApiImportRunnerTest extends TestCase
         self::assertArrayHasKey('email', $createSpec['input']);
     }
 
+    public function testMapsMultipartOnlyObjectBodyAndWarnsNormalized(): void
+    {
+        // Phase 4a: a request body declared only as multipart/form-data (no
+        // application/json) is normalized into spec inputs rather than dropped,
+        // and the receipt surfaces the normalization.
+        $path = $this->sandbox . '/openapi.yaml';
+        file_put_contents($path, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Upload API, version: 1.0.0 }
+            paths:
+              /uploads:
+                post:
+                  operationId: createUpload
+                  summary: Create an upload
+                  requestBody:
+                    required: true
+                    content:
+                      multipart/form-data:
+                        schema:
+                          type: object
+                          required: [title]
+                          properties:
+                            title: { type: string }
+                            size: { type: integer }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $path,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok);
+        $spec = Yaml::parseFile($this->sandbox . '/api/uploads/create.yaml');
+        self::assertArrayHasKey('title', $spec['input']);
+        self::assertArrayHasKey('size', $spec['input']);
+        self::assertContains('required', $spec['input']['title']['rules']);
+        self::assertStringContainsString(
+            'normalized',
+            implode("\n", $receipt->warnings),
+        );
+    }
+
     public function testRespectsCustomOutDir(): void
     {
         $documentPath = $this->writeOpenApi();

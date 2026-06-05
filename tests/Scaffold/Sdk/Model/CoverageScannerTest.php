@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Altair\Tests\Scaffold\Sdk\Model;
 
 use Altair\Scaffold\Sdk\Model\CoverageScanner;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+#[CoversClass(CoverageScanner::class)]
 final class CoverageScannerTest extends TestCase
 {
     public function testMinimalDocumentHasNoWarnings(): void
@@ -53,20 +55,65 @@ final class CoverageScannerTest extends TestCase
         ], $warnings);
     }
 
-    public function testWarnsOnRequestBodyRefAndNonJsonBody(): void
+    public function testWarnsOnRequestBodyRefAndNormalizesNonJsonBody(): void
     {
+        // Phase 4a: a non-JSON *object* body is now read (normalized), not dropped;
+        // a binary/scalar-only body (octet-stream) and a schema-less body still are.
         $warnings = (new CoverageScanner())->scan([
             'paths' => [
                 '/a' => ['post' => ['requestBody' => ['$ref' => '#/components/requestBodies/X'], 'responses' => []]],
                 '/b' => ['post' => ['requestBody' => ['content' => ['multipart/form-data' => ['schema' => ['type' => 'object']]]], 'responses' => []]],
                 '/c' => ['post' => ['requestBody' => ['content' => ['application/json' => ['schema' => ['type' => 'object']], 'application/xml' => ['schema' => ['type' => 'object']]]], 'responses' => []]],
+                '/d' => ['post' => ['requestBody' => ['content' => ['application/octet-stream' => ['schema' => ['type' => 'string', 'format' => 'binary']]]], 'responses' => []]],
+                '/e' => ['post' => ['requestBody' => ['content' => ['text/plain' => []]], 'responses' => []]],
             ],
         ]);
 
         self::assertSame([
             'requestBody `$ref` on POST /a is not imported (body dropped).',
-            'request body on POST /b uses multipart/form-data; only application/json is imported, so the body is dropped.',
+            'request body on POST /b has no application/json; its schema is read from multipart/form-data (normalized).',
             'request body content type(s) application/xml on POST /c are not imported (only application/json is read).',
+            'request body on POST /d uses application/octet-stream with no mappable object schema; not imported.',
+            'request body on POST /e uses text/plain with no mappable object schema; not imported.',
+        ], $warnings);
+    }
+
+    public function testSchemalessJsonFallsBackToMappableNonJsonBody(): void
+    {
+        // A schema-less application/json stub alongside a multipart object body:
+        // the parser reads the multipart schema, so the scanner reports the
+        // normalization rather than claiming JSON was read.
+        $warnings = (new CoverageScanner())->scan([
+            'paths' => [
+                '/b' => ['post' => ['requestBody' => ['content' => [
+                    'application/json' => [],
+                    'application/x-www-form-urlencoded' => ['schema' => ['type' => 'object']],
+                ]], 'responses' => []]],
+            ],
+        ]);
+
+        self::assertSame([
+            'request body on POST /b has no application/json; its schema is read from application/x-www-form-urlencoded (normalized).',
+        ], $warnings);
+    }
+
+    public function testWarnsWhenResponseSchemaNormalizedFromNonJson(): void
+    {
+        // A response carried only as application/xml is read (normalized), so
+        // the importer surfaces it; a JSON response with extra representations
+        // is not warned (the others are alternative views, not a loss).
+        $warnings = (new CoverageScanner())->scan([
+            'paths' => [
+                '/x' => ['get' => ['responses' => [
+                    '200' => ['content' => ['application/xml' => ['schema' => ['type' => 'object']]]],
+                    '201' => ['content' => ['application/json' => ['schema' => ['type' => 'object']], 'application/xml' => ['schema' => ['type' => 'object']]]],
+                    '204' => ['description' => 'no content'],
+                ]]],
+            ],
+        ]);
+
+        self::assertSame([
+            'response 200 on GET /x has no application/json; its schema is read from application/xml (normalized).',
         ], $warnings);
     }
 
