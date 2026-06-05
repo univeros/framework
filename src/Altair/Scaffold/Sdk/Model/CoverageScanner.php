@@ -102,6 +102,7 @@ final readonly class CoverageScanner
     {
         $this->scanParameters($operation['parameters'] ?? null, $where, $warnings);
         $this->scanRequestBody($operation['requestBody'] ?? null, $where, $warnings);
+        $this->scanResponses($operation['responses'] ?? null, $where, $warnings);
 
         if ($this->nonEmptyArray($operation['security'] ?? null)) {
             $warnings[] = \sprintf('operation `security` on %s is not imported.', $where);
@@ -132,6 +133,12 @@ final readonly class CoverageScanner
     }
 
     /**
+     * Mirrors {@see OpenApiParser::bodySchemaFromContent}: `application/json`
+     * (with a schema) is read and the other representations dropped; with no
+     * JSON, the first content type carrying an object/array schema is read
+     * (normalized to the request body), and a binary/scalar-only body has no
+     * Altair representation and is dropped.
+     *
      * @param list<string> $warnings
      */
     private function scanRequestBody(mixed $requestBody, string $where, array &$warnings): void
@@ -151,17 +158,155 @@ final readonly class CoverageScanner
             return;
         }
 
-        $otherTypes = array_values(array_filter(
-            array_keys($content),
-            static fn(int|string $type): bool => \is_string($type) && $type !== 'application/json',
-        ));
-        if ($otherTypes === []) {
+        if ($this->hasSchema($content['application/json'] ?? null)) {
+            $otherTypes = array_values(array_filter(
+                array_keys($content),
+                static fn(int|string $type): bool => \is_string($type) && $type !== 'application/json',
+            ));
+            if ($otherTypes !== []) {
+                $warnings[] = \sprintf('request body content type(s) %s on %s are not imported (only application/json is read).', implode(', ', $otherTypes), $where);
+            }
+
             return;
         }
 
-        $warnings[] = isset($content['application/json'])
-            ? \sprintf('request body content type(s) %s on %s are not imported (only application/json is read).', implode(', ', $otherTypes), $where)
-            : \sprintf('request body on %s uses %s; only application/json is imported, so the body is dropped.', $where, implode(', ', $otherTypes));
+        $normalizedFrom = $this->firstMappableContentType($content);
+        if ($normalizedFrom !== null) {
+            $warnings[] = \sprintf('request body on %s has no application/json; its schema is read from %s (normalized).', $where, $normalizedFrom);
+
+            return;
+        }
+
+        $types = array_values(array_filter(array_keys($content), \is_string(...)));
+        if ($types !== []) {
+            $warnings[] = \sprintf('request body on %s uses %s with no mappable object schema; not imported.', $where, implode(', ', $types));
+        }
+    }
+
+    /**
+     * Mirrors {@see OpenApiParser::responseSchemaFromContent}: a response whose
+     * schema comes from a non-JSON content type is read (normalized) rather than
+     * dropped, so the importer surfaces the normalization — `output:` blocks
+     * always re-emit as `application/json`. When `application/json` carries the
+     * schema the other representations are alternative views, not a loss, so
+     * they are not warned (unlike a request body, which the client must choose
+     * one representation to send).
+     *
+     * @param list<string> $warnings
+     */
+    private function scanResponses(mixed $responses, string $where, array &$warnings): void
+    {
+        if (!\is_array($responses)) {
+            return;
+        }
+
+        foreach ($responses as $status => $response) {
+            if (!\is_array($response)) {
+                continue;
+            }
+
+            $content = $response['content'] ?? null;
+            if (!\is_array($content)) {
+                continue;
+            }
+
+            if ($this->hasSchema($content['application/json'] ?? null)) {
+                continue;
+            }
+
+            $normalizedFrom = $this->firstContentTypeWithSchema($content);
+            if ($normalizedFrom !== null) {
+                $warnings[] = \sprintf('response %s on %s has no application/json; its schema is read from %s (normalized).', (string) $status, $where, $normalizedFrom);
+            }
+        }
+    }
+
+    /**
+     * First content type whose schema is an object/array/`$ref` root — the one
+     * {@see OpenApiParser} would normalize the body from when no JSON is present.
+     *
+     * @param array<int|string, mixed> $content
+     */
+    private function firstMappableContentType(array $content): ?string
+    {
+        foreach ($content as $type => $media) {
+            if ($type === 'application/json') {
+                continue;
+            }
+
+            if (\is_string($type) && \is_array($media) && $this->isMappableRootSchema($media['schema'] ?? null)) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * First non-JSON content type carrying any schema — the response counterpart
+     * to {@see firstMappableContentType} (responses map scalar schemas too).
+     *
+     * @param array<int|string, mixed> $content
+     */
+    private function firstContentTypeWithSchema(array $content): ?string
+    {
+        foreach ($content as $type => $media) {
+            if ($type === 'application/json') {
+                continue;
+            }
+
+            if (\is_string($type) && $this->hasSchema($media)) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    private function isMappableRootSchema(mixed $schema): bool
+    {
+        if (!\is_array($schema)) {
+            return false;
+        }
+
+        if (isset($schema['$ref'])) {
+            return true;
+        }
+
+        if (\is_array($schema['properties'] ?? null)) {
+            return true;
+        }
+
+        $type = $schema['type'] ?? null;
+        if (\is_array($type)) {
+            $type = $this->firstNonNullType($type);
+        }
+
+        return $type === 'object' || $type === 'array';
+    }
+
+    /**
+     * Mirrors {@see OpenApiParser}'s `firstNonNull`: the first non-`null`,
+     * string entry of an OpenAPI 3.1 `type: [..]` union (so `[object, "null"]`
+     * resolves to `object`). Identical contract keeps the parser and scanner
+     * from disagreeing about which bodies are mappable.
+     *
+     * @param array<mixed> $types
+     */
+    private function firstNonNullType(array $types): ?string
+    {
+        foreach ($types as $type) {
+            if ($type !== 'null' && \is_string($type)) {
+                return $type;
+            }
+        }
+
+        return null;
+    }
+
+    private function hasSchema(mixed $media): bool
+    {
+        return \is_array($media) && \is_array($media['schema'] ?? null);
     }
 
     private function nonEmptyArray(mixed $value): bool

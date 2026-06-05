@@ -269,12 +269,75 @@ final readonly class OpenApiParser
             return null;
         }
 
+        return $this->bodySchemaFromContent($content);
+    }
+
+    /**
+     * Selects the request-body schema from a `content` map. `application/json`
+     * wins when it carries a schema; otherwise the first content type whose
+     * schema is an object or array (multipart/form-data, x-www-form-urlencoded)
+     * is read, so non-JSON *object* bodies map instead of being dropped. A
+     * binary/scalar body (`application/octet-stream`) has no named-field
+     * representation, so it yields null and the {@see CoverageScanner} reports
+     * it. The chosen schema re-emits as `application/json` on export — the
+     * wire content type is normalized, the body structure round-trips.
+     *
+     * @param  array<string, mixed>      $content
+     * @return array<string, mixed>|null
+     */
+    private function bodySchemaFromContent(array $content): ?array
+    {
         $json = $content['application/json'] ?? null;
-        if (!\is_array($json) || !\is_array($json['schema'] ?? null)) {
-            return null;
+        if (\is_array($json) && \is_array($json['schema'] ?? null)) {
+            return $json['schema'];
         }
 
-        return $json['schema'];
+        foreach ($content as $type => $media) {
+            if ($type === 'application/json') {
+                continue;
+            }
+
+            if (!\is_array($media)) {
+                continue;
+            }
+
+            if (!\is_array($media['schema'] ?? null)) {
+                continue;
+            }
+
+            if ($this->isMappableRootSchema($media['schema'])) {
+                return $media['schema'];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether a raw schema node maps to an Altair input body — an object
+     * (named fields), an array (a single named list field), or a `$ref`
+     * (resolved downstream). Scalars/binaries are excluded so an
+     * `application/octet-stream` body stays unmapped rather than producing a
+     * nameless scalar field.
+     *
+     * @param array<string, mixed> $schema
+     */
+    private function isMappableRootSchema(array $schema): bool
+    {
+        if (isset($schema['$ref'])) {
+            return true;
+        }
+
+        if (\is_array($schema['properties'] ?? null)) {
+            return true;
+        }
+
+        $type = $schema['type'] ?? null;
+        if (\is_array($type)) {
+            $type = $this->firstNonNull($type);
+        }
+
+        return $type === 'object' || $type === 'array';
     }
 
     /**
@@ -284,8 +347,11 @@ final readonly class OpenApiParser
     {
         $schema = null;
         $content = $response['content'] ?? null;
-        if (\is_array($content) && \is_array($content['application/json'] ?? null) && \is_array($content['application/json']['schema'] ?? null)) {
-            $schema = $this->parseSchema($content['application/json']['schema']);
+        if (\is_array($content)) {
+            $schemaArray = $this->responseSchemaFromContent($content);
+            if ($schemaArray !== null) {
+                $schema = $this->parseSchema($schemaArray);
+            }
         }
 
         return new ResponseModel(
@@ -293,6 +359,35 @@ final readonly class OpenApiParser
             schema: $schema,
             description: isset($response['description']) && \is_string($response['description']) ? $response['description'] : '',
         );
+    }
+
+    /**
+     * Like {@see bodySchemaFromContent} but for responses, which Altair's
+     * `output:` block can render from any schema kind (including scalars), so
+     * the fallback accepts the first content type carrying a schema rather than
+     * restricting to object/array roots.
+     *
+     * @param  array<string, mixed>      $content
+     * @return array<string, mixed>|null
+     */
+    private function responseSchemaFromContent(array $content): ?array
+    {
+        $json = $content['application/json'] ?? null;
+        if (\is_array($json) && \is_array($json['schema'] ?? null)) {
+            return $json['schema'];
+        }
+
+        foreach ($content as $type => $media) {
+            if ($type === 'application/json') {
+                continue;
+            }
+
+            if (\is_array($media) && \is_array($media['schema'] ?? null)) {
+                return $media['schema'];
+            }
+        }
+
+        return null;
     }
 
     /**
