@@ -109,6 +109,84 @@ final class PathDeriverTest extends TestCase
         self::assertSame('specs/users/create.yaml', $filename);
     }
 
+    public function testActionStyleSegmentIsNotTreatedAsResource(): void
+    {
+        $deriver = new PathDeriver();
+
+        // findByStatus / uploadImage / login are RPC-style actions, not resources:
+        // the resource is the noun segment before them, never singularized into junk.
+        self::assertSame(
+            'App\\Pet\\FindPetsByStatus',
+            $deriver->domainFqcn($this->operation('GET', '/pet/findByStatus', operationId: 'findPetsByStatus')),
+        );
+        self::assertSame(
+            'App\\Pet\\UploadFile',
+            $deriver->domainFqcn($this->operation('POST', '/pet/{petId}/uploadImage', operationId: 'uploadFile', pathParameters: ['petId'])),
+        );
+        self::assertSame(
+            'App\\User\\LoginUser',
+            $deriver->domainFqcn($this->operation('POST', '/user/login', operationId: 'loginUser')),
+        );
+    }
+
+    public function testActionSegmentResourceDirUsesTheNoun(): void
+    {
+        $deriver = new PathDeriver();
+
+        self::assertSame('pet', $deriver->resourceDir($this->operation('GET', '/pet/findByStatus', operationId: 'findPetsByStatus')));
+        self::assertSame('pet', $deriver->resourceSingular($this->operation('GET', '/pet/findByStatus', operationId: 'findPetsByStatus')));
+        // A genuine noun leaf (store/inventory) is still the resource.
+        self::assertSame('inventory', $deriver->resourceDir($this->operation('GET', '/store/inventory', operationId: 'getInventory')));
+    }
+
+    public function testCamelCaseSegmentIsNotMangledBySingularize(): void
+    {
+        // Even when every segment is action-style, the trailing 's' of
+        // "findByStatus" must not be stripped to "findByStatu".
+        $deriver = new PathDeriver();
+
+        self::assertSame('findByStatus', $deriver->resourceSingular($this->operation('GET', '/findByStatus', operationId: 'findByStatus')));
+    }
+
+    public function testCamelCaseNounResourceIsStillSingularized(): void
+    {
+        // A camelCase *noun* resource (first word `user`, not a verb) is a
+        // resource, so it is singularized normally — not mistaken for an action.
+        $deriver = new PathDeriver();
+
+        self::assertSame(
+            'App\\UserProfile\\ListUserProfiles',
+            $deriver->domainFqcn($this->operation('GET', '/userProfiles', operationId: 'listUserProfiles')),
+        );
+    }
+
+    public function testFilenameForActionPathUsesNounResource(): void
+    {
+        $filename = (new PathDeriver())->filename($this->operation('GET', '/pet/findByStatus', operationId: 'findPetsByStatus'));
+
+        self::assertSame('api/pet/find.yaml', $filename);
+    }
+
+    public function testFindActionsOnSameResourceDisambiguateToDistinctFiles(): void
+    {
+        $deriver = new PathDeriver();
+        $byStatus = $this->operation('GET', '/pet/findByStatus', operationId: 'findPetsByStatus');
+        $byTags = $this->operation('GET', '/pet/findByTags', operationId: 'findPetsByTags');
+
+        $files = $deriver->resolveFilenames([$byStatus, $byTags]);
+
+        self::assertSame('api/pet/find-pets-by-status.yaml', $files[$deriver->operationKey($byStatus)]);
+        self::assertSame('api/pet/find-pets-by-tags.yaml', $files[$deriver->operationKey($byTags)]);
+    }
+
+    public function testBareActionVerbSingleSegmentFallsBackToItself(): void
+    {
+        $deriver = new PathDeriver();
+
+        self::assertSame('search', $deriver->resourceDir($this->operation('GET', '/search', operationId: 'searchItems')));
+        self::assertSame('login', $deriver->resourceSingular($this->operation('POST', '/login', operationId: 'loginUser')));
+    }
+
     /**
      * @param list<string> $pathParameters
      */

@@ -1,0 +1,34 @@
+endpoint:
+  method: POST
+  path: /store/order
+  summary: 'Place an order for a pet.'
+  tags:
+    - order
+input:
+  id:
+    type: int
+    rules: {  }
+  petId:
+    type: int
+    rules: {  }
+  quantity:
+    type: int
+    rules: {  }
+  shipDate:
+    type: string
+    rules:
+      - datetime
+  status:
+    type: string
+    rules:
+      - 'in:placed,approved,delivered'
+  complete:
+    type: bool
+    rules: {  }
+output:
+  200:
+    body:
+      order: App\Order\Order
+domain:
+  class: App\Order\PlaceOrder
+  invocation: __invoke

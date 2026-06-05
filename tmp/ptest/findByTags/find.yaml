@@ -1,0 +1,19 @@
+endpoint:
+  method: GET
+  path: /pet/findByTags
+  summary: 'Finds Pets by tags.'
+  tags:
+    - findByTags
+input:
+  tags:
+    type: array
+    in: query
+    rules:
+      - required
+output:
+  200:
+    body:
+      result: list<App\Pet\Pet>
+domain:
+  class: App\FindByTag\FindPetsByTags
+  invocation: __invoke

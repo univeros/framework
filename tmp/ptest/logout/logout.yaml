@@ -1,0 +1,9 @@
+endpoint:
+  method: GET
+  path: /user/logout
+  summary: 'Logs out current logged in user session.'
+  tags:
+    - logout
+domain:
+  class: App\Logout\LogoutUser
+  invocation: __invoke

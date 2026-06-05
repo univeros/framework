@@ -1,0 +1,19 @@
+endpoint:
+  method: GET
+  path: '/user/{username}'
+  summary: 'Get user by user name.'
+  tags:
+    - user
+input:
+  username:
+    type: string
+    in: path
+    rules:
+      - required
+output:
+  200:
+    body:
+      user: App\User\User
+domain:
+  class: App\User\GetUserByName
+  invocation: __invoke
