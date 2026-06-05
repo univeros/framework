@@ -117,6 +117,46 @@ final class CoverageScannerTest extends TestCase
         ], $warnings);
     }
 
+    public function testWarnsWhenComponentSchemaUsesAllOf(): void
+    {
+        // allOf is flattened to a merged object on import; the composition
+        // relationship is not preserved, so it is surfaced.
+        $warnings = (new CoverageScanner())->scan([
+            'components' => ['schemas' => [
+                'NewPet' => ['type' => 'object', 'properties' => ['name' => ['type' => 'string']]],
+                'Pet' => ['allOf' => [
+                    ['$ref' => '#/components/schemas/NewPet'],
+                    ['type' => 'object', 'properties' => ['id' => ['type' => 'integer']]],
+                ]],
+            ]],
+            'paths' => [],
+        ]);
+
+        self::assertSame([
+            '`components.schemas.Pet` uses allOf; its subschemas are merged into one object on import (composition not preserved).',
+        ], $warnings);
+    }
+
+    public function testWarnsOnInlineAllOfRequestBody(): void
+    {
+        // An inline allOf body (not via $ref) is flattened too, so it is surfaced
+        // at the operation rather than relying on a named-component warning.
+        $warnings = (new CoverageScanner())->scan([
+            'paths' => [
+                '/things' => ['post' => ['requestBody' => ['content' => ['application/json' => ['schema' => [
+                    'allOf' => [
+                        ['type' => 'object', 'properties' => ['a' => ['type' => 'string']]],
+                        ['type' => 'object', 'properties' => ['b' => ['type' => 'integer']]],
+                    ],
+                ]]]], 'responses' => []]],
+            ],
+        ]);
+
+        self::assertSame([
+            'request body on POST /things uses allOf; its subschemas are merged into one object on import (composition not preserved).',
+        ], $warnings);
+    }
+
     public function testWarnsOnDocumentLevelAndOperationLevelConstructs(): void
     {
         $warnings = (new CoverageScanner())->scan([

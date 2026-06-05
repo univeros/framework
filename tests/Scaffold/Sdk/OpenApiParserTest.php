@@ -145,6 +145,36 @@ class OpenApiParserTest extends TestCase
         $this->assertArrayNotHasKey('fromXml', $body->properties);
     }
 
+    public function testParsesAllOfIntoAllOfNode(): void
+    {
+        $doc = (new OpenApiParser())->parse([
+            'paths' => [
+                '/pets' => [
+                    'post' => [
+                        'operationId' => 'createPet',
+                        'requestBody' => ['content' => ['application/json' => ['schema' => [
+                            'allOf' => [
+                                ['$ref' => '#/components/schemas/NewPet'],
+                                ['type' => 'object', 'properties' => ['id' => ['type' => 'integer']], 'required' => ['id']],
+                            ],
+                        ]]]],
+                        'responses' => ['200' => ['description' => 'ok']],
+                    ],
+                ],
+            ],
+            'components' => ['schemas' => [
+                'NewPet' => ['type' => 'object', 'properties' => ['name' => ['type' => 'string']], 'required' => ['name']],
+            ]],
+        ]);
+
+        $body = $doc->operations[0]->requestBody;
+        $this->assertNotNull($body);
+        $this->assertSame(SchemaType::ALLOF, $body->kind);
+        $this->assertCount(2, $body->allOf);
+        $this->assertSame(SchemaType::REF, $body->allOf[0]->kind);
+        $this->assertTrue($body->allOf[1]->isObject());
+    }
+
     public function testSchemalessJsonFallsBackToMappableBody(): void
     {
         // application/json present but with no schema (a stub): the parser falls

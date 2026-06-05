@@ -380,6 +380,127 @@ final class SchemaMapperTest extends TestCase
         }
     }
 
+    public function testMergesAllOfBodyIntoSingleObject(): void
+    {
+        // allOf composition has no Altair representation, so the subschema
+        // properties are merged into one flat object (composition flattened).
+        $body = SchemaType::allOf([
+            SchemaType::object(['a' => ['schema' => SchemaType::scalar('string'), 'required' => true]]),
+            SchemaType::object(['b' => ['schema' => SchemaType::scalar('integer'), 'required' => false]]),
+        ]);
+        $operation = $this->operation('POST', '/things', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            ['name' => 'a', 'type' => 'string', 'rules' => ['required']],
+            ['name' => 'b', 'type' => 'int', 'rules' => []],
+        ], $fields);
+    }
+
+    public function testMergesAllOfWithRefSubschemaResolvingComponents(): void
+    {
+        // The classic inheritance shape: allOf [ $ref Base, inline {id} ].
+        $body = SchemaType::allOf([
+            SchemaType::ref('Base'),
+            SchemaType::object(['id' => ['schema' => SchemaType::scalar('integer'), 'required' => true]]),
+        ]);
+        $operation = $this->operation('POST', '/pets', requestBody: $body);
+        $document = new OpenApiDocument(
+            title: 'X',
+            version: '1.0',
+            operations: [],
+            namedSchemas: [
+                'Base' => SchemaType::object(['name' => ['schema' => SchemaType::scalar('string'), 'required' => true]]),
+            ],
+        );
+
+        $fields = (new SchemaMapper())->inputFields($document, $operation);
+
+        self::assertSame([
+            ['name' => 'name', 'type' => 'string', 'rules' => ['required']],
+            ['name' => 'id', 'type' => 'int', 'rules' => ['required']],
+        ], $fields);
+    }
+
+    public function testAllOfRequiredIsUnionedAcrossSubschemas(): void
+    {
+        // The same property required in any subschema is required in the merge.
+        $body = SchemaType::allOf([
+            SchemaType::object(['x' => ['schema' => SchemaType::scalar('string'), 'required' => false]]),
+            SchemaType::object(['x' => ['schema' => SchemaType::scalar('string'), 'required' => true]]),
+        ]);
+        $operation = $this->operation('POST', '/things', requestBody: $body);
+
+        $fields = (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+
+        self::assertSame([
+            ['name' => 'x', 'type' => 'string', 'rules' => ['required']],
+        ], $fields);
+    }
+
+    public function testAllOfWithNonObjectSubschemaRaises(): void
+    {
+        $body = SchemaType::allOf([
+            SchemaType::object(['a' => ['schema' => SchemaType::scalar('string'), 'required' => true]]),
+            SchemaType::scalar('string'),
+        ]);
+        $operation = $this->operation('POST', '/things', requestBody: $body);
+
+        $this->expectException(UnmappableSchemaException::class);
+        $this->expectExceptionMessage('allOf');
+        (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+    }
+
+    public function testCyclicAllOfViaRefTerminatesWithException(): void
+    {
+        // A self-referential allOf (Pet: allOf [$ref Pet]) must terminate via the
+        // resolution-depth guard, not recurse forever / overflow the stack.
+        $document = new OpenApiDocument(
+            title: 'X',
+            version: '1.0',
+            operations: [],
+            namedSchemas: ['Pet' => SchemaType::allOf([SchemaType::ref('Pet')])],
+        );
+        $operation = $this->operation('POST', '/pets', requestBody: SchemaType::ref('Pet'));
+
+        $this->expectException(UnmappableSchemaException::class);
+        $this->expectExceptionMessage('resolution depth');
+        (new SchemaMapper())->inputFields($document, $operation);
+    }
+
+    public function testDeeplyNestedInlineAllOfRaises(): void
+    {
+        // A pathological inline allOf nesting bomb is bounded by the same guard.
+        $schema = SchemaType::object(['a' => ['schema' => SchemaType::scalar('string'), 'required' => false]]);
+        for ($i = 0; $i < 9; ++$i) {
+            $schema = SchemaType::allOf([$schema]);
+        }
+
+        $operation = $this->operation('POST', '/things', requestBody: $schema);
+
+        $this->expectException(UnmappableSchemaException::class);
+        $this->expectExceptionMessage('allOf composition exceeded resolution depth');
+        (new SchemaMapper())->inputFields($this->emptyDocument(), $operation);
+    }
+
+    public function testNestedAllOfPropertyInResponseMapsToLooseMap(): void
+    {
+        // A response object whose property is itself an allOf exercises the
+        // ALLOF arm of outputType (property schemas are not pre-resolved).
+        $operation = $this->operation('GET', '/things', responses: [
+            new ResponseModel(status: '200', schema: SchemaType::object([
+                'meta' => ['schema' => SchemaType::allOf([
+                    SchemaType::object(['a' => ['schema' => SchemaType::scalar('string'), 'required' => false]]),
+                ]), 'required' => false],
+            ])),
+        ]);
+
+        $outputs = (new SchemaMapper())->outputs($this->emptyDocument(), $operation);
+
+        self::assertSame([200 => ['meta' => 'array<string, mixed>']], $outputs);
+    }
+
     /**
      * @param list<string>          $pathParameters
      * @param list<ResponseModel>   $responses

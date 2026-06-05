@@ -34,11 +34,14 @@ final readonly class SchemaType
 
     public const string MIXED = 'mixed';
 
+    public const string ALLOF = 'allOf';
+
     /**
      * @param array<string, PropertyShape>      $properties  Object properties (OBJECT kind).
      * @param list<string>                       $enumValues  Allowed values (ENUM kind).
      * @param array<string, int|float|string>    $constraints JSON-Schema validation keywords kept verbatim
      *                                                        (`minLength`, `maxLength`, `pattern`, `minimum`, `maximum`).
+     * @param list<SchemaType>                   $allOf       Subschemas of an `allOf` composition (ALLOF kind), merged downstream.
      */
     public function __construct(
         public string $kind,
@@ -50,6 +53,7 @@ final readonly class SchemaType
         public ?string $format = null,
         public bool $nullable = false,
         public array $constraints = [],
+        public array $allOf = [],
     ) {}
 
     /**
@@ -89,6 +93,18 @@ final readonly class SchemaType
     public static function enum(array $values, bool $nullable = false): self
     {
         return new self(kind: self::ENUM, scalarType: 'string', enumValues: $values, nullable: $nullable);
+    }
+
+    /**
+     * An `allOf` composition. The subschemas are kept unresolved here; the
+     * mapper merges their (resolved) object properties into one object, since
+     * Altair has no representation for schema composition.
+     *
+     * @param list<SchemaType> $subschemas
+     */
+    public static function allOf(array $subschemas, bool $nullable = false): self
+    {
+        return new self(kind: self::ALLOF, nullable: $nullable, allOf: $subschemas);
     }
 
     public function isObject(): bool

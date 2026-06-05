@@ -328,6 +328,10 @@ final readonly class OpenApiParser
             return true;
         }
 
+        if (\is_array($schema['allOf'] ?? null)) {
+            return true;
+        }
+
         if (\is_array($schema['properties'] ?? null)) {
             return true;
         }
@@ -407,6 +411,10 @@ final readonly class OpenApiParser
             return SchemaType::enum($values, $nullable);
         }
 
+        if (isset($schema['allOf']) && \is_array($schema['allOf'])) {
+            return $this->parseAllOf($schema, $nullable);
+        }
+
         $type = $schema['type'] ?? null;
         // OpenAPI 3.1 allows `type: [string, "null"]`.
         if (\is_array($type)) {
@@ -426,6 +434,31 @@ final readonly class OpenApiParser
             'string' => SchemaType::scalar('string', $this->formatOf($schema), $nullable, $this->constraintsOf($schema)),
             default => $this->fallbackSchema($schema, $nullable),
         };
+    }
+
+    /**
+     * Parses an `allOf` node into an {@see SchemaType::ALLOF} carrying its
+     * subschemas (refs kept unresolved). The mapper merges them into one
+     * object — Altair has no representation for composition. Sibling keywords
+     * on the `allOf` node itself (`properties`/`required`) are a valid extra
+     * constraint, so they ride along as an additional inline object subschema.
+     *
+     * @param array<string, mixed> $schema
+     */
+    private function parseAllOf(array $schema, bool $nullable): SchemaType
+    {
+        $subschemas = [];
+        foreach ($schema['allOf'] as $sub) {
+            if (\is_array($sub)) {
+                $subschemas[] = $this->parseSchema($sub);
+            }
+        }
+
+        if (\is_array($schema['properties'] ?? null)) {
+            $subschemas[] = SchemaType::object($this->parseProperties($schema));
+        }
+
+        return SchemaType::allOf($subschemas, $nullable);
     }
 
     /**
