@@ -13,6 +13,7 @@ namespace Altair\Scaffold\Cli;
 
 use Altair\Scaffold\Emitter\OpenApiEmitter;
 use Altair\Scaffold\Sdk\Model\OpenApiParser;
+use Altair\Scaffold\Sdk\Model\RefBundler;
 use Altair\Scaffold\Spec\Emitter\EmittedSpec;
 use Altair\Scaffold\Spec\Emitter\Emitter as SpecEmitter;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
@@ -66,10 +67,23 @@ final readonly class OpenApiRoundtripRunner
         $sourceYaml = (string) @file_get_contents($options->documentPath);
 
         try {
-            $source = $this->openApiParser->parseYaml($sourceYaml);
+            $decoded = Yaml::parse($sourceYaml);
+            if (!\is_array($decoded)) {
+                return new RoundtripReceipt(
+                    clean: false,
+                    input: $options->documentPath,
+                    operationsCompared: 0,
+                    differences: [],
+                    error: 'OpenAPI document must be a YAML map at the top level.',
+                );
+            }
+
+            $real = realpath($options->documentPath);
+            $bundled = (new RefBundler(\dirname($real !== false ? $real : $options->documentPath)))->bundle($decoded)->document;
+            $source = $this->openApiParser->parse($bundled);
             $emittedSpecs = $this->specEmitter->emit($source);
             $rebuilt = $this->reemit($emittedSpecs);
-            $sourceProjection = $this->projectFromDocument(Yaml::parse($sourceYaml) ?: []);
+            $sourceProjection = $this->projectFromDocument($bundled);
             $rebuiltProjection = $this->projectFromDocument($rebuilt);
             $differences = $this->compare($sourceProjection, $rebuiltProjection);
         } catch (UnmappableSchemaException $unmappableSchemaException) {

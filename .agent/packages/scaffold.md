@@ -5,6 +5,7 @@
 ## Concrete classes
 
 - `ActionEmitter`
+- `BundleResult` _(final)_
 - `CoverageScanner` _(final)_
 - `DiffCommand` _(final)_
 - `DomainSpec` _(final)_
@@ -68,6 +69,7 @@
 - `PhpHeader` _(final)_
 - `PythonEmitter` _(final)_ — implements `EmitterInterface`
 - `QueueDispatchSpec` _(final)_
+- `RefBundler` _(final)_
 - `ReplayCommand` _(final)_
 - `RepositoryEmitter` _(final)_
 - `ResponderEmitter`
@@ -143,6 +145,7 @@
 - `tests/Scaffold/Sdk/OpenApiParserExtensionsTest.php`
 - `tests/Scaffold/Sdk/OpenApiParserTest.php`
 - `tests/Scaffold/Sdk/PythonEmitterTest.php`
+- `tests/Scaffold/Sdk/RefBundlerTest.php`
 - `tests/Scaffold/Sdk/TypeScriptEmitterTest.php`
 - `tests/Scaffold/Spec/Emitter/EmittedSpecTest.php`
 - `tests/Scaffold/Spec/Emitter/EmitterTest.php`
