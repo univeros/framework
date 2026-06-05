@@ -60,6 +60,17 @@ final class OpenApiRoundtripRunnerTest extends TestCase
         self::assertSame([], $receipt->differences);
     }
 
+    public function testNonMapDocumentIsAnErrorNotASilentCleanPass(): void
+    {
+        $documentPath = $this->writeDocument("just-a-scalar-string\n");
+
+        $receipt = (new OpenApiRoundtripRunner())->run(new OpenApiRoundtripOptions($documentPath));
+
+        self::assertFalse($receipt->clean);
+        self::assertNotNull($receipt->error);
+        self::assertStringContainsString('YAML map', $receipt->error);
+    }
+
     public function testDescriptionOnlyStatusesDoNotCountAsDrift(): void
     {
         // 204 No Content and 404 Not Found carry no schema; the round-trip

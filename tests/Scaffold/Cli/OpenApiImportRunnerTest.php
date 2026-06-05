@@ -104,6 +104,76 @@ final class OpenApiImportRunnerTest extends TestCase
         );
     }
 
+    public function testBundlesExternalFileRefIntoSpecInputs(): void
+    {
+        // Phase 4e: a body whose schema lives in a sibling file is bundled and
+        // imported instead of failing with "ref not defined".
+        mkdir($this->sandbox . '/schemas', 0o755, true);
+        file_put_contents($this->sandbox . '/schemas/pet.yaml', <<<'YAML'
+            Pet:
+              type: object
+              required: [name]
+              properties:
+                name: { type: string }
+                tag: { type: string }
+            YAML);
+        $path = $this->sandbox . '/openapi.yaml';
+        file_put_contents($path, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets API, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema: { $ref: './schemas/pet.yaml#/Pet' }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $path,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok);
+        $spec = Yaml::parseFile($this->sandbox . '/api/pets/create.yaml');
+        self::assertSame(['name', 'tag'], array_keys($spec['input']));
+        self::assertContains('required', $spec['input']['name']['rules']);
+    }
+
+    public function testRejectsRemoteExternalRefWithWarning(): void
+    {
+        $path = $this->sandbox . '/openapi.yaml';
+        file_put_contents($path, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: API, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  requestBody:
+                    content:
+                      application/json:
+                        schema: { $ref: 'https://evil.example/pet.yaml#/Pet' }
+                  responses:
+                    '201': { description: Created }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $path,
+            projectRoot: $this->sandbox,
+            skipUnmappable: true,
+        ));
+
+        self::assertTrue($receipt->ok);
+        self::assertStringContainsString('remote', implode("\n", $receipt->warnings));
+    }
+
     public function testFlattensAllOfBodyIntoSpecInputs(): void
     {
         // Phase 4b: a request body composed with allOf (inheritance via $ref +

@@ -23,9 +23,11 @@ use Altair\Scaffold\Emitter\EmittedFileKind;
 use Altair\Scaffold\Journal\Journal;
 use Altair\Scaffold\Journal\JournalEntry;
 use Altair\Scaffold\Journal\SnapshotCollector;
+use Altair\Scaffold\Sdk\Exception\SdkException;
 use Altair\Scaffold\Sdk\Model\CoverageScanner;
 use Altair\Scaffold\Sdk\Model\OpenApiDocument;
 use Altair\Scaffold\Sdk\Model\OpenApiParser;
+use Altair\Scaffold\Sdk\Model\RefBundler;
 use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
 use Altair\Scaffold\Spec\Emitter\OperationMapper;
 use Altair\Scaffold\Spec\Emitter\PathDeriver;
@@ -37,6 +39,7 @@ use Altair\Scaffold\Writer\WriteStatus;
 use function array_values;
 use function microtime;
 
+use Symfony\Component\Yaml\Exception\ParseException;
 use Symfony\Component\Yaml\Yaml;
 use Throwable;
 
@@ -103,7 +106,8 @@ final readonly class OpenApiImportRunner
         }
 
         try {
-            $document = $this->parser->parseYaml($sourceContents);
+            $bundle = (new RefBundler($this->baseDir($options->documentPath)))->bundle($this->decodeDocument($sourceContents));
+            $document = $this->parser->parse($bundle->document);
             $plan = $this->planSpecs($document, $options);
         } catch (UnmappableSchemaException $unmappableSchemaException) {
             return $this->failure(
@@ -116,7 +120,7 @@ final readonly class OpenApiImportRunner
             return $this->failure($options, $throwable->getMessage(), $startedAt);
         }
 
-        $coverageWarnings = $this->coverageWarnings($sourceContents);
+        $coverageWarnings = [...$bundle->warnings, ...$this->coverageScanner->scan($bundle->document)];
 
         if ($options->dryRun) {
             return $this->dryRunReceipt($options, $plan, $document, $coverageWarnings);
@@ -465,21 +469,37 @@ final readonly class OpenApiImportRunner
     }
 
     /**
-     * Warnings for every OpenAPI construct the importer drops — so nothing is
-     * lost silently. Best-effort: a document that no longer parses as YAML
-     * simply yields no coverage warnings (the parse failure surfaces elsewhere).
+     * Decodes the raw document, mirroring {@see OpenApiParser::parseYaml}'s
+     * error handling so an invalid document fails the same way whether or not
+     * it carries external refs.
      *
-     * @return list<string>
+     * @return array<string, mixed>
      */
-    private function coverageWarnings(string $sourceContents): array
+    private function decodeDocument(string $sourceContents): array
     {
         try {
-            $raw = Yaml::parse($sourceContents);
-        } catch (Throwable) {
-            return [];
+            $decoded = Yaml::parse($sourceContents);
+        } catch (ParseException $parseException) {
+            throw new SdkException('Invalid OpenAPI YAML: ' . $parseException->getMessage(), 0, $parseException);
         }
 
-        return \is_array($raw) ? $this->coverageScanner->scan($raw) : [];
+        if (!\is_array($decoded)) {
+            throw new SdkException('OpenAPI document must be a YAML map at the top level.');
+        }
+
+        return $decoded;
+    }
+
+    /**
+     * Directory the document's external `$ref`s resolve against, with the
+     * document path canonicalized first so a symlinked spec still resolves its
+     * siblings against their real directory.
+     */
+    private function baseDir(string $documentPath): string
+    {
+        $real = realpath($documentPath);
+
+        return \dirname($real !== false ? $real : $documentPath);
     }
 
     /**

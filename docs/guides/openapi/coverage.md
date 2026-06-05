@@ -21,6 +21,7 @@ closes the gaps.
 - Schema types: `object` (incl. **nested objects**), `array`, **arrays of objects**, **top-level array bodies**, scalars (`integer`→`int`, `number`→`float`, `boolean`→`bool`, `string`), `enum`→`in:` rule.
 - **Validation constraints** ↔ rules (Phase 3): `format` (`email`/`uri`/`ip`/`date-time`)→`email`/`url`/`ip`/`datetime`; `minLength`/`maxLength`→`min`/`max`; `minimum`/`maximum`→`min`/`max`; `pattern`→`regex:`. Round-trips (the forward emitter writes the inverse).
 - Internal `$ref` (`#/components/schemas/<Name>`), `properties` + `required`.
+- **External relative-file `$ref`** (Phase 4e) — a `$ref` into a sibling file (`./schemas/pet.yaml#/Pet`) is **bundled**: the target schema (and its own nested/internal refs) is inlined into `components/schemas` and the ref rewritten to internal, so multi-file specs import instead of failing. Bounded (file count, per-file size, ref-chase depth; cycles dedupe). **Remote refs are never fetched** and a ref escaping the document's directory is rejected — both are warned and left unresolved.
 - **`allOf` composition** (Phase 4b) — subschemas are resolved (`$ref`s included) and their properties **merged into one object**; a property required in any subschema is required in the merge. Altair has no representation for composition, so the relationship is flattened (warned) while the data is preserved. A subschema that does not resolve to an object is unmappable.
 - `x-altair-*` extensions (domain/persistence/queue/idempotency/webhook round-trip).
 
@@ -41,7 +42,7 @@ closes the gaps.
 
 ### Surfaced as errors / skips (fail, or `--skip-unmappable`)
 
-- **External / file / URL `$ref`** (only internal component refs resolve).
+- **Remote (`http(s)://`) `$ref`, or a file `$ref` escaping the document directory** — warned by the bundler and left unresolved, so the mapper surfaces them as unmappable (never fetched/read).
 - `oneOf` / `anyOf` in a request body; recursive `$ref`; a bare scalar body (incl. a normalized non-JSON body that turns out to be a scalar); an `allOf` whose subschema is not an object.
 
 ### Not yet mapped or warned (later phases)
@@ -63,6 +64,7 @@ constraints** from validation rules — `email`→`format`, `min:3`→`minLength
 
 See [#214](https://github.com/univeros/framework/issues/214) for the phased plan
 (stop silent loss → parameters → validation fidelity → content & composition →
-security & misc). This page is updated as each phase lands. **Phases 4a** (non-JSON
-object bodies), **4b** (`allOf` merge), and **4c/4d** (`oneOf`/`anyOf` +
-`additionalProperties`, surfaced) have landed; external-`$ref` bundling remains.
+security & misc). This page is updated as each phase lands. **Phase 4 is
+complete** — 4a (non-JSON bodies), 4b (`allOf` merge), 4c/4d (`oneOf`/`anyOf` +
+`additionalProperties`), and 4e (external-`$ref` bundling). **Phase 5** (security
+schemes + naming) is next.
