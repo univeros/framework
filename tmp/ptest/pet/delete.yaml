@@ -1,0 +1,19 @@
+endpoint:
+  method: DELETE
+  path: '/pet/{petId}'
+  summary: 'Deletes a pet.'
+  tags:
+    - pet
+input:
+  petId:
+    type: int
+    in: path
+    rules:
+      - required
+  api_key:
+    type: string
+    in: header
+    rules: {  }
+domain:
+  class: App\Pet\DeletePet
+  invocation: __invoke

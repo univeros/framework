@@ -16,7 +16,8 @@ closes the gaps.
 ### Mapped
 
 - Paths + operations; `operationId` (or synthesised), `summary`.
-- **Parameters** — path / query / header / cookie become inputs tagged with their `in:` location (with type + `required`; enums → `in:` rule). *Phase 2.*
+- **Resource naming** (Phase 5) — RPC-style path leaves (`findByStatus`, `uploadImage`, `login`) are recognised as actions, not resources: `GET /pet/findByStatus` derives the `Pet` namespace (`App\Pet\FindPetsByStatus`), not a mangled `FindByStatu`. The nearest noun segment is the resource.
+- **Parameters** — path / query / header / cookie become inputs tagged with their `in:` location (with their declared **type** + `required`; enums → `in:` rule). A path param declared with `schema: {type: integer}` imports as `int`, not `string`. *Phase 2.*
 - Request + response bodies in **`application/json`**. When a request body has **no `application/json`**, its schema is read from the first content type carrying an object/array schema (multipart/form-data, x-www-form-urlencoded) — the body is *normalized*, not dropped (Phase 4a). Responses fall back to the first content type with any schema. On export the body always re-emits as `application/json`, so the wire content type is normalized while the body structure round-trips.
 - Schema types: `object` (incl. **nested objects**), `array`, **arrays of objects**, **top-level array bodies**, scalars (`integer`→`int`, `number`→`float`, `boolean`→`bool`, `string`), `enum`→`in:` rule.
 - **Validation constraints** ↔ rules (Phase 3): `format` (`email`/`uri`/`ip`/`date-time`)→`email`/`url`/`ip`/`datetime`; `minLength`/`maxLength`→`min`/`max`; `minimum`/`maximum`→`min`/`max`; `pattern`→`regex:`. Round-trips (the forward emitter writes the inverse).
@@ -37,7 +38,7 @@ closes the gaps.
 - **`allOf` flattening** (Phase 4b) — reported once per named component that uses it (`` `components.schemas.<Name>` uses allOf ``) and per inline body/response that uses it, since the composition relationship is not preserved.
 - **`oneOf` / `anyOf`** (Phase 4c) — a union has no Altair representation; reported per component / inline body / response. A `oneOf`/`anyOf` *body* stays unmappable (skipped with `--skip-unmappable`); a union *response* surfaces as `mixed`.
 - **`additionalProperties`** (Phase 4d) — an open-ended map; reported per component / inline body / response. Declared `properties` still map; only the open-key capability is dropped. An explicit `additionalProperties: false` (closed object) is not warned.
-- operation + global **`security`**, `components.securitySchemes`.
+- operation + global **`security`** and `components.securitySchemes` — surfaced **by design** (Phase 5): Altair has no auth/middleware spec construct to generate into, so the requirement is reported (so you wire auth yourself) rather than silently dropped. This is a deliberate non-goal, like `oneOf` — not a pending gap.
 - `servers`, `webhooks` (3.1), `callbacks`, path-item `$ref`.
 
 ### Surfaced as errors / skips (fail, or `--skip-unmappable`)
@@ -57,14 +58,17 @@ closes the gaps.
 `application/json` request body from body inputs, **OpenAPI `parameters`** for
 inputs tagged `in: path|query|header|cookie` (Phase 2), and **schema
 constraints** from validation rules — `email`→`format`, `min:3`→`minLength`,
-`in:`→`enum`, `regex`→`pattern` (Phase 3). Not yet emitted (tracked in #214):
-`security`, `servers`.
+`in:`→`enum`, `regex`→`pattern` (Phase 3). `security` and `servers` are not
+emitted — there is no Altair spec construct that carries them (see the security
+note above).
 
 ## Roadmap
 
 See [#214](https://github.com/univeros/framework/issues/214) for the phased plan
 (stop silent loss → parameters → validation fidelity → content & composition →
-security & misc). This page is updated as each phase lands. **Phase 4 is
-complete** — 4a (non-JSON bodies), 4b (`allOf` merge), 4c/4d (`oneOf`/`anyOf` +
-`additionalProperties`), and 4e (external-`$ref` bundling). **Phase 5** (security
-schemes + naming) is next.
+security & misc). **The epic is complete.** Phases 1–3 (stop silent loss,
+parameters, validation), Phase 4 (4a non-JSON bodies, 4b `allOf`, 4c/4d
+`oneOf`/`anyOf` + `additionalProperties`, 4e external-`$ref` bundling), and
+Phase 5 (resource-naming fixes; path-param types; `security` surfaced by design)
+have all landed. Remaining items are deliberate non-goals (composition unions,
+auth middleware) or low-value constraints, each surfaced rather than dropped.

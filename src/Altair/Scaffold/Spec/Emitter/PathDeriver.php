@@ -21,6 +21,19 @@ use Altair\Scaffold\Sdk\Model\OperationModel;
  */
 final readonly class PathDeriver
 {
+    /**
+     * Leading verbs that mark a path leaf as an RPC-style action rather than a
+     * resource. Matched against the leaf's *first* camelCase word, so
+     * `findByStatus`/`uploadImage`/`login` are actions while noun leaves like
+     * `userProfiles` (first word `user`) or `findings` (one word, not `find`)
+     * stay resources.
+     */
+    private const array ACTION_VERBS = [
+        'get', 'list', 'find', 'search', 'fetch', 'create', 'add', 'update',
+        'delete', 'remove', 'upload', 'download', 'login', 'logout', 'register',
+        'refresh', 'verify', 'reset', 'send', 'callback', 'me',
+    ];
+
     public function __construct(
         private string $appNamespace = 'App',
         private string $specRoot = 'api',
@@ -144,7 +157,27 @@ final readonly class PathDeriver
             return 'endpoint';
         }
 
-        return end($segments);
+        // Walk back past RPC-style action leaves (findByStatus, uploadImage,
+        // login) to the nearest noun resource — an action is not a resource and
+        // must not become the class namespace. `/pet/findByStatus` → `pet`.
+        for ($i = \count($segments) - 1; $i >= 0; --$i) {
+            if (!$this->isActionSegment($segments[$i])) {
+                return $segments[$i];
+            }
+        }
+
+        return $segments[\count($segments) - 1];
+    }
+
+    /**
+     * Whether a path leaf reads as an action (verb/RPC) rather than a resource
+     * (noun): its first camelCase word is a known verb. `findByStatus` → `find`
+     * (action); `userProfiles` → `user` (resource); `findings` → `findings`
+     * (one word, not `find` → resource).
+     */
+    private function isActionSegment(string $segment): bool
+    {
+        return \in_array(strtolower($this->firstCamelWord($segment)), self::ACTION_VERBS, true);
     }
 
     private function endsWithPathParameter(string $path): bool
@@ -246,6 +279,12 @@ final readonly class PathDeriver
     private function singularize(string $value): string
     {
         if ($value === '') {
+            return $value;
+        }
+
+        // Never singularize an action/RPC leaf: stripping the trailing 's' of
+        // "findByStatus" would yield "findByStatu".
+        if ($this->isActionSegment($value)) {
             return $value;
         }
 

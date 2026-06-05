@@ -1,0 +1,19 @@
+endpoint:
+  method: GET
+  path: '/pet/{petId}'
+  summary: 'Find pet by ID.'
+  tags:
+    - pet
+input:
+  petId:
+    type: int
+    in: path
+    rules:
+      - required
+output:
+  200:
+    body:
+      pet: App\Pet\Pet
+domain:
+  class: App\Pet\GetPetById
+  invocation: __invoke

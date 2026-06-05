@@ -1,0 +1,49 @@
+endpoint:
+  method: POST
+  path: /pet
+  summary: 'Add a new pet to the store.'
+  tags:
+    - pet
+input:
+  id:
+    type: int
+    rules: {  }
+  name:
+    type: string
+    rules:
+      - required
+  category:
+    type: object
+    rules: {  }
+    fields:
+      id:
+        type: int
+        rules: {  }
+      name:
+        type: string
+        rules: {  }
+  photoUrls:
+    type: array
+    rules:
+      - required
+  tags:
+    type: array
+    rules: {  }
+    fields:
+      id:
+        type: int
+        rules: {  }
+      name:
+        type: string
+        rules: {  }
+  status:
+    type: string
+    rules:
+      - 'in:available,pending,sold'
+output:
+  200:
+    body:
+      pet: App\Pet\Pet
+domain:
+  class: App\Pet\AddPet
+  invocation: __invoke

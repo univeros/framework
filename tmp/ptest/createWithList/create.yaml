@@ -1,0 +1,42 @@
+endpoint:
+  method: POST
+  path: /user/createWithList
+  summary: 'Creates list of users with given input array.'
+  tags:
+    - createWithList
+input:
+  items:
+    type: array
+    rules: {  }
+    fields:
+      id:
+        type: int
+        rules: {  }
+      username:
+        type: string
+        rules: {  }
+      firstName:
+        type: string
+        rules: {  }
+      lastName:
+        type: string
+        rules: {  }
+      email:
+        type: string
+        rules: {  }
+      password:
+        type: string
+        rules: {  }
+      phone:
+        type: string
+        rules: {  }
+      userStatus:
+        type: int
+        rules: {  }
+output:
+  200:
+    body:
+      user: App\User\User
+domain:
+  class: App\CreateWithList\CreateUsersWithListInput
+  invocation: __invoke

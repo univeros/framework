@@ -1,0 +1,20 @@
+endpoint:
+  method: GET
+  path: /pet/findByStatus
+  summary: 'Finds Pets by status.'
+  tags:
+    - findByStatus
+input:
+  status:
+    type: string
+    in: query
+    rules:
+      - required
+      - 'in:available,pending,sold'
+output:
+  200:
+    body:
+      result: list<App\Pet\Pet>
+domain:
+  class: App\FindByStatu\FindPetsByStatus
+  invocation: __invoke
