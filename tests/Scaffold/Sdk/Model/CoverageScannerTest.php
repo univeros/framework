@@ -137,6 +137,63 @@ final class CoverageScannerTest extends TestCase
         ], $warnings);
     }
 
+    public function testWarnsOnOneOfAnyOfAndAdditionalPropertiesComponents(): void
+    {
+        // Unions (oneOf/anyOf) have no Altair representation; additionalProperties
+        // is an open-ended map whose extra keys are not imported. All surfaced.
+        $warnings = (new CoverageScanner())->scan([
+            'components' => ['schemas' => [
+                'Choice' => ['oneOf' => [['type' => 'object'], ['type' => 'string']]],
+                'Mix' => ['anyOf' => [['type' => 'object'], ['type' => 'integer']]],
+                'Map' => ['type' => 'object', 'additionalProperties' => ['type' => 'integer']],
+                'OpenMap' => ['type' => 'object', 'additionalProperties' => true],
+                'Closed' => ['type' => 'object', 'additionalProperties' => false],
+            ]],
+            'paths' => [],
+        ]);
+
+        self::assertSame([
+            '`components.schemas.Choice` uses oneOf; a union has no Altair representation, so it is not imported.',
+            '`components.schemas.Mix` uses anyOf; a union has no Altair representation, so it is not imported.',
+            '`components.schemas.Map` uses additionalProperties; open-ended map keys are not imported.',
+            '`components.schemas.OpenMap` uses additionalProperties; open-ended map keys are not imported.',
+        ], $warnings);
+    }
+
+    public function testDetectsCompositionKeywordsNestedInProperties(): void
+    {
+        // A union buried inside a property is found by the recursive descent.
+        $warnings = (new CoverageScanner())->scan([
+            'components' => ['schemas' => [
+                'Wrapper' => ['type' => 'object', 'properties' => [
+                    'payload' => ['oneOf' => [['type' => 'string'], ['type' => 'integer']]],
+                ]],
+            ]],
+            'paths' => [],
+        ]);
+
+        self::assertSame([
+            '`components.schemas.Wrapper` uses oneOf; a union has no Altair representation, so it is not imported.',
+        ], $warnings);
+    }
+
+    public function testWarnsOnInlineOneOfResponseBody(): void
+    {
+        $warnings = (new CoverageScanner())->scan([
+            'paths' => [
+                '/x' => ['get' => ['responses' => [
+                    '200' => ['content' => ['application/json' => ['schema' => [
+                        'oneOf' => [['type' => 'object'], ['type' => 'string']],
+                    ]]]],
+                ]]],
+            ],
+        ]);
+
+        self::assertSame([
+            'response 200 on GET /x uses oneOf; a union has no Altair representation, so it is not imported.',
+        ], $warnings);
+    }
+
     public function testWarnsOnInlineAllOfRequestBody(): void
     {
         // An inline allOf body (not via $ref) is flattened too, so it is surfaced
