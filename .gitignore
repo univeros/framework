@@ -59,3 +59,7 @@ phpstan.neon.cache
 /docs/marketing/
 /docs/strategy/
 
+
+# Local scratch output (e.g. ad-hoc openapi:import --out runs)
+/tmp/
+tmp/
