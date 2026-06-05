@@ -21,6 +21,7 @@ closes the gaps.
 - Schema types: `object` (incl. **nested objects**), `array`, **arrays of objects**, **top-level array bodies**, scalars (`integer`→`int`, `number`→`float`, `boolean`→`bool`, `string`), `enum`→`in:` rule.
 - **Validation constraints** ↔ rules (Phase 3): `format` (`email`/`uri`/`ip`/`date-time`)→`email`/`url`/`ip`/`datetime`; `minLength`/`maxLength`→`min`/`max`; `minimum`/`maximum`→`min`/`max`; `pattern`→`regex:`. Round-trips (the forward emitter writes the inverse).
 - Internal `$ref` (`#/components/schemas/<Name>`), `properties` + `required`.
+- **`allOf` composition** (Phase 4b) — subschemas are resolved (`$ref`s included) and their properties **merged into one object**; a property required in any subschema is required in the merge. Altair has no representation for composition, so the relationship is flattened (warned) while the data is preserved. A subschema that does not resolve to an object is unmappable.
 - `x-altair-*` extensions (domain/persistence/queue/idempotency/webhook round-trip).
 
 ### Surfaced as warnings (imported, but reported — not silent) — *Phase 1*
@@ -32,18 +33,20 @@ closes the gaps.
 - **binary/scalar-only request bodies** (`application/octet-stream`, `text/plain`) — no named-field representation, so still dropped (warned).
 - **non-`application/json` responses whose schema is read** — when a response has no `application/json`, its schema is normalized from the first content type carrying one, and the importer reports the normalization (Phase 4a). When `application/json` is present the other representations are alternative views, not a loss, so they are not warned.
 - requestBody **`$ref`** (body dropped).
+- **`allOf` flattening** (Phase 4b) — reported once per named component that uses it (`` `components.schemas.<Name>` uses allOf ``) and per inline body/response that uses it, since the composition relationship is not preserved.
 - operation + global **`security`**, `components.securitySchemes`.
 - `servers`, `webhooks` (3.1), `callbacks`, path-item `$ref`.
 
 ### Surfaced as errors / skips (fail, or `--skip-unmappable`)
 
 - **External / file / URL `$ref`** (only internal component refs resolve).
-- `oneOf` / `anyOf` / `allOf` in a request body; recursive `$ref`; a bare scalar body (incl. a normalized non-JSON body that turns out to be a scalar).
+- `oneOf` / `anyOf` in a request body; recursive `$ref`; a bare scalar body (incl. a normalized non-JSON body that turns out to be a scalar); an `allOf` whose subschema is not an object.
 
 ### Not yet mapped or warned (later phases)
 
 - Remaining constraints: `multipleOf`, `min/maxItems`, `uniqueItems` (no Altair rule yet).
 - requestBody `required` flag; `additionalProperties`, `const`, `discriminator`, `not`, `prefixItems`, `nullable`; `deprecated`, `default`, `example(s)`, `title`/`description`; response `headers`/`links`.
+- A bare `required` *sibling* on an `allOf` node (marking inherited properties required without re-declaring them) — `required` **inside** an `allOf` subschema is honored; a top-level `required` alongside `allOf` with no sibling `properties` is not yet applied (the flat field model has no slot for a required name without a property).
 
 ## Export (Altair spec → OpenAPI)
 
@@ -58,6 +61,6 @@ constraints** from validation rules — `email`→`format`, `min:3`→`minLength
 
 See [#214](https://github.com/univeros/framework/issues/214) for the phased plan
 (stop silent loss → parameters → validation fidelity → content & composition →
-security & misc). This page is updated as each phase lands. **Phase 4a** (non-JSON
-object bodies, normalized) has landed; `allOf` merge, `oneOf`/`anyOf`,
+security & misc). This page is updated as each phase lands. **Phases 4a** (non-JSON
+object bodies, normalized) and **4b** (`allOf` merge) have landed; `oneOf`/`anyOf`,
 `additionalProperties`, and external-`$ref` bundling remain.

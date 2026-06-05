@@ -30,8 +30,12 @@ use Altair\Scaffold\Spec\Emitter\Exception\UnmappableSchemaException;
  */
 final readonly class SchemaMapper
 {
-    /** Refs we have followed during the current resolution — guards against cycles. */
-    private const int MAX_REF_DEPTH = 8;
+    /**
+     * Resolution-depth ceiling shared by `$ref` chains and `allOf` composition
+     * (both flow through {@see resolveRef}) — guards against cyclic `$ref`s and
+     * cyclic/pathological `allOf` nesting by raising a clean exception.
+     */
+    private const int MAX_RESOLUTION_DEPTH = 8;
 
     /**
      * Inline object-nesting ceiling. `resolveRef` already bounds `$ref` chains;
@@ -383,7 +387,8 @@ final readonly class SchemaMapper
             SchemaType::SCALAR => $this->outputScalarType((string) $schema->scalarType),
             SchemaType::ENUM => 'string',
             SchemaType::ARRAY => $this->outputArrayType($document, $schema, $pointer),
-            SchemaType::OBJECT => 'array<string, mixed>',
+            // A flattened allOf is an object, so it surfaces as the same loose map.
+            SchemaType::OBJECT, SchemaType::ALLOF => 'array<string, mixed>',
             SchemaType::MIXED => 'mixed',
             default => throw new UnmappableSchemaException(
                 $pointer,
@@ -439,11 +444,19 @@ final readonly class SchemaMapper
         string $pointer,
         int $depth = 0,
     ): SchemaType {
+        if ($schema->kind === SchemaType::ALLOF) {
+            if ($depth >= self::MAX_RESOLUTION_DEPTH) {
+                throw new UnmappableSchemaException($pointer, 'allOf composition exceeded resolution depth.');
+            }
+
+            return $this->mergeAllOf($document, $schema, $pointer, $depth + 1);
+        }
+
         if ($schema->kind !== SchemaType::REF) {
             return $schema;
         }
 
-        if ($depth >= self::MAX_REF_DEPTH) {
+        if ($depth >= self::MAX_RESOLUTION_DEPTH) {
             throw new UnmappableSchemaException($pointer, 'ref cycle exceeded resolution depth.');
         }
 
@@ -453,6 +466,35 @@ final readonly class SchemaMapper
         }
 
         return $this->resolveRef($document, $document->namedSchemas[$refName], $pointer, $depth + 1);
+    }
+
+    /**
+     * Flattens an `allOf` composition into one object by merging the resolved
+     * properties of every subschema (later subschemas win on name collision; a
+     * property required in any subschema is required in the result). Altair has
+     * no representation for composition, so the relationship is dropped while
+     * the data is preserved. A subschema that does not resolve to an object is
+     * unmappable.
+     */
+    private function mergeAllOf(OpenApiDocument $document, SchemaType $schema, string $pointer, int $depth): SchemaType
+    {
+        $properties = [];
+        foreach ($schema->allOf as $subschema) {
+            $resolved = $this->resolveRef($document, $subschema, $pointer, $depth);
+            if ($resolved->kind !== SchemaType::OBJECT) {
+                throw new UnmappableSchemaException(
+                    $pointer,
+                    \sprintf('allOf subschema is not an object (got %s); composition cannot be flattened.', $resolved->kind),
+                );
+            }
+
+            foreach ($resolved->properties as $name => $property) {
+                $required = ($property['required'] ?? false) || ($properties[(string) $name]['required'] ?? false);
+                $properties[(string) $name] = ['schema' => $property['schema'], 'required' => $required];
+            }
+        }
+
+        return SchemaType::object($properties, $schema->nullable);
     }
 
     private function requestBodyPointer(OperationModel $operation): string

@@ -104,6 +104,57 @@ final class OpenApiImportRunnerTest extends TestCase
         );
     }
 
+    public function testFlattensAllOfBodyIntoSpecInputs(): void
+    {
+        // Phase 4b: a request body composed with allOf (inheritance via $ref +
+        // an inline object) is flattened into a single merged input set.
+        $path = $this->sandbox . '/openapi.yaml';
+        file_put_contents($path, <<<'YAML'
+            openapi: 3.1.0
+            info: { title: Pets API, version: 1.0.0 }
+            paths:
+              /pets:
+                post:
+                  operationId: createPet
+                  summary: Create a pet
+                  requestBody:
+                    required: true
+                    content:
+                      application/json:
+                        schema:
+                          $ref: '#/components/schemas/Pet'
+                  responses:
+                    '201': { description: Created }
+            components:
+              schemas:
+                NewPet:
+                  type: object
+                  required: [name]
+                  properties:
+                    name: { type: string }
+                    tag: { type: string }
+                Pet:
+                  allOf:
+                    - $ref: '#/components/schemas/NewPet'
+                    - type: object
+                      required: [id]
+                      properties:
+                        id: { type: integer }
+            YAML);
+
+        $receipt = (new OpenApiImportRunner())->run(new OpenApiImportOptions(
+            documentPath: $path,
+            projectRoot: $this->sandbox,
+        ));
+
+        self::assertTrue($receipt->ok);
+        $spec = Yaml::parseFile($this->sandbox . '/api/pets/create.yaml');
+        self::assertSame(['name', 'tag', 'id'], array_keys($spec['input']));
+        self::assertContains('required', $spec['input']['name']['rules']);
+        self::assertContains('required', $spec['input']['id']['rules']);
+        self::assertStringContainsString('allOf', implode("\n", $receipt->warnings));
+    }
+
     public function testRespectsCustomOutDir(): void
     {
         $documentPath = $this->writeOpenApi();

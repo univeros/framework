@@ -27,6 +27,12 @@ final readonly class CoverageScanner
     private const array HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
 
     /**
+     * Inline-schema recursion ceiling for {@see usesAllOf} — a hostile, deeply
+     * nested document stops being walked rather than exhausting the stack.
+     */
+    private const int MAX_SCAN_DEPTH = 64;
+
+    /**
      * @param  array<string, mixed> $document Raw decoded OpenAPI document.
      * @return list<string>
      */
@@ -35,6 +41,7 @@ final readonly class CoverageScanner
         $warnings = [];
 
         $this->scanDocument($document, $warnings);
+        $this->scanComponentSchemas($document, $warnings);
 
         $paths = $document['paths'] ?? null;
         if (\is_array($paths)) {
@@ -46,6 +53,57 @@ final readonly class CoverageScanner
         }
 
         return $warnings;
+    }
+
+    /**
+     * A named component schema that uses `allOf` (anywhere within it) is
+     * flattened to a single merged object on import — the composition
+     * relationship is not preserved — so it is reported once, in document order.
+     *
+     * @param array<string, mixed> $document
+     * @param list<string>         $warnings
+     */
+    private function scanComponentSchemas(array $document, array &$warnings): void
+    {
+        $components = $document['components'] ?? null;
+        $schemas = \is_array($components) && \is_array($components['schemas'] ?? null) ? $components['schemas'] : [];
+
+        foreach ($schemas as $name => $schema) {
+            if (\is_string($name) && \is_array($schema) && $this->usesAllOf($schema)) {
+                $warnings[] = \sprintf('`components.schemas.%s` uses allOf; its subschemas are merged into one object on import (composition not preserved).', $name);
+            }
+        }
+    }
+
+    /**
+     * Recursively detects an `allOf` anywhere within a single inline schema
+     * tree (its `properties` and array `items`). `$ref`s are not followed, so
+     * this cannot cycle; nesting is bounded by {@see MAX_SCAN_DEPTH}.
+     *
+     * @param array<string, mixed> $schema
+     */
+    private function usesAllOf(array $schema, int $depth = 0): bool
+    {
+        if ($depth >= self::MAX_SCAN_DEPTH) {
+            return false;
+        }
+
+        if (\is_array($schema['allOf'] ?? null)) {
+            return true;
+        }
+
+        $properties = $schema['properties'] ?? null;
+        if (\is_array($properties)) {
+            foreach ($properties as $property) {
+                if (\is_array($property) && $this->usesAllOf($property, $depth + 1)) {
+                    return true;
+                }
+            }
+        }
+
+        $items = $schema['items'] ?? null;
+
+        return \is_array($items) && $this->usesAllOf($items, $depth + 1);
     }
 
     /**
@@ -167,12 +225,15 @@ final readonly class CoverageScanner
                 $warnings[] = \sprintf('request body content type(s) %s on %s are not imported (only application/json is read).', implode(', ', $otherTypes), $where);
             }
 
+            $this->scanComposition($content['application/json'] ?? null, 'request body', $where, $warnings);
+
             return;
         }
 
         $normalizedFrom = $this->firstMappableContentType($content);
         if ($normalizedFrom !== null) {
             $warnings[] = \sprintf('request body on %s has no application/json; its schema is read from %s (normalized).', $where, $normalizedFrom);
+            $this->scanComposition($content[$normalizedFrom] ?? null, 'request body', $where, $warnings);
 
             return;
         }
@@ -210,15 +271,48 @@ final readonly class CoverageScanner
                 continue;
             }
 
+            $subject = \sprintf('response %s', (string) $status);
+
             if ($this->hasSchema($content['application/json'] ?? null)) {
+                $this->scanComposition($content['application/json'] ?? null, $subject, $where, $warnings);
+
                 continue;
             }
 
             $normalizedFrom = $this->firstContentTypeWithSchema($content);
             if ($normalizedFrom !== null) {
-                $warnings[] = \sprintf('response %s on %s has no application/json; its schema is read from %s (normalized).', (string) $status, $where, $normalizedFrom);
+                $warnings[] = \sprintf('%s on %s has no application/json; its schema is read from %s (normalized).', $subject, $where, $normalizedFrom);
+                $this->scanComposition($content[$normalizedFrom] ?? null, $subject, $where, $warnings);
             }
         }
+    }
+
+    /**
+     * Warns when the schema actually read for a body/response is itself an
+     * inline `allOf` (flattened to a merged object on import). A `$ref` body's
+     * composition lives in the named component and is reported by
+     * {@see scanComponentSchemas}, so only inline composition surfaces here.
+     *
+     * @param list<string> $warnings
+     */
+    private function scanComposition(mixed $media, string $subject, string $where, array &$warnings): void
+    {
+        $schema = $this->schemaOf($media);
+        if ($schema !== null && $this->usesAllOf($schema)) {
+            $warnings[] = \sprintf('%s on %s uses allOf; its subschemas are merged into one object on import (composition not preserved).', $subject, $where);
+        }
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    private function schemaOf(mixed $media): ?array
+    {
+        if (\is_array($media) && \is_array($media['schema'] ?? null)) {
+            return $media['schema'];
+        }
+
+        return null;
     }
 
     /**
@@ -270,6 +364,10 @@ final readonly class CoverageScanner
         }
 
         if (isset($schema['$ref'])) {
+            return true;
+        }
+
+        if (\is_array($schema['allOf'] ?? null)) {
             return true;
         }
 
