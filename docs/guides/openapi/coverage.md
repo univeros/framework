@@ -34,6 +34,8 @@ closes the gaps.
 - **non-`application/json` responses whose schema is read** — when a response has no `application/json`, its schema is normalized from the first content type carrying one, and the importer reports the normalization (Phase 4a). When `application/json` is present the other representations are alternative views, not a loss, so they are not warned.
 - requestBody **`$ref`** (body dropped).
 - **`allOf` flattening** (Phase 4b) — reported once per named component that uses it (`` `components.schemas.<Name>` uses allOf ``) and per inline body/response that uses it, since the composition relationship is not preserved.
+- **`oneOf` / `anyOf`** (Phase 4c) — a union has no Altair representation; reported per component / inline body / response. A `oneOf`/`anyOf` *body* stays unmappable (skipped with `--skip-unmappable`); a union *response* surfaces as `mixed`.
+- **`additionalProperties`** (Phase 4d) — an open-ended map; reported per component / inline body / response. Declared `properties` still map; only the open-key capability is dropped. An explicit `additionalProperties: false` (closed object) is not warned.
 - operation + global **`security`**, `components.securitySchemes`.
 - `servers`, `webhooks` (3.1), `callbacks`, path-item `$ref`.
 
@@ -62,5 +64,5 @@ constraints** from validation rules — `email`→`format`, `min:3`→`minLength
 See [#214](https://github.com/univeros/framework/issues/214) for the phased plan
 (stop silent loss → parameters → validation fidelity → content & composition →
 security & misc). This page is updated as each phase lands. **Phases 4a** (non-JSON
-object bodies, normalized) and **4b** (`allOf` merge) have landed; `oneOf`/`anyOf`,
-`additionalProperties`, and external-`$ref` bundling remain.
+object bodies), **4b** (`allOf` merge), and **4c/4d** (`oneOf`/`anyOf` +
+`additionalProperties`, surfaced) have landed; external-`$ref` bundling remains.

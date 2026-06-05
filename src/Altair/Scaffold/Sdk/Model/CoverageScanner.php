@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Sdk\Model;
 
+use LogicException;
+
 /**
  * Walks a raw OpenAPI document and reports every construct `openapi:import`
  * does not map — so the import warns instead of silently dropping.
@@ -27,7 +29,7 @@ final readonly class CoverageScanner
     private const array HTTP_METHODS = ['get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace'];
 
     /**
-     * Inline-schema recursion ceiling for {@see usesAllOf} — a hostile, deeply
+     * Inline-schema recursion ceiling for {@see compositionKeywords} — a hostile, deeply
      * nested document stops being walked rather than exhausting the stack.
      */
     private const int MAX_SCAN_DEPTH = 64;
@@ -56,9 +58,10 @@ final readonly class CoverageScanner
     }
 
     /**
-     * A named component schema that uses `allOf` (anywhere within it) is
-     * flattened to a single merged object on import — the composition
-     * relationship is not preserved — so it is reported once, in document order.
+     * A named component schema that uses a composition / open-map keyword
+     * (anywhere within it) is reported once per keyword, in document order:
+     * `allOf` is flattened, `oneOf`/`anyOf` are unions with no Altair
+     * representation, and `additionalProperties` is an open-ended map.
      *
      * @param array<string, mixed> $document
      * @param list<string>         $warnings
@@ -69,41 +72,138 @@ final readonly class CoverageScanner
         $schemas = \is_array($components) && \is_array($components['schemas'] ?? null) ? $components['schemas'] : [];
 
         foreach ($schemas as $name => $schema) {
-            if (\is_string($name) && \is_array($schema) && $this->usesAllOf($schema)) {
-                $warnings[] = \sprintf('`components.schemas.%s` uses allOf; its subschemas are merged into one object on import (composition not preserved).', $name);
+            if (\is_string($name) && \is_array($schema)) {
+                $this->warnCompositionKeywords($schema, \sprintf('`components.schemas.%s`', $name), $warnings);
             }
         }
     }
 
     /**
-     * Recursively detects an `allOf` anywhere within a single inline schema
-     * tree (its `properties` and array `items`). `$ref`s are not followed, so
-     * this cannot cycle; nesting is bounded by {@see MAX_SCAN_DEPTH}.
+     * Appends one warning per composition / open-map keyword found anywhere in
+     * the schema tree, in a fixed keyword order so receipts stay byte-stable.
      *
      * @param array<string, mixed> $schema
+     * @param list<string>         $warnings
      */
-    private function usesAllOf(array $schema, int $depth = 0): bool
+    private function warnCompositionKeywords(array $schema, string $subject, array &$warnings): void
+    {
+        foreach ($this->compositionKeywords($schema) as $keyword) {
+            $warnings[] = $this->compositionWarning($keyword, $subject);
+        }
+    }
+
+    private function compositionWarning(string $keyword, string $subject): string
+    {
+        return match ($keyword) {
+            'allOf' => \sprintf('%s uses allOf; its subschemas are merged into one object on import (composition not preserved).', $subject),
+            'oneOf' => \sprintf('%s uses oneOf; a union has no Altair representation, so it is not imported.', $subject),
+            'anyOf' => \sprintf('%s uses anyOf; a union has no Altair representation, so it is not imported.', $subject),
+            'additionalProperties' => \sprintf('%s uses additionalProperties; open-ended map keys are not imported.', $subject),
+            // compositionKeywords only ever yields the four keywords above; a new
+            // one must add its arm here rather than fall through to a wrong message.
+            default => throw new LogicException(\sprintf('unhandled composition keyword: %s', $keyword)),
+        };
+    }
+
+    /**
+     * Recursively collects which composition / open-map keywords
+     * (`allOf`, `oneOf`, `anyOf`, `additionalProperties`) appear anywhere within
+     * a single inline schema tree — its `properties`, array `items`, and the
+     * `allOf`/`oneOf`/`anyOf` subschema lists. `$ref`s are not followed, so this
+     * cannot cycle; nesting is bounded by {@see MAX_SCAN_DEPTH}. Returns the
+     * present keywords in the canonical order above (deterministic output).
+     *
+     * @param  array<string, mixed> $schema
+     * @return list<string>
+     */
+    private function compositionKeywords(array $schema, int $depth = 0): array
     {
         if ($depth >= self::MAX_SCAN_DEPTH) {
-            return false;
+            return [];
         }
 
-        if (\is_array($schema['allOf'] ?? null)) {
-            return true;
+        $found = [];
+        foreach (['allOf', 'oneOf', 'anyOf'] as $keyword) {
+            $subschemas = $schema[$keyword] ?? null;
+            if (\is_array($subschemas)) {
+                $found[$keyword] = true;
+                foreach ($subschemas as $subschema) {
+                    if (\is_array($subschema)) {
+                        $this->collectKeywords($subschema, $depth + 1, $found);
+                    }
+                }
+            }
         }
 
+        if ($this->hasOpenAdditionalProperties($schema)) {
+            $found['additionalProperties'] = true;
+        }
+
+        $additional = $schema['additionalProperties'] ?? null;
+        if (\is_array($additional)) {
+            $this->collectKeywords($additional, $depth + 1, $found);
+        }
+
+        $this->collectFromChildren($schema, $depth, $found);
+
+        return array_values(array_filter(
+            ['allOf', 'oneOf', 'anyOf', 'additionalProperties'],
+            static fn(string $keyword): bool => isset($found[$keyword]),
+        ));
+    }
+
+    /**
+     * Merges the keywords of a nested schema into the running set.
+     *
+     * @param array<string, mixed> $schema
+     * @param array<string, true>  $found
+     */
+    private function collectKeywords(array $schema, int $depth, array &$found): void
+    {
+        foreach ($this->compositionKeywords($schema, $depth) as $keyword) {
+            $found[$keyword] = true;
+        }
+    }
+
+    /**
+     * Recurses into a schema's `properties` and array `items`.
+     *
+     * @param array<string, mixed> $schema
+     * @param array<string, true>  $found
+     */
+    private function collectFromChildren(array $schema, int $depth, array &$found): void
+    {
         $properties = $schema['properties'] ?? null;
         if (\is_array($properties)) {
             foreach ($properties as $property) {
-                if (\is_array($property) && $this->usesAllOf($property, $depth + 1)) {
-                    return true;
+                if (\is_array($property)) {
+                    $this->collectKeywords($property, $depth + 1, $found);
                 }
             }
         }
 
         $items = $schema['items'] ?? null;
+        if (\is_array($items)) {
+            $this->collectKeywords($items, $depth + 1, $found);
+        }
+    }
 
-        return \is_array($items) && $this->usesAllOf($items, $depth + 1);
+    /**
+     * `additionalProperties` is lossy only when it permits extra keys — `true`
+     * or a schema. An explicit `false` (closed object) is the safe default and
+     * is not warned.
+     *
+     * @param array<string, mixed> $schema
+     */
+    private function hasOpenAdditionalProperties(array $schema): bool
+    {
+        if (!\array_key_exists('additionalProperties', $schema)) {
+            return false;
+        }
+
+        $value = $schema['additionalProperties'];
+
+        return $value === true || \is_array($value);
     }
 
     /**
@@ -298,8 +398,8 @@ final readonly class CoverageScanner
     private function scanComposition(mixed $media, string $subject, string $where, array &$warnings): void
     {
         $schema = $this->schemaOf($media);
-        if ($schema !== null && $this->usesAllOf($schema)) {
-            $warnings[] = \sprintf('%s on %s uses allOf; its subschemas are merged into one object on import (composition not preserved).', $subject, $where);
+        if ($schema !== null) {
+            $this->warnCompositionKeywords($schema, \sprintf('%s on %s', $subject, $where), $warnings);
         }
     }
 
