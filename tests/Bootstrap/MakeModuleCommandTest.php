@@ -50,6 +50,14 @@ final class MakeModuleCommandTest extends TestCase
         $migration = (string) file_get_contents($migrations[0]);
         self::assertStringContainsString('namespace Acme\\UserManagement\\Database\\Migrations;', $migration);
 
+        // The agent guide ships rewritten — package name + namespace substituted,
+        // no leftover skeleton placeholders.
+        $agent = (string) file_get_contents($this->target . '/AGENT.md');
+        self::assertStringContainsString('acme/user-management', $agent);
+        self::assertStringContainsString('Acme\\UserManagement\\Module', $agent);
+        self::assertStringNotContainsString('vendor/module', $agent);
+        self::assertStringNotContainsString('VendorModule', $agent);
+
         // The next-steps blurb tells the user exactly what to register.
         self::assertStringContainsString('Acme\\UserManagement\\Module', $output);
     }
