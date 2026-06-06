@@ -31,6 +31,16 @@ parameters:
               - src/Altair/Cache/Storage/MemcachedCacheItemStorage.php
               - src/Altair/Cache/Storage/RedisCacheItemStorage.php
 
+        # reason: MessengerConfiguration probes for optional Symfony Messenger
+        # transport-bridge factories (Redis/Doctrine/Amqp/Beanstalkd) via a
+        # defensive class_exists() so a host gets only the transports whose bridge
+        # package it installed. Whether each class is resolvable depends on the
+        # analysis environment's installed bridges, so PHPStan can prove some
+        # absent (impossibleType) on a slim CI install while they exist at runtime
+        # for hosts that require them. The runtime check is intentional and correct.
+        - identifier: function.impossibleType
+          path: src/Altair/Messaging/Configuration/MessengerConfiguration.php
+
         # Public-API mixin traits consumed by host applications (and exercised by the
         # framework's own test fixtures). PHPStan analyses `src` only, so it reports them
         # as "used zero times"; they are intentionally part of the published surface.

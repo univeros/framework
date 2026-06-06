@@ -31,7 +31,6 @@ class HandlerTestEmitter
         $testNamespace = 'Tests\\Messages';
 
         $header = PhpHeader::render($testNamespace);
-        $this->shortNameOf($messageFqcn);
         $handlerShort = $this->shortNameOf($handlerFqcn);
 
         $body = <<<PHP

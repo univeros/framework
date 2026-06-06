@@ -1,6 +1,6 @@
 {
     "name": "univeros/module",
-    "description": "Pluggable extension modules for Univeros: a module self-registers its routes, Cycle entities, and migrations into a host app via one container tag.",
+    "description": "Pluggable extension modules for Univeros: a module self-registers its routes, PSR-15 middleware, Cycle entities, and migrations into a host app via one container tag.",
     "license": "MIT",
     "homepage": "https://univeros.io",
     "support": {
@@ -9,6 +9,7 @@
     },
     "require": {
         "php": ">=8.3",
+        "psr/http-server-middleware": "^1.0",
         "univeros/configuration": "^2.0",
         "univeros/container": "^2.0"
     },

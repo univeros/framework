@@ -108,7 +108,9 @@
 - `LcobucciTokenGenerator` — implements `TokenGeneratorInterface`
 - `LcobucciTokenParser` — implements `TokenParserInterface`
 - `MiddlewareCollection` — implements `ArrayAccess`, `CapacityInterface`, `CollectionInterface`, `Countable`, `IteratorAggregate`, `JsonSerializable`, `QueueInterface`, `Stringable`, `Traversable`
+- `MiddlewarePriority` _(final)_
 - `MimeType`
+- `ModuleMiddleware` _(final)_
 - `ModuleRoutes` _(final)_
 - `NoCacheLimiter` — implements `CacheLimiterInterface`
 - `Payload` — implements `HttpStatusInterface`, `PayloadInterface`
@@ -183,6 +185,7 @@
 - `tests/Http/Support/HeaderTokenExtractorTest.php`
 - `tests/Http/Support/HttpCacheTest.php`
 - `tests/Http/Support/MimeTypeTest.php`
+- `tests/Http/Support/ModuleMiddlewareTest.php`
 - `tests/Http/Support/ModuleRoutesTest.php`
 - `tests/Http/Support/ProblemDetailsErrorHandlerTest.php`
 - `tests/Http/Support/QueryParamsTokenExtractorTest.php`

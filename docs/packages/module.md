@@ -1,13 +1,13 @@
 # Module
 
-> Pluggable extension modules for Univeros. A module is a single class a host app registers in `config/modules.php`; from that one line it self-registers its HTTP routes, Cycle entities, and migrations — no other host file changes.
+> Pluggable extension modules for Univeros. A module is a single class a host app registers in `config/modules.php`; from that one line it self-registers its HTTP routes, PSR-15 middleware, Cycle entities, and migrations — no other host file changes.
 
 **Composer:** `univeros/module`
 **Namespace:** `Altair\Module`
 
 ## Introduction
 
-A host Altair app can already `composer require` a package and pull its services into the container through a [Configuration](./configuration.md). What it could *not* do — until this package — is discover a third-party package's **routes**, **entities**, and **migrations**, which live in fixed host locations (`config/routes.php`, the host's entity directories, the single `database/migrations/`). That gap made a "voilà, the whole feature is wired" extension impossible: the host always had to hand-edit several files.
+A host Altair app can already `composer require` a package and pull its services into the container through a [Configuration](./configuration.md). What it could *not* do — until this package — is discover a third-party package's **routes**, **middleware**, **entities**, and **migrations**, which live in fixed host locations (`config/routes.php`, the hand-assembled Relay pipeline in `public/index.php`, the host's entity directories, the single `database/migrations/`). That gap made a "voilà, the whole feature is wired" extension impossible: the host always had to hand-edit several files.
 
 The Module package closes that gap with a thin, opt-in convention built entirely on parts the framework already has — `ConfigurationInterface`, the container's `tag()`/`tagged()`, the [Http](./http.md) route list, the multi-directory `AttributeSchemaProvider`, and Cycle's shared `cycle_migrations` tracking table. There is no new runtime engine and no auto-magic file scanning: a host registers module *instances* explicitly in `config/modules.php`, and the framework's existing consumers (the front controller, the schema provider, the `db:migrate` commands) pick the contributions up.
 
@@ -67,14 +67,16 @@ A module advertises what it contributes by implementing extra interfaces. Consum
 | Contract | Method | Consumed by |
 |---|---|---|
 | `RoutesProviderInterface` | `routes(): list<array{0,1,2}>` | the front controller, via `Altair\Http\Support\ModuleRoutes::collect()` |
+| `MiddlewareProviderInterface` | `middleware(): list<array{middleware, priority}>` | the front controller, via `Altair\Http\Support\ModuleMiddleware::collect()` |
 | `EntityDirectoriesProviderInterface` | `entityDirectories(): list<string>` | `Altair\Persistence\Schema\ModuleAwareSchemaProvider` |
 | `MigrationDirectoriesProviderInterface` | `migrationDirectories(): list<MigrationSource>` | `bin/altair db:migrate` / `:status` / `:rollback` |
 
-Routes use the same `[METHOD, PATH, Action::class]` shape as `config/routes.php`. Each `MigrationSource` pairs a directory with the migration namespace your classes are declared in (e.g. `Acme\UserManagement\Database\Migrations`) — Cycle reads each migration's FQCN from the file, so per-module namespaces never collide.
+Routes use the same `[METHOD, PATH, Action::class]` shape as `config/routes.php`. Each `MigrationSource` pairs a directory with the migration namespace your classes are declared in (e.g. `Acme\UserManagement\Database\Migrations`) — Cycle reads each migration's FQCN from the file, so per-module namespaces never collide. Middleware entries each pair a PSR-15 middleware (a `class-string` resolved through the container, or an instance) with an integer `priority`, ordered against the documented anchors in `Altair\Http\Support\MiddlewarePriority` (`EXCEPTION_HANDLER` = 0, `DISPATCHER` = 500, `ACTION` = 1000).
 
 ### How the contributions are picked up
 
 - **Routes** — the generated `public/index.php` calls `ModuleRoutes::collect($container, $hostRoutes)`, which appends every tagged module's `routes()` to the host's. Host routes come first, so a host can always override.
+- **Middleware** — the generated `public/index.php` calls `ModuleMiddleware::collect($container, $baseStages)`, which appends every tagged module's `middleware()` to the framework's base pipeline and stable-sorts the result by priority (equal priorities keep input order, so the merge is deterministic). The resulting queue is handed to Relay with a `ContainerResolver`, so class-string middleware are instantiated — and their dependencies autowired — at dispatch time. A module can thus register an auth / rate-limit / idempotency guard without the host editing `public/index.php`.
 - **Entities** — bind `SchemaProviderInterface` to `ModuleAwareSchemaProvider`; it compiles the schema from the host's entity directories plus every module's `entityDirectories()`.
 - **Migrations** — the migrate commands pass each module's directory to Cycle's `MigrationConfig` as a `vendorDirectories` entry, so one migrator runs the host's `database/migrations` and every module's directory against the shared tracking table, with correct ordering, status, and rollback.
 

@@ -22,6 +22,7 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
  * provider contracts in this namespace:
  *
  *   - {@see RoutesProviderInterface}              — contribute HTTP routes
+ *   - {@see MiddlewareProviderInterface}          — contribute PSR-15 middleware
  *   - {@see EntityDirectoriesProviderInterface}   — contribute Cycle entity dirs
  *   - {@see MigrationDirectoriesProviderInterface} — contribute migration dirs
  *
