@@ -8,7 +8,7 @@
         "univeros/framework": "^2.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^11.4"
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "psr-4": {

@@ -365,7 +365,7 @@ $this->assertNotSame($input, $output);
 $this->assertNull($input->getAttribute('audit'));
 ```
 
-Test files for this package live under `tests/Middleware/` and mirror the `src/Altair/Middleware/` layout. Use PHPUnit 11 attribute style (`#[Test]`, `#[DataProvider]`).
+Test files for this package live under `tests/Middleware/` and mirror the `src/Altair/Middleware/` layout. Use PHPUnit 12 attribute style (`#[Test]`, `#[DataProvider]`).
 
 ---
 

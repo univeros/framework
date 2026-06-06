@@ -1,6 +1,6 @@
 # TestReporter
 
-> An AI-native PHPUnit 11 extension that emits a structured JSON report at the end of every run — every failure mapped back to the production source under test, with structured diffs and a one-word verdict you can branch on.
+> An AI-native PHPUnit 12 extension that emits a structured JSON report at the end of every run — every failure mapped back to the production source under test, with structured diffs and a one-word verdict you can branch on.
 
 **Composer:** `univeros/test-reporter`
 **Namespace:** `Altair\TestReporter`
@@ -23,7 +23,7 @@ Install it as a dev dependency:
 composer require --dev univeros/test-reporter
 ```
 
-It belongs in `require-dev` because it only ever runs under PHPUnit — it has no place in your production autoloader. The only runtime requirement beyond PHP 8.3 is `phpunit/phpunit: ^11.4`; the extension hooks into PHPUnit 11's event system, so it will not load under PHPUnit 10 or earlier. If you installed the whole framework via `composer require univeros/framework`, this package is already bundled.
+It belongs in `require-dev` because it only ever runs under PHPUnit — it has no place in your production autoloader. The only runtime requirement beyond PHP 8.3 is `phpunit/phpunit: ^12.5`; the extension hooks into PHPUnit 12's event system, so it will not load under PHPUnit 11 or earlier. If you installed the whole framework via `composer require univeros/framework`, this package is already bundled.
 
 ## Quick start
 
@@ -273,7 +273,7 @@ Because `JsonWriter` is deterministic, the natural way to defend the report form
 
 ## Limitations
 
-- **PHPUnit 11 only.** The extension implements `PHPUnit\Runner\Extension\Extension` and subscribes to PHPUnit 11's event system. It will not load under PHPUnit 10 or earlier; the package requires `phpunit/phpunit: ^11.4`.
+- **PHPUnit 12 only.** The extension implements `PHPUnit\Runner\Extension\Extension` and subscribes to PHPUnit 12's event system. It will not load under PHPUnit 11 or earlier; the package requires `phpunit/phpunit: ^12.5`.
 - **`build/test-results.json` is a build artifact.** Keep it gitignored — it is regenerated on every run and is not source to be committed.
 - **The resolver can return `[]`.** When none of the three signals match — an unconventional test name with no `#[CoversClass]`, a test covering something the heuristic can't reach — `source_under_test` is an empty array. That is correct behaviour, not a bug: it tells the agent the mapping is unavailable so it does not chase a wrong guess. The fix is to add a `#[CoversClass]` attribute.
 - **Path relativisation uses `getcwd()`.** Paths are relative to the directory you invoke `phpunit` from. Run from your project root (as you normally would) and they come out clean; run from a subdirectory and the emitted paths reflect that working directory.

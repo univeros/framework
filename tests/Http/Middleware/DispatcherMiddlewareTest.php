@@ -25,7 +25,7 @@ class DispatcherMiddlewareTest extends AbstractMiddlewareTest
 {
     public function testActionAndRouteArgsAreSetAsRequestAttributes(): void
     {
-        $action = $this->createMock(Action::class);
+        $action = $this->createStub(Action::class);
         $collector = new RouteCollector(new Std(), new DataGenerator());
         $collector->addRoute('GET', '/users/{id:\d+}', $action);
 
@@ -53,7 +53,7 @@ class DispatcherMiddlewareTest extends AbstractMiddlewareTest
     public function testThrowsMethodNotAllowedWhenMethodMismatches(): void
     {
         $collector = new RouteCollector(new Std(), new DataGenerator());
-        $collector->addRoute('POST', '/things', $this->createMock(Action::class));
+        $collector->addRoute('POST', '/things', $this->createStub(Action::class));
 
         $middleware = new DispatcherMiddleware(new GroupCountBased($collector->getData()));
         $request = (new ServerRequest())->withMethod('GET')->withUri(new Uri('/things'));

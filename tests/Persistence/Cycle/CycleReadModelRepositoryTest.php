@@ -126,7 +126,7 @@ final class CycleReadModelRepositoryTest extends TestCase
         $manager = new CycleEntityManager(
             orm: $this->orm,
             unitOfWork: $this->unitOfWork,
-            container: $this->createMock(ContainerInterface::class),
+            container: $this->createStub(ContainerInterface::class),
             hydrator: new DataObjectHydrator(),
         );
 

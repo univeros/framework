@@ -3,7 +3,6 @@
 namespace Altair\Tests\Cookie;
 
 use Altair\Cookie\Contracts\CookieInterface;
-use Altair\Cookie\Contracts\SetCookieInterface;
 use Altair\Cookie\Cookie;
 use Altair\Cookie\CookieManager;
 use Altair\Cookie\Factory\SetCookieFactory;
@@ -25,7 +24,7 @@ class CookieManagerTest extends TestCase
     public function testGetCookiesFromRequest(string $cookieString, array $names): void
     {
         $request = $this->createStub(RequestInterface::class);
-        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
+        $request->method('getHeaderLine')->willReturn($cookieString);
         $manager = new CookieManager();
 
         foreach ($names as $name) {
@@ -38,7 +37,7 @@ class CookieManagerTest extends TestCase
     {
         $manager = new CookieManager();
         $request = $this->createStub(RequestInterface::class);
-        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn('');
+        $request->method('getHeaderLine')->willReturn('');
 
         $cookie = $manager->getFromRequest($request, 'name', 'value');
 
@@ -103,7 +102,7 @@ class CookieManagerTest extends TestCase
     public function testGetSetCookiesFromResponse(array $setCookieStrings, array $names, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);
-        $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
+        $response->method('getHeader')->willReturn($setCookieStrings);
         $manager = new CookieManager();
 
         foreach ($names as $idx => $name) {

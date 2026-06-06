@@ -392,7 +392,7 @@ tests/Common/
     Support/StrTest.php
 ```
 
-There are no fixtures files for this package. PHPUnit 11 attribute style (`#[Test]`, `#[DataProvider]`) is preferred for new test methods.
+There are no fixtures files for this package. PHPUnit 12 attribute style (`#[Test]`, `#[DataProvider]`) is preferred for new test methods.
 
 ---
 

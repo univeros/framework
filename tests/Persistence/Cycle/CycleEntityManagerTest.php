@@ -22,12 +22,12 @@ final class CycleEntityManagerTest extends TestCase
         $orm->expects(self::once())
             ->method('getRepository')
             ->with(Widget::class)
-            ->willReturn($this->createMock(CycleNativeRepository::class));
+            ->willReturn($this->createStub(CycleNativeRepository::class));
 
         $manager = new CycleEntityManager(
             orm: $orm,
-            unitOfWork: $this->createMock(UnitOfWorkInterface::class),
-            container: $this->createMock(ContainerInterface::class),
+            unitOfWork: $this->createStub(UnitOfWorkInterface::class),
+            container: $this->createStub(ContainerInterface::class),
         );
 
         $repository = $manager->repository(Widget::class);
@@ -38,7 +38,7 @@ final class CycleEntityManagerTest extends TestCase
 
     public function testResolvesBoundRepositoryThroughContainer(): void
     {
-        $boundRepository = $this->createMock(RepositoryInterface::class);
+        $boundRepository = $this->createStub(RepositoryInterface::class);
         $container = $this->createMock(ContainerInterface::class);
         $container->expects(self::once())
             ->method('get')
@@ -46,8 +46,8 @@ final class CycleEntityManagerTest extends TestCase
             ->willReturn($boundRepository);
 
         $manager = new CycleEntityManager(
-            orm: $this->createMock(ORMInterface::class),
-            unitOfWork: $this->createMock(UnitOfWorkInterface::class),
+            orm: $this->createStub(ORMInterface::class),
+            unitOfWork: $this->createStub(UnitOfWorkInterface::class),
             container: $container,
             repositoryBindings: [Widget::class => 'App\\Widget\\WidgetRepository'],
         );
@@ -57,11 +57,11 @@ final class CycleEntityManagerTest extends TestCase
 
     public function testUnitOfWorkExposed(): void
     {
-        $uow = $this->createMock(UnitOfWorkInterface::class);
+        $uow = $this->createStub(UnitOfWorkInterface::class);
         $manager = new CycleEntityManager(
-            orm: $this->createMock(ORMInterface::class),
+            orm: $this->createStub(ORMInterface::class),
             unitOfWork: $uow,
-            container: $this->createMock(ContainerInterface::class),
+            container: $this->createStub(ContainerInterface::class),
         );
 
         self::assertSame($uow, $manager->unitOfWork());

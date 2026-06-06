@@ -190,7 +190,7 @@ For shell-capable agents working in a local checkout, the framework also ships t
 
 ### 10. Test reporter — failures mapped back to source
 
-`Altair\TestReporter\AltairExtension` is a PHPUnit 11 extension that emits a structured JSON report at the end of every run — failures mapped back to the production class under test (via `#[CoversClass]`, `@covers`, or a namespace heuristic), structured diffs for `assertSame` / `assertEquals`, one-word `result` for agents to branch on.
+`Altair\TestReporter\AltairExtension` is a PHPUnit 12 extension that emits a structured JSON report at the end of every run — failures mapped back to the production class under test (via `#[CoversClass]`, `@covers`, or a namespace heuristic), structured diffs for `assertSame` / `assertEquals`, one-word `result` for agents to branch on.
 
 ### 11. Migration intelligence — safe schema changes
 

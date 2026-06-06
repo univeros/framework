@@ -48,7 +48,7 @@ class CookieFactoryTest extends TestCase
     public function testCreateCollectionFromRequest(string $cookieString, array $expectedCookies): void
     {
         $request = $this->createStub(RequestInterface::class);
-        $request->method('getHeaderLine')->with(Cookie::HEADER)->willReturn($cookieString);
+        $request->method('getHeaderLine')->willReturn($cookieString);
 
         $cookieCollection = CookieFactory::createCollectionFromRequest($request);
 
