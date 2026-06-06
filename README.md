@@ -62,7 +62,7 @@ composer qa     # cs + stan + test — the pre-commit gate
 composer test   # PHPUnit 12 only
 ```
 
-CI mirrors the same gates plus the determinism drift check.
+CI mirrors the same gates plus the determinism drift check. Add a bullet to the [`CHANGELOG.md`](CHANGELOG.md) `[Unreleased]` section for any user-facing change.
 
 ## Security
 
