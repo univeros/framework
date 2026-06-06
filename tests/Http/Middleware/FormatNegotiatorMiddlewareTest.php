@@ -20,7 +20,7 @@ class FormatNegotiatorMiddlewareTest extends AbstractMiddlewareTest
     {
         $negotiator = $this->createStub(FormatNegotiatorInterface::class);
         $negotiator->method('getFromServerRequestUriPath')->willReturn('json');
-        $negotiator->method('getContentTypeByFormat')->with('json')->willReturn('application/json');
+        $negotiator->method('getContentTypeByFormat')->willReturn('application/json');
 
         $captured = null;
         $middleware = new FormatNegotiatorMiddleware($negotiator);
@@ -35,7 +35,7 @@ class FormatNegotiatorMiddlewareTest extends AbstractMiddlewareTest
         $negotiator = $this->createStub(FormatNegotiatorInterface::class);
         $negotiator->method('getFromServerRequestUriPath')->willReturn(null);
         $negotiator->method('getFromServerRequestHeaderLine')->willReturn('xml');
-        $negotiator->method('getContentTypeByFormat')->with('xml')->willReturn('application/xml');
+        $negotiator->method('getContentTypeByFormat')->willReturn('application/xml');
 
         $captured = null;
         $middleware = new FormatNegotiatorMiddleware($negotiator);

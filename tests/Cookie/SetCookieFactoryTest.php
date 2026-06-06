@@ -2,7 +2,6 @@
 
 namespace Altair\Tests\Cookie;
 
-use Altair\Cookie\Contracts\SetCookieInterface;
 use Altair\Cookie\Factory\SetCookieFactory;
 use Altair\Cookie\SetCookie;
 use PHPUnit\Framework\TestCase;
@@ -57,7 +56,7 @@ class SetCookieFactoryTest extends TestCase
     public function testCreatesFromResponse(array $setCookieStrings, array $expectedSetCookies): void
     {
         $response = $this->createStub(ResponseInterface::class);
-        $response->method('getHeader')->with(SetCookieInterface::HEADER)->willReturn($setCookieStrings);
+        $response->method('getHeader')->willReturn($setCookieStrings);
 
         $setCookies = SetCookieFactory::createCollectionFromResponse($response);
 

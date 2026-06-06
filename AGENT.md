@@ -22,7 +22,7 @@ This file is the source of truth. Tool-specific entry points (`CLAUDE.md`) point
 .
 ├── .github/workflows/ci.yml      ← CI (PHP 8.3 + 8.4 matrix, PHPStan, CS-Fixer, Rector, Codecov)
 ├── .php-cs-fixer.dist.php        ← PHP-CS-Fixer v3 config (@PER-CS2.0, @PHP83Migration)
-├── phpunit.xml.dist              ← PHPUnit 11 config
+├── phpunit.xml.dist              ← PHPUnit 12 config
 ├── phpstan.neon.dist             ← PHPStan config (level 8, no baseline)
 ├── rector.php                    ← Rector config (PHP 8.3 + code-quality + dead-code sets)
 ├── composer.json                 ← Root manifest (monorepo via `replace`)
@@ -231,7 +231,7 @@ Enforcement is layered and live:
 
 ## 6. Testing
 
-- Framework: **PHPUnit 11**, attribute-style (`#[DataProvider]`, `#[Group]`, `#[Test]`).
+- Framework: **PHPUnit 12**, attribute-style (`#[DataProvider]`, `#[Group]`, `#[Test]`).
 - Bootstrap: `tests/bootstrap.php`. Per-package fixtures in `tests/{Container,Courier,Sanitation,Validation}/fixtures.php`.
 - Suffix `Test.php`, mirror the `src/Altair/<Pkg>` layout under `tests/<Pkg>/`.
 - Coverage target: **80%+** for new code (unit + integration).
@@ -272,7 +272,7 @@ The migration from PHP 7.2 / abandoned deps to PHP 8.3 is **complete** — all p
 - `Zend\Diactoros\*` → `Laminas\Diactoros\*` swapped in 8 files.
 - `.travis.yml` → `.github/workflows/ci.yml` (8.3 + 8.4 matrix).
 - `.php_cs` → `.php-cs-fixer.dist.php` (v3 format, PER-CS 2.0).
-- `phpunit.xml.dist` → PHPUnit 11 schema.
+- `phpunit.xml.dist` → PHPUnit 12 schema.
 - `phpstan.neon.dist` + `rector.php` added.
 - `.pre-commit-config.yaml` updated.
 - `.gitignore` covers new tool caches.
@@ -363,7 +363,7 @@ If Rector or PHPStan find new issues your change introduced, fix at root cause �
 - PHP 8.3 release notes: <https://www.php.net/releases/8.3/en.php>
 - Rector docs: <https://getrector.com/>
 - PHPStan rule levels: <https://phpstan.org/user-guide/rule-levels>
-- PHPUnit 11 attributes: <https://docs.phpunit.de/en/11.4/attributes.html>
+- PHPUnit 12 attributes: <https://docs.phpunit.de/en/12.5/attributes.html>
 - Flysystem v3 migration: <https://flysystem.thephpleague.com/docs/upgrade-from-1.x/>
 - Laminas Diactoros (PSR-7): <https://docs.laminas.dev/laminas-diactoros/>
 - Relay 2 (PSR-15): <https://github.com/relayphp/Relay.Relay>

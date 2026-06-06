@@ -2,7 +2,7 @@
 
 namespace Altair\Tests\Session;
 
-use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\MockObject\Stub;
 use Altair\Session\SessionBlock;
 use Altair\Session\SessionManager;
 use PHPUnit\Framework\TestCase;
@@ -108,10 +108,8 @@ class SessionBlockTest extends TestCase
         return new SessionBlock('name', $manager);
     }
 
-    protected function mockSessionManager(): MockObject
+    protected function mockSessionManager(): SessionManager&Stub
     {
-        return $this->getMockBuilder(SessionManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createStub(SessionManager::class);
     }
 }

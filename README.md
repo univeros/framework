@@ -59,7 +59,7 @@ Before submitting:
 
 ```bash
 composer qa     # cs + stan + test — the pre-commit gate
-composer test   # PHPUnit 11 only
+composer test   # PHPUnit 12 only
 ```
 
 CI mirrors the same gates plus the determinism drift check.

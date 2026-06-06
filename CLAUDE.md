@@ -24,7 +24,7 @@ composer install
 composer update -W
 
 composer qa            # cs + stan + test — the pre-commit gate
-composer test          # PHPUnit 11
+composer test          # PHPUnit 12
 composer cs            # PHP-CS-Fixer dry-run
 composer cs:fix        # apply
 composer stan          # PHPStan
@@ -175,7 +175,7 @@ When adding a new spec scaffolder downstream, do NOT bypass `ScaffoldCommand` �
 
 ### Test reporter (AI-native PHPUnit JSON)
 
-The `univeros/test-reporter` sub-package ships `Altair\TestReporter\AltairExtension`, a PHPUnit 11 Extension that emits a structured JSON report at the end of every run — failures mapped back to the production source under test, structured diffs for `assertSame` / `assertEquals`, one-word `result` field for agents to branch on.
+The `univeros/test-reporter` sub-package ships `Altair\TestReporter\AltairExtension`, a PHPUnit 12 Extension that emits a structured JSON report at the end of every run — failures mapped back to the production source under test, structured diffs for `assertSame` / `assertEquals`, one-word `result` field for agents to branch on.
 
 ```xml
 <extensions>
