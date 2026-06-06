@@ -235,6 +235,7 @@ When you encounter these, **stop and surface them** instead of working around:
 - **Commits:** style is `re #<issue> <subject>` (see `git log`). Keep that style for issue-linked work; conventional commits (`feat:`, `fix:`) for ad-hoc work.
 - **Never auto-push.** Always confirm before `git push`.
 - **Never `--no-verify`.** If pre-commit (CS-Fixer) fails, fix the underlying lint issue.
+- **CHANGELOG.md ([Keep a Changelog](https://keepachangelog.com)).** Every user-facing change adds a bullet under `## [Unreleased]` (grouped Added / Changed / Fixed / Removed / Deprecated / Security) referencing its PR/issue, e.g. `(#231)`. On release: rename `[Unreleased]` to `[vX.Y.Z] - YYYY-MM-DD`, add a fresh empty `[Unreleased]`, update the compare links at the bottom of the file, and reuse that version's section as the annotated-tag body. Release notes are no longer tag-only — `CHANGELOG.md` is the source of truth, and `[Unreleased]` always shows what's merged-but-unpublished.
 
 ---
 
