@@ -95,6 +95,46 @@ $routes = ModuleRoutes::collect($container, require '.../config/routes.php');
 
 Host routes come first, so a host can override any route a module would add.
 
+### Middleware — automatic
+
+A module that needs a PSR-15 guard — authentication, rate-limiting, tenant resolution, an action-aware idempotency check — implements `MiddlewareProviderInterface`:
+
+```php
+use Altair\Http\Support\MiddlewarePriority;
+use Altair\Module\Contracts\MiddlewareProviderInterface;
+
+final class Module implements ModuleInterface, MiddlewareProviderInterface
+{
+    public function middleware(): array
+    {
+        return [
+            // Runs after routing, before the action — so it can read the
+            // matched action off the request (an action-aware guard).
+            ['middleware' => AuthGuard::class, 'priority' => MiddlewarePriority::DISPATCHER + 10],
+        ];
+    }
+}
+```
+
+The generated `public/index.php` already merges these:
+
+```php
+$pipeline = ModuleMiddleware::collect($container, [ /* base stages with priorities */ ]);
+$relay = new Relay($pipeline, new ContainerResolver($container));
+```
+
+**Ordering is by integer `priority`** — lower runs earlier / more outer — against three documented anchors for the framework's own stages in `Altair\Http\Support\MiddlewarePriority`:
+
+| Anchor | Value | Stage |
+|---|---|---|
+| `EXCEPTION_HANDLER` | `0` | outermost; turns any throwable into a response |
+| `DISPATCHER` | `500` | matches the route, records the action on the request |
+| `ACTION` | `1000` | innermost; resolves and runs the matched action |
+
+Slot a pre-routing guard (CORS, rate-limit) below `DISPATCHER`; slot an action-aware guard (auth, idempotency) between `DISPATCHER` and `ACTION`. Keep ordinary guards strictly between the anchors — `ACTION` is the innermost stage and is *terminal* on a matched route, so a priority `>= ACTION` never runs once a route matches; a priority below `EXCEPTION_HANDLER` runs *outside* the exception handler (reserve it for a deliberate outermost wrapper). The merge is a **stable sort**: equal priorities keep input order — base stages first, then modules in registration order — so the assembled pipeline is fully deterministic. A class-string entry is resolved through the container at dispatch time, so the middleware's own dependencies are autowired; you may also pass a ready-made instance.
+
+`bin/altair middleware:list` shows the merged pipeline (when the host binds it as the `MiddlewareCollection`), so module middleware appear at their resolved position.
+
 ### Migrations — automatic
 
 `bin/altair db:migrate` (and `:status` / `:rollback`) collect every registered module's migration directory and pass them to Cycle as `vendorDirectories`. One migrator runs the host's `database/migrations` plus every module's directory against the shared `cycle_migrations` table — correct ordering, status, and rollback, applied-once semantics included.
