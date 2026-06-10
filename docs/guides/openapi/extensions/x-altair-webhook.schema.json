@@ -18,7 +18,7 @@
         },
         "secret_name": {
             "type": "string",
-            "description": "Lookup key the SecretResolverInterface uses to fetch the shared secret. The secret value itself never appears in OpenAPI — only this key."
+            "description": "Lookup key the SecretResolverInterface uses to fetch the shared secret. The secret value itself never appears in OpenAPI; only this key."
         },
         "header": {
             "type": "string",

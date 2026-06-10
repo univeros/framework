@@ -1,6 +1,6 @@
 # Common
 
-A collection of pure PHP utilities — string helpers, array manipulation, and a key-value registry — shared across every Altair sub-package.
+A collection of pure PHP utilities (string helpers, array manipulation, and a key-value registry) shared across every Altair sub-package.
 
 **Package:** `univeros/common`
 **Namespace:** `Altair\Common`
@@ -11,7 +11,7 @@ A collection of pure PHP utilities — string helpers, array manipulation, and a
 
 The Common package is the lowest-level building block in the Altair framework. It provides a small set of stateless utility classes and one stateful registry that every other sub-package can depend on without pulling in unrelated behaviour.
 
-The package is deliberately narrow in scope. `Arr` covers the array operations that PHP's standard library handles awkwardly — recursive merging with predictable key semantics, dot-path traversal, multi-column indexing, and HTML encoding. `Str` covers the byte-safe string operations that appear repeatedly when processing user input or building HTTP identifiers. Neither class touches the filesystem, the network, or any framework-specific abstraction.
+The package is deliberately narrow in scope. `Arr` covers the array operations that PHP's standard library handles awkwardly: recursive merging with predictable key semantics, dot-path traversal, multi-column indexing, and HTML encoding. `Str` covers the byte-safe string operations that appear repeatedly when processing user input or building HTTP identifiers. Neither class touches the filesystem, the network, or any framework-specific abstraction.
 
 `ArrayRegistry` is the sole stateful class. It pairs a flat key-value store with `Arr::getValue`'s dot-path resolution, giving other packages a convenient place to hold runtime configuration without coupling them to a full DI container or config reader.
 
@@ -31,7 +31,7 @@ composer require univeros/common
 
 The only non-optional runtime requirement is `ext-intl` (for `Transliterator`). `Arr` and `Str` work without it; `Inflector::slug` degrades gracefully to a Latin-only fallback map when `intl` is absent.
 
-If you are consuming the full `univeros/framework` monorepo, `univeros/common` is already satisfied through the root `replace` map — no separate `require` is needed.
+If you are consuming the full `univeros/framework` monorepo, `univeros/common` is already satisfied through the root `replace` map; no separate `require` is needed.
 
 ---
 
@@ -108,7 +108,7 @@ $limit = Arr::getValue($options, 'pagination.limit', 25);
 $full = Arr::getValue($user, fn($u, $d) => $u['first'] . ' ' . $u['last']);
 ```
 
-If the array already contains a key that literally contains a dot (for example `'x.y'`), `getValue` returns that key's value directly before descending — it does not split on the dot. To force traversal, pass an array of key segments instead: `['x', 'y']`.
+If the array already contains a key that literally contains a dot (for example `'x.y'`), `getValue` returns that key's value directly before descending; it does not split on the dot. To force traversal, pass an array of key segments instead: `['x', 'y']`.
 
 #### `Arr::merge`
 
@@ -195,7 +195,7 @@ Arr::keyExists('content-type', $headers, false);           // true  (case-insens
 
 #### `byteLength` and `byteSubString`
 
-Use these when you need to measure or slice binary-safe strings — for example, when hashing passwords, computing HMAC payloads, or slicing JWT segments.
+Use these when you need to measure or slice binary-safe strings, for example when hashing passwords, computing HMAC payloads, or slicing JWT segments.
 
 ```php
 $str = new Str();
@@ -329,7 +329,7 @@ $registry
     ->set('cache.ttl', 900);
 ```
 
-`set` stores values at the top-level key only — it does not perform deep writes via dot notation. To write a nested value, either seed the constructor with the full structure or set the entire sub-array at once:
+`set` stores values at the top-level key only; it does not perform deep writes via dot notation. To write a nested value, either seed the constructor with the full structure or set the entire sub-array at once:
 
 ```php
 $registry->set('cache', ['driver' => 'memcached', 'ttl' => 900]);
@@ -483,9 +483,9 @@ $validated = Arr::filter($request->getParsedBody(), [
 
 ## Related packages
 
-- [`./configuration.md`](./configuration.md) — The Configuration package uses `ArrayRegistry` as the underlying store when loading dotenv files. Read it if you need read-only, file-backed configuration.
-- [`./structure.md`](./structure.md) — The Structure package provides typed collection classes (Map, Set, Queue) when you need more than a raw array with helper methods.
-- [`./container.md`](./container.md) — The Container package (PSR-11) uses `RegistryInterface` for service binding. Understanding Common's registry contract helps when reading Container internals.
+- [`./configuration.md`](./configuration.md): The Configuration package uses `ArrayRegistry` as the underlying store when loading dotenv files. Read it if you need read-only, file-backed configuration.
+- [`./structure.md`](./structure.md): The Structure package provides typed collection classes (Map, Set, Queue) when you need more than a raw array with helper methods.
+- [`./container.md`](./container.md): The Container package (PSR-11) uses `RegistryInterface` for service binding. Understanding Common's registry contract helps when reading Container internals.
 
 ---
 
@@ -495,5 +495,5 @@ $validated = Arr::filter($request->getParsedBody(), [
 - **No Unicode normalization in `Str`.** `Str` provides no NFC/NFD normalization. If you compare strings that originate from different sources (e.g., user input vs. stored data), normalize them upstream before calling `startsWith` or `endsWith`.
 - **`Inflector` handles English morphology only.** `Pluralizer` contains English irregular words and English morphological rules. It does not pluralize or singularize words from other languages.
 - **`Arr::filter` is one level deep.** The filter syntax supports `'parent.child'` paths, but not deeper nesting (`'a.b.c'` is not supported). For deep allow-listing, nest multiple `filter` calls.
-- **`ArrayRegistry::set` writes only to the top level.** Dot notation in `set` is not interpreted as a path. Only `get` resolves dots. This is intentional — the registry is a flat key-value store whose values may themselves be arrays.
+- **`ArrayRegistry::set` writes only to the top level.** Dot notation in `set` is not interpreted as a path. Only `get` resolves dots. This is intentional: the registry is a flat key-value store whose values may themselves be arrays.
 - **`Arr::remove` and `Arr::removeValue` mutate their argument.** This is the only deliberate mutation in the package. Both accept their array by reference. Callers that require immutability should copy the array first.

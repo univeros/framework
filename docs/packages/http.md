@@ -10,7 +10,7 @@ PSR-15 HTTP foundation with the framework's signature Action/Domain/Input/Respon
 
 ## Introduction
 
-The Http package is the outermost layer of the Altair framework. Every HTTP request your application receives enters through a PSR-15 middleware pipeline and exits as a PSR-7 response — without a single line of framework logic leaking into your domain classes.
+The Http package is the outermost layer of the Altair framework. Every HTTP request your application receives enters through a PSR-15 middleware pipeline and exits as a PSR-7 response, without a single line of framework logic leaking into your domain classes.
 
 The pipeline runs in single-pass mode using `relay/relay ^2`. Each middleware receives a `ServerRequestInterface` and a `RequestHandlerInterface`, does its work, calls `$handler->handle($request)` to continue the chain, and returns a `ResponseInterface`. There is no second `$response` parameter passed down the chain, and there is no `RelayBuilder` or `$next($req, $res)` double-pass signature. The dispatcher is `Relay\Relay`, wired with a `ContainerResolver` that lazily builds middleware from class names via the DI container.
 
@@ -18,9 +18,9 @@ The framework's most opinionated contribution is the **Action / Domain / Input /
 
 Routing is powered by `nikic/fast-route ^1.3`. Routes are declared as a `RouteCollection` (a `Map` keyed by `"METHOD /path"`) and registered with the FastRoute dispatcher via `FastRouteConfiguration`. Route segment variables (e.g. `/users/{id:\d+}`) are automatically set as request attributes by `DispatcherMiddleware` and are therefore visible to any `Input` that reads `$request->getAttributes()`.
 
-Authentication ships in three flavours. `BasicAuthenticationMiddleware` and `DigestAuthenticationMiddleware` handle the corresponding HTTP authentication schemes. `TokenAuthenticationMiddleware` covers token-based flows — including JWT — via composable `TokenExtractorInterface`, `CredentialsExtractorInterface`, and `TokenFactoryInterface` collaborators. The JWT implementation wraps Lcobucci JWT and is configured through `LcobucciTokenConfiguration` and related environment variables. All three middleware share the `HttpAuthenticationAwareTrait`, which provides rule-based request filtering (path and method passthrough rules) and an HTTPS-only enforcement gate.
+Authentication ships in three flavours. `BasicAuthenticationMiddleware` and `DigestAuthenticationMiddleware` handle the corresponding HTTP authentication schemes. `TokenAuthenticationMiddleware` covers token-based flows (including JWT) via composable `TokenExtractorInterface`, `CredentialsExtractorInterface`, and `TokenFactoryInterface` collaborators. The JWT implementation wraps Lcobucci JWT and is configured through `LcobucciTokenConfiguration` and related environment variables. All three middleware share the `HttpAuthenticationAwareTrait`, which provides rule-based request filtering (path and method passthrough rules) and an HTTPS-only enforcement gate.
 
-The package does not handle HTTP/2 push, server-sent events, WebSockets, long-polling, or any stateful connection model. It does not include an HTML template engine beyond the optional `PhpViewFormatter`. For rate limiting it ships `RateLimitMiddleware` — a fixed-window PSR-15 limiter backed by any PSR-16 cache pool, with a pluggable key resolver (IP by default; API-key / user-id is one line). It complements rather than replaces edge / reverse-proxy rate limiting — the proxy stops floods at the door; this catches the surviving abuse with per-key precision.
+The package does not handle HTTP/2 push, server-sent events, WebSockets, long-polling, or any stateful connection model. It does not include an HTML template engine beyond the optional `PhpViewFormatter`. For rate limiting it ships `RateLimitMiddleware`: a fixed-window PSR-15 limiter backed by any PSR-16 cache pool, with a pluggable key resolver (IP by default; API-key / user-id is one line). It complements rather than replaces edge / reverse-proxy rate limiting; the proxy stops floods at the door, and this catches the surviving abuse with per-key precision.
 
 ---
 
@@ -34,8 +34,8 @@ composer require univeros/http
 
 The package requires **PHP 8.3 or later** and the following runtime extensions:
 
-- **`ext-json`** — required; used by `JsonContentMiddleware`, `JsonFormatter`, and `InputParser`.
-- **`ext-gd`** — optional; required only if you use `DefaultErrorHandler`'s image error renderers (JPEG, GIF, PNG responses for media requests).
+- **`ext-json`**: required; used by `JsonContentMiddleware`, `JsonFormatter`, and `InputParser`.
+- **`ext-gd`**: optional; required only if you use `DefaultErrorHandler`'s image error renderers (JPEG, GIF, PNG responses for media requests).
 
 `laminas/laminas-diactoros ^3.5` is pulled in automatically as the PSR-7 implementation. If you use the full `univeros/framework` meta-package this package is already included.
 
@@ -97,7 +97,7 @@ $response = $relay->handle($request);
 
 The ADIR pattern separates an HTTP request into four responsibilities, each with one job.
 
-**Input** (`Altair\Http\Contracts\InputInterface`) reads the PSR-7 request and returns an `InputCollection` — a plain `Map` of domain-neutral data. An Input knows about HTTP: query strings, parsed bodies, uploaded files, route attributes, and cookies. It does not call the database or apply business rules.
+**Input** (`Altair\Http\Contracts\InputInterface`) reads the PSR-7 request and returns an `InputCollection`, a plain `Map` of domain-neutral data. An Input knows about HTTP: query strings, parsed bodies, uploaded files, route attributes, and cookies. It does not call the database or apply business rules.
 
 ```php
 public function __invoke(ServerRequestInterface $request): InputCollection;
@@ -109,7 +109,7 @@ public function __invoke(ServerRequestInterface $request): InputCollection;
 public function __invoke(InputCollection $input): PayloadInterface;
 ```
 
-**Action** (`Altair\Http\Base\Action`) is a value object — not a controller. It holds three class names: the Domain, the Input, and the Responder. `ActionMiddleware` reads the `Action` from the request attribute set by `DispatcherMiddleware`, then orchestrates `input($request) -> domain(collection) -> responder(request, response, payload)`.
+**Action** (`Altair\Http\Base\Action`) is a value object, not a controller. It holds three class names: the Domain, the Input, and the Responder. `ActionMiddleware` reads the `Action` from the request attribute set by `DispatcherMiddleware`, then orchestrates `input($request) -> domain(collection) -> responder(request, response, payload)`.
 
 **Responder** (`Altair\Http\Contracts\ResponderInterface`) turns a `PayloadInterface` into a `ResponseInterface`. A Responder knows about HTTP status codes, content-type headers, and response bodies. It does not call the domain.
 
@@ -131,10 +131,10 @@ return $responder($request, $this->responseFactory->createResponse(), $domain($i
 
 `Altair\Http\Base\Payload` is an immutable value object that carries the domain's answer back to the HTTP layer. It has four orthogonal parts:
 
-- **status** — a domain-level status integer (mapped to an HTTP status code by `StatusResponder`).
-- **output** — the data array to serialize into the response body.
-- **messages** — validation errors, notices, or other human-readable strings.
-- **settings** — arbitrary key-value pairs used by responders and formatters (e.g. `redirect`, `template`, `layout`).
+- **status**: a domain-level status integer (mapped to an HTTP status code by `StatusResponder`).
+- **output**: the data array to serialize into the response body.
+- **messages**: validation errors, notices, or other human-readable strings.
+- **settings**: arbitrary key-value pairs used by responders and formatters (e.g. `redirect`, `template`, `layout`).
 
 All mutating methods return new copies (`withStatus()`, `withOutput()`, `withMessages()`, `withSetting()`, `withoutSetting()`). The domain never modifies a payload in place.
 
@@ -207,9 +207,145 @@ $relay    = $container->make(\Relay\Relay::class);
 $response = $relay->handle($request);
 ```
 
+### Scoping middleware to specific paths
+
+The pipeline built from `MiddlewareCollection` is global: every middleware in the queue runs for every request that reaches the front controller. PSR-15 (and `relay/relay`) has no built-in notion of "apply this middleware only to `/admin`" or "skip CSRF on `/webhooks`". Altair gives you two ways to make a middleware path-aware, depending on whether the middleware already understands rules.
+
+**1. Authentication middleware: use `RequestPathRule`.**
+
+The three authentication middleware (`BasicAuthenticationMiddleware`, `DigestAuthenticationMiddleware`, `TokenAuthenticationMiddleware`) accept a list of `HttpAuthRuleInterface` rules as their `$rules` constructor argument. Each rule decides, per request, whether the middleware should act on it; if any rule returns `false` the middleware skips authentication and passes the request straight through. `RequestPathRule` is the path-based rule and takes two options:
+
+| Option | Meaning | Default |
+|---|---|---|
+| `path` | List of path prefixes the middleware applies to (the include list). | `['/']` (everything) |
+| `passthrough` | List of prefixes exempted even when they match `path` (the exclude list). | `[]` |
+
+`passthrough` is evaluated first and always wins, so you point `path` at the protected area and list the public sub-paths under `passthrough`:
+
+```php
+use Altair\Http\Middleware\TokenAuthenticationMiddleware;
+use Altair\Http\Rule\RequestPathRule;
+
+$auth = new TokenAuthenticationMiddleware(
+    // ... extractors, token factory, identity validator, response factory ...
+    rules: [
+        new RequestPathRule([
+            'path'        => ['/api'],                        // authenticate everything under /api
+            'passthrough' => ['/api/login', '/api/health'],  // except these public endpoints
+        ]),
+    ],
+);
+
+$queue->push($auth);
+```
+
+Matching is prefix-based and boundary-aware: a configured `/api` matches `/api`, `/api/`, and `/api/users/42`, but not `/apidocs`. Duplicate and trailing slashes are normalised before comparison. When the rule returns `false` (the path sits under `passthrough`, or matches none of `path`), the request is forwarded without authentication, so confirm that every passthrough path is genuinely public before listing it.
+
+Rules are AND-combined: all of them must pass for the middleware to act. That lets you stack the default `RequestMethodRule` (which exempts `OPTIONS` pre-flight requests) alongside `RequestPathRule`, so CORS pre-flight is let through and authentication is still scoped by path:
+
+```php
+use Altair\Http\Rule\RequestMethodRule;
+use Altair\Http\Rule\RequestPathRule;
+
+rules: [
+    new RequestMethodRule(),                       // let OPTIONS pre-flight through
+    new RequestPathRule(['path' => ['/admin']]),   // only authenticate /admin
+],
+```
+
+Passing an empty `$rules` array installs a single `RequestMethodRule` for you, so `OPTIONS` is always exempt by default.
+
+**2. Any other middleware: wrap it in a path-scoped decorator.**
+
+Middleware that does not take rules (`CacheMiddleware`, `CsrfMiddleware`, or one of your own) is scoped by wrapping it in a small decorator that decides whether to delegate to the inner middleware or skip ahead to the next handler. Because the pipeline is single-pass PSR-15, "skip" simply means returning `$handler->handle($request)` without invoking the wrapped middleware:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Http\Middleware;
+
+use Altair\Http\Contracts\MiddlewareInterface;
+use Override;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface as PsrMiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
+
+/**
+ * Runs the wrapped middleware only when the request path matches one of the
+ * configured prefixes (the allow list) and is not under any excluded prefix
+ * (the deny list). On a non-match the wrapped middleware is skipped entirely.
+ */
+final class PathScopedMiddleware implements MiddlewareInterface
+{
+    /**
+     * @param list<string> $only   Prefixes the middleware applies to. Empty = all paths.
+     * @param list<string> $except Prefixes to exclude. Takes precedence over $only.
+     */
+    public function __construct(
+        private readonly PsrMiddlewareInterface $middleware,
+        private readonly array $only = [],
+        private readonly array $except = [],
+    ) {
+    }
+
+    #[Override]
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
+        return $this->applies($request->getUri()->getPath())
+            ? $this->middleware->process($request, $handler)
+            : $handler->handle($request);
+    }
+
+    private function applies(string $path): bool
+    {
+        $path = '/' . ltrim($path, '/');
+
+        foreach ($this->except as $prefix) {
+            if ($this->matches($path, $prefix)) {
+                return false;
+            }
+        }
+
+        if ($this->only === []) {
+            return true;
+        }
+
+        foreach ($this->only as $prefix) {
+            if ($this->matches($path, $prefix)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function matches(string $path, string $prefix): bool
+    {
+        $prefix = rtrim($prefix, '/');
+
+        return $prefix === '' || $path === $prefix || str_starts_with($path, $prefix . '/');
+    }
+}
+```
+
+Register the wrapped middleware in the usual place; the path policy stays in one obvious spot and the wrapped middleware never knows it is being scoped:
+
+```php
+$queue->push(new PathScopedMiddleware(
+    middleware: $container->make(CsrfMiddleware::class),
+    only:   ['/dashboard', '/account'],   // CSRF only on the authenticated UI
+    except: ['/dashboard/webhooks'],      // but never on the inbound webhook receiver
+));
+```
+
+For richer matching (regex, host, or header based) implement the same `process()` shape with your own predicate.
+
 ### Routing with FastRoute
 
-Routes are declared as a `RouteCollection` map. Each entry's key is a `"METHOD /path"` string; the value is an `Action` instance. `FastRouteConfiguration` registers a `FastRoute\Dispatcher` factory with the container. By default it uses `simpleDispatcher` (recompiles routes on every request — fine for dev). Pass an `Altair\Configuration\Support\Env` as the second constructor argument to opt into `cachedDispatcher`, then set `ROUTE_CACHE_FILE` in the environment to a writable file path; see the **Configuration** section below for the env-var contract.
+Routes are declared as a `RouteCollection` map. Each entry's key is a `"METHOD /path"` string; the value is an `Action` instance. `FastRouteConfiguration` registers a `FastRoute\Dispatcher` factory with the container. By default it uses `simpleDispatcher` (recompiles routes on every request, fine for dev). Pass an `Altair\Configuration\Support\Env` as the second constructor argument to opt into `cachedDispatcher`, then set `ROUTE_CACHE_FILE` in the environment to a writable file path; see the **Configuration** section below for the env-var contract.
 
 ```php
 use Altair\Http\Base\Action;
@@ -349,9 +485,9 @@ final class CreateOrderResponder implements ResponderInterface
 
 **`CompoundResponder`** is the default. It chains three built-in responders in order:
 
-1. `FormattedResponder` — if the payload has output, selects a formatter via content negotiation and writes the response body.
-2. `RedirectResponder` — if the payload has a `redirect` setting, adds a `Location` header.
-3. `StatusResponder` — maps the payload's domain status to an HTTP status code on the response.
+1. `FormattedResponder`: if the payload has output, selects a formatter via content negotiation and writes the response body.
+2. `RedirectResponder`: if the payload has a `redirect` setting, adds a `Location` header.
+3. `StatusResponder`: maps the payload's domain status to an HTTP status code on the response.
 
 You can change the list of inner responders by passing a custom `$responders` array to the constructor.
 
@@ -363,7 +499,7 @@ You can change the list of inner responders by passing a custom `$responders` ar
 
 ### Built-in middleware
 
-**`ExceptionHandlerMiddleware`** wraps the rest of the pipeline in a try/catch. In capture mode (`$capture = true`) it converts any `Throwable` into an error response via the `ErrorHandlerInterface`. In non-capture mode it re-throws. It also intercepts 4xx/5xx responses from the pipeline and routes them through the error handler. A thrown exception that implements `HttpExceptionInterface` is rendered with **its own** status code and headers (so a thrown `HttpNotFoundException` is a 404, not a 500); any other `Throwable` becomes a 500. Pass an optional PSR-3 `LoggerInterface` and every 5xx is logged with the request method/path — wire it to `EventRecordingLogger` (Events package) to record `http_error` events. Use `ProblemDetailsErrorHandler` (RFC 7807) for both development and production; the legacy `DefaultErrorHandler` is dev-only.
+**`ExceptionHandlerMiddleware`** wraps the rest of the pipeline in a try/catch. In capture mode (`$capture = true`) it converts any `Throwable` into an error response via the `ErrorHandlerInterface`. In non-capture mode it re-throws. It also intercepts 4xx/5xx responses from the pipeline and routes them through the error handler. A thrown exception that implements `HttpExceptionInterface` is rendered with **its own** status code and headers (so a thrown `HttpNotFoundException` is a 404, not a 500); any other `Throwable` becomes a 500. Pass an optional PSR-3 `LoggerInterface` and every 5xx is logged with the request method/path; wire it to `EventRecordingLogger` (Events package) to record `http_error` events. Use `ProblemDetailsErrorHandler` (RFC 7807) for both development and production; the legacy `DefaultErrorHandler` is dev-only.
 
 **`DispatcherMiddleware`** calls the FastRoute dispatcher with the request method and path. On `FOUND`, it sets the `Action` on the request attribute `ATTRIBUTE_ACTION` and adds route segment variables as individual attributes. On `NOT_FOUND` or `METHOD_NOT_ALLOWED`, it throws a typed `HttpException`.
 
@@ -404,13 +540,13 @@ Two extractors ship out of the box: `HeaderTokenExtractor` reads the `Authorizat
 
 The JWT implementation uses `lcobucci/jwt`. `LcobucciTokenGenerator` generates signed tokens (RSA/SHA-256 by default). `LcobucciTokenParser` verifies the signature and returns a `Token` value object containing the raw JWT string and its claims as metadata.
 
-Authentication rules control which requests the middleware applies to. `RequestMethodRule` passes through `OPTIONS` requests by default. `RequestPathRule` can restrict authentication to specific path prefixes while exempting others. Both implement `HttpAuthRuleInterface`. Pass an array of rules as the `$rules` constructor argument; if you pass an empty array the default `RequestMethodRule` is used.
+Authentication rules control which requests the middleware applies to. `RequestMethodRule` passes through `OPTIONS` requests by default. `RequestPathRule` can restrict authentication to specific path prefixes while exempting others. Both implement `HttpAuthRuleInterface`. Pass an array of rules as the `$rules` constructor argument; if you pass an empty array the default `RequestMethodRule` is used. See [Scoping middleware to specific paths](#scoping-middleware-to-specific-paths) for the full `path` / `passthrough` contract and for scoping non-authentication middleware.
 
 All three authentication middleware enforce HTTPS by default. Requests over plain HTTP are rejected with a `RuntimeException` unless the host is in the configured `$allowed` list (default: `localhost`, `127.0.0.1`, `::1`).
 
 ### Error handling
 
-The `bin/altair new` skeleton wires this for you — `ExceptionHandlerMiddleware` is the outermost entry in `public/index.php`, so a fresh app never leaks a raw PHP fatal. To wire it by hand, position it first in the queue:
+The `bin/altair new` skeleton wires this for you: `ExceptionHandlerMiddleware` is the outermost entry in `public/index.php`, so a fresh app never leaks a raw PHP fatal. To wire it by hand, position it first in the queue:
 
 ```php
 $queue->push(new ExceptionHandlerMiddleware(
@@ -421,18 +557,18 @@ $queue->push(new ExceptionHandlerMiddleware(
 ));
 ```
 
-**Status mapping.** Exceptions carry their own status via `HttpExceptionInterface::getStatusCode()` (and `getHeaders()` for things like the `Allow` header on a 405). The framework's `HttpException` hierarchy implements it — `HttpNotFoundException` is 404, `HttpMethodNotAllowedException` is 405 with an `Allow` header, `InputValidationException` is 422, the auth exceptions are 401/403. A bare `HttpBadRequestException` falls back to 400 and any non-HTTP `Throwable` to 500. In capture mode the middleware reads that status off the thrown exception, so a thrown 404 renders as 404. Userland exceptions can implement `HttpExceptionInterface` to opt a domain error into a specific status without subclassing the framework's exceptions.
+**Status mapping.** Exceptions carry their own status via `HttpExceptionInterface::getStatusCode()` (and `getHeaders()` for things like the `Allow` header on a 405). The framework's `HttpException` hierarchy implements it: `HttpNotFoundException` is 404, `HttpMethodNotAllowedException` is 405 with an `Allow` header, `InputValidationException` is 422, the auth exceptions are 401/403. A bare `HttpBadRequestException` falls back to 400 and any non-HTTP `Throwable` to 500. In capture mode the middleware reads that status off the thrown exception, so a thrown 404 renders as 404. Userland exceptions can implement `HttpExceptionInterface` to opt a domain error into a specific status without subclassing the framework's exceptions.
 
 **`ProblemDetailsErrorHandler`** (recommended, dev and prod) renders an RFC 7807 `application/problem+json` document by default, negotiating down to a safe HTML page or plain text from the request's `Accept` header. It writes to the PSR-7 body (never `echo`) and escapes every interpolated value. It distinguishes environments via its `debug` flag:
 
-- **production** (`debug: false`): generic `detail` for 5xx, and never the exception class, message, or stack trace — no internal information leaks to the client.
+- **production** (`debug: false`): generic `detail` for 5xx, and never the exception class, message, or stack trace; no internal information leaks to the client.
 - **debug** (`debug: true`): the exception class, `file:line`, and stack trace are attached to the problem document.
 
-An exception implementing `ProblemExtensionInterface` contributes extra members to the document — `InputValidationException`, for example, adds `"errors": {"field": "message"}` to its 422 problem (reserved members `type`/`title`/`status`/`instance` can't be overwritten).
+An exception implementing `ProblemExtensionInterface` contributes extra members to the document; `InputValidationException`, for example, adds `"errors": {"field": "message"}` to its 422 problem (reserved members `type`/`title`/`status`/`instance` can't be overwritten).
 
 **`DefaultErrorHandler`** is the legacy dev-only handler. It content-negotiates HTML/JSON/XML/plain-text/image from the response `Content-Type`, but uses `echo` internally and is not appropriate for production JSON APIs. Prefer `ProblemDetailsErrorHandler`.
 
-**Recording failures for agents.** Pass a PSR-3 `LoggerInterface` and the middleware logs every 5xx with the request method, path, and exception. Wire it to `Altair\Events\EventRecordingLogger` (bound by `EventsConfiguration` when the Events package is enabled) and each server-side failure becomes an `http_error` event in `.altair/events.jsonl`, queryable across sessions with `bin/altair events:filter --kind=http_error`. Client errors (4xx) are intentionally not recorded — they are expected and would only add noise. The skeleton picks the logger up automatically when Events is enabled.
+**Recording failures for agents.** Pass a PSR-3 `LoggerInterface` and the middleware logs every 5xx with the request method, path, and exception. Wire it to `Altair\Events\EventRecordingLogger` (bound by `EventsConfiguration` when the Events package is enabled) and each server-side failure becomes an `http_error` event in `.altair/events.jsonl`, queryable across sessions with `bin/altair events:filter --kind=http_error`. Client errors (4xx) are intentionally not recorded; they are expected and would only add noise. The skeleton picks the logger up automatically when Events is enabled.
 
 ---
 
@@ -444,12 +580,12 @@ Each `Configuration` class implements `ConfigurationInterface` from `univeros/co
 
 **`RelayConfiguration`** wires `ContainerResolver` with the container instance and delegates `Relay\Relay` construction to a factory that reads `MiddlewareCollection` from the container. You must push your middleware into `MiddlewareCollection` before applying this configuration.
 
-**`FastRouteConfiguration`** registers a `FastRoute\Dispatcher` factory. It iterates the `RouteCollection`, splits each key on the first space to get the HTTP method and path, and adds them to the FastRoute collector. The constructor takes an optional `Altair\Configuration\Support\Env` as a second argument; when omitted the factory uses `FastRoute\simpleDispatcher` (no file cache, recompiles every request — the dev default). When `Env` is provided the configuration reads these environment variables:
+**`FastRouteConfiguration`** registers a `FastRoute\Dispatcher` factory. It iterates the `RouteCollection`, splits each key on the first space to get the HTTP method and path, and adds them to the FastRoute collector. The constructor takes an optional `Altair\Configuration\Support\Env` as a second argument; when omitted the factory uses `FastRoute\simpleDispatcher` (no file cache, recompiles every request, the dev default). When `Env` is provided the configuration reads these environment variables:
 
 | Variable | Default | Description |
 |---|---|---|
 | `ROUTE_CACHE_FILE` | unset | Absolute path to the compiled route-cache file. When unset or empty the configuration falls back to `simpleDispatcher`. The host must make the directory writable on deploy (pre-warm it in your build, or delete the file to bust the cache). |
-| `ROUTE_CACHE_DISABLED` | `false` | Kill switch. When truthy (`1`, `true`, `on`, `yes`) `simpleDispatcher` is used even if `ROUTE_CACHE_FILE` is set — useful for dev hosts that always export the cache path but want recompiles while editing routes. |
+| `ROUTE_CACHE_DISABLED` | `false` | Kill switch. When truthy (`1`, `true`, `on`, `yes`) `simpleDispatcher` is used even if `ROUTE_CACHE_FILE` is set, useful for dev hosts that always export the cache path but want recompiles while editing routes. |
 
 `Action` implements `__set_state`, so the cached dispatch data round-trips through PHP's `var_export` correctly.
 
@@ -654,7 +790,7 @@ new CompoundResponder(
 
 ### Custom output formatters
 
-Implement `Altair\Http\Contracts\OutputFormatterInterface` — three methods: `accepts(): array` (MIME types), `type(): string` (Content-Type value), and `body(PayloadInterface $payload): string`. Register it on `FormattedResponder` via the `withFormatter()` method or via `PhpViewConfiguration::apply()` as a model for your own configuration class.
+Implement `Altair\Http\Contracts\OutputFormatterInterface` with three methods: `accepts(): array` (MIME types), `type(): string` (Content-Type value), and `body(PayloadInterface $payload): string`. Register it on `FormattedResponder` via the `withFormatter()` method or via `PhpViewConfiguration::apply()` as a model for your own configuration class.
 
 ### Custom error handlers
 
@@ -810,13 +946,13 @@ return $payload
 
 ## Related packages
 
-- [./cookie.md](./cookie.md) — PSR-7-aware cookie value objects. `SessionHeadersMiddleware` uses `CookieManager` directly.
-- **session** — Session handlers (file, Redis, Mongo). `CsrfMiddleware` and `SessionHeadersMiddleware` require `Altair\Session\SessionManager`.
-- **sanitation** — Input sanitation rules. Apply to the `InputCollection` inside your `InputInterface` implementation.
-- **security** — Hashing, encryption, and CSRF token generation. `SecurityManager`'s CSRF token is what `CsrfMiddleware` validates.
-- **validation** — Validation rules and middleware. Validate the `InputCollection` returned by your Input before the Domain processes it.
-- **middleware** — Generic PSR-15 middleware primitives shared across packages. `Altair\Http\Contracts\MiddlewareInterface` extends the PSR-15 interface defined there.
-- **container** — DI container (PSR-11). `ContainerResolver` wraps it. All middleware, Domains, Inputs, and Responders are resolved through it.
+- [./cookie.md](./cookie.md): PSR-7-aware cookie value objects. `SessionHeadersMiddleware` uses `CookieManager` directly.
+- **session**: Session handlers (file, Redis, Mongo). `CsrfMiddleware` and `SessionHeadersMiddleware` require `Altair\Session\SessionManager`.
+- **sanitation**: Input sanitation rules. Apply to the `InputCollection` inside your `InputInterface` implementation.
+- **security**: Hashing, encryption, and CSRF token generation. `SecurityManager`'s CSRF token is what `CsrfMiddleware` validates.
+- **validation**: Validation rules and middleware. Validate the `InputCollection` returned by your Input before the Domain processes it.
+- **middleware**: Generic PSR-15 middleware primitives shared across packages. `Altair\Http\Contracts\MiddlewareInterface` extends the PSR-15 interface defined there.
+- **container**: DI container (PSR-11). `ContainerResolver` wraps it. All middleware, Domains, Inputs, and Responders are resolved through it.
 
 ---
 
@@ -860,7 +996,7 @@ Key differences:
 - The next step is `$handler->handle($request)`, not `$next($request, $response)`.
 - Middleware that need to create a response (auth, CORS, error handler) receive a `ResponseFactoryInterface` via the constructor.
 
-**`RelayBuilder` is gone.** `Relay\Relay` v2 accepts the queue directly in its constructor: `new Relay($queue, $resolver)`. The resolver is any callable that accepts a class name or object and returns an object — `ContainerResolver` fulfils this contract without implementing the removed `Relay\ResolverInterface`.
+**`RelayBuilder` is gone.** `Relay\Relay` v2 accepts the queue directly in its constructor: `new Relay($queue, $resolver)`. The resolver is any callable that accepts a class name or object and returns an object; `ContainerResolver` fulfils this contract without implementing the removed `Relay\ResolverInterface`.
 
 **`relay/middleware` is gone.** `AbstractContentHandlerMiddleware`, `FormContentMiddleware`, and `JsonContentMiddleware` no longer extend any Relay v1 abstract class. They are reimplemented inline as `Altair\Http\Middleware\AbstractContentHandlerMiddleware`.
 
@@ -874,9 +1010,9 @@ If you have any custom middleware that extends `Relay\MiddlewareInterface` or th
 
 The Http package deliberately excludes several concerns:
 
-- **HTTP/2 server push** — Not supported, and largely moot (server push has been removed from major browsers); the package stays at the message-oriented PSR-7/PSR-15 level. Note that server-sent events *are* achievable over PSR-15 — Observatory's `ActivityStreamHandler` streams an SSE tail through an emit-and-close handler — they are simply not shipped as a built-in Http helper.
-- **WebSockets** — WebSocket connections require a protocol upgrade and persistent connection handling outside the PSR-15 request/response cycle.
-- **Route caching** — `FastRouteConfiguration` defaults to `simpleDispatcher` (recompiles every request, safe for dev). Set `ROUTE_CACHE_FILE` to a writable path to opt into FastRoute's `cachedDispatcher`; flip `ROUTE_CACHE_DISABLED=1` to force the simple path back on without un-setting the cache path. The cache file is a plain PHP file written via `var_export` — pre-warm it on deploy and delete it to bust the cache. See the **Configuration** section above.
-- **Rate limiting** — `RateLimitMiddleware` is a fixed-window PSR-15 limiter backed by any PSR-16 cache pool (`Altair\Cache` works out of the box). The default `IpKeyResolver` keys on the client IP, preferring the `ATTRIBUTE_IP_ADDRESS` attribute set by `IpAddressMiddleware` (so trusted-proxy resolution lives in one place — never trust `X-Forwarded-For` directly); pass a custom `KeyResolverInterface` for API-key or user-id keying. Under-limit requests pass through with informational `X-RateLimit-Limit / Remaining / Reset` headers; at-limit returns `429 Too Many Requests` with `Retry-After`. Fixed-window has the classic boundary burst (`2 × limit` across the window edge); layer a token-bucket on top if you need stricter accounting. Complements edge / reverse-proxy rate limiting; does not replace it.
-- **Request body streaming** — `JsonContentMiddleware` and `FormContentMiddleware` buffer the entire body string via `(string) $request->getBody()`. They are not suitable for very large request bodies.
-- **Multipart form data** — File upload parsing relies on PHP's built-in `$_FILES` superglobal via `ServerRequestFactory::fromGlobals()`. Complex multipart handling is outside the package's scope.
+- **HTTP/2 server push**: Not supported, and largely moot (server push has been removed from major browsers); the package stays at the message-oriented PSR-7/PSR-15 level. Note that server-sent events *are* achievable over PSR-15: Observatory's `ActivityStreamHandler` streams an SSE tail through an emit-and-close handler, but they are simply not shipped as a built-in Http helper.
+- **WebSockets**: WebSocket connections require a protocol upgrade and persistent connection handling outside the PSR-15 request/response cycle.
+- **Route caching**: `FastRouteConfiguration` defaults to `simpleDispatcher` (recompiles every request, safe for dev). Set `ROUTE_CACHE_FILE` to a writable path to opt into FastRoute's `cachedDispatcher`; flip `ROUTE_CACHE_DISABLED=1` to force the simple path back on without un-setting the cache path. The cache file is a plain PHP file written via `var_export`; pre-warm it on deploy and delete it to bust the cache. See the **Configuration** section above.
+- **Rate limiting**: `RateLimitMiddleware` is a fixed-window PSR-15 limiter backed by any PSR-16 cache pool (`Altair\Cache` works out of the box). The default `IpKeyResolver` keys on the client IP, preferring the `ATTRIBUTE_IP_ADDRESS` attribute set by `IpAddressMiddleware` (so trusted-proxy resolution lives in one place; never trust `X-Forwarded-For` directly); pass a custom `KeyResolverInterface` for API-key or user-id keying. Under-limit requests pass through with informational `X-RateLimit-Limit / Remaining / Reset` headers; at-limit returns `429 Too Many Requests` with `Retry-After`. Fixed-window has the classic boundary burst (`2 × limit` across the window edge); layer a token-bucket on top if you need stricter accounting. Complements edge / reverse-proxy rate limiting; does not replace it.
+- **Request body streaming**: `JsonContentMiddleware` and `FormContentMiddleware` buffer the entire body string via `(string) $request->getBody()`. They are not suitable for very large request bodies.
+- **Multipart form data**: File upload parsing relies on PHP's built-in `$_FILES` superglobal via `ServerRequestFactory::fromGlobals()`. Complex multipart handling is outside the package's scope.

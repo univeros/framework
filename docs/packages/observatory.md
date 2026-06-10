@@ -1,15 +1,15 @@
 # Observatory
 
-> A dev-only web monitoring panel for Altair apps — health, activity, queues, routes, config and more — in the spirit of Laravel Telescope/Horizon/Pulse, but as a thin, gated layer over data the framework already produces.
+> A dev-only web monitoring panel for Altair apps (health, activity, queues, routes, config and more), in the spirit of Laravel Telescope/Horizon/Pulse, but as a thin, gated layer over data the framework already produces.
 
 **Composer:** `univeros/observatory`
 **Namespace:** `Altair\Observatory`
 
 ## Introduction
 
-Every framework eventually needs a window into the running app: is it healthy, what just happened, what's stuck in the queue, which routes exist. Observatory is that window. The key design choice is that it owns **no data of its own** — `doctor` (health), `events` (the append-only activity/error log), `messaging` (queues and failed jobs), `introspection` (routes, container, config, listeners, middleware) and `persistence` (migrations) already expose everything, and `univeros/mcp` already wraps those same sources for agents. Observatory is simply the *human* consumer of that data: an agent reads via MCP, a developer reads via the panel.
+Every framework eventually needs a window into the running app: is it healthy, what just happened, what's stuck in the queue, which routes exist. Observatory is that window. The key design choice is that it owns **no data of its own**: `doctor` (health), `events` (the append-only activity/error log), `messaging` (queues and failed jobs), `introspection` (routes, container, config, listeners, middleware) and `persistence` (migrations) already expose everything, and `univeros/mcp` already wraps those same sources for agents. Observatory is simply the *human* consumer of that data: an agent reads via MCP, a developer reads via the panel.
 
-That makes the package a presentation layer with near-zero coupling to the core. A **panel** is a pure data provider — it reads one source and projects a render-agnostic `PanelSnapshot` (a status, a headline, a flat metrics map, detail rows). The same snapshot backs the web UI and any JSON endpoint, so panels stay unit-testable and never bind to HTML.
+That makes the package a presentation layer with near-zero coupling to the core. A **panel** is a pure data provider: it reads one source and projects a render-agnostic `PanelSnapshot` (a status, a headline, a flat metrics map, detail rows). The same snapshot backs the web UI and any JSON endpoint, so panels stay unit-testable and never bind to HTML.
 
 Because the panel surfaces configuration, queues and database state, **access is fail-closed**: it is denied unless explicitly enabled *and* running in a non-production environment, so a misconfigured production deploy never exposes it.
 
@@ -54,7 +54,7 @@ if ($observatory->isAccessible()) {
 
 **The registry is id-keyed and overridable.** `PanelRegistry` keys panels by `id()`; registering an existing id replaces it, so a host can override a built-in panel by registering its own after configuration (`prepare()`-ing the shared `PanelRegistry`).
 
-**Access is a swappable contract.** `AccessGuardInterface::allows()` decides whether the panel may be served. The default `EnvironmentAccessGuard` is fail-closed (enabled flag AND allow-listed environment). Hosts rebind it for real auth — IP allow-list, signed cookie, RBAC — without touching panels.
+**Access is a swappable contract.** `AccessGuardInterface::allows()` decides whether the panel may be served. The default `EnvironmentAccessGuard` is fail-closed (enabled flag AND allow-listed environment). Hosts rebind it for real auth (IP allow-list, signed cookie, RBAC) without touching panels.
 
 ## Configuration
 
@@ -110,10 +110,10 @@ $response = $container->get(DashboardHandler::class)->handle($request);
 // 200 + HTML when accessible; 403 + "disabled" page otherwise.
 ```
 
-`?panel=<id>` renders that panel's detail view — a filterable table of its rows
-(404 on an unknown id) — while the bare path renders the card overview.
+`?panel=<id>` renders that panel's detail view (a filterable table of its rows,
+404 on an unknown id) while the bare path renders the card overview.
 
-The `queues` and `migrations` panels read through framework-owned seams —
+The `queues` and `migrations` panels read through framework-owned seams:
 `FailedQueueReaderInterface` and `MigrationStatusReaderInterface`. Bind a host
 adapter (Messenger failure transport / Cycle migrator) for live data; absent a
 binding the panel simply isn't registered (the dashboard shows fewer cards).
@@ -135,17 +135,17 @@ $response = $container->get(ActivityStreamHandler::class)->handle($request);
 
 ## Related packages
 
-- [doctor.md](./doctor.md) — health checks (the `health` panel's source).
-- [events.md](./events.md) — the append-only activity/error log (the `events` panel + the SSE tail).
-- [messaging.md](./messaging.md) — queues and failed jobs (the `queues` panel's source, via the reader seam).
-- [persistence.md](./persistence.md) — migration status (the `migrations` panel's source, via the reader seam).
-- [introspection.md](./introspection.md) — routes, container, config, listeners, middleware.
-- [mcp.md](./mcp.md) — the agent-facing consumer of the same data sources (Observatory is the human one).
+- [doctor.md](./doctor.md): health checks (the `health` panel's source).
+- [events.md](./events.md): the append-only activity/error log (the `events` panel + the SSE tail).
+- [messaging.md](./messaging.md): queues and failed jobs (the `queues` panel's source, via the reader seam).
+- [persistence.md](./persistence.md): migration status (the `migrations` panel's source, via the reader seam).
+- [introspection.md](./introspection.md): routes, container, config, listeners, middleware.
+- [mcp.md](./mcp.md): the agent-facing consumer of the same data sources (Observatory is the human one).
 
 ## Limitations
 
-- **Dev-only by design.** The default guard denies in production and whenever `OBSERVATORY_ENABLED` is unset — it is environment-based, not auth-based, so put real authentication in front before exposing it anywhere shared. Point production observability (metrics/tracing) at your APM instead.
-- The SSE activity tail **emits-and-closes** (the client reconnects); it is near-real-time, not a persistent push channel, on purpose — so it never pins a worker.
+- **Dev-only by design.** The default guard denies in production and whenever `OBSERVATORY_ENABLED` is unset: it is environment-based, not auth-based, so put real authentication in front before exposing it anywhere shared. Point production observability (metrics/tracing) at your APM instead.
+- The SSE activity tail **emits-and-closes** (the client reconnects); it is near-real-time, not a persistent push channel, on purpose, so it never pins a worker.
 - The `queues` and `migrations` panels need a host-bound reader adapter to show live data; without one they are simply absent from the dashboard.
-- Panels describe **state** ("right now"), not history or trends — use [events.md](./events.md) for the chronological record.
+- Panels describe **state** ("right now"), not history or trends; use [events.md](./events.md) for the chronological record.
 - The `resources/views/*` templates are presentation-only (HTML in PHP) and are excluded from the framework's static analysis; treat them as the view layer, not application logic.

@@ -7,18 +7,18 @@
 
 ## Introduction
 
-The framework types against `Psr\Log\LoggerInterface` in several packages — the `ExceptionHandlerMiddleware` (Http), the event `Recorder` (Events), the command-bus logger (Courier), the worker and middleware (Messaging), and the cache pool (Cache). Until you bind a logger, all of those resolve to a `NullLogger`: the framework asks for a logger and the answer is silence. A server-side 500 is logged into the void.
+The framework types against `Psr\Log\LoggerInterface` in several packages: the `ExceptionHandlerMiddleware` (Http), the event `Recorder` (Events), the command-bus logger (Courier), the worker and middleware (Messaging), and the cache pool (Cache). Until you bind a logger, all of those resolve to a `NullLogger`: the framework asks for a logger and the answer is silence. A server-side 500 is logged into the void.
 
-This package fills that gap the same way Persistence wraps Cycle and Messaging wraps Symfony Messenger: it **wraps a battle-tested library behind a contract** rather than re-implementing it. The contract here is the industry-standard PSR-3 `LoggerInterface`, and the implementation is [Monolog](https://github.com/Seldaek/monolog) — the same logger Laravel and Symfony ship. Hand-rolling a logger would mean re-deriving handlers, formatters, level handling, and processors that Monolog has had production-hardened for over a decade.
+This package fills that gap the same way Persistence wraps Cycle and Messaging wraps Symfony Messenger: it **wraps a battle-tested library behind a contract** rather than re-implementing it. The contract here is the industry-standard PSR-3 `LoggerInterface`, and the implementation is [Monolog](https://github.com/Seldaek/monolog), the same logger Laravel and Symfony ship. Hand-rolling a logger would mean re-deriving handlers, formatters, level handling, and processors that Monolog has had production-hardened for over a decade.
 
 What the package adds on top of Monolog is a one-call DI wiring driven by environment variables, with an **agent-first default**: newline-delimited JSON to `stderr`. That keeps application logs machine-parseable and consistent with the rest of the framework's structured output, while a `line` format stays available for human-friendly local development.
 
-This is the general-purpose PSR-3 sink — distinct from the framework's other structured-telemetry stories, which it does not replace:
+This is the general-purpose PSR-3 sink, distinct from the framework's other structured-telemetry stories, which it does not replace:
 
-- **Events** (`.altair/events.jsonl`) — *what mutated* (agent memory).
-- **Observability** — OpenTelemetry-format traces + metrics (*how requests flow*).
-- **Profiling** — CPU sampling (*where time goes*).
-- **Logging** (this package) — arbitrary application log lines and third-party library logs (*the catch-all PSR-3 stream*).
+- **Events** (`.altair/events.jsonl`): *what mutated* (agent memory).
+- **Observability**: OpenTelemetry-format traces + metrics (*how requests flow*).
+- **Profiling**: CPU sampling (*where time goes*).
+- **Logging** (this package): arbitrary application log lines and third-party library logs (*the catch-all PSR-3 stream*).
 
 ## Installation
 
@@ -32,7 +32,7 @@ This pulls in `monolog/monolog`. If you are installing the full framework, `comp
 
 ## Configuration
 
-Add `LoggingConfiguration` to your configuration chain — early, so packages that register a `NullLogger` fallback (e.g. Messaging) see a real logger already bound:
+Add `LoggingConfiguration` to your configuration chain early, so packages that register a `NullLogger` fallback (e.g. Messaging) see a real logger already bound:
 
 ```php
 // config/configurations.php
@@ -73,8 +73,8 @@ With the default `LOG_FORMAT=json`, each record is a single JSON object per line
 
 ## Overriding the logger
 
-`LoggingConfiguration` binds `LoggerInterface` unconditionally — opting into it means you want this logger. To use a different PSR-3 logger (a custom Monolog setup with rotation/syslog handlers, a host framework's logger, or a test double), bind your own `LoggerInterface` in a configuration that runs **after** `LoggingConfiguration`, or simply omit `LoggingConfiguration` from the chain and bind your own.
+`LoggingConfiguration` binds `LoggerInterface` unconditionally: opting into it means you want this logger. To use a different PSR-3 logger (a custom Monolog setup with rotation/syslog handlers, a host framework's logger, or a test double), bind your own `LoggerInterface` in a configuration that runs **after** `LoggingConfiguration`, or simply omit `LoggingConfiguration` from the chain and bind your own.
 
 ## Relationship to error handling
 
-When a `LoggerInterface` is bound, the Http `ExceptionHandlerMiddleware` logs every 5xx with the request method, path, and exception — so an unhandled server error produces both a structured log line here and (when Events is enabled) an `http_error` event in `.altair/events.jsonl`.
+When a `LoggerInterface` is bound, the Http `ExceptionHandlerMiddleware` logs every 5xx with the request method, path, and exception, so an unhandled server error produces both a structured log line here and (when Events is enabled) an `http_error` event in `.altair/events.jsonl`.

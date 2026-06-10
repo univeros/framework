@@ -19,7 +19,7 @@ Requires:   php >=8.3, vlucas/phpdotenv ^5.6,
 
 Most PHP applications reach for a plain associative array when they need configuration. That approach works for small projects, but it leaves you writing the same bootstrapping glue in every entry point and scattering `$_ENV` calls throughout the codebase. This package takes a different position: configuration is an operation applied to a dependency-injection container, not a data structure you pass around.
 
-Every configuration class in this package implements `ConfigurationInterface`, which exposes a single method: `apply(Container $container): void`. When you call `apply`, the configuration registers whatever it manages — environment variables, service bindings, shared instances — into the container. Consumers then ask the container for what they need, and the container delivers it fully initialised.
+Every configuration class in this package implements `ConfigurationInterface`, which exposes a single method: `apply(Container $container): void`. When you call `apply`, the configuration registers whatever it manages (environment variables, service bindings, shared instances) into the container. Consumers then ask the container for what they need, and the container delivers it fully initialised.
 
 `EnvironmentConfiguration` is the entry point for `.env` support. It wraps vlucas/phpdotenv 5 and, when applied, registers a shared `Env` service in the container. That service knows how to read variables from `$_ENV`, `$_SERVER`, and `getenv()` in that priority order. Dotenv 5 loads values lazily: the `.env` file is parsed only when the `Env` service is first resolved from the container.
 
@@ -90,9 +90,9 @@ interface ConfigurationInterface
 }
 ```
 
-`apply` receives the application container and uses it to register shared instances, delegate factories, or preparation callbacks. Nothing is returned — the container is mutated in place. This is the single extension point the package defines.
+`apply` receives the application container and uses it to register shared instances, delegate factories, or preparation callbacks. Nothing is returned; the container is mutated in place. This is the single extension point the package defines.
 
-### ConfigurationCollection — composing configurations
+### ConfigurationCollection: composing configurations
 
 `ConfigurationCollection` extends `Altair\Structure\Set` and itself implements `ConfigurationInterface`. Because it implements the same interface as its members, collections can nest: a collection of collections is valid.
 
@@ -100,11 +100,11 @@ Each member can be either a class-name string or an already-constructed object. 
 
 If a member (whether passed as a string or an object) does not implement `ConfigurationInterface`, the collection throws `InvalidConfigurationException` immediately, stopping the application before it reaches an inconsistent state.
 
-### EnvironmentConfiguration — env loading
+### EnvironmentConfiguration: env loading
 
-`EnvironmentConfiguration` wraps phpdotenv 5. Its constructor accepts a full file path and an `$immutable` flag (default `true`). With `$immutable = true` it calls `Dotenv::createImmutable`, which respects variables that are already set in the environment — a shell-level export or a testing fixture will not be overwritten. With `$immutable = false` it calls `Dotenv::createMutable`, which always overwrites.
+`EnvironmentConfiguration` wraps phpdotenv 5. Its constructor accepts a full file path and an `$immutable` flag (default `true`). With `$immutable = true` it calls `Dotenv::createImmutable`, which respects variables that are already set in the environment; a shell-level export or a testing fixture will not be overwritten. With `$immutable = false` it calls `Dotenv::createMutable`, which always overwrites.
 
-The constructor validates the file path immediately and throws `InvalidArgumentException` if the file does not exist or is not readable. This check happens at construction time, not at `apply` time, so misconfigured paths fail early — before any container work begins.
+The constructor validates the file path immediately and throws `InvalidArgumentException` if the file does not exist or is not readable. This check happens at construction time, not at `apply` time, so misconfigured paths fail early, before any container work begins.
 
 When `apply` is called:
 
@@ -112,13 +112,13 @@ When `apply` is called:
 2. `Dotenv::class` is registered with a delegate factory that creates the correct immutable or mutable instance.
 3. A preparation callback on `Env::class` calls `$container->make(Dotenv::class)->load()`. The `.env` file is parsed at this point.
 
-### Env — the value accessor
+### Env: the value accessor
 
 `Altair\Configuration\Support\Env` is the runtime accessor for environment variables. It checks `$_ENV`, then `$_SERVER`, then `getenv()`, and returns the first match. It never throws on a missing key; pass a second argument as the default value.
 
 `Env` does not perform type coercion. All values it returns are strings (or your default). Convert values to `int`, `bool`, etc. in the configuration class that consumes them.
 
-### EnvAwareTrait — injection helper
+### EnvAwareTrait: injection helper
 
 `Altair\Configuration\Traits\EnvAwareTrait` provides a standard constructor that accepts `Env` and assigns it to `$this->env`. Use it in any configuration class that reads environment variables directly, so the container can inject `Env` automatically.
 
@@ -164,7 +164,7 @@ $configs = new ConfigurationCollection([
 $configs->apply($container);
 ```
 
-Because `ConfigurationCollection` extends `Set` (which stores unique values), adding the same class name twice has no effect — the second occurrence is silently discarded.
+Because `ConfigurationCollection` extends `Set` (which stores unique values), adding the same class name twice has no effect; the second occurrence is silently discarded.
 
 ### Loading environment variables
 
@@ -259,7 +259,7 @@ NVAR2="World!"
 NVAR3="${NVAR1} ${NVAR2}"
 ```
 
-A file with unquoted values that contain spaces (`SPACED=with spaces`) triggers phpdotenv 5's `InvalidFileException` when the file is loaded — phpdotenv 5 requires that values with spaces be wrapped in quotes.
+A file with unquoted values that contain spaces (`SPACED=with spaces`) triggers phpdotenv 5's `InvalidFileException` when the file is loaded; phpdotenv 5 requires that values with spaces be wrapped in quotes.
 
 ### Seeding env vars in tests
 
@@ -289,7 +289,7 @@ public function testReadsValues(): void
 }
 ```
 
-When you need to inject env vars without a file — for example in a unit test for a configuration class that uses `EnvAwareTrait` — use `putenv()` in a `setUp`/`tearDown` pair and construct `Env` directly:
+When you need to inject env vars without a file (for example in a unit test for a configuration class that uses `EnvAwareTrait`), use `putenv()` in a `setUp`/`tearDown` pair and construct `Env` directly:
 
 ```php
 protected function setUp(): void
@@ -327,7 +327,7 @@ Always clean up `putenv` calls in `tearDown`. Global env state leaks across test
 
 ### Custom configuration sources
 
-Implement `ConfigurationInterface` to add any configuration source — YAML files, a remote secrets manager, a database table. The only requirement is that your class can express its work as a set of container operations.
+Implement `ConfigurationInterface` to add any configuration source: YAML files, a remote secrets manager, a database table. The only requirement is that your class can express its work as a set of container operations.
 
 Below is a minimal YAML-backed configuration source. It reads a YAML file, converts the values to env-style strings, and registers the parsed data as a keyed parameter in the container.
 
@@ -431,8 +431,8 @@ Each configuration class is instantiated by the container, which means the conta
 
 ## Related packages
 
-- [container.md](./container.md) — `Altair\Container\Container` is the target of every `apply` call. Understanding `share`, `alias`, `delegate`, and `define` is essential for writing configuration classes.
-- [common.md](./common.md) — `Altair\Common` and `Altair\Structure` provide the `Set` base class that `ConfigurationCollection` extends.
+- [container.md](./container.md): `Altair\Container\Container` is the target of every `apply` call. Understanding `share`, `alias`, `delegate`, and `define` is essential for writing configuration classes.
+- [common.md](./common.md): `Altair\Common` and `Altair\Structure` provide the `Set` base class that `ConfigurationCollection` extends.
 
 ---
 

@@ -14,7 +14,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 ### Added
 - `bin/altair module:new` now scaffolds an `AGENT.md` agent guide alongside the
   README, so an agent working in a generated module gets the Univeros conventions
-  up front — the naming rule, the `ModuleInterface` capability contracts, the
+  up front: the naming rule, the `ModuleInterface` capability contracts, the
   Action/Input/Domain/Responder lifecycle, the isolated dev/test loop, and the
   `spec:scaffold` vocabulary caveat. (#230, #231)
 
@@ -22,11 +22,11 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 
 ### Fixed
 - `univeros/http` and `univeros/cookie` pinned `psr/http-message ^2.0`, which made
-  them uninstallable as standalone packages — their own deps `neomerx/cors-psr7`
+  them uninstallable as standalone packages; their own deps `neomerx/cors-psr7`
   (`^1.0`) and `relay/relay` (`~1.0`) cap the graph at PSR-7 v1.1. Loosened both to
   `^1.1 || ^2.0` (matching the monorepo root and the sibling HTTP packages), so
   `composer require univeros/http` and `bin/altair module:new` modules resolve. No
-  code change — the framework already runs on psr/http-message 1.1. (#228, #229)
+  code change; the framework already runs on psr/http-message 1.1. (#228, #229)
 
 ### Changed
 - Test toolchain: PHPUnit 11 → 12.5 and paratest 7.8 → 7.20, keeping the PHP 8.3
@@ -36,7 +36,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 ## [2.5.0] - 2026-06-06
 
 ### Added
-- `MiddlewareProviderInterface` — modules self-register PSR-15 middleware into the
+- `MiddlewareProviderInterface`: modules self-register PSR-15 middleware into the
   HTTP pipeline, ordered by documented priority anchors (`MiddlewarePriority`) and
   merged deterministically via `ModuleMiddleware`. (#224, #225)
 - OpenAPI 3.1 bidirectional fidelity (epic #214): parameter mapping, validation
@@ -57,7 +57,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 ## [2.4.0] - 2026-06-04
 
 ### Added
-- Nested objects & arrays-of-objects in spec inputs — bidirectional OpenAPI
+- Nested objects & arrays-of-objects in spec inputs: bidirectional OpenAPI
   import/export, round-trip clean (the Swagger Petstore imports with zero skips).
   New `openapi:import --skip-unmappable` for graceful partial imports. (#203, #204)
 - paratest (`composer test:par`) plus a dependency-free docker-CLI integration
@@ -68,7 +68,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
   "required parameter after optional" deprecation. (#205, #206)
 
 ### Changed
-- AGENT.md + CLAUDE.md refreshed to current state — 40 sub-packages, modernization
+- AGENT.md + CLAUDE.md refreshed to current state: 40 sub-packages, modernization
   (Phases 1–4) complete, PHPStan level 8 with no baseline. (#207)
 
 ## [2.3.0] - 2026-06-03
@@ -82,7 +82,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 
 ### Added
 - Production-safe, agent-native HTTP error handling: `HttpExceptionInterface` (thrown
-  exceptions render with their real status — 404 no longer collapses to 500),
+  exceptions render with their real status (404 no longer collapses to 500),
   `ProblemDetailsErrorHandler` (RFC 7807 problem+json, debug vs production verbosity),
   and an `EventRecordingLogger` bridge recording 5xx failures as `http_error` events.
   Wired into the skeleton by default. (#200)
@@ -90,7 +90,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 ## [2.1.0] - 2026-06-03
 
 ### Added
-- Module (extension) system — a host registers one class and a feature's routes,
+- Module (extension) system: a host registers one class and a feature's routes,
   entities, and migrations self-register (`univeros/module` + `bin/altair module:new`).
 
 ### Changed
@@ -104,7 +104,7 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 ## [2.0.1] - 2026-06-02
 
 ### Added
-- Split-pipeline parity — `univeros/idempotency` and `univeros/webhooks` published.
+- Split-pipeline parity: `univeros/idempotency` and `univeros/webhooks` published.
 
 ## [2.0.0] - 2026-05-30
 

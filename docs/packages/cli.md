@@ -1,6 +1,6 @@
 # Cli
 
-> An attribute-driven CLI runtime layered over **Symfony Console** — you write a `final` invokable class, decorate its parameters with `#[Argument]` / `#[Option]`, and the framework turns it into a fully wired console command resolved through the container.
+> An attribute-driven CLI runtime layered over **Symfony Console**: you write a `final` invokable class, decorate its parameters with `#[Argument]` / `#[Option]`, and the framework turns it into a fully wired console command resolved through the container.
 
 **Composer:** `univeros/cli`
 **Namespace:** `Altair\Cli`
@@ -25,7 +25,7 @@ composer require univeros/cli
 
 That pulls in `symfony/console ^7.0`, `univeros/container ^2.0`, and `univeros/configuration ^2.0`. No PHP extensions beyond what core PHP 8.3 already requires.
 
-If you are installing the full framework, `composer require univeros/framework` already bundles it — and you already have the `bin/altair` entry point on disk.
+If you are installing the full framework, `composer require univeros/framework` already bundles it, and you already have the `bin/altair` entry point on disk.
 
 ## Quick start
 
@@ -89,11 +89,11 @@ The package has a small number of moving parts, and they line up one-to-one with
 
 - **Attribute-driven invokable commands.** A command is any class with the `#[Command]` attribute (`Altair\Cli\Attribute\Command`) and an `__invoke()` method. There is no base class to extend and no interface to implement. `Command` carries `name`, `description`, `aliases`, `hidden`, and `help`; `#[Argument]` and `#[Option]` describe the `__invoke()` parameters.
 
-- **`Application` extends Symfony Console.** `Altair\Cli\Application` is a `Symfony\Component\Console\Application` subclass. Its one addition is `discover(iterable $commandClasses)`, which wraps each discovered class in an `AltairCommand` and registers it. Everything else — argument parsing, help rendering, exit-code handling — is Symfony's.
+- **`Application` extends Symfony Console.** `Altair\Cli\Application` is a `Symfony\Component\Console\Application` subclass. Its one addition is `discover(iterable $commandClasses)`, which wraps each discovered class in an `AltairCommand` and registers it. Everything else (argument parsing, help rendering, exit-code handling) is Symfony's.
 
 - **The `AltairCommand` bridge.** `AltairCommand` is the adapter between your invokable and Symfony's `Command` surface. One `AltairCommand` wraps exactly one of your classes. In `configure()` it reflects `__invoke()` and registers each parameter as an argument or option; in `execute()` it pulls each value back out of the `InputInterface`, coerces it to the parameter's declared type, constructs your class via the container, and calls `__invoke()`.
 
-- **Container autowiring of command constructors.** When a command runs, `AltairCommand::execute()` calls `$container->make($commandClass)` — so your command's *constructor* dependencies are autowired by `Altair\Container`, exactly like any other service. The fixture command `CreateUserIntegrationCommand` takes a `SpyUserRepository` in its constructor and never news it up; the container provides it. Your `__invoke()` parameters are the CLI inputs; your `__construct()` parameters are your collaborators.
+- **Container autowiring of command constructors.** When a command runs, `AltairCommand::execute()` calls `$container->make($commandClass)`, so your command's *constructor* dependencies are autowired by `Altair\Container`, exactly like any other service. The fixture command `CreateUserIntegrationCommand` takes a `SpyUserRepository` in its constructor and never news it up; the container provides it. Your `__invoke()` parameters are the CLI inputs; your `__construct()` parameters are your collaborators.
 
 - **Discovery via attribute scan.** `Discovery\AttributeCommandDiscoverer` (which implements `Contracts\CommandLocatorInterface`) walks the registered directories, tokenizes every `.php` file to read its namespace and class declarations *without including the file*, then reflects on each candidate to check for the `#[Command]` attribute. Abstract classes, interfaces, and traits are skipped. Each class is yielded once, even if a path is listed twice.
 
@@ -122,11 +122,11 @@ Three rules, all enforced at registration time so mistakes surface loudly rather
 
 1. The class carries `#[Command(name: ..., description: ...)]`. A class without it is ignored by discovery, and `AltairCommand` throws `InvalidCommandException` if you wire one up directly.
 2. The class defines `__invoke()`. Missing it is an `InvalidCommandException`.
-3. Every `__invoke()` parameter carries either `#[Argument]` or `#[Option]`. A naked parameter throws `InvalidCommandException` — there is no implicit positional binding.
+3. Every `__invoke()` parameter carries either `#[Argument]` or `#[Option]`. A naked parameter throws `InvalidCommandException`; there is no implicit positional binding.
 
 `__invoke()` returns `int` or `void`. Return `0` (or nothing) for success and a non-zero int to signal failure; the value becomes the process exit code. Returning anything else throws `InvalidCommandException`.
 
-Here is a realistic command — the one the package's own integration test exercises — showing constructor autowiring, an argument, a nullable option, an enum option, a short alias, and a boolean flag:
+Here is a realistic command (the one the package's own integration test exercises) showing constructor autowiring, an argument, a nullable option, an enum option, a short alias, and a boolean flag:
 
 ```php
 <?php
@@ -183,11 +183,11 @@ The two binders translate reflection into Symfony's input model:
 
 - **`#[Argument]`** (positional). `Binding\ArgumentBinder` makes it `InputArgument::REQUIRED` when the parameter has no default, `InputArgument::OPTIONAL` when it does. An `array`-typed parameter becomes a variadic (`IS_ARRAY`) argument. The public name defaults to the parameter name; override it with `#[Argument(name: 'custom')]`.
 
-- **`#[Option]`** (named, `--flag`). `Binding\OptionBinder` makes a `bool` parameter a value-less flag (`VALUE_NONE` — presence means `true`), and everything else a `VALUE_REQUIRED` option. An `array`-typed option becomes repeatable (`VALUE_IS_ARRAY`). The public name defaults to the parameter name **kebab-cased** — `$dryRun` becomes `--dry-run` — and `#[Option(short: 'p')]` adds a single-character alias. Override the long name with `#[Option(name: 'custom')]`.
+- **`#[Option]`** (named, `--flag`). `Binding\OptionBinder` makes a `bool` parameter a value-less flag (`VALUE_NONE`, presence means `true`), and everything else a `VALUE_REQUIRED` option. An `array`-typed option becomes repeatable (`VALUE_IS_ARRAY`). The public name defaults to the parameter name **kebab-cased** (`$dryRun` becomes `--dry-run`), and `#[Option(short: 'p')]` adds a single-character alias. Override the long name with `#[Option(name: 'custom')]`.
 
 ### How values are coerced
 
-Symfony Console hands you strings (and `true` for value-less flags). `Binding\ValueCoercer` casts each raw value to the parameter's declared native type before `__invoke()` is called, and throws `ValueCoercionException` — surfaced as Symfony's own `InvalidArgumentException`, so the user sees a clean console error — when a value does not fit:
+Symfony Console hands you strings (and `true` for value-less flags). `Binding\ValueCoercer` casts each raw value to the parameter's declared native type before `__invoke()` is called, and throws `ValueCoercionException` (surfaced as Symfony's own `InvalidArgumentException`, so the user sees a clean console error) when a value does not fit:
 
 | Declared type | Accepted input | Notes |
 |---|---|---|
@@ -205,7 +205,7 @@ A nullable parameter (`?string $password = null`) passes `null` straight through
 
 The framework's CLI binary, `bin/altair`, builds its list of command paths at startup from two sources:
 
-1. **Built-in package directories.** It adds each framework sub-package's `Cli/` directory that exists on disk — `src/Altair/AgentSpec/Cli`, `src/Altair/Doctor/Cli`, `src/Altair/Mcp/Cli`, `src/Altair/Messaging/Cli`, `src/Altair/Persistence/Cli`, and `src/Altair/Scaffold/Cli`. This is why installing the full framework gives you `manifest:*`, `spec:*`, `db:*`, and the rest with zero configuration.
+1. **Built-in package directories.** It adds each framework sub-package's `Cli/` directory that exists on disk: `src/Altair/AgentSpec/Cli`, `src/Altair/Doctor/Cli`, `src/Altair/Mcp/Cli`, `src/Altair/Messaging/Cli`, `src/Altair/Persistence/Cli`, and `src/Altair/Scaffold/Cli`. This is why installing the full framework gives you `manifest:*`, `spec:*`, `db:*`, and the rest with zero configuration.
 
 2. **The `ALTAIR_CLI_PATHS` environment variable.** A `PATH_SEPARATOR`-delimited list of additional directories to scan (the legacy singular `ALTAIR_CLI_PATH` is also honored). This is how *your* application's commands get picked up:
 
@@ -219,13 +219,13 @@ export ALTAIR_CLI_PATHS="/app/src/Cli:/app/modules/billing/Cli"
 bin/altair greet World
 ```
 
-Each entry that is not an existing directory is silently skipped, so a stale path in the env var will not crash the binary. Discovery is recursive — nested sub-directories are scanned too.
+Each entry that is not an existing directory is silently skipped, so a stale path in the env var will not crash the binary. Discovery is recursive; nested sub-directories are scanned too.
 
 ## Configuration
 
 `Configuration\CliConfiguration` is the single wiring point, and it implements the framework's `ConfigurationInterface`. Construct it with the list of paths to scan (plus optional application name and version) and call `apply()` on a container. It does three things: shares the `AttributeCommandDiscoverer` so the scan result is reused, aliases `CommandLocatorInterface` to that discoverer, and delegates `Application` construction so the app auto-discovers commands the first time it is resolved.
 
-`bin/altair` does exactly this for you — but if you embed the CLI in your own bootstrap (a custom binary, a test, a long-running worker that shells out to commands), wire it by hand:
+`bin/altair` does exactly this for you, but if you embed the CLI in your own bootstrap (a custom binary, a test, a long-running worker that shells out to commands), wire it by hand:
 
 ```php
 use Altair\Cli\Application;
@@ -245,7 +245,7 @@ $application = $container->make(Application::class);
 exit($application->run());
 ```
 
-`name` and `version` default to `Application::DEFAULT_NAME` (`'Altair'`) and `Application::DEFAULT_VERSION` (`'2.x-dev'`) — what you see in `bin/altair --version`. Because command classes are resolved through the same `$container`, anything you have bound (repositories, configuration, env-driven services) is available to command constructors. See [container.md](./container.md) for the binding API and [configuration.md](./configuration.md) for the `ConfigurationInterface` contract.
+`name` and `version` default to `Application::DEFAULT_NAME` (`'Altair'`) and `Application::DEFAULT_VERSION` (`'2.x-dev'`), which is what you see in `bin/altair --version`. Because command classes are resolved through the same `$container`, anything you have bound (repositories, configuration, env-driven services) is available to command constructors. See [container.md](./container.md) for the binding API and [configuration.md](./configuration.md) for the `ConfigurationInterface` contract.
 
 ## Testing
 
@@ -274,24 +274,24 @@ self::assertSame(0, $exitCode);
 
 Tests worth reading before you write your own:
 
-- `tests/Cli/IntegrationTest.php` — the end-to-end story: container autowiring, default fall-through, enum coercion producing a clean Symfony error, `CliConfiguration` auto-discovery, and help output assembled from attributes.
-- `tests/Cli/Binding/ArgumentBinderTest.php` / `OptionBinderTest.php` — exactly how parameters map to required/optional/array/flag modes and how names are derived.
-- `tests/Cli/Binding/ValueCoercerTest.php` — every coercion rule in the table above, including the failure messages.
-- `tests/Cli/Discovery/AttributeCommandDiscovererTest.php` — what the scanner does and does not pick up (see its `fixtures/` directory, including `NotACommand.php`).
+- `tests/Cli/IntegrationTest.php`: the end-to-end story: container autowiring, default fall-through, enum coercion producing a clean Symfony error, `CliConfiguration` auto-discovery, and help output assembled from attributes.
+- `tests/Cli/Binding/ArgumentBinderTest.php` / `OptionBinderTest.php`: exactly how parameters map to required/optional/array/flag modes and how names are derived.
+- `tests/Cli/Binding/ValueCoercerTest.php`: every coercion rule in the table above, including the failure messages.
+- `tests/Cli/Discovery/AttributeCommandDiscovererTest.php`: what the scanner does and does not pick up (see its `fixtures/` directory, including `NotACommand.php`).
 
 ## Related packages
 
-- [container.md](./container.md) — the DI container `CliConfiguration` writes into and `AltairCommand` uses (`make()`) to construct your command. Command constructor dependencies are autowired here.
-- [configuration.md](./configuration.md) — the `ConfigurationInterface` contract `CliConfiguration` implements.
-- [agent-spec.md](./agent-spec.md) — exposes `manifest:generate` / `manifest:show` as `#[Command]` invokables through this runtime.
-- [scaffold.md](./scaffold.md) — exposes `spec:scaffold`, `spec:lint`, `journal:*`, and the SDK/OpenAPI emitters as commands; `ScaffoldCommand` is the canonical real-world example of this package's attributes.
-- [doctor.md](./doctor.md) — its diagnostic checks are surfaced as `#[Command]` classes discovered from `src/Altair/Doctor/Cli`.
-- [mcp.md](./mcp.md) — the MCP server commands plug into the same attribute-driven discovery.
+- [container.md](./container.md): the DI container `CliConfiguration` writes into and `AltairCommand` uses (`make()`) to construct your command. Command constructor dependencies are autowired here.
+- [configuration.md](./configuration.md): the `ConfigurationInterface` contract `CliConfiguration` implements.
+- [agent-spec.md](./agent-spec.md): exposes `manifest:generate` / `manifest:show` as `#[Command]` invokables through this runtime.
+- [scaffold.md](./scaffold.md): exposes `spec:scaffold`, `spec:lint`, `journal:*`, and the SDK/OpenAPI emitters as commands; `ScaffoldCommand` is the canonical real-world example of this package's attributes.
+- [doctor.md](./doctor.md): its diagnostic checks are surfaced as `#[Command]` classes discovered from `src/Altair/Doctor/Cli`.
+- [mcp.md](./mcp.md): the MCP server commands plug into the same attribute-driven discovery.
 
 ## Limitations
 
-- **Console input only.** Coercion covers scalars, `array`, `DateTimeImmutable`, and backed enums. Arbitrary value objects, union types, and intersection types are not coerced — a `__invoke()` parameter typed as something the `ValueCoercer` does not recognize throws `ValueCoercionException`. Resolve such collaborators through the *constructor* (where the container autowires them) instead of through `__invoke()`.
-- **No interactive prompting layer.** The package binds input and dispatches; it does not add a question/prompt helper on top of Symfony. Use Symfony Console's `QuestionHelper` directly if you need it — but a command authored here receives plain `__invoke()` parameters, not the `InputInterface`/`OutputInterface` pair, so interactive prompts mean reaching for Symfony's API around the framework's bridge.
+- **Console input only.** Coercion covers scalars, `array`, `DateTimeImmutable`, and backed enums. Arbitrary value objects, union types, and intersection types are not coerced: a `__invoke()` parameter typed as something the `ValueCoercer` does not recognize throws `ValueCoercionException`. Resolve such collaborators through the *constructor* (where the container autowires them) instead of through `__invoke()`.
+- **No interactive prompting layer.** The package binds input and dispatches; it does not add a question/prompt helper on top of Symfony. Use Symfony Console's `QuestionHelper` directly if you need it, but a command authored here receives plain `__invoke()` parameters, not the `InputInterface`/`OutputInterface` pair, so interactive prompts mean reaching for Symfony's API around the framework's bridge.
 - **Discovery is filesystem-based.** `AttributeCommandDiscoverer` scans directories you point it at; it does not read PSR-4 maps or composer metadata. Commands shipped inside a vendored package are not auto-discovered unless that package's `Cli/` directory is a built-in path or you add it to `ALTAIR_CLI_PATHS`.
 - **One `#[Command]` per class.** Each `AltairCommand` wraps exactly one invokable. A class that needs to expose several sub-commands should be several classes.
 - **No global flags of its own.** Beyond what Symfony Console provides (`--help`, `--quiet`, `--no-interaction`, `--verbose`, `--version`), the package adds no framework-wide options. Cross-cutting behavior belongs in your command constructors via the container.

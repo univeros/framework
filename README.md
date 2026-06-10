@@ -17,9 +17,9 @@
 
 ## About Univeros
 
-Univeros is a PHP 8.3+ framework for building APIs. Its codebase lives under the `Altair\*` namespace — the engineering name, the way `Illuminate\*` is the engineering name for Laravel's components. The brand consumers see is **Univeros**; `Altair\*` is the plumbing.
+Univeros is a PHP 8.3+ framework for building APIs. Its codebase lives under the `Altair\*` namespace, the engineering name, the way `Illuminate\*` is the engineering name for Laravel's components. The brand consumers see is **Univeros**; `Altair\*` is the plumbing.
 
-It looks familiar at first — PSR-7/15 HTTP stack, a DI container, a Cycle ORM bridge, a Symfony Messenger bridge, immutable value objects, single-pass middleware. The unusual part is the layer above that: a CLI surface (`bin/altair`) whose every command emits deterministic JSON an AI agent can branch on, and a set of primitives — **spec-driven scaffolding, a rewindable journal, an append-only event log, a symbol-usage index, a doctor, a refactor adviser, an MCP server** — designed so an agent can be productive without a human in the loop.
+It looks familiar at first: PSR-7/15 HTTP stack, a DI container, a Cycle ORM bridge, a Symfony Messenger bridge, immutable value objects, single-pass middleware. The unusual part is the layer above that: a CLI surface (`bin/altair`) whose every command emits deterministic JSON an AI agent can branch on, and a set of primitives (**spec-driven scaffolding, a rewindable journal, an append-only event log, a symbol-usage index, a doctor, a refactor adviser, an MCP server**) designed so an agent can be productive without a human in the loop.
 
 For the pitch, agent affordances walkthrough, and architecture diagram, see [**univeros/univeros**](https://github.com/univeros/univeros). For per-package guides, see [**univeros/docs**](https://github.com/univeros/docs).
 
@@ -43,17 +43,17 @@ composer require univeros/events        # Append-only mutation event log for age
 
 The complete published list: `agent-spec`, `bootstrap`, `cache`, `cli`, `common`, `configuration`, `container`, `cookie`, `courier`, `data`, `doctor`, `eval`, `events`, `examples`, `filesystem`, `happen`, `http`, `index`, `introspection`, `mcp`, `messaging`, `middleware`, `migration-intelligence`, `observability`, `observatory`, `persistence`, `profiling`, `sanitation`, `scaffold`, `security`, `session`, `structure`, `suggest`, `test-reporter`, `tinker`, `validation`.
 
-Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml) — see [docs/guides/split-publish.md](docs/guides/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
+Splits are produced automatically by [.github/workflows/split.yml](.github/workflows/split.yml); see [docs/guides/split-publish.md](docs/guides/split-publish.md) for the operator runbook. All changes belong in this monorepo; the split repos are read-only mirrors.
 
 ## Repositories
 
-- **[univeros/univeros](https://github.com/univeros/univeros)** — `composer create-project` starter and the main entry point for application developers.
-- **[univeros/framework](https://github.com/univeros/framework)** — this repo. The library source.
-- **[univeros/docs](https://github.com/univeros/docs)** — per-package documentation.
+- **[univeros/univeros](https://github.com/univeros/univeros)**: `composer create-project` starter and the main entry point for application developers.
+- **[univeros/framework](https://github.com/univeros/framework)**: this repo. The library source.
+- **[univeros/docs](https://github.com/univeros/docs)**: per-package documentation.
 
 ## Contributing
 
-Issues and pull requests are welcome on this repository — it's the source of truth. The 35 sub-package repos under `github.com/univeros/*` are read-only mirrors; PRs against them will be ignored and overwritten on the next split.
+Issues and pull requests are welcome on this repository; it's the source of truth. The 35 sub-package repos under `github.com/univeros/*` are read-only mirrors; PRs against them will be ignored and overwritten on the next split.
 
 Before submitting:
 

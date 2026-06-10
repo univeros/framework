@@ -16,9 +16,9 @@ A trait-composed, immutable-by-default data-object layer with JSON serialization
 
 The Data package provides the structural foundation for typed, immutable data objects in the Altair framework. It is the right tool when you need an object that carries named attributes, can survive a round-trip through `json_encode` / `json_decode`, and enforces that no caller ever modifies its state after construction.
 
-A **DTO** (Data Transfer Object) carries data across a process boundary but typically has no behaviour. A Data object is similar: it is attribute-oriented and carries no persistence logic. The difference is that it goes further by providing a standardised interface — `DataObjectInterface` — that every consuming layer (validation, HTTP responders, view models, cache and queue payloads) can depend on without knowing the concrete class.
+A **DTO** (Data Transfer Object) carries data across a process boundary but typically has no behaviour. A Data object is similar: it is attribute-oriented and carries no persistence logic. The difference is that it goes further by providing a standardised interface (`DataObjectInterface`) that every consuming layer (validation, HTTP responders, view models, cache and queue payloads) can depend on without knowing the concrete class.
 
-This package is **not an ORM**, and it owns no repository contracts. There is no query builder, no relationship loading, no lazy hydration, and no database connection. Persistence is a separate concern: the `univeros/persistence` package owns the framework's single `RepositoryInterface` and is where a Data object can gain persistence, relations, and type coercion. The dependency arrow is one-way — Persistence may depend on Data, never the reverse — which keeps this package a zero-dependency leaf.
+This package is **not an ORM**, and it owns no repository contracts. There is no query builder, no relationship loading, no lazy hydration, and no database connection. Persistence is a separate concern: the `univeros/persistence` package owns the framework's single `RepositoryInterface` and is where a Data object can gain persistence, relations, and type coercion. The dependency arrow is one-way (Persistence may depend on Data, never the reverse), which keeps this package a zero-dependency leaf.
 
 Date fields get first-class treatment. Any string attribute that holds a parseable date can be read back as a `Carbon\Carbon` instance via `asCarbonDate()`, or as a formatted string via `asDateString()`. This removes the boilerplate of constructing Carbon objects at the call site and keeps the conversion logic co-located with the entity.
 
@@ -95,7 +95,7 @@ echo json_encode($product);                    // {"id":1,"name":"Orion Lens","c
 
 ### Attribute access
 
-Attributes are declared as **typed private properties** on your entity class. The `ImmutableAttributesAwareTrait` constructor reads an incoming array, intersects its keys against the object's declared properties, and copies matching values in. Unknown keys are silently discarded — this makes it safe to pass raw request data directly without worrying about mass-assignment of undeclared fields.
+Attributes are declared as **typed private properties** on your entity class. The `ImmutableAttributesAwareTrait` constructor reads an incoming array, intersects its keys against the object's declared properties, and copies matching values in. Unknown keys are silently discarded; this makes it safe to pass raw request data directly without worrying about mass-assignment of undeclared fields.
 
 After construction, `__get()` delegates to `get()`, giving you clean property-style reads (`$entity->name`). `__set()` and `__unset()` both throw `Altair\Data\Exception\RuntimeException`, enforcing immutability at runtime. Any attribute update must go through `withData()`, which clones the object and applies changes to the clone.
 
@@ -105,7 +105,7 @@ Date mutators operate on any attribute that holds a date string parseable by `Ca
 
 ### JSON serialization
 
-`jsonSerialize()` — called automatically by `json_encode()` — delegates to `toArray()`. The result is a flat, recursively expanded array. Nested `ArrayableInterface` values are expanded too.
+`jsonSerialize()`, called automatically by `json_encode()`, delegates to `toArray()`. The result is a flat, recursively expanded array. Nested `ArrayableInterface` values are expanded too.
 
 ### PHP serialization
 
@@ -117,7 +117,7 @@ Date mutators operate on any attribute that holds a date string parseable by `Ca
 
 ### Defining an entity
 
-Declare the class, implement `DataObjectInterface`, and compose all four traits. Properties must be declared explicitly — the constructor uses `get_object_vars()` to discover them, so undeclared dynamic properties are invisible.
+Declare the class, implement `DataObjectInterface`, and compose all four traits. Properties must be declared explicitly; the constructor uses `get_object_vars()` to discover them, so undeclared dynamic properties are invisible.
 
 ```php
 <?php declare(strict_types=1);
@@ -162,7 +162,7 @@ Nested entities serialize recursively. If a property holds another `ArrayableInt
 
 ### Date attribute mutators
 
-Pass the attribute name to read its value as a `Carbon\Carbon` instance or as a formatted date string. The trait constructs a `Carbon` object from the raw string each time you call the method — there is no caching.
+Pass the attribute name to read its value as a `Carbon\Carbon` instance or as a formatted date string. The trait constructs a `Carbon` object from the raw string each time you call the method; there is no caching.
 
 ```php
 // Read as a Carbon instance for arithmetic and comparisons.
@@ -358,7 +358,7 @@ final class Invoice implements DataObjectInterface
 
 ### Pairing with a persistence layer
 
-The Data package owns no repository contracts. When you need to load and store Data objects, depend on the `univeros/persistence` package: its `RepositoryInterface` is the framework's single repository abstraction. A persistence adapter fetches a row and hydrates a Data object — for example by passing the row array straight to the constructor — so the Data object stays free of any storage concern.
+The Data package owns no repository contracts. When you need to load and store Data objects, depend on the `univeros/persistence` package: its `RepositoryInterface` is the framework's single repository abstraction. A persistence adapter fetches a row and hydrates a Data object (for example by passing the row array straight to the constructor), so the Data object stays free of any storage concern.
 
 ```php
 <?php declare(strict_types=1);
@@ -493,8 +493,8 @@ echo $partial->role;  // null (default)
 
 ## Related packages
 
-- [**validation.md**](./validation.md) — The Validation package operates on arrays and entities. Pass `$entity->toArray()` to a validator to check field-level rules before constructing or updating an entity.
-- [**common.md**](./common.md) — The Common package provides array helpers (`Altair\Common\Helper\ArrHelper`) that complement `toArray()` for transformation, filtering, and flattening use cases.
+- [**validation.md**](./validation.md): The Validation package operates on arrays and entities. Pass `$entity->toArray()` to a validator to check field-level rules before constructing or updating an entity.
+- [**common.md**](./common.md): The Common package provides array helpers (`Altair\Common\Helper\ArrHelper`) that complement `toArray()` for transformation, filtering, and flattening use cases.
 
 ---
 
@@ -506,4 +506,4 @@ These are deliberate scope boundaries, not gaps. Data is the value-object layer;
 - **No relations.** There is no mechanism for lazy-loading or eager-loading associated objects. If you need to nest objects, set a composed object as a property value before construction, or use a custom mutator trait to decode a related payload.
 - **No ORM features.** There is no identity map, unit-of-work, dirty-tracking, or schema reflection, and the package ships no repository contracts. Use `univeros/persistence` and its `RepositoryInterface` when you need them.
 - **No automatic type coercion.** The constructor assigns values as-is. If your storage layer returns integers as strings, you must coerce them before passing to the constructor or in a custom mutator trait.
-- **`serialize()` / `unserialize()` writes directly to properties.** The `unserialize()` implementation in `SerializeAwareTrait` bypasses `__set()` by writing to `$this->{$key}` inside the trait's own scope. This is intentional — it is the only path for deserializing an immutable object — but it means a deserialized object does not pass through the constructor or any validation logic.
+- **`serialize()` / `unserialize()` writes directly to properties.** The `unserialize()` implementation in `SerializeAwareTrait` bypasses `__set()` by writing to `$this->{$key}` inside the trait's own scope. This is intentional (it is the only path for deserializing an immutable object), but it means a deserialized object does not pass through the constructor or any validation logic.

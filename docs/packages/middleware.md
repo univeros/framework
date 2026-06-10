@@ -1,6 +1,6 @@
 # Middleware
 
-A generic, domain-agnostic middleware pipeline — a typed Payload flows through an ordered stack of middleware driven by a Runner — entirely distinct from the PSR-15 HTTP middleware pipeline in `univeros/http`.
+A generic, domain-agnostic middleware pipeline (a typed Payload flows through an ordered stack of middleware driven by a Runner), entirely distinct from the PSR-15 HTTP middleware pipeline in `univeros/http`.
 
 **Package:** `univeros/middleware`
 **Namespace:** `Altair\Middleware`
@@ -111,7 +111,7 @@ Internally, `Runner` holds a `Queue` (from `univeros/structure`) and an optional
 
 ### MiddlewareResolver
 
-`MiddlewareResolverInterface` converts a queue entry — which may be an object, a class name string, or any other value — into a concrete `MiddlewareInterface`. The built-in `MiddlewareResolver` checks whether the entry is already an object; if it is, it returns it as-is. Otherwise it calls `Container::make` to instantiate it via the DI container. You may supply any `callable` instead when you do not have a container.
+`MiddlewareResolverInterface` converts a queue entry (which may be an object, a class name string, or any other value) into a concrete `MiddlewareInterface`. The built-in `MiddlewareResolver` checks whether the entry is already an object; if it is, it returns it as-is. Otherwise it calls `Container::make` to instantiate it via the DI container. You may supply any `callable` instead when you do not have a container.
 
 ### Ordering semantics
 
@@ -201,7 +201,7 @@ $runner = new Runner($queue);
 $output = $runner(new Payload(['data' => $input]));
 ```
 
-To store class names instead of objects — for example, to defer instantiation — pass a resolver as the second argument to `Runner`. A plain closure works when you do not have a container:
+To store class names instead of objects (for example, to defer instantiation), pass a resolver as the second argument to `Runner`. A plain closure works when you do not have a container:
 
 ```php
 $queue  = new Queue([
@@ -329,7 +329,7 @@ $next = fn(PayloadInterface $p): PayloadInterface => $p->withAttribute('processe
 
 ### Testing the full pipeline
 
-Use the real `Queue`, `Runner`, and `MiddlewareManager` classes in integration tests. The suite in `tests/Middleware/` does exactly this — no mocks for the pipeline infrastructure itself.
+Use the real `Queue`, `Runner`, and `MiddlewareManager` classes in integration tests. The suite in `tests/Middleware/` does exactly this: no mocks for the pipeline infrastructure itself.
 
 ```php
 use Altair\Middleware\MiddlewareManager;
@@ -371,7 +371,7 @@ Test files for this package live under `tests/Middleware/` and mirror the `src/A
 
 ## Extending
 
-The middleware layer itself is the extension point. You do not extend `Runner`, `Payload`, or `MiddlewareManager` to add domain behavior — you write new middleware and add them to the queue.
+The middleware layer itself is the extension point. You do not extend `Runner`, `Payload`, or `MiddlewareManager` to add domain behavior; you write new middleware and add them to the queue.
 
 To create a domain-specific pipeline on top of this package, follow the pattern used by `Sanitation` and `Validation`:
 
@@ -519,8 +519,8 @@ class UserEnrichmentMiddleware implements MiddlewareInterface
 
 ## Related packages
 
-- [`./http.md`](./http.md) — The HTTP package implements a PSR-15 pipeline (`Psr\Http\Server\MiddlewareInterface`) using `relay/relay` 2.x. Its middleware receive `ServerRequestInterface` and return `ResponseInterface`. It is entirely separate from this package and the two pipelines are not interchangeable.
-- [`./courier.md`](./courier.md) — The Courier package implements a command-bus pattern. Its `CommandMiddlewareInterface` follows the same shape (`handle(CommandMessageInterface, callable $next)`) and conceptual model as `MiddlewareInterface`, though it does not depend on `univeros/middleware` directly.
+- [`./http.md`](./http.md): The HTTP package implements a PSR-15 pipeline (`Psr\Http\Server\MiddlewareInterface`) using `relay/relay` 2.x. Its middleware receive `ServerRequestInterface` and return `ResponseInterface`. It is entirely separate from this package and the two pipelines are not interchangeable.
+- [`./courier.md`](./courier.md): The Courier package implements a command-bus pattern. Its `CommandMiddlewareInterface` follows the same shape (`handle(CommandMessageInterface, callable $next)`) and conceptual model as `MiddlewareInterface`, though it does not depend on `univeros/middleware` directly.
 
 ---
 

@@ -12,10 +12,10 @@ The framework deliberately does not ship its own queue or transport adapters. Sy
 This package wraps Messenger. It does *not* replace it. The wrap exists for three reasons:
 
 1. **A vendor-neutral contract.** `Altair\Messaging\Contracts\MessageBusInterface` is framework-owned. Application code typehints that, not `Symfony\Component\Messenger\MessageBusInterface`. If Messenger is ever replaced (with `enqueue/enqueue`, a custom transport, or a fake for tests), the call sites do not move.
-2. **A consistent DI story.** `MessengerConfiguration` reads `MESSENGER_*` env variables and binds the entire stack — bus, middleware, transports, handler locator, failure listener — into `Altair\Container` in one call. Handlers themselves are resolved through the framework's container so they get the same dependency injection as any other service.
-3. **Spec-driven generation.** The `univeros/scaffold` sub-package already turns a YAML endpoint spec into Action / Input / Responder / test / OpenAPI. With a `queue:` block on the same spec, you also get a readonly message DTO, an `#[AsHandler]`-decorated handler stub, and a PHPUnit test — emitted alongside the HTTP artifacts, so the wire format and the async contract stay in sync without manual coordination.
+2. **A consistent DI story.** `MessengerConfiguration` reads `MESSENGER_*` env variables and binds the entire stack (bus, middleware, transports, handler locator, failure listener) into `Altair\Container` in one call. Handlers themselves are resolved through the framework's container so they get the same dependency injection as any other service.
+3. **Spec-driven generation.** The `univeros/scaffold` sub-package already turns a YAML endpoint spec into Action / Input / Responder / test / OpenAPI. With a `queue:` block on the same spec, you also get a readonly message DTO, an `#[AsHandler]`-decorated handler stub, and a PHPUnit test, emitted alongside the HTTP artifacts, so the wire format and the async contract stay in sync without manual coordination.
 
-What this package deliberately does *not* do: it does not invent a new message envelope (Symfony's `Envelope` + `StampInterface` are the source of truth), it does not ship its own retry strategy (Messenger's `MultiplierRetryStrategy` is fine), and it does not embed transport adapters — each transport bridge (`symfony/redis-messenger`, `symfony/doctrine-messenger`, `symfony/amqp-messenger`) is installed per-application.
+What this package deliberately does *not* do: it does not invent a new message envelope (Symfony's `Envelope` + `StampInterface` are the source of truth), it does not ship its own retry strategy (Messenger's `MultiplierRetryStrategy` is fine), and it does not embed transport adapters; each transport bridge (`symfony/redis-messenger`, `symfony/doctrine-messenger`, `symfony/amqp-messenger`) is installed per-application.
 
 ## Installation
 
@@ -173,7 +173,7 @@ app/Messages/SendWelcomeEmailHandler.php   # #[AsHandler] handler stub with TODO
 tests/Messages/SendWelcomeEmailHandlerTest.php  # golden test
 ```
 
-The HTTP-side artifacts (`CreateUserAction`, `CreateUserInput`, etc.) are emitted in the same pass. Re-runs are idempotent — existing files are skipped unless `--force` is passed.
+The HTTP-side artifacts (`CreateUserAction`, `CreateUserInput`, etc.) are emitted in the same pass. Re-runs are idempotent; existing files are skipped unless `--force` is passed.
 
 ## Architecture (one level deeper)
 
@@ -200,19 +200,19 @@ Workers run via `WorkerFactory`, which builds a Symfony `Worker` with the config
 
 ## Test as documentation
 
-- [tests/Messaging/Attribute/AsHandlerTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Attribute/AsHandlerTest.php) — reading the `#[AsHandler]` attribute.
-- [tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php) — filesystem scan + registry build.
-- [tests/Messaging/Discovery/HandlerRegistryTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/HandlerRegistryTest.php) — priority ordering, transport filtering.
-- [tests/Messaging/HandlerLocatorTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/HandlerLocatorTest.php) — descriptor resolution through `Container`.
-- [tests/Messaging/MessageBusTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/MessageBusTest.php) — wrapping the Symfony bus.
-- [tests/Messaging/Configuration/TransportSettingsTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/TransportSettingsTest.php) — env → settings parsing.
-- [tests/Messaging/Configuration/MessengerConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/MessengerConfigurationTest.php) — end-to-end container wiring.
-- [tests/Messaging/Integration/DispatchAndConsumeTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Integration/DispatchAndConsumeTest.php) — sync dispatch + async InMemory transport + worker consume.
-- [tests/Messaging/Middleware/LoggingMiddlewareTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Middleware/LoggingMiddlewareTest.php) — optional logging middleware.
+- [tests/Messaging/Attribute/AsHandlerTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Attribute/AsHandlerTest.php): reading the `#[AsHandler]` attribute.
+- [tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/AttributeHandlerDiscovererTest.php): filesystem scan + registry build.
+- [tests/Messaging/Discovery/HandlerRegistryTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Discovery/HandlerRegistryTest.php): priority ordering, transport filtering.
+- [tests/Messaging/HandlerLocatorTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/HandlerLocatorTest.php): descriptor resolution through `Container`.
+- [tests/Messaging/MessageBusTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/MessageBusTest.php): wrapping the Symfony bus.
+- [tests/Messaging/Configuration/TransportSettingsTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/TransportSettingsTest.php): env → settings parsing.
+- [tests/Messaging/Configuration/MessengerConfigurationTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Configuration/MessengerConfigurationTest.php): end-to-end container wiring.
+- [tests/Messaging/Integration/DispatchAndConsumeTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Integration/DispatchAndConsumeTest.php): sync dispatch + async InMemory transport + worker consume.
+- [tests/Messaging/Middleware/LoggingMiddlewareTest.php](https://github.com/univeros/framework/blob/master/tests/Messaging/Middleware/LoggingMiddlewareTest.php): optional logging middleware.
 
 ## Related packages
 
-- [`univeros/cli`](cli.md) — provides the `#[Command]` attribute used by `WorkerCommand` and the failed-message commands.
-- [`univeros/configuration`](configuration.md) — `ConfigurationInterface` + `Env`.
-- [`univeros/container`](container.md) — handler resolution.
-- [`univeros/scaffold`](scaffold.md) — `queue:` block parsing + emitters.
+- [`univeros/cli`](cli.md): provides the `#[Command]` attribute used by `WorkerCommand` and the failed-message commands.
+- [`univeros/configuration`](configuration.md): `ConfigurationInterface` + `Env`.
+- [`univeros/container`](container.md): handler resolution.
+- [`univeros/scaffold`](scaffold.md): `queue:` block parsing + emitters.

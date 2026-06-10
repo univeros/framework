@@ -1,6 +1,6 @@
 # Extending Altair: building a module
 
-A **module** is a pluggable, installable feature for a Univeros app — analogous to a Laravel package with a service provider or a Symfony bundle. A host `composer require`s it, adds one line to `config/modules.php`, and the module's HTTP routes, Cycle entities, and migrations are wired in. Nothing else in the host changes.
+A **module** is a pluggable, installable feature for a Univeros app, analogous to a Laravel package with a service provider or a Symfony bundle. A host `composer require`s it, adds one line to `config/modules.php`, and the module's HTTP routes, Cycle entities, and migrations are wired in. Nothing else in the host changes.
 
 This guide shows how to build one. The mechanism is intentionally small: it reuses [`ConfigurationInterface`](../packages/configuration.md), the container's [tagging](../packages/container.md), the [Http](../packages/http.md) route list, the multi-directory schema provider, and Cycle's shared migration table. See [the Module package reference](../packages/module.md) for the contract details.
 
@@ -10,7 +10,7 @@ This guide shows how to build one. The mechanism is intentionally small: it reus
 bin/altair module:new --dir=user-management --name=acme/user-management
 ```
 
-You get a complete, testable package (`acme/user-management`, namespace `Acme\UserManagement` derived from the name — override with `--namespace`):
+You get a complete, testable package (`acme/user-management`, namespace `Acme\UserManagement` derived from the name, override with `--namespace`):
 
 ```
 src/Module.php                         the entry point a host registers
@@ -85,7 +85,7 @@ return [
 
 That is the entire installation. Here is what each capability does and how it is picked up:
 
-### Routes — automatic
+### Routes: automatic
 
 The generated `public/index.php` already merges module routes:
 
@@ -95,9 +95,9 @@ $routes = ModuleRoutes::collect($container, require '.../config/routes.php');
 
 Host routes come first, so a host can override any route a module would add.
 
-### Middleware — automatic
+### Middleware: automatic
 
-A module that needs a PSR-15 guard — authentication, rate-limiting, tenant resolution, an action-aware idempotency check — implements `MiddlewareProviderInterface`:
+A module that needs a PSR-15 guard (authentication, rate-limiting, tenant resolution, an action-aware idempotency check) implements `MiddlewareProviderInterface`:
 
 ```php
 use Altair\Http\Support\MiddlewarePriority;
@@ -123,7 +123,7 @@ $pipeline = ModuleMiddleware::collect($container, [ /* base stages with prioriti
 $relay = new Relay($pipeline, new ContainerResolver($container));
 ```
 
-**Ordering is by integer `priority`** — lower runs earlier / more outer — against three documented anchors for the framework's own stages in `Altair\Http\Support\MiddlewarePriority`:
+**Ordering is by integer `priority`** (lower runs earlier / more outer), against three documented anchors for the framework's own stages in `Altair\Http\Support\MiddlewarePriority`:
 
 | Anchor | Value | Stage |
 |---|---|---|
@@ -131,19 +131,19 @@ $relay = new Relay($pipeline, new ContainerResolver($container));
 | `DISPATCHER` | `500` | matches the route, records the action on the request |
 | `ACTION` | `1000` | innermost; resolves and runs the matched action |
 
-Slot a pre-routing guard (CORS, rate-limit) below `DISPATCHER`; slot an action-aware guard (auth, idempotency) between `DISPATCHER` and `ACTION`. Keep ordinary guards strictly between the anchors — `ACTION` is the innermost stage and is *terminal* on a matched route, so a priority `>= ACTION` never runs once a route matches; a priority below `EXCEPTION_HANDLER` runs *outside* the exception handler (reserve it for a deliberate outermost wrapper). The merge is a **stable sort**: equal priorities keep input order — base stages first, then modules in registration order — so the assembled pipeline is fully deterministic. A class-string entry is resolved through the container at dispatch time, so the middleware's own dependencies are autowired; you may also pass a ready-made instance.
+Slot a pre-routing guard (CORS, rate-limit) below `DISPATCHER`; slot an action-aware guard (auth, idempotency) between `DISPATCHER` and `ACTION`. Keep ordinary guards strictly between the anchors; `ACTION` is the innermost stage and is *terminal* on a matched route, so a priority `>= ACTION` never runs once a route matches; a priority below `EXCEPTION_HANDLER` runs *outside* the exception handler (reserve it for a deliberate outermost wrapper). The merge is a **stable sort**: equal priorities keep input order (base stages first, then modules in registration order), so the assembled pipeline is fully deterministic. A class-string entry is resolved through the container at dispatch time, so the middleware's own dependencies are autowired; you may also pass a ready-made instance.
 
 `bin/altair middleware:list` shows the merged pipeline (when the host binds it as the `MiddlewareCollection`), so module middleware appear at their resolved position.
 
-### Migrations — automatic
+### Migrations: automatic
 
-`bin/altair db:migrate` (and `:status` / `:rollback`) collect every registered module's migration directory and pass them to Cycle as `vendorDirectories`. One migrator runs the host's `database/migrations` plus every module's directory against the shared `cycle_migrations` table — correct ordering, status, and rollback, applied-once semantics included.
+`bin/altair db:migrate` (and `:status` / `:rollback`) collect every registered module's migration directory and pass them to Cycle as `vendorDirectories`. One migrator runs the host's `database/migrations` plus every module's directory against the shared `cycle_migrations` table, with correct ordering, status, and rollback, applied-once semantics included.
 
 > **Migration namespace convention.** Give each module its own migration namespace (e.g. `Acme\UserManagement\Database\Migrations`, as the scaffold does via `__NAMESPACE__`). Cycle reads each migration's fully-qualified class name from the file, so distinct per-module namespaces guarantee no class-name collisions across modules.
 
-### Entities — one host binding
+### Entities: one host binding
 
-Cycle needs a `SchemaProviderInterface`. To include module entities, bind the module-aware provider (instead of a bare `AttributeSchemaProvider`) wherever your host wires persistence — typically in a host `ConfigurationInterface`:
+Cycle needs a `SchemaProviderInterface`. To include module entities, bind the module-aware provider (instead of a bare `AttributeSchemaProvider`) wherever your host wires persistence, typically in a host `ConfigurationInterface`:
 
 ```php
 $container->factory(
@@ -157,18 +157,18 @@ It compiles the schema from your `baseDirectories` plus every registered module'
 
 ## 4. Test
 
-The scaffolded `tests/ModuleTest.php` constructs the module and asserts its routes, bindings, and directories. Grow it as you add behaviour — the host doesn't need to be involved to test a module in isolation.
+The scaffolded `tests/ModuleTest.php` constructs the module and asserts its routes, bindings, and directories. Grow it as you add behaviour; the host doesn't need to be involved to test a module in isolation.
 
 ## 5. Publish
 
-A module is an ordinary Composer package. Pick your own vendor and namespace — **do not** use `Altair\` (the first-party namespace) or a `univeros/*` name (those are the framework's own read-only splits). Tag a release and submit the repo to Packagist; hosts then `composer require acme/user-management` and add the one line above.
+A module is an ordinary Composer package. Pick your own vendor and namespace: **do not** use `Altair\` (the first-party namespace) or a `univeros/*` name (those are the framework's own read-only splits). Tag a release and submit the repo to Packagist; hosts then `composer require acme/user-management` and add the one line above.
 
 ## What this is not
 
-Registration is explicit — there is no composer-`extra` auto-discovery scanning installed packages. That is deliberate: a host's `config/modules.php` is the single, greppable source of truth for what is installed, in what order. If you want a module enabled, you name it there.
+Registration is explicit; there is no composer-`extra` auto-discovery scanning installed packages. That is deliberate: a host's `config/modules.php` is the single, greppable source of truth for what is installed, in what order. If you want a module enabled, you name it there.
 
 ## See also
 
-- [Module package reference](../packages/module.md) — the contracts in detail.
-- [Bootstrap](../packages/bootstrap.md) — `module:new` and `new` scaffolders.
+- [Module package reference](../packages/module.md): the contracts in detail.
+- [Bootstrap](../packages/bootstrap.md): `module:new` and `new` scaffolders.
 - [Http](../packages/http.md) · [Persistence](../packages/persistence.md) · [Container](../packages/container.md) · [Configuration](../packages/configuration.md).

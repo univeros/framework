@@ -1,4 +1,4 @@
-# `openapi:roundtrip` — drift gate for OpenAPI ↔ Altair YAML
+# `openapi:roundtrip`: drift gate for OpenAPI ↔ Altair YAML
 
 > CI gate that exercises the full `OpenAPI → Altair YAML → OpenAPI`
 > chain in memory and reports semantic drift. Same contract style as
@@ -53,12 +53,12 @@ round-trip itself.
 
 For every `(method, path)` operation the gate compares:
 
-- **`summary`** — exact string match (drift surfaces in plain text).
+- **`summary`:** exact string match (drift surfaces in plain text).
 - **`x-altair-domain`** / **`x-altair-persistence`** / **`x-altair-queue`** /
-  **`x-altair-idempotency`** / **`x-altair-webhook`** — full deep equality
+  **`x-altair-idempotency`** / **`x-altair-webhook`:** full deep equality
   of any block the source carried. (See [extensions.md](./extensions.md)
   for the keys themselves.)
-- **Response status set** — limited to statuses that carry an
+- **Response status set:** limited to statuses that carry an
   `application/json` schema (see normalization below).
 
 Operations missing from either side are flagged
@@ -66,7 +66,7 @@ Operations missing from either side are flagged
 
 ## What the gate intentionally ignores
 
-These are documented as part of the contract — when present, they do
+These are documented as part of the contract; when present, they do
 *not* fail the gate:
 
 - **Key order.** Output is alphabetical; source is whatever order the
@@ -82,7 +82,7 @@ These are documented as part of the contract — when present, they do
 - **`components/schemas`.** Today the importer resolves `$ref` to
   inlined types in the spec; re-emission cannot restore the
   components map. Drift in component definitions is a known
-  limitation — the gate compares operation-level shapes only.
+  limitation; the gate compares operation-level shapes only.
 - **Description-only responses.** `204 No Content`, `404 Not found`,
   any 2xx/4xx/5xx without an `application/json` schema. The Altair
   `output:` block has no way to represent an empty body, so these
@@ -169,10 +169,10 @@ proves the gate fails on a regression.
   lands when `OpenApiParser` learns to preserve `parameters[]` and
   `components/schemas` on the reverse path; the gate gains a
   `--strict` flag at that point.
-- `x-altair-input-location` is a reserved key — it rides along verbatim
+- `x-altair-input-location` is a reserved key; it rides along verbatim
   but the gate does not yet have a corresponding spec field to compare
   against. Drift would surface as a warning in the import receipt rather
-  than in this gate's diff. (`x-altair-webhook` is now fully compared —
+  than in this gate's diff. (`x-altair-webhook` is now fully compared;
   see the list above.)
 - Component schema names are not preserved through the round-trip
   even when the wire shape is identical, so a `$ref` to
@@ -183,8 +183,8 @@ proves the gate fails on a regression.
 
 ## See also
 
-- [docs/openapi/import.md](./import.md) — the importer the gate exercises
-- [docs/openapi/extensions.md](./extensions.md) — the `x-altair-*` keys the gate watches
-- [#161](https://github.com/univeros/framework/issues/161) — spec emitter
-- [#162](https://github.com/univeros/framework/issues/162) — import CLI
-- [#163](https://github.com/univeros/framework/issues/163) — extension family
+- [docs/openapi/import.md](./import.md): the importer the gate exercises
+- [docs/openapi/extensions.md](./extensions.md): the `x-altair-*` keys the gate watches
+- [#161](https://github.com/univeros/framework/issues/161): spec emitter
+- [#162](https://github.com/univeros/framework/issues/162): import CLI
+- [#163](https://github.com/univeros/framework/issues/163): extension family

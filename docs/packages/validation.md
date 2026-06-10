@@ -1,6 +1,6 @@
 # Validation
 
-A rule-based input validation library that rejects values not conforming to declared constraints — distinct from the `./sanitation.md` package, which transforms input rather than gatekeeping it.
+A rule-based input validation library that rejects values not conforming to declared constraints, distinct from the `./sanitation.md` package, which transforms input rather than gatekeeping it.
 
 **Package:** `univeros/validation`
 **Namespace:** `Altair\Validation`
@@ -9,7 +9,7 @@ A rule-based input validation library that rejects values not conforming to decl
 
 ## Introduction
 
-The Validation package enforces a strict boundary between your application and untrusted data. When a value arrives — from a request body, a CLI argument, a database row, or an API payload — you describe what "valid" means using one or more composable rules, then run a validator to decide whether to proceed or reject. Nothing is modified; the package answers a single yes-or-no question and, on a no, tells you exactly which fields failed and why.
+The Validation package enforces a strict boundary between your application and untrusted data. When a value arrives (from a request body, a CLI argument, a database row, or an API payload), you describe what "valid" means using one or more composable rules, then run a validator to decide whether to proceed or reject. Nothing is modified; the package answers a single yes-or-no question and, on a no, tells you exactly which fields failed and why.
 
 This distinguishes it from the Sanitation package, whose purpose is transformation rather than judgment. Validation rejects. Sanitation corrects. You will often want both: validate first to establish that the shape of the data is acceptable, then sanitize to normalise the acceptable values before persisting them.
 
@@ -31,7 +31,7 @@ composer require univeros/validation
 
 The package requires PHP 8.3 or later. Its direct Altair dependencies (`univeros/configuration`, `univeros/container`, `univeros/middleware`, `univeros/structure`) are resolved automatically.
 
-No PHP extensions beyond the standard distribution are required by the package itself. Note that `IbanRule` uses `bcmod` for the ISO 7064 MOD-97-10 check and `IpRule` uses `bccomp`/`ip2long` for network-range comparisons — both functions are part of PHP core on all common platforms, but if you are running a stripped-down Docker image you should verify that `bcmath` is available.
+No PHP extensions beyond the standard distribution are required by the package itself. Note that `IbanRule` uses `bcmod` for the ISO 7064 MOD-97-10 check and `IpRule` uses `bccomp`/`ip2long` for network-range comparisons; both functions are part of PHP core on all common platforms, but if you are running a stripped-down Docker image you should verify that `bcmath` is available.
 
 If you are consuming the full `univeros/framework` monorepo, the package is already satisfied through the root `replace` map.
 
@@ -91,8 +91,8 @@ if (!$validator->validate($form)) {
 
 Every assertion implements `Altair\Validation\Contracts\RuleInterface`, which extends `Altair\Middleware\Contracts\MiddlewareInterface`. The contract exposes two methods:
 
-- `assert(mixed $value): bool` — the pure boolean check you write when creating a custom rule.
-- `__invoke(PayloadInterface $payload, callable $next): PayloadInterface` — the middleware handler implemented by `AbstractRule`. You do not override this; it reads the subject and attribute key from the payload, calls `assert`, and either advances the queue or records a failure.
+- `assert(mixed $value): bool`: the pure boolean check you write when creating a custom rule.
+- `__invoke(PayloadInterface $payload, callable $next): PayloadInterface`: the middleware handler implemented by `AbstractRule`. You do not override this; it reads the subject and attribute key from the payload, calls `assert`, and either advances the queue or records a failure.
 
 Because each rule is simultaneously a validation function and a middleware handler, the same object can be used either standalone (`$rule->assert($value)`) or threaded through a `RulesRunner` queue.
 
@@ -112,8 +112,8 @@ Keys may contain a comma-separated list of field names (`'firstName, lastName'`)
 
 After a call to `validate`, `getPayload()` returns the final payload, from which you can read:
 
-- `PayloadInterface::ATTRIBUTE_RESULT` — `true` when all rules passed, `false` otherwise.
-- `PayloadInterface::ATTRIBUTE_FAILURES` — an associative array of `['fieldName' => 'error message string']`.
+- `PayloadInterface::ATTRIBUTE_RESULT`: `true` when all rules passed, `false` otherwise.
+- `PayloadInterface::ATTRIBUTE_FAILURES`: an associative array of `['fieldName' => 'error message string']`.
 
 ### RulesRunner
 
@@ -137,31 +137,31 @@ The following rules ship with the package. All of them extend `AbstractRule` and
 
 | Class | Constructor arguments | What it checks |
 |---|---|---|
-| `AlphaRule` | — | Value contains only Unicode letters (`\p{L}`). Rejects digits, spaces, punctuation, and non-scalar types. |
-| `AlphaNumRule` | — | Value contains only Unicode letters and decimal digits (`\p{L}\p{Nd}`). |
+| `AlphaRule` | none | Value contains only Unicode letters (`\p{L}`). Rejects digits, spaces, punctuation, and non-scalar types. |
+| `AlphaNumRule` | none | Value contains only Unicode letters and decimal digits (`\p{L}\p{Nd}`). |
 | `BetweenRule` | `mixed $min, mixed $max` | Scalar value satisfies `$min <= $value <= $max` (PHP loose comparison). |
-| `BooleanRule` | — | Value is a boolean-like scalar accepted by `FILTER_VALIDATE_BOOLEAN` (`true`, `false`, `"1"`, `"0"`, `"yes"`, `"no"`, `"on"`, `"off"`). |
+| `BooleanRule` | none | Value is a boolean-like scalar accepted by `FILTER_VALIDATE_BOOLEAN` (`true`, `false`, `"1"`, `"0"`, `"yes"`, `"no"`, `"on"`, `"off"`). |
 | `CallbackRule` | `callable $callable` | Delegates to the provided callable. Receives the value; must return `bool`. |
 | `CreditCardRule` | `string $type` | Card number passes a Luhn mod-10 check and matches the pattern and length for the named card type. Accepts spaces and hyphens in the input. UnionPay numbers skip the Luhn check. Throws `InvalidArgumentException` for unknown types. |
-| `DateTimeRule` | — | Value is a `DateTime` instance, or a scalar that `date_create` can parse without warnings. Rejects empty strings. |
-| `EmailRule` | — | Value is a string and passes `FILTER_VALIDATE_EMAIL`. Uses PHP's built-in filter, which is deliberately basic. The source comment recommends `egulias/EmailValidator` for production use. |
-| `IbanRule` | — | Value is a structurally valid IBAN: 15+ characters, recognised two-letter country code, country-specific body pattern, and ISO 7064 MOD-97-10 checksum. Strips the `IBAN` prefix and non-alphanumeric separators before checking. Supports 60+ country codes. Uses `bcmod`. |
+| `DateTimeRule` | none | Value is a `DateTime` instance, or a scalar that `date_create` can parse without warnings. Rejects empty strings. |
+| `EmailRule` | none | Value is a string and passes `FILTER_VALIDATE_EMAIL`. Uses PHP's built-in filter, which is deliberately basic. The source comment recommends `egulias/EmailValidator` for production use. |
+| `IbanRule` | none | Value is a structurally valid IBAN: 15+ characters, recognised two-letter country code, country-specific body pattern, and ISO 7064 MOD-97-10 checksum. Strips the `IBAN` prefix and non-alphanumeric separators before checking. Supports 60+ country codes. Uses `bcmod`. |
 | `InRule` | `mixed $haystack, bool $strict = false` | Value is in an array haystack (`in_array`) or is a substring of a string haystack (`mb_strpos`/`mb_stripos`). |
-| `IntegerRule` | — | Value is a PHP `int` or a numeric string whose value equals its integer cast. |
+| `IntegerRule` | none | Value is a PHP `int` or a numeric string whose value equals its integer cast. |
 | `IpRule` | `?int $options = null, ?string $range = null` | Value is a valid IP address. Optionally filtered by `FILTER_FLAG_IPV4`, `FILTER_FLAG_IPV6`, or `FILTER_FLAG_NO_PRIV_RANGE`; optionally constrained to a CIDR block, a hyphen-delimited range, or a wildcard pattern. Uses `bccomp` for range comparison. |
 | `IsbnRule` | `?int $type = null` | Value is a valid ISBN-10 or ISBN-13. Pass `10` or `13` to restrict to one edition; pass `null` to accept either. Strips hyphens and spaces before checking. |
 | `MaxRule` | `mixed $max` | Scalar value satisfies `$value <= $max`. |
 | `MinRule` | `mixed $min` | Scalar value satisfies `$value >= $min`. |
 | `RegexRule` | `string $pattern` | Scalar value matches the given PCRE pattern (including delimiters). |
-| `SwiftBicRule` | — | Value matches the SWIFT/BIC format: 4 letters (institution), 2 letters (country), 2 alphanumerics (location), optional 3 alphanumerics (branch). |
-| `UrlRule` | — | Value is a scalar containing no forbidden characters and parses as a URL with a non-empty scheme and host. |
+| `SwiftBicRule` | none | Value matches the SWIFT/BIC format: 4 letters (institution), 2 letters (country), 2 alphanumerics (location), optional 3 alphanumerics (branch). |
+| `UrlRule` | none | Value is a scalar containing no forbidden characters and parses as a URL with a non-empty scheme and host. |
 | `ZipCodeRule` | `?string $country = null` | Value matches the postal code pattern for the given ISO 3166-1 alpha-2 country code. Defaults to `'US'`. Patterns cover 150+ territories. Throws `InvalidArgumentException` for unrecognised country codes. |
 
 **Supported `CreditCardRule` types:** `visaelectron`, `carteblanche`, `maestro`, `forbrugsforeningen`, `dankort`, `visa`, `mastercard`, `amex`, `dinersclub`, `discover`, `unionpay`, `jcb`, `solo`, `switch`.
 
 ### Composing rules
 
-You describe all rules for a field as an array. Every rule in the array must pass. The runner processes them in the order they appear and short-circuits on the first failure — subsequent rules for that field are not evaluated.
+You describe all rules for a field as an array. Every rule in the array must pass. The runner processes them in the order they appear and short-circuits on the first failure; subsequent rules for that field are not evaluated.
 
 ```php
 // Both AlphaRule and MinRule must pass for 'username' to be valid.
@@ -270,7 +270,7 @@ If you are wiring the stack manually (for example in tests or small scripts), co
 
 Rules are pure: `assert` takes a value and returns a bool with no side effects and no external dependencies. This makes unit-testing them trivial.
 
-The `AbstractRuleTest` base class in the test suite encodes the canonical pattern. Subclass it and provide `trueProvider` and `falseProvider` data providers; the base class generates four test methods automatically — two testing `assert` directly and two testing the full middleware invocation path.
+The `AbstractRuleTest` base class in the test suite encodes the canonical pattern. Subclass it and provide `trueProvider` and `falseProvider` data providers; the base class generates four test methods automatically: two testing `assert` directly and two testing the full middleware invocation path.
 
 ```php
 use Altair\Middleware\Payload;
@@ -305,7 +305,7 @@ class EmailRuleTest extends TestCase
 }
 ```
 
-To test the full middleware path — including the payload attributes written by `AbstractRule::__invoke` — build a payload with `ATTRIBUTE_SUBJECT` and `ATTRIBUTE_KEY` set, invoke the rule as a callable, and inspect `ATTRIBUTE_RESULT` on the returned payload.
+To test the full middleware path (including the payload attributes written by `AbstractRule::__invoke`), build a payload with `ATTRIBUTE_SUBJECT` and `ATTRIBUTE_KEY` set, invoke the rule as a callable, and inspect `ATTRIBUTE_RESULT` on the returned payload.
 
 ```php
 $payload = (new Payload())
@@ -458,7 +458,7 @@ $uniqueUsername = new CallbackRule(
 (new RuleCollection())->put('username', [$uniqueUsername]);
 ```
 
-Be aware that `CallbackRule::buildErrorMessage` always returns `"value" is not a valid value.` — write a custom rule class when you need a descriptive message.
+Be aware that `CallbackRule::buildErrorMessage` always returns `"value" is not a valid value.`: write a custom rule class when you need a descriptive message.
 
 ### Locale-aware postal code validation
 
@@ -526,9 +526,9 @@ $isValidSwift = $swift->assert('NWBKGB2L');                // true
 
 ## Related packages
 
-- [`./sanitation.md`](./sanitation.md) — The Sanitation package is the natural counterpart: it transforms values (trim, strip tags, normalise case) where Validation only judges them. Run validation after sanitation to assess the cleaned data.
-- [`./http.md`](./http.md) — The HTTP package provides the middleware pipeline where a validation step typically lives. Because `RuleInterface` is already a `MiddlewareInterface`, rules can be embedded directly in a `RelayRunner`-compatible queue.
-- [`./data.md`](./data.md) — The Data package provides entity and DTO base classes. Implement `ValidatableInterface` on a Data entity to give it a native `getRules()` contract, enabling direct validation of persisted value objects.
+- [`./sanitation.md`](./sanitation.md): The Sanitation package is the natural counterpart: it transforms values (trim, strip tags, normalise case) where Validation only judges them. Run validation after sanitation to assess the cleaned data.
+- [`./http.md`](./http.md): The HTTP package provides the middleware pipeline where a validation step typically lives. Because `RuleInterface` is already a `MiddlewareInterface`, rules can be embedded directly in a `RelayRunner`-compatible queue.
+- [`./data.md`](./data.md): The Data package provides entity and DTO base classes. Implement `ValidatableInterface` on a Data entity to give it a native `getRules()` contract, enabling direct validation of persisted value objects.
 
 ---
 
