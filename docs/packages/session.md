@@ -9,13 +9,13 @@ Server-side session storage with pluggable handlers for the filesystem, MongoDB,
 
 ## Introduction
 
-The Session package separates session storage from the cookie envelope that carries the session ID over HTTP. The cookie wire format — `Set-Cookie` headers, `Secure`, `HttpOnly`, `SameSite` — is handled by `./cookie.md`. This package handles everything that happens once PHP has the session ID in hand: reading and writing session data through a `SessionHandlerInterface` implementation, managing session lifecycle (start, resume, close, destroy), and regenerating IDs to prevent fixation.
+The Session package separates session storage from the cookie envelope that carries the session ID over HTTP. The cookie wire format (`Set-Cookie` headers, `Secure`, `HttpOnly`, `SameSite`) is handled by `./cookie.md`. This package handles everything that happens once PHP has the session ID in hand: reading and writing session data through a `SessionHandlerInterface` implementation, managing session lifecycle (start, resume, close, destroy), and regenerating IDs to prevent fixation.
 
 PHP's native session machinery (`session_start`, `session_write_close`, `$_SESSION`) remains the runtime. What changes is the storage backend. When you register a custom `SessionHandlerInterface` with `session_set_save_handler()`, PHP delegates every read and write to your handler instead of writing files in the default `session.save_path`. `SessionManager::start()` calls `session_set_save_handler($this->sessionHandler, false)` before `session_start()`, so your handler is active for the lifetime of the request.
 
-The package organises its functionality into three layers. The handler layer (`Handler/`) contains the four concrete `SessionHandlerInterface` implementations. The adapter layer (`Adapter/`) sits underneath `PdoSessionHandler` and handles the SQL dialect differences between MySQL, PostgreSQL, and SQLite — including the different locking strategies each database supports. The manager layer (`SessionManager`) is the single entry point for application code: it starts sessions, provides namespaced sub-arrays through `SessionBlock`, manages the CSRF token, and registers a shutdown function that calls `session_write_close()` so session data is always flushed even if application code forgets to call `close()`.
+The package organises its functionality into three layers. The handler layer (`Handler/`) contains the four concrete `SessionHandlerInterface` implementations. The adapter layer (`Adapter/`) sits underneath `PdoSessionHandler` and handles the SQL dialect differences between MySQL, PostgreSQL, and SQLite, including the different locking strategies each database supports. The manager layer (`SessionManager`) is the single entry point for application code: it starts sessions, provides namespaced sub-arrays through `SessionBlock`, manages the CSRF token, and registers a shutdown function that calls `session_write_close()` so session data is always flushed even if application code forgets to call `close()`.
 
-Session data is partitioned into named `SessionBlock` instances. Rather than reading from and writing to `$_SESSION` directly, you call `$manager->getSessionBlock('myapp')` to get a scoped view that reads and writes only to `$_SESSION['myapp']`. Blocks also carry flash messages — values that persist for exactly one more request and are then removed automatically.
+Session data is partitioned into named `SessionBlock` instances. Rather than reading from and writing to `$_SESSION` directly, you call `$manager->getSessionBlock('myapp')` to get a scoped view that reads and writes only to `$_SESSION['myapp']`. Blocks also carry flash messages: values that persist for exactly one more request and are then removed automatically.
 
 The package depends on `univeros/security` for the `Salt` helper used in CSRF token generation, and on `nesbot/carbon` for the expiry check in `FileSessionHandler`. Storage-specific extensions (ext-mongodb, ext-pdo, predis/predis) are optional at install time but required at runtime if you activate the corresponding handler.
 
@@ -132,7 +132,7 @@ Because the Altair Session package does not control HTTP response headers direct
 | `PrivateNoExpireCacheLimiter` | `private, max-age=N, pre-check=N` (no `Expires` header) |
 | `PublicCacheLimiter` | `public, max-age=N` + a future `Expires` |
 
-The `cacheExpire` constructor argument on all limiters defaults to 180 minutes and corresponds to the `session.cache_expire` INI setting. You select one of these classes when you wire `SessionHeadersMiddleware` — this is how you replace PHP's native header-emission behaviour with explicit PSR-7 immutable response mutations. See [http.md](./http.md) for middleware wiring details.
+The `cacheExpire` constructor argument on all limiters defaults to 180 minutes and corresponds to the `session.cache_expire` INI setting. You select one of these classes when you wire `SessionHeadersMiddleware`; this is how you replace PHP's native header-emission behaviour with explicit PSR-7 immutable response mutations. See [http.md](./http.md) for middleware wiring details.
 
 ---
 
@@ -155,7 +155,7 @@ $handler = new FileSessionHandler(
 );
 ```
 
-Garbage collection (`gc()`) iterates all files in the directory and deletes any file whose `filemtime` plus `$maxlifetime` seconds is in the past. PHP triggers `gc()` probabilistically on `session_start()`; the `$minutes` constructor argument and PHP's `session.gc_maxlifetime` INI value are separate controls — the handler honours both.
+Garbage collection (`gc()`) iterates all files in the directory and deletes any file whose `filemtime` plus `$maxlifetime` seconds is in the past. PHP triggers `gc()` probabilistically on `session_start()`; the `$minutes` constructor argument and PHP's `session.gc_maxlifetime` INI value are separate controls, and the handler honours both.
 
 ### Mongo handler
 
@@ -295,11 +295,11 @@ All PDO adapters accept a `$lockMode` argument. The three modes are defined as c
 | `LOCK_ADVISORY` | `1` | Application-level advisory lock (MySQL `GET_LOCK`, PostgreSQL `pg_advisory_lock`). Not enforced by the database row; not available on SQLite. |
 | `LOCK_TRANSACTIONAL` | `2` | Real row-level lock within a transaction. Default. The only mode that is reliable across all supported databases. |
 
-GC is deliberately deferred to `close()` by the handler. The `gc()` method simply sets a flag (`$gcCalled = true`) and returns `true`. When `close()` runs, it commits the transaction and releases advisory locks first, then — if `$gcCalled` is true — executes the `DELETE FROM sessions WHERE (session_lifetime + session_time) < :now` cleanup query. This prevents expired-session pruning from holding the lock while the current session is still active.
+GC is deliberately deferred to `close()` by the handler. The `gc()` method simply sets a flag (`$gcCalled = true`) and returns `true`. When `close()` runs, it commits the transaction and releases advisory locks first, then (if `$gcCalled` is true) executes the `DELETE FROM sessions WHERE (session_lifetime + session_time) < :now` cleanup query. This prevents expired-session pruning from holding the lock while the current session is still active.
 
 ### Predis handler
 
-`PredisSessionHandler` extends `Predis\Session\Handler` from the `predis/predis` library, which already implements `SessionHandlerInterface`. The class body is intentionally minimal — it exists to give the handler a namespaced class name within `Altair\Session` and to act as the container alias target.
+`PredisSessionHandler` extends `Predis\Session\Handler` from the `predis/predis` library, which already implements `SessionHandlerInterface`. The class body is intentionally minimal: it exists to give the handler a namespaced class name within `Altair\Session` and to act as the container alias target.
 
 ```php
 use Altair\Session\Handler\PredisSessionHandler;
@@ -321,7 +321,7 @@ $handler = new PredisSessionHandler($client, [
 ]);
 ```
 
-Since the session lifetime and key prefix are controlled by `Predis\Session\Handler`, you configure them in the options array rather than via INI settings. The `gc()` method in the Predis handler is a no-op because Redis expires keys automatically via TTL — no explicit garbage collection is needed.
+Since the session lifetime and key prefix are controlled by `Predis\Session\Handler`, you configure them in the options array rather than via INI settings. The `gc()` method in the Predis handler is a no-op because Redis expires keys automatically via TTL; no explicit garbage collection is needed.
 
 ### Cache limiters
 
@@ -347,7 +347,7 @@ $middleware = new SessionHeadersMiddleware($cookieManager, new PublicCacheLimite
 
 `PrivateCacheLimiter` adds a hard `Expires: [past date]` before delegating to `PrivateNoExpireCacheLimiter`. The hard past-date `Expires` header instructs HTTP/1.0 proxies to treat the response as uncacheable, while the `Cache-Control: private` header handles HTTP/1.1 clients. Use `PrivateNoExpireCacheLimiter` directly when you target HTTP/1.1-only infrastructure and do not want the redundant `Expires` header.
 
-### SessionManager — lifecycle
+### SessionManager: lifecycle
 
 Every application request that involves session data follows this sequence:
 
@@ -436,7 +436,7 @@ $notices->appendFlash('errors', 'Password is too short.');
 
 ### Regenerating session IDs
 
-Regenerate the session ID whenever a user's privilege level changes — most importantly on successful login — to prevent session fixation attacks. When the session has a CSRF token active, `regenerateId()` generates a new CSRF value automatically.
+Regenerate the session ID whenever a user's privilege level changes (most importantly on successful login) to prevent session fixation attacks. When the session has a CSRF token active, `regenerateId()` generates a new CSRF value automatically.
 
 ```php
 // Called after verifying the user's credentials:
@@ -448,7 +448,7 @@ if ($manager->regenerateId(deletePrevious: true)) {
 
 Pass `$deletePrevious = false` to keep the old session record alive while the new one is created. This is rarely useful and creates a window where both IDs are valid. Prefer the default of `true`.
 
-`regenerateId()` has no effect if the session is not active — it returns `false` and does not throw. Call `start()` before `regenerateId()`.
+`regenerateId()` has no effect if the session is not active; it returns `false` and does not throw. Call `start()` before `regenerateId()`.
 
 ---
 
@@ -491,7 +491,7 @@ Environment variables consumed:
 
 The configuration uses a delegate factory that builds a `MongoDB\Client`, selects the collection, and passes it to `MongoSessionHandler`. After `apply()`, `SessionHandlerInterface` resolves to `MongoSessionHandler`.
 
-Note: the default `SESSION_MONGO_URI` value (`mongodb://12.0.0.1/`) is likely a placeholder — set this variable explicitly in your environment.
+Note: the default `SESSION_MONGO_URI` value (`mongodb://12.0.0.1/`) is likely a placeholder; set this variable explicitly in your environment.
 
 ### MySqlSessionHandlerConfiguration, PostgreSqlSessionHandlerConfiguration, SqliteSessionHandlerConfiguration
 
@@ -634,7 +634,7 @@ final class ApcuSessionHandler implements SessionHandlerInterface
 }
 ```
 
-Pass the handler to `SessionManager` or register it as the `SessionHandlerInterface` alias in your container. No other changes are needed — `SessionManager::start()` calls `session_set_save_handler()` with whatever handler you provide.
+Pass the handler to `SessionManager` or register it as the `SessionHandlerInterface` alias in your container. No other changes are needed; `SessionManager::start()` calls `session_set_save_handler()` with whatever handler you provide.
 
 ---
 
@@ -726,7 +726,7 @@ $auth->set('user_id', $user->getId());
 $auth->set('roles', $user->getRoles());
 ```
 
-Never skip the regeneration step. An attacker who knows a valid pre-login session ID can use it after the user logs in and inherit the authenticated state — this is the session fixation vulnerability.
+Never skip the regeneration step. An attacker who knows a valid pre-login session ID can use it after the user logs in and inherit the authenticated state; this is the session fixation vulnerability.
 
 On logout, destroy the session entirely:
 
@@ -755,10 +755,10 @@ $message = $notices->getFlash('success');
 
 ## Related packages
 
-- [cookie.md](./cookie.md) — the wire format: `Set-Cookie` header construction, the `CookieManager`, and `SetCookie` value objects. `SessionHeadersMiddleware` uses this package to set the session cookie on the response.
-- [http.md](./http.md) — `SessionHeadersMiddleware` and the `CacheLimiterInterface` hierarchy (`NoCacheLimiter`, `PublicCacheLimiter`, `PrivateCacheLimiter`, `PrivateNoExpireCacheLimiter`) that control the `Cache-Control` headers associated with session responses.
-- [security.md](./security.md) — `Altair\Security\Support\Salt`, used by `CsrfToken::generateValue()` to produce the raw entropy for CSRF token values. CSRF token management is integrated directly into `SessionManager::getCsrfToken()`.
-- [cache.md](./cache.md) — the PSR-6/16 caching layer. Session storage and the cache layer are independent; the Predis session handler and `PredisCacheItemStorage` can share a Redis instance but operate in separate key namespaces.
+- [cookie.md](./cookie.md): the wire format: `Set-Cookie` header construction, the `CookieManager`, and `SetCookie` value objects. `SessionHeadersMiddleware` uses this package to set the session cookie on the response.
+- [http.md](./http.md): `SessionHeadersMiddleware` and the `CacheLimiterInterface` hierarchy (`NoCacheLimiter`, `PublicCacheLimiter`, `PrivateCacheLimiter`, `PrivateNoExpireCacheLimiter`) that control the `Cache-Control` headers associated with session responses.
+- [security.md](./security.md): `Altair\Security\Support\Salt`, used by `CsrfToken::generateValue()` to produce the raw entropy for CSRF token values. CSRF token management is integrated directly into `SessionManager::getCsrfToken()`.
+- [cache.md](./cache.md): the PSR-6/16 caching layer. Session storage and the cache layer are independent; the Predis session handler and `PredisCacheItemStorage` can share a Redis instance but operate in separate key namespaces.
 
 ---
 
@@ -772,10 +772,10 @@ $message = $notices->getFlash('success');
 
 - **PostgreSQL before 9.5 does not support `INSERT ... ON CONFLICT`.** `PostgreSqlPdoSessionAdapter::getMergePdoStatement()` returns `null` for these versions. The adapter falls back to a separate UPDATE + INSERT sequence with a duplicate-key retry. This is functional but involves more round trips than the upsert path.
 
-- **`gc()` in the PDO handler is deferred to `close()`.** This is intentional — garbage collection runs after the session transaction commits and locks are released. A side-effect is that if `close()` is never called (and the shutdown function does not fire), GC does not run. The shutdown function registered in `SessionManager`'s constructor is the safety net for this.
+- **`gc()` in the PDO handler is deferred to `close()`.** This is intentional: garbage collection runs after the session transaction commits and locks are released. A side-effect is that if `close()` is never called (and the shutdown function does not fire), GC does not run. The shutdown function registered in `SessionManager`'s constructor is the safety net for this.
 
 - **`SessionManager::getCookieParams()` recurses infinitely** (tracked in [#42](https://github.com/univeros/framework/issues/42)). The method as shipped calls `$this->getCookieParams()` rather than returning `$this->cookieParams`, so any invocation blows the stack. Until the source is fixed, read `$this->cookieParams` directly or call `session_get_cookie_params()`.
 
-- **`MongoSessionHandlerConfiguration` default URI is a typo** (tracked in [#43](https://github.com/univeros/framework/issues/43)). When `SESSION_MONGO_URI` is unset, the configuration falls back to `mongodb://12.0.0.1/` — almost certainly intended to be `127.0.0.1`. Set `SESSION_MONGO_URI` explicitly in any environment that uses the Mongo handler.
+- **`MongoSessionHandlerConfiguration` default URI is a typo** (tracked in [#43](https://github.com/univeros/framework/issues/43)). When `SESSION_MONGO_URI` is unset, the configuration falls back to `mongodb://12.0.0.1/`, almost certainly intended to be `127.0.0.1`. Set `SESSION_MONGO_URI` explicitly in any environment that uses the Mongo handler.
 
 - **No flash message support outside `SessionBlock`.** Flash counters are stored under `altair:session:flash` inside a block. If you write to `$_SESSION` directly (outside a block), flash lifecycle management does not apply.

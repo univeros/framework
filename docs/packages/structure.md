@@ -1,6 +1,6 @@
 # Structure
 
-Typed data structures — Map, Set, Vector, Deque, Queue, Stack, and PriorityQueue — inspired by the `ext-ds` PHP extension, implemented in pure PHP with no C extension required.
+Typed data structures (Map, Set, Vector, Deque, Queue, Stack, and PriorityQueue) inspired by the `ext-ds` PHP extension, implemented in pure PHP with no C extension required.
 
 **Package:** `univeros/structure`
 **Namespace:** `Altair\Structure`
@@ -10,13 +10,13 @@ Typed data structures — Map, Set, Vector, Deque, Queue, Stack, and PriorityQue
 
 ## Introduction
 
-PHP arrays are flexible, but that flexibility comes at a cost. An array can hold any mix of types, shift between indexed and associative layouts at any point, and have its iteration order change silently when keys are added or removed. For application code that needs to reason about collections precisely — "this is a sequence of integers in insertion order" or "this set contains no duplicates by construction" — a plain array provides no enforcement and no semantic signal to the reader.
+PHP arrays are flexible, but that flexibility comes at a cost. An array can hold any mix of types, shift between indexed and associative layouts at any point, and have its iteration order change silently when keys are added or removed. For application code that needs to reason about collections precisely ("this is a sequence of integers in insertion order" or "this set contains no duplicates by construction"), a plain array provides no enforcement and no semantic signal to the reader.
 
 The Structure package fills that gap. It provides eight concrete collection types and the contract layer above them. Each type has a well-defined semantic: a `Map` is a key-value store that preserves insertion order; a `Set` guarantees uniqueness; a `Vector` is a dense, contiguous, integer-indexed sequence; a `Deque` is a double-ended sequence that supports efficient push and unshift; a `Queue` is strictly FIFO; a `Stack` is strictly LIFO; a `PriorityQueue` dequeues by priority rather than arrival order; a `Pair` is an immutable key-value tuple used internally by `Map` and surfaced by `Map::pairs()` and `Map::skip()`.
 
 The design mirrors the `ext-ds` PHP extension closely. `ext-ds` is a compiled C extension that ships with PHP 8.0+ as an optional pecl package and provides the same conceptual types (`Ds\Map`, `Ds\Set`, `Ds\Vector`, etc.). The Structure package reproduces that API in pure PHP so you can use the same collection semantics without depending on the extension being installed in your environment. The trade-off is performance: pure PHP iteration is slower than the C implementation, and this matters in tight loops over large collections. For most web application workloads, where collections are small and operations are infrequent, the difference is negligible.
 
-Every collection implements `CollectionInterface`, which extends PHP's built-in `Countable`, `JsonSerializable`, and `Traversable`. This means every collection works with `count()`, can be passed to `json_encode()` directly, and can be iterated in a `foreach` loop. The `CapacityInterface` is implemented by the structures that manage an internal buffer — `Map`, `Vector`, `Deque`, `Queue`, `Stack`, and `PriorityQueue` — and exposes `allocate(int $capacity)` so you can pre-size the internal array and avoid repeated reallocations when you know the expected size in advance.
+Every collection implements `CollectionInterface`, which extends PHP's built-in `Countable`, `JsonSerializable`, and `Traversable`. This means every collection works with `count()`, can be passed to `json_encode()` directly, and can be iterated in a `foreach` loop. The `CapacityInterface` is implemented by the structures that manage an internal buffer (`Map`, `Vector`, `Deque`, `Queue`, `Stack`, and `PriorityQueue`) and exposes `allocate(int $capacity)` so you can pre-size the internal array and avoid repeated reallocations when you know the expected size in advance.
 
 All collection methods return new instances where the contract specifies a new collection as a result (`filter`, `map`, `sort`, `reverse`, `slice`, `merge`, and similar). Methods that modify in place (`push`, `pop`, `put`, `remove`, and similar) return `$this` for chaining and update the receiver directly. This is intentional: sequence and map mutation is O(1) and returning a full copy on every insertion would be wasteful. If you need snapshot semantics, call `copy()` before the operation.
 
@@ -139,7 +139,7 @@ Concrete classes share behaviour through four traits in `Altair\Structure\Traits
 
 ### Map
 
-A `Map` is a sequential collection of key-value pairs where iteration order equals insertion order. Keys can be any PHP value — scalar, object, array — not just strings and integers as in a plain PHP array. When you call `put($key, $value)` and a pair with an equal key already exists, the existing pair's value is replaced; its insertion position does not change.
+A `Map` is a sequential collection of key-value pairs where iteration order equals insertion order. Keys can be any PHP value (scalar, object, array), not just strings and integers as in a plain PHP array. When you call `put($key, $value)` and a pair with an equal key already exists, the existing pair's value is replaced; its insertion position does not change.
 
 Internally, `Map` stores an array of `Pair` objects (`$this->internal`) and a squared-capacity buffer. Key lookup is linear: `hasKey`, `get`, and `remove` all iterate `$this->internal` and call `Pair::equalsKey()` on each pair. This means Map key lookup is O(n). For large maps where lookup performance matters, consider a plain associative PHP array with string keys.
 
@@ -214,7 +214,7 @@ $first = $tags->get(0);   // 'php'
 **Gotchas:**
 
 - `offsetSet($offset, $value)` requires `$offset === null` (i.e., `$set[] = $value`). Passing a non-null offset throws `\OutOfBoundsException`.
-- `offsetExists` and `offsetUnset` always throw `\Error('Not supported')`. Do not use `isset($set[$i])` or `unset($set[$i])` — use `contains()` and `remove()` instead.
+- `offsetExists` and `offsetUnset` always throw `\Error('Not supported')`. Do not use `isset($set[$i])` or `unset($set[$i])`; use `contains()` and `remove()` instead.
 - `sort()` sorts by the key positions inside the internal `Map` (using `ksort`), which sorts the values themselves.
 - `getMap()` exposes the internal `Map` for delegation purposes. Reading from it directly is safe; mutating it bypasses uniqueness logic and is not supported.
 
@@ -347,7 +347,7 @@ $array = $stack->toArray(); // ['b', 'a']
 
 ### PriorityQueue
 
-A `PriorityQueue` is a max-heap. Values are pushed with an integer priority and are always dequeued in descending priority order. When two values have the same priority, they are dequeued in FIFO insertion order — the stamp field on each `PriorityNode` records arrival sequence and serves as the tiebreaker.
+A `PriorityQueue` is a max-heap. Values are pushed with an integer priority and are always dequeued in descending priority order. When two values have the same priority, they are dequeued in FIFO insertion order; the stamp field on each `PriorityNode` records arrival sequence and serves as the tiebreaker.
 
 `PriorityQueue::push(mixed $value, int $priority)` has a different signature from `Queue::push`. The second argument is required and is the priority integer.
 
@@ -381,17 +381,17 @@ $pq2->pop();  // 'second'
 
 - Priority is `int` only. Passing a float will cause a `TypeError` under `strict_types=1`.
 - `PriorityQueue` does not implement `CapacityInterface` as a declared interface, but it does use `SquaredCapacityTrait`, so `allocate()` and `capacity()` are available as public methods at the class level.
-- `PriorityQueue` does not expose a `push(mixed ...$values)` without priorities. The method signature is `push(mixed $value, int $priority): void` — it does not return `$this`.
+- `PriorityQueue` does not expose a `push(mixed ...$values)` without priorities. The method signature is `push(mixed $value, int $priority): void`; it does not return `$this`.
 
 ---
 
 ### Pair
 
-A `Pair` is a simple key-value tuple. It is not a standalone collection — it is the internal node type that `Map` stores and returns. You encounter `Pair` instances through:
+A `Pair` is a simple key-value tuple. It is not a standalone collection; it is the internal node type that `Map` stores and returns. You encounter `Pair` instances through:
 
-- `Map::first()` and `Map::last()` — return the first and last `Pair`.
-- `Map::skip(int $position)` — returns a copy of the `Pair` at the given insertion position.
-- `Map::pairs()` — returns a `Vector` of `Pair` copies.
+- `Map::first()` and `Map::last()`: return the first and last `Pair`.
+- `Map::skip(int $position)`: returns a copy of the `Pair` at the given insertion position.
+- `Map::pairs()`: returns a `Vector` of `Pair` copies.
 
 `Pair` has two public properties, `$key` and `$value`, set by the constructor. It implements `JsonSerializable` and serializes as `['key' => ..., 'value' => ...]`. It also implements `\Stringable` and returns `'object(Altair\Structure\Pair)'`.
 
@@ -416,7 +416,7 @@ foreach ($map->pairs() as $pair) {
 **Gotchas:**
 
 - Pairs returned by `skip()` and `pairs()` are copies. Modifying `$pair->value` does not update the map.
-- Pairs returned by `first()` and `last()` are the live internal objects. Mutating `$pair->value` on these will modify the map in place. This is an edge case to be aware of — prefer `get($key)` for reads and `put($key, $value)` for updates.
+- Pairs returned by `first()` and `last()` are the live internal objects. Mutating `$pair->value` on these will modify the map in place. This is an edge case to be aware of; prefer `get($key)` for reads and `put($key, $value)` for updates.
 - `unset($pair->key)` triggers `__get` via a PHP quirk and sets the property to `null` rather than removing it.
 
 ---
@@ -738,10 +738,10 @@ When two tasks share the same priority, they run in FIFO order thanks to the ins
 
 ## Related packages
 
-- [`./cookie.md`](./cookie.md) — The Cookie package's `CookieCollection` and `SetCookieCollection` both extend `Map`. Reading this document first makes the `CookieCollection` API immediately legible: every method that is not overridden in `CookieCollection` is inherited from `Map` and documented here.
-- [`./cache.md`](./cache.md) — The Cache package does not currently use `Altair\Structure` types in its public API, but domain layers that bridge the two packages (for example, storing `Map` instances as cache values) will serialize correctly because all collection types implement `JsonSerializable` and `\Serializable`.
-- [`./common.md`](./common.md) — The Common package provides `Arr` helpers that complement `toArray()` for post-processing collection output (dot-path access, column extraction, recursive merging).
-- [`./data.md`](./data.md) — The Data package's entity `toArray()` and `withData()` pattern works well alongside `Map` when you need both a typed entity shape and a flexible key-value store.
+- [`./cookie.md`](./cookie.md): The Cookie package's `CookieCollection` and `SetCookieCollection` both extend `Map`. Reading this document first makes the `CookieCollection` API immediately legible: every method that is not overridden in `CookieCollection` is inherited from `Map` and documented here.
+- [`./cache.md`](./cache.md): The Cache package does not currently use `Altair\Structure` types in its public API, but domain layers that bridge the two packages (for example, storing `Map` instances as cache values) will serialize correctly because all collection types implement `JsonSerializable` and `\Serializable`.
+- [`./common.md`](./common.md): The Common package provides `Arr` helpers that complement `toArray()` for post-processing collection output (dot-path access, column extraction, recursive merging).
+- [`./data.md`](./data.md): The Data package's entity `toArray()` and `withData()` pattern works well alongside `Map` when you need both a typed entity shape and a flexible key-value store.
 
 ---
 

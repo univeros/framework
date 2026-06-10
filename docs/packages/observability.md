@@ -7,11 +7,11 @@
 
 ## Introduction
 
-#71 (introspection) answers *"what is wired?"* — a read-once, no-overhead surface. Observability is its runtime counterpart: *"what is happening **now**?"* Continuous emission, real overhead, separate UX. So it lives in its own package, off by default, with the host opting in by applying `ObservabilityConfiguration`.
+#71 (introspection) answers *"what is wired?"*: a read-once, no-overhead surface. Observability is its runtime counterpart: *"what is happening **now**?"* Continuous emission, real overhead, separate UX. So it lives in its own package, off by default, with the host opting in by applying `ObservabilityConfiguration`.
 
 The design choice that keeps it lean: the v1 package speaks the OTel **wire format** (OTLP-JSON over HTTP) natively, but does not pull in the full OpenTelemetry SDK. The OTLP shape is well-documented and stable; a thin native exporter that POSTs the right JSON to `/v1/traces` and `/v1/metrics` gets you OTel Collector compatibility without dragging in gRPC, protobuf, and a transitive dependency tree. A full-SDK adapter is a documented follow-up for hosts that want it.
 
-Observability owns the *data*. The naturally-paired UI is the existing [`univeros/observatory`](./observatory.md) (a presentation layer that owns no data of its own) — a future observatory panel can read `.altair/observability/<date>.jsonl` exactly the way its existing panels read events, queues, and routes.
+Observability owns the *data*. The naturally-paired UI is the existing [`univeros/observatory`](./observatory.md) (a presentation layer that owns no data of its own); a future observatory panel can read `.altair/observability/<date>.jsonl` exactly the way its existing panels read events, queues, and routes.
 
 ## Installation
 
@@ -58,37 +58,37 @@ bin/altair observability:stats --format=json
 
 ## Concepts
 
-**Spans, metrics, exporters — the OTel data model**, expressed as small framework-native VOs (`Span`, `MetricPoint`). Hex trace ids (16 bytes) and span ids (8 bytes) so the wire format is OTel-spec exact; timestamps as absolute unix nanoseconds; attributes as scalar / scalar-list values. Every internal VO has `toArray()` for the JSONL log and a `fromArray()` so the JSONL can be re-hydrated and forwarded.
+**Spans, metrics, exporters: the OTel data model**, expressed as small framework-native VOs (`Span`, `MetricPoint`). Hex trace ids (16 bytes) and span ids (8 bytes) so the wire format is OTel-spec exact; timestamps as absolute unix nanoseconds; attributes as scalar / scalar-list values. Every internal VO has `toArray()` for the JSONL log and a `fromArray()` so the JSONL can be re-hydrated and forwarded.
 
 **The Tracer is a stack**, not a context propagation library. Spans you open inside a request become children of whatever is currently open in the same `Tracer`; the middleware opens the root server span at the top of the pipeline so anything else you instrument inside (a domain operation, a database call) hangs off it without explicit parent linkage.
 
 **Exporters are pluggable**, and the v1 ships three:
 
-- `JsonLogExporter` — appends to `.altair/observability/<date>.jsonl` (one JSON object per line, discriminated by `_kind: span|metric`). The default; perfect for `tail -f` and offline forensics.
-- `OtlpJsonExporter` — POSTs OTLP-JSON to `<endpoint>/v1/traces` and `<endpoint>/v1/metrics`. Curl-based, no PSR-18 dependency; failures log to an optional file rather than throwing (losing telemetry must never break the app).
-- `StdoutExporter` — one-line-per-event dev output (`[span ] ✓ HTTP GET 20.8ms trace=5584f25e`).
+- `JsonLogExporter`: appends to `.altair/observability/<date>.jsonl` (one JSON object per line, discriminated by `_kind: span|metric`). The default; perfect for `tail -f` and offline forensics.
+- `OtlpJsonExporter`: POSTs OTLP-JSON to `<endpoint>/v1/traces` and `<endpoint>/v1/metrics`. Curl-based, no PSR-18 dependency; failures log to an optional file rather than throwing (losing telemetry must never break the app).
+- `StdoutExporter`: one-line-per-event dev output (`[span ] ✓ HTTP GET 20.8ms trace=5584f25e`).
 
 **The Recorder buffers and bounds**. `InMemoryRecorder` holds spans and metric points up to `maxBufferedSpans` / `maxBufferedPoints` (defaults 1k / 5k). When the cap is hit and an exporter is bound, it auto-flushes; when no exporter is bound, the oldest entries roll off. So a long-running worker without an exporter never grows its buffer beyond the cap.
 
-**Resource attributes are static**, stamped once per `OtlpJsonExporter` instance (default `service.name=altair`). Per-span attributes are dynamic. This matches OTel's resource/scope/span split exactly — a Collector sees the same shape it would from any spec-compliant client.
+**Resource attributes are static**, stamped once per `OtlpJsonExporter` instance (default `service.name=altair`). Per-span attributes are dynamic. This matches OTel's resource/scope/span split exactly; a Collector sees the same shape it would from any spec-compliant client.
 
 ## What each exporter actually produces
 
 Given a single HTTP GET request through the middleware:
 
-**`StdoutExporter`** — for dev tail:
+**`StdoutExporter`:** for dev tail:
 ```
 [span ] ✓ HTTP GET  20.8ms  trace=5584f25e
 [counter] http.server.requests = 1
 ```
 
-**`JsonLogExporter`** — one JSON per line in `.altair/observability/<date>.jsonl`:
+**`JsonLogExporter`:** one JSON per line in `.altair/observability/<date>.jsonl`:
 ```json
 {"_kind":"span","trace_id":"5584f25e89e4da068b9678aee117d822","span_id":"a4d4d4c6501c6d8e","parent_span_id":null,"name":"HTTP GET","kind":2,"start_unix_nano":1780088478973381120,"end_unix_nano":1780088478994185984,"duration_ms":20.8,"status":{"code":1,"message":null},"attributes":{"http.request.method":"GET","http.response.status_code":200}}
 {"_kind":"metric","name":"http.server.requests","kind":"counter","value":1,"unix_nano":1780088478994667008,"attributes":{"http.method":"GET","http.status_code":200},"unit":null,"description":null}
 ```
 
-**`OtlpJsonExporter`** — POSTed to `<endpoint>/v1/traces`:
+**`OtlpJsonExporter`:** POSTed to `<endpoint>/v1/traces`:
 ```json
 {
   "resourceSpans": [{
@@ -123,7 +123,7 @@ Given a single HTTP GET request through the middleware:
 
 ## MCP tools
 
-[`univeros/mcp`](./mcp.md) exposes two read-only tools — the server now serves **42 tools**:
+[`univeros/mcp`](./mcp.md) exposes two read-only tools; the server now serves **42 tools**:
 
 | Tool | Wraps | Returns |
 |---|---|---|
@@ -183,17 +183,17 @@ The recorder auto-flushes to the OTLP exporter on buffer cap; you can also call 
 
 ## Testing
 
-- `tests/Observability/Trace/TracerTest.php` — span lifecycle, parent-child, out-of-order ends, span()-helper success + exception paths.
-- `tests/Observability/Metrics/MeterTest.php` — counter / gauge / histogram emission.
-- `tests/Observability/Recorder/InMemoryRecorderTest.php` — flush, auto-flush at cap, rolling drop when no exporter, no-op flush.
-- `tests/Observability/Exporter/JsonLogExporterTest.php` — line-per-event shape, day-file append, empty-batch no-op.
-- `tests/Observability/Middleware/ObservabilityMiddlewareTest.php` — PSR-15 happy path, 5xx as Error, thrown exception captured and re-thrown.
+- `tests/Observability/Trace/TracerTest.php`: span lifecycle, parent-child, out-of-order ends, span()-helper success + exception paths.
+- `tests/Observability/Metrics/MeterTest.php`: counter / gauge / histogram emission.
+- `tests/Observability/Recorder/InMemoryRecorderTest.php`: flush, auto-flush at cap, rolling drop when no exporter, no-op flush.
+- `tests/Observability/Exporter/JsonLogExporterTest.php`: line-per-event shape, day-file append, empty-batch no-op.
+- `tests/Observability/Middleware/ObservabilityMiddlewareTest.php`: PSR-15 happy path, 5xx as Error, thrown exception captured and re-thrown.
 
 ## Related packages
 
-- [`univeros/observatory`](./observatory.md) — the natural human consumer. A future Observatory `traces` / `metrics` panel reads from `.altair/observability/<date>.jsonl` the same way the existing panels read from events, queues, and routes.
-- [`univeros/profiling`](./profiling.md) — Profiling answers *"where does my code spend time?"* (sampling, call tree, hotspots, diff); Observability answers *"what is happening **now**?"* (per-request tracing + metrics, OTel-shape). Profiling is dev-loop; Observability is prod-shape.
-- [`univeros/events`](./events.md) — Events is the append-only mutation log (what *changed*); Observability is the runtime telemetry stream (what *ran*). Different questions, different audiences.
+- [`univeros/observatory`](./observatory.md): the natural human consumer. A future Observatory `traces` / `metrics` panel reads from `.altair/observability/<date>.jsonl` the same way the existing panels read from events, queues, and routes.
+- [`univeros/profiling`](./profiling.md): Profiling answers *"where does my code spend time?"* (sampling, call tree, hotspots, diff); Observability answers *"what is happening **now**?"* (per-request tracing + metrics, OTel-shape). Profiling is dev-loop; Observability is prod-shape.
+- [`univeros/events`](./events.md): Events is the append-only mutation log (what *changed*); Observability is the runtime telemetry stream (what *ran*). Different questions, different audiences.
 
 ## Limitations
 

@@ -12,7 +12,7 @@ epic [#160](https://github.com/univeros/framework/issues/160)
 
 ## Why an extension family
 
-OpenAPI 3.1 describes the wire shape — what the request looks like, what
+OpenAPI 3.1 describes the wire shape: what the request looks like, what
 each response looks like, what each status means. It deliberately does
 not describe how that shape is satisfied: which class handles the
 request, which entity persists it, which message gets dispatched after.
@@ -32,11 +32,11 @@ All keys live at the **operation** level (under
 
 | Key | Round-trips | Schema |
 |---|---|---|
-| `x-altair-domain` | Yes — `spec.domain.{class, invocation}` | [x-altair-domain.schema.json](./extensions/x-altair-domain.schema.json) |
-| `x-altair-persistence` | Yes — `spec.persistence` | [x-altair-persistence.schema.json](./extensions/x-altair-persistence.schema.json) |
-| `x-altair-queue` | Yes — `spec.queue` | [x-altair-queue.schema.json](./extensions/x-altair-queue.schema.json) |
-| `x-altair-idempotency` | Yes — `spec.idempotency` (ttl, scope) | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |
-| `x-altair-webhook` | Yes — `spec.webhook` (direction + signing always; other fields when non-default) | [x-altair-webhook.schema.json](./extensions/x-altair-webhook.schema.json) |
+| `x-altair-domain` | Yes: `spec.domain.{class, invocation}` | [x-altair-domain.schema.json](./extensions/x-altair-domain.schema.json) |
+| `x-altair-persistence` | Yes: `spec.persistence` | [x-altair-persistence.schema.json](./extensions/x-altair-persistence.schema.json) |
+| `x-altair-queue` | Yes: `spec.queue` | [x-altair-queue.schema.json](./extensions/x-altair-queue.schema.json) |
+| `x-altair-idempotency` | Yes: `spec.idempotency` (ttl, scope) | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |
+| `x-altair-webhook` | Yes: `spec.webhook` (direction + signing always; other fields when non-default) | [x-altair-webhook.schema.json](./extensions/x-altair-webhook.schema.json) |
 | `x-altair-input-location` | Carried through; needs parameters-parser support | [x-altair-input-location.schema.json](./extensions/x-altair-input-location.schema.json) |
 
 "Carried through" means the parser preserves the key on the
@@ -139,7 +139,7 @@ The schemas in [`docs/openapi/extensions/`](./extensions/) are Draft
    inline as the document is edited.
 2. **At CI time.** A linter step in the OpenAPI document's repository
    can validate each `x-altair-*` block against the matching schema and
-   fail the build on drift — the same gate the round-trip test
+   fail the build on drift, the same gate the round-trip test
    ([#164](https://github.com/univeros/framework/issues/164)) provides
    from the framework side.
 
@@ -149,10 +149,10 @@ The schemas in [`docs/openapi/extensions/`](./extensions/) are Draft
   represent path / query / header / body inputs uniformly, but the
   `OpenApiParser` does not currently parse `parameters[]` schemas, so
   the location annotation has nowhere to land on the reverse path. The
-  forward emitter does not yet write this key either — both halves
+  forward emitter does not yet write this key either; both halves
   land together when the parser gains `parameters[]` support.
 `x-altair-idempotency` now round-trips end to end (see
-[idempotency.md](../../packages/idempotency.md)) — the `ttl` and
+[idempotency.md](../../packages/idempotency.md)): the `ttl` and
 `scope` carry through the OpenAPI extension; `mode` is a server-side
 enforcement concern and defaults to `optional` on the reverse path.
 
@@ -163,12 +163,12 @@ always travel; every other field (`secret_name`, custom header names,
 `dead_letter`) is written only when it differs from its default. The
 importer re-applies the same defaults and the re-emit drops them again,
 which is what keeps the block byte-stable through the round-trip gate.
-The shared secret itself never appears in OpenAPI — only `secret_name`,
+The shared secret itself never appears in OpenAPI; only `secret_name`,
 the resolver lookup key, carries through.
 
 ## See also
 
-- [docs/openapi/import.md](./import.md) — the importer that consumes these keys
-- [#162](https://github.com/univeros/framework/issues/162) — the CLI itself
-- [#161](https://github.com/univeros/framework/issues/161) — the spec emitter (library)
-- [#164](https://github.com/univeros/framework/issues/164) — round-trip drift gate
+- [docs/openapi/import.md](./import.md): the importer that consumes these keys
+- [#162](https://github.com/univeros/framework/issues/162): the CLI itself
+- [#161](https://github.com/univeros/framework/issues/161): the spec emitter (library)
+- [#164](https://github.com/univeros/framework/issues/164): round-trip drift gate

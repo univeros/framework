@@ -9,13 +9,13 @@ Transform untrusted input into a safe, canonical form before it reaches your dom
 
 ## Introduction
 
-Sanitation and validation are complementary but distinct concerns. Validation rejects input that does not conform to a rule — it answers the question "is this value acceptable?" and returns a pass/fail result without changing the data. Sanitation transforms input into a safe canonical form — it answers the question "what should this value look like?" and returns a cleaned copy. You sanitize before you validate: strip the spaces before you check whether the remaining string is an email address.
+Sanitation and validation are complementary but distinct concerns. Validation rejects input that does not conform to a rule: it answers the question "is this value acceptable?" and returns a pass/fail result without changing the data. Sanitation transforms input into a safe canonical form: it answers the question "what should this value look like?" and returns a cleaned copy. You sanitize before you validate: strip the spaces before you check whether the remaining string is an email address.
 
 PHP's built-in `ext-filter` (`filter_var`, `FILTER_SANITIZE_*`) provides a flat list of sanitization constants, but it does not compose cleanly. Applying several transformations in sequence requires chaining multiple `filter_var` calls by hand, with no standard way to carry parameters or to insert domain-specific steps. HTML-purifier libraries go in the other direction: they handle the complex but narrow problem of stripping unsafe markup from rich text, and they are not designed for general scalar transformation.
 
 This package occupies the middle ground. Each filter is a small object that implements `FilterInterface` and exposes a single `parse(mixed $value): mixed` method. Filters are composable: you attach an ordered list of them to a field name, and the `Sanitizer` runs each one in turn, passing the output of one as the input to the next. The mechanism is built on the same middleware pipeline used elsewhere in the Altair framework, so filters are also usable as standalone `MiddlewareInterface` callables.
 
-The `Sanitizer` is driven by objects that implement `SanitizableInterface`. Any object — a DTO, a form model, a command object — can carry its own filter map by returning a `FilterCollection` from `getFilters()`. The sanitizer clones the subject before it begins, so the original object is never mutated; you receive a cleaned copy. This immutable-by-default design makes sanitation safe to call in any part of the pipeline.
+The `Sanitizer` is driven by objects that implement `SanitizableInterface`. Any object (a DTO, a form model, a command object) can carry its own filter map by returning a `FilterCollection` from `getFilters()`. The sanitizer clones the subject before it begins, so the original object is never mutated; you receive a cleaned copy. This immutable-by-default design makes sanitation safe to call in any part of the pipeline.
 
 No `ext-intl` requirement is imposed by this package. The only runtime dependencies are `univeros/middleware` (for the pipeline infrastructure), `univeros/structure` (for the `Queue` and `Map` types), `univeros/container` (for `FilterResolver`), and `univeros/configuration` (for `SanitationConfiguration`).
 
@@ -31,7 +31,7 @@ composer require univeros/sanitation
 
 PHP 8.3 or later is required. There are no native extension requirements beyond what PHP 8.3 provides by default. The `mbstring` extension is used by `LowerCaseFilter`, `UpperCaseFilter`, and `MaxStrLengthFilter`; it is bundled with PHP 8.3 in most distributions.
 
-If you are consuming the full `univeros/framework` monorepo, this package is already satisfied through the root `replace` map — no separate `require` is needed.
+If you are consuming the full `univeros/framework` monorepo, this package is already satisfied through the root `replace` map; no separate `require` is needed.
 
 ---
 
@@ -147,7 +147,7 @@ The payload travels through the filter pipeline carrying two well-known attribut
 | `PayloadInterface::ATTRIBUTE_SUBJECT` | `'altair:sanitation:subject'` | The object being sanitized |
 | `PayloadInterface::ATTRIBUTE_KEY` | `'altair:sanitation:attribute'` | The current field name |
 
-Because the pipeline is built on `univeros/middleware`, you can insert any `MiddlewareInterface` into a filter chain — for example, a logging middleware that records every transformation for auditing.
+Because the pipeline is built on `univeros/middleware`, you can insert any `MiddlewareInterface` into a filter chain, for example a logging middleware that records every transformation for auditing.
 
 ### Multi-key shorthand
 
@@ -169,20 +169,20 @@ All filters live under `Altair\Sanitation\Filter\`. Filters that require constru
 
 | Filter class | Description | Constructor args |
 |---|---|---|
-| `AlphaFilter` | Removes every character that is not a Unicode letter (`\p{L}`). Preserves non-ASCII letters (Cyrillic, Arabic, CJK, etc.). | — |
-| `AlphaNumFilter` | Removes every character that is not a Unicode letter (`\p{L}`) or decimal digit (`\p{Nd}`). | — |
+| `AlphaFilter` | Removes every character that is not a Unicode letter (`\p{L}`). Preserves non-ASCII letters (Cyrillic, Arabic, CJK, etc.). | none |
+| `AlphaNumFilter` | Removes every character that is not a Unicode letter (`\p{L}`) or decimal digit (`\p{Nd}`). | none |
 | `BetweenFilter` | Clamps a value to the closed range `[$min, $max]`. Works with any comparable scalar. | `:min`, `:max` |
-| `BooleanFilter` | Normalizes truthy strings (`'yes'`, `'on'`, `'true'`, `'1'`) to `true` and falsy strings (`'no'`, `'off'`, `'false'`, `'0'`) to `false`. Returns `null` for non-scalar input. Strings that are neither truthy nor falsy are cast to `(bool)`. | — |
+| `BooleanFilter` | Normalizes truthy strings (`'yes'`, `'on'`, `'true'`, `'1'`) to `true` and falsy strings (`'no'`, `'off'`, `'false'`, `'0'`) to `false`. Returns `null` for non-scalar input. Strings that are neither truthy nor falsy are cast to `(bool)`. | none |
 | `CallbackFilter` | Delegates transformation to a callable you supply. The callable receives the raw value and must return the cleaned value. | `:callable` |
 | `DateTimeFilter` | Parses the value as a date/time string and reformats it using a PHP date format. Returns `null` for empty, non-scalar, ambiguous, or invalid input. Default format is `'Y-m-d H:i:s'`. | `:format` |
-| `IntegerFilter` | Converts numeric scalars to `int`. Handles leading `+`/`-` signs and scientific notation (`(int)(float)'1E5'` = `100000`). Returns `null` for non-numeric strings or non-scalar input. | — |
+| `IntegerFilter` | Converts numeric scalars to `int`. Handles leading `+`/`-` signs and scientific notation (`(int)(float)'1E5'` = `100000`). Returns `null` for non-numeric strings or non-scalar input. | none |
 | `LowerCaseFilter` | Converts a string to lower case via `strtolower`. When `$firstOnly` is `true`, lowers only the first character using `mb_substr` and leaves the rest unchanged. Returns `null` for non-scalar input. | `:firstOnly` (default `false`) |
 | `MaxFilter` | Caps a scalar value at `$max`: returns `$max` if the value exceeds it, the value otherwise. Returns `null` for non-scalar input. | `:max` |
 | `MaxStrLengthFilter` | Truncates a string to at most `$max` characters using `mb_substr`. Returns `null` for non-string input. | `:max` |
 | `MinFilter` | Raises a scalar value to `$min`: returns `$min` if the value is below it, the value otherwise. Returns `null` for non-scalar input. | `:min` |
 | `MinStrLengthFilter` | Pads a string to at least `$min` characters using `str_pad`. Padding character and direction are configurable. Returns `null` for non-string input. | `:min`, `:pad` (default `' '`), `:direction` (default `STR_PAD_RIGHT`) |
 | `RegexFilter` | Applies `preg_replace($pattern, $replace, $value)`. Returns `null` for non-scalar input. | `:pattern`, `:replace` |
-| `TitleCaseFilter` | Capitalizes the first letter of each word via `ucwords`. Returns `null` for non-string input. | — |
+| `TitleCaseFilter` | Capitalizes the first letter of each word via `ucwords`. Returns `null` for non-string input. | none |
 | `TrimFilter` | Strips leading and trailing characters via `trim`. Default character mask is `" \t\n\r\0\x0B"`. Returns `null` for non-string input. | `:chars` |
 | `UpperCaseFilter` | Converts a string to upper case via `strtoupper`. When `$firstOnly` is `true`, uppers only the first character using `mb_substr` and leaves the rest unchanged. Returns `null` for non-scalar input. | `:firstOnly` (default `false`) |
 
@@ -305,7 +305,7 @@ $sanitizer = $container->make(\Altair\Sanitation\Sanitizer::class);
 | `FiltersRunnerInterface` | `FiltersRunner` |
 | `FilterResolver` | Defined with `:container` injected |
 
-The configuration lives in `Altair\Validation\Configuration\SanitationConfiguration` (note: the file's declared namespace is `Altair\Validation\Configuration`, which is a legacy placement — the class is functionally part of the Sanitation package and is imported from there).
+The configuration lives in `Altair\Validation\Configuration\SanitationConfiguration` (note: the file's declared namespace is `Altair\Validation\Configuration`, which is a legacy placement; the class is functionally part of the Sanitation package and is imported from there).
 
 ---
 
@@ -544,9 +544,9 @@ new FilterCollection([
 
 ## Related packages
 
-- [`./validation.md`](./validation.md) — The validation package is the natural complement to sanitation. Sanitize first, then validate. The two packages share the same `SanitizableInterface`-style API: implement `getFilters()` for sanitation and `getRules()` for validation on the same object.
-- [`./common.md`](./common.md) — The `Altair\Common\Support\Inflector::slug` method pairs well with the slug recipe above when you need Unicode transliteration before applying `RegexFilter`. `Altair\Common\Support\Str` provides byte-safe string utilities that complement the length-bounding filters.
-- [`./configuration.md`](./configuration.md) — `SanitationConfiguration` depends on the Altair container (see also `univeros/container`). Read the Configuration package docs if you are managing dotenv-driven bootstrap.
+- [`./validation.md`](./validation.md): The validation package is the natural complement to sanitation. Sanitize first, then validate. The two packages share the same `SanitizableInterface`-style API: implement `getFilters()` for sanitation and `getRules()` for validation on the same object.
+- [`./common.md`](./common.md): The `Altair\Common\Support\Inflector::slug` method pairs well with the slug recipe above when you need Unicode transliteration before applying `RegexFilter`. `Altair\Common\Support\Str` provides byte-safe string utilities that complement the length-bounding filters.
+- [`./configuration.md`](./configuration.md): `SanitationConfiguration` depends on the Altair container (see also `univeros/container`). Read the Configuration package docs if you are managing dotenv-driven bootstrap.
 
 ---
 

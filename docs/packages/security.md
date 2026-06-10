@@ -1,6 +1,6 @@
 # Security
 
-Cryptographic primitives for key derivation, symmetric encryption, and timing-safe MAC verification — the foundation that other Altair packages build on.
+Cryptographic primitives for key derivation, symmetric encryption, and timing-safe MAC verification: the foundation that other Altair packages build on.
 
 **Package:** `univeros/security`
 **Namespace:** `Altair\Security`
@@ -11,7 +11,7 @@ Cryptographic primitives for key derivation, symmetric encryption, and timing-sa
 
 The Security package is deliberately narrow. It provides the cryptographic building blocks that the rest of the Altair framework needs without trying to be a complete application-security solution. If you are looking for a CSRF token class, an authentication layer, or an encrypted-session handler, those live in other packages that depend on this one. What this package ships is the substrate they are built from.
 
-The core of the package is two key-derivation classes: `HkdfKey` and `Pbkdf2Key`. Both implement `KeyInterface`, which declares a single method — `derive(): string` — that returns a raw binary key of whatever length the caller requests. That key is the input to everything else: symmetric encryption, HMAC generation, cookie signing. Having a typed contract for "something that can produce a key" lets the `Encrypter` accept either derivation strategy interchangeably.
+The core of the package is two key-derivation classes: `HkdfKey` and `Pbkdf2Key`. Both implement `KeyInterface`, which declares a single method, `derive(): string`, that returns a raw binary key of whatever length the caller requests. That key is the input to everything else: symmetric encryption, HMAC generation, cookie signing. Having a typed contract for "something that can produce a key" lets the `Encrypter` accept either derivation strategy interchangeably.
 
 `Encrypter` is the only class that performs confidentiality operations. It takes a `KeyInterface` and a cipher name at construction time, derives the key immediately, and validates that the derived key length matches the cipher. Encryption produces a base64-encoded JSON envelope (`iv`, `value`, `mac`). Decryption re-validates the MAC before decrypting, and the MAC comparison in `PayloadValidator` is done via a double-HMAC timing-safe pattern using `hash_equals`.
 
@@ -29,9 +29,9 @@ Install via Composer:
 composer require univeros/security
 ```
 
-The only declared runtime requirement beyond PHP 8.3 is `ext-openssl`, which `Encrypter` needs. The key-derivation classes (`HkdfKey`, `Pbkdf2Key`) and `Salt` use only functions from PHP's always-bundled `hash` extension (`hash_hmac`, `hash_pbkdf2`, `hash_equals`, `random_bytes`). You do not need to require `ext-hash` separately — it is compiled into every standard PHP distribution. If your deployment uses a stripped PHP build, verify that `ext-openssl` is present before constructing `Encrypter`.
+The only declared runtime requirement beyond PHP 8.3 is `ext-openssl`, which `Encrypter` needs. The key-derivation classes (`HkdfKey`, `Pbkdf2Key`) and `Salt` use only functions from PHP's always-bundled `hash` extension (`hash_hmac`, `hash_pbkdf2`, `hash_equals`, `random_bytes`). You do not need to require `ext-hash` separately; it is compiled into every standard PHP distribution. If your deployment uses a stripped PHP build, verify that `ext-openssl` is present before constructing `Encrypter`.
 
-If you are consuming the full `univeros/framework` monorepo, `univeros/security` is satisfied through the root `replace` map — no separate `require` is needed.
+If you are consuming the full `univeros/framework` monorepo, `univeros/security` is satisfied through the root `replace` map; no separate `require` is needed.
 
 ---
 
@@ -82,7 +82,7 @@ Both classes derive a fixed-length binary key from a secret input, but they solv
 
 **PBKDF2** (Password-Based Key Derivation Function 2, RFC 2898) is designed to be slow. Its `$iterations` parameter controls how many times the underlying HMAC is applied. The default in `Pbkdf2Key` is 100,000 iterations. That cost is the entire point: it makes brute-force attacks against low-entropy inputs (such as user-chosen passwords) computationally expensive. Use `Pbkdf2Key` when your input key is a password or any other value a human might have typed.
 
-**HKDF** (HMAC-based Key Derivation Function, RFC 5869) is designed to be fast. It is a two-step extract-then-expand construction. The extract step condenses the input key material (IKM) and salt into a pseudorandom key (PRK) with one HMAC call. The expand step stretches the PRK into the required number of output bytes using a short loop of HMAC calls, mixing in an optional `$context` string (labelled "info" in the RFC) at each block. Use `HkdfKey` when your input is already high-entropy — for example, a random application secret or a key returned by a secret manager — and you need to derive one or more purpose-specific subkeys from it. Pass a distinct `$context` string for each purpose.
+**HKDF** (HMAC-based Key Derivation Function, RFC 5869) is designed to be fast. It is a two-step extract-then-expand construction. The extract step condenses the input key material (IKM) and salt into a pseudorandom key (PRK) with one HMAC call. The expand step stretches the PRK into the required number of output bytes using a short loop of HMAC calls, mixing in an optional `$context` string (labelled "info" in the RFC) at each block. Use `HkdfKey` when your input is already high-entropy (for example, a random application secret or a key returned by a secret manager) and you need to derive one or more purpose-specific subkeys from it. Pass a distinct `$context` string for each purpose.
 
 Both classes use SHA-256 as the underlying hash algorithm, inherited from `AbstractKey::$algorithm`. Neither class exposes a method to change the algorithm; if you need a different digest, you would subclass `AbstractKey` and override `$algorithm`. That said, SHA-256 is an appropriate default for both constructions.
 
@@ -96,7 +96,7 @@ Note that `decrypt` calls `unserialize` with `['allowed_classes' => true]`. Be a
 
 ### Salt generation
 
-`Salt::generate(int $length = 32): string` calls `random_bytes($length)`, base64-encodes the result, translates `+`, `/`, and `=` to `_`, `-`, and `.` (URL-safe alphabet), and trims to exactly `$length` characters. The output is URL-safe and of predictable length, but note that because it is derived from `ceil($length * 3 / 4) * 4 / 3` bytes of randomness and then sliced, the effective entropy is slightly below `$length` bytes — it is still fully unpredictable, but you should not treat the character count as equivalent to the byte count of `random_bytes`.
+`Salt::generate(int $length = 32): string` calls `random_bytes($length)`, base64-encodes the result, translates `+`, `/`, and `=` to `_`, `-`, and `.` (URL-safe alphabet), and trims to exactly `$length` characters. The output is URL-safe and of predictable length, but note that because it is derived from `ceil($length * 3 / 4) * 4 / 3` bytes of randomness and then sliced, the effective entropy is slightly below `$length` bytes; it is still fully unpredictable, but you should not treat the character count as equivalent to the byte count of `random_bytes`.
 
 ---
 
@@ -124,7 +124,7 @@ $rawKey = $key->derive(); // returns a binary string of exactly $length bytes
 
 The `$salt` argument is required for `Pbkdf2Key`. Passing an empty string is technically valid but eliminates the salt's purpose; always supply a randomly generated salt. The `$iterations` default of 100,000 reflects 2020-era guidance; consider raising it on hardware where latency permits.
 
-If `hash_pbkdf2` returns `false` — which in practice means the algorithm name is invalid — `derive` throws `InvalidConfigException`. Since SHA-256 is hard-coded as the algorithm, this exception path is only reachable if you subclass and override `$algorithm` with a name PHP does not recognize.
+If `hash_pbkdf2` returns `false` (which in practice means the algorithm name is invalid), `derive` throws `InvalidConfigException`. Since SHA-256 is hard-coded as the algorithm, this exception path is only reachable if you subclass and override `$algorithm` with a name PHP does not recognize.
 
 `Pbkdf2Key` implements `\Stringable`, so you can cast it to a string and it will call `derive()` for you. Use this sparingly; calling `derive()` computes the full PBKDF2 iteration chain each time, and repeated calls are not cached.
 
@@ -190,7 +190,7 @@ $payload = $encrypter->encrypt($value);
 $value = $encrypter->decrypt($payload);
 ```
 
-`encrypt` accepts any PHP value because it passes the input through `serialize` first. Scalars, arrays, and objects are all valid. `decrypt` calls `unserialize` with `['allowed_classes' => true]`, which permits reconstructing objects. Only decrypt data you encrypted yourself — or data whose integrity you have independently verified — because `unserialize` with class instantiation enabled can trigger constructors on arbitrary classes if the serialized string is attacker-controlled.
+`encrypt` accepts any PHP value because it passes the input through `serialize` first. Scalars, arrays, and objects are all valid. `decrypt` calls `unserialize` with `['allowed_classes' => true]`, which permits reconstructing objects. Only decrypt data you encrypted yourself, or data whose integrity you have independently verified, because `unserialize` with class instantiation enabled can trigger constructors on arbitrary classes if the serialized string is attacker-controlled.
 
 The HMAC key used for the MAC is the same derived key used for encryption. If you need separate encryption and MAC keys (a common hardening pattern), derive two keys with `HkdfKey` using distinct `$context` strings and use one for the `Encrypter` and the other for an external HMAC.
 
@@ -236,7 +236,7 @@ The output characters are drawn from the set `[A-Za-z0-9_\-.]`. The `generate` c
 
 ## Configuration
 
-The Security package has no `Configuration/` directory and no configuration classes. There are no environment variables it reads by default. All parameters — key material, salt values, cipher choice, iteration counts — are passed explicitly through constructors.
+The Security package has no `Configuration/` directory and no configuration classes. There are no environment variables it reads by default. All parameters (key material, salt values, cipher choice, iteration counts) are passed explicitly through constructors.
 
 If you want to wire a shared `Encrypter` through the container using an application key stored in `.env`, that wiring belongs in your own configuration class. A minimal example:
 
@@ -367,7 +367,7 @@ tests/Security/
 
 **Do not extend `HkdfKey` or `Pbkdf2Key` to swap in a different cryptographic algorithm** unless you have a concrete, reviewed reason to do so. The algorithm choice (SHA-256) is embedded in `AbstractKey::$algorithm` and inherited by both subclasses. Overriding it without understanding how the change propagates through HKDF's extract and expand steps, or through PBKDF2's iteration loop, risks silent security degradation.
 
-If you need a different key derivation primitive entirely — for example, Argon2id for password hashing — implement `KeyInterface` from scratch rather than subclassing `AbstractKey`. `KeyInterface` is a single method (`derive(): string`) and imposes no assumptions about the underlying algorithm.
+If you need a different key derivation primitive entirely (for example, Argon2id for password hashing), implement `KeyInterface` from scratch rather than subclassing `AbstractKey`. `KeyInterface` declares a single method (`derive(): string`) and imposes no assumptions about the underlying algorithm.
 
 `EncrypterInterface` is similarly open for alternative implementations. The three cipher constants on the interface (`AES_128_CBC_CIPHER`, `AES_192_CBC_CIPHER`, `AES_256_CBC_CIPHER`) and the `HASH_SHA256_ALGORITHM` constant are purely informational; an alternative implementation could use a different cipher as long as it returns a base64-encoded string from `encrypt` that its own `decrypt` can reverse.
 
@@ -448,7 +448,7 @@ HKDF makes this particularly important: even changing `$context` while keeping t
 
 ### Verifying a payload MAC without full decryption
 
-If you need to authenticate a payload without decrypting it — for example, in an early-exit middleware — instantiate a `PayloadValidator` directly.
+If you need to authenticate a payload without decrypting it (for example, in an early-exit middleware), instantiate a `PayloadValidator` directly.
 
 ```php
 use Altair\Security\Validator\PayloadValidator;
@@ -466,10 +466,10 @@ if (!(new PayloadValidator($encrypter, $decoded))->validate()) {
 
 ## Related packages
 
-- [session.md](./session.md) — `Altair\Session\CsrfToken` is the CSRF token implementation. It depends on `Altair\Security\Support\Salt` for random value generation and uses `hash_equals` for timing-safe comparison. Configure session storage and the `SessionManager` here.
-- [http.md](./http.md) — `Altair\Http\Middleware\CsrfMiddleware` is the PSR-15 middleware that enforces CSRF protection in the request pipeline. It depends on `SessionManager::getCsrfToken()`.
-- [cookie.md](./cookie.md) — Cookie value objects live here. Signed cookies (if your application needs them) would use a key derived by `HkdfKey` or `Pbkdf2Key` from this package; the Security package does not ship a signing helper for cookies itself.
-- [configuration.md](./configuration.md) — Use `EnvironmentConfiguration` and `EnvAwareTrait` to load `APP_KEY` from `.env` and wire it into a shared `Encrypter` binding through the container.
+- [session.md](./session.md): `Altair\Session\CsrfToken` is the CSRF token implementation. It depends on `Altair\Security\Support\Salt` for random value generation and uses `hash_equals` for timing-safe comparison. Configure session storage and the `SessionManager` here.
+- [http.md](./http.md): `Altair\Http\Middleware\CsrfMiddleware` is the PSR-15 middleware that enforces CSRF protection in the request pipeline. It depends on `SessionManager::getCsrfToken()`.
+- [cookie.md](./cookie.md): Cookie value objects live here. Signed cookies (if your application needs them) would use a key derived by `HkdfKey` or `Pbkdf2Key` from this package; the Security package does not ship a signing helper for cookies itself.
+- [configuration.md](./configuration.md): Use `EnvironmentConfiguration` and `EnvAwareTrait` to load `APP_KEY` from `.env` and wire it into a shared `Encrypter` binding through the container.
 
 ---
 

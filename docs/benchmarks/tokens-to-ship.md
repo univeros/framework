@@ -1,4 +1,4 @@
-# Benchmark methodology — "Tokens to Ship"
+# Benchmark methodology: "Tokens to Ship"
 
 > Because a software company's reputation rests on its honesty, this methodology
 > is designed to be **defensible first, flattering second.** A benchmark that
@@ -35,8 +35,8 @@ A single realistic feature, specified once and never changed:
 > (entity + migration + repository), an OpenAPI 3.1 description, a typed
 > TypeScript client, and tests for the happy path + validation failures.
 
-The task is deliberately a **CRUD-with-plumbing** feature — the bread-and-butter
-of agency work — not a contrived codegen-friendly toy and not an
+The task is deliberately a **CRUD-with-plumbing** feature, the bread-and-butter
+of agency work, not a contrived codegen-friendly toy and not an
 algorithmically hard problem. (See §7 for why this choice is fair and where it
 isn't.)
 
@@ -45,14 +45,14 @@ isn't.)
 Both arms use the **same model, same agent runner, same allowed tools, same
 acceptance suite, same cold-start context.** Only the framework differs.
 
-- **Arm A — Altair.** The agent writes the YAML spec(s), runs `spec:scaffold`,
+- **Arm A: Altair.** The agent writes the YAML spec(s), runs `spec:scaffold`,
   reads the JSON receipt, runs the test reporter, and emits the SDK with
   `spec:emit-sdk`. It is *permitted* to re-read generated files but not
-  *required* to — the receipt + verdict are designed to make re-reading
+  *required* to; the receipt + verdict are designed to make re-reading
   unnecessary.
-- **Arm B — Baseline.** The agent hand-builds the same artifacts on a
+- **Arm B: Baseline.** The agent hand-builds the same artifacts on a
   conventional PHP setup (a minimal PSR-15 + a query-builder/ORM stack, *or*
-  vanilla Laravel without Boost — pick one and document it). Same acceptance
+  vanilla Laravel without Boost, pick one and document it). Same acceptance
   bar.
 
 > **Baseline honesty:** document exactly which baseline was used and its version.
@@ -65,7 +65,7 @@ acceptance suite, same cold-start context.** Only the framework differs.
 1. **Same model + temperature.** Record exact model ID and settings.
 2. **Same system/agent prompt scaffolding**, minus framework-specific tool docs
    each arm legitimately ships with (Altair's CLI/MCP docs vs. the baseline's
-   framework docs). This asymmetry is *the thing being measured* — but it must
+   framework docs). This asymmetry is *the thing being measured*, but it must
    be a fair, real-world setup for each, not a handicap.
 3. **N repetitions** (recommend N ≥ 5 per arm). Report **median** and the
    full spread (min/max), never a single lucky run.
@@ -115,8 +115,8 @@ into `results/results.json` plus a printed table.
 Publishing the weaknesses is what makes the strength believable.
 
 - **Task selection bias.** CRUD-with-plumbing structurally favors deterministic
-  codegen. That is a *real* advantage for this class of work — which is most
-  agency work — but do **not** generalize it to "Altair is N× faster at
+  codegen. That is a *real* advantage for this class of work, which is most
+  agency work, but do **not** generalize it to "Altair is N× faster at
   everything." Scope the claim to the task class. Consider a second,
   non-CRUD task to show where the gap shrinks; reporting that *increases* trust.
 - **Baseline strength.** A weak baseline inflates the result. Use a credible,

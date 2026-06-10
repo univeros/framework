@@ -1,15 +1,15 @@
 # Webhooks
 
-> First-class webhook primitive — both directions. **Inbound:** a spec block wires a PSR-15 middleware that verifies an HMAC / Ed25519 signature, enforces a timestamp replay window, and dedupes by event id in a pluggable store. **Outbound:** a `WebhookDispatcher` signs the payload, dispatches asynchronously over Symfony Messenger, retries failed deliveries with exponential / linear backoff, dead-letters after `max_attempts`, and exposes `bin/altair webhook:replay <id>` to re-send. Round-trips through OpenAPI 3.1 via `x-altair-webhook` so the policy survives `spec:emit-openapi` → `openapi:import` byte-for-byte.
+> First-class webhook primitive, covering both directions. **Inbound:** a spec block wires a PSR-15 middleware that verifies an HMAC / Ed25519 signature, enforces a timestamp replay window, and dedupes by event id in a pluggable store. **Outbound:** a `WebhookDispatcher` signs the payload, dispatches asynchronously over Symfony Messenger, retries failed deliveries with exponential / linear backoff, dead-letters after `max_attempts`, and exposes `bin/altair webhook:replay <id>` to re-send. Round-trips through OpenAPI 3.1 via `x-altair-webhook` so the policy survives `spec:emit-openapi` → `openapi:import` byte-for-byte.
 
 **Composer:** `univeros/webhooks`
 **Namespace:** `Altair\Webhooks`
 
 ## Introduction
 
-PHP frameworks ship no native primitive for webhooks. Laravel has none. Symfony has none. Slim has none. Yet every API that talks to another system eventually needs them — Stripe, GitHub, Slack, Twilio, Shopify and Square all ship both inbound *and* outbound webhook contracts. Teams either roll their own (and re-invent HMAC verification, timestamp-window protection, idempotent delivery, retry curves and dead-letter semantics) or stitch together three uncoordinated community packages.
+PHP frameworks ship no native primitive for webhooks. Laravel has none. Symfony has none. Slim has none. Yet every API that talks to another system eventually needs them: Stripe, GitHub, Slack, Twilio, Shopify and Square all ship both inbound *and* outbound webhook contracts. Teams either roll their own (and re-invent HMAC verification, timestamp-window protection, idempotent delivery, retry curves and dead-letter semantics) or stitch together three uncoordinated community packages.
 
-The agent-era cost is sharper. An agent asked to integrate Stripe's webhooks has to discover the signing scheme, find a verification library, wire the timestamp check, dedupe deliveries and write replay handling — all from spec-less prose. An agent asked to *emit* webhooks for a third-party integration has to invent retry curves and dead-letter behaviour from scratch.
+The agent-era cost is sharper. An agent asked to integrate Stripe's webhooks has to discover the signing scheme, find a verification library, wire the timestamp check, dedupe deliveries and write replay handling, all from spec-less prose. An agent asked to *emit* webhooks for a third-party integration has to invent retry curves and dead-letter behaviour from scratch.
 
 This package ships the contract for both directions:
 
@@ -38,8 +38,8 @@ That YAML is the source of truth. Run `bin/altair spec:scaffold` and the scaffol
 
 Four pieces make the design honest:
 
-1. **Multi-scheme signing.** `SignerInterface` has three operations — `name`, `sign`, `verify` — and the package ships `HmacSha256Signer`, `HmacSha512Signer` and `Ed25519Signer`. HMAC signatures are hex-encoded to match Stripe / GitHub; `verify()` is constant-time (`hash_equals` / libsodium) and tolerantly parses the Stripe `t=<ts>,v1=<hex>` header format as well as a bare hex digest.
-2. **Pluggable storage.** Inbound dedupe (`InboundDeduplicatorInterface`) and outbound delivery state (`DeliveryStoreInterface`) each ship an `InMemory` adapter for tests and a `Redis` adapter for production. The inbound dedupe primitive is `SET key value NX EX ttl` — concurrent identical deliveries see exactly one handler invocation.
+1. **Multi-scheme signing.** `SignerInterface` has three operations (`name`, `sign`, `verify`) and the package ships `HmacSha256Signer`, `HmacSha512Signer` and `Ed25519Signer`. HMAC signatures are hex-encoded to match Stripe / GitHub; `verify()` is constant-time (`hash_equals` / libsodium) and tolerantly parses the Stripe `t=<ts>,v1=<hex>` header format as well as a bare hex digest.
+2. **Pluggable storage.** Inbound dedupe (`InboundDeduplicatorInterface`) and outbound delivery state (`DeliveryStoreInterface`) each ship an `InMemory` adapter for tests and a `Redis` adapter for production. The inbound dedupe primitive is `SET key value NX EX ttl`; concurrent identical deliveries see exactly one handler invocation.
 3. **No hand-rolled dispatcher.** `WebhookDispatcher` records a `Delivery`, dispatches a `WebhookMessage` over Symfony Messenger, and `WebhookHandler` performs the signed POST with retry + dead-letter. Delivery state (id, attempts, last response, status) is persisted so `webhook:replay` works.
 4. **Round-trips through OpenAPI.** The `x-altair-webhook` extension carries the policy through OpenAPI 3.1 (see [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
 
@@ -68,7 +68,7 @@ WEBHOOK_SECRET_STRIPE=whsec_xxx
 WEBHOOK_SECRET_PARTNER_X=...      # secret_name 'partner-x' folds non-alphanumerics to '_'
 ```
 
-## Quick start — inbound
+## Quick start: inbound
 
 ### 1. Add the block to a spec
 
@@ -146,7 +146,7 @@ curl -X POST http://localhost:8080/webhooks/stripe \
 
 When the `X-Event-Id` header is absent the middleware synthesises a stable id from `sha256(body + timestamp)`, so dedupe still works for senders that don't supply one.
 
-## Quick start — outbound
+## Quick start: outbound
 
 ### 1. Declare it, or dispatch directly
 
@@ -219,14 +219,14 @@ $signer = $registry->get('hmac-sha256');
 
 ### Secret resolution
 
-`SecretResolverInterface::resolve(string $name): string` turns a `secret_name` into the actual secret. `EnvSecretResolver` reads `WEBHOOK_SECRET_<NAME>` (configurable prefix; non-alphanumerics in the name fold to `_`) and throws `WebhookException::missingSecret()` when unset. Bind your own implementation to back secrets with a KMS / secret manager — the secret value never travels through OpenAPI, only the `secret_name` lookup key does.
+`SecretResolverInterface::resolve(string $name): string` turns a `secret_name` into the actual secret. `EnvSecretResolver` reads `WEBHOOK_SECRET_<NAME>` (configurable prefix; non-alphanumerics in the name fold to `_`) and throws `WebhookException::missingSecret()` when unset. Bind your own implementation to back secrets with a KMS / secret manager; the secret value never travels through OpenAPI, only the `secret_name` lookup key does.
 
 ## Storage adapters
 
 | Concern | InMemory | Redis |
 |---|---|---|
-| Inbound dedupe | `InMemoryDeduplicator` (tests, single-worker dev) | `RedisDeduplicator` — atomic `SET … NX EX ttl`, key prefix `webhook:dedupe:` |
-| Outbound delivery state | `InMemoryDeliveryStore` (tests) | `RedisDeliveryStore` — serialized at `webhook:delivery:<id>`, dead-letter index as a sorted set scored by `createdAt` |
+| Inbound dedupe | `InMemoryDeduplicator` (tests, single-worker dev) | `RedisDeduplicator`: atomic `SET … NX EX ttl`, key prefix `webhook:dedupe:` |
+| Outbound delivery state | `InMemoryDeliveryStore` (tests) | `RedisDeliveryStore`: serialized at `webhook:delivery:<id>`, dead-letter index as a sorted set scored by `createdAt` |
 
 The Redis adapters take a pre-configured `\Redis` client so connection lifecycle stays the host's responsibility. `WebhooksConfiguration` binds the InMemory adapters by default; swap to Redis by re-binding in your own Configuration:
 
@@ -241,14 +241,14 @@ $container->factory(
 );
 ```
 
-## Behaviour matrix — inbound
+## Behaviour matrix: inbound
 
 `WebhookVerifyMiddleware` handles every meaningful state in one place. Defaults: `dedupe_ttl` 1h, `timestamp_window` 5m.
 
 | Situation | Response |
 |---|---|
 | Signature header absent | `401 Unauthorized` (opaque `{error}` envelope) |
-| Signature mismatch / secret missing | `401 Unauthorized` (opaque — never leak which check failed) |
+| Signature mismatch / secret missing | `401 Unauthorized` (opaque; never leak which check failed) |
 | Timestamp header absent (`requireTimestamp=true`) | `400 Bad Request` |
 | Timestamp non-numeric | `400 Bad Request` |
 | Timestamp outside the window (past or future) | `400 Bad Request` |
@@ -259,7 +259,7 @@ $container->factory(
 
 The request body is read for verification and then re-streamed from position 0 so the downstream handler sees the full payload. Dedupe is claim-once: the first caller wins, later identical deliveries within the TTL are absorbed with `200 OK`.
 
-## Behaviour matrix — outbound
+## Behaviour matrix: outbound
 
 `WebhookHandler` drives delivery state through the `RetryPolicy` (defaults: `max_attempts` 5, `exponential` backoff, `base_delay` 30s).
 
@@ -269,17 +269,17 @@ The request body is read for verification and then re-streamed from position 0 s
 | `4xx` response | `DeadLettered` immediately | `UnrecoverableMessageHandlingException` → failure transport |
 | `5xx` / network error, attempt < `max_attempts` | `Failed` (`nextAttemptAt` scheduled) | `RecoverableMessageHandlingException` → redelivered after the backoff delay |
 | `5xx` / network error, attempt ≥ `max_attempts` | `DeadLettered` | `UnrecoverableMessageHandlingException` → failure transport |
-| delivery row missing | — | `UnrecoverableMessageHandlingException` (not retried) |
+| delivery row missing | N/A | `UnrecoverableMessageHandlingException` (not retried) |
 
 Backoff delay before the *n*-th attempt: exponential = `base_delay × 2^(n-1)` (30s, 60s, 120s, 240s…), linear = `base_delay × n` (30s, 60s, 90s…). A `4xx` is treated as a permanent rejection and dead-letters without burning the retry budget; only `5xx` and transport-level failures are retried.
 
 ## Auto-wiring
 
-`ActionAwareWebhookVerifyMiddleware` reads the resolved Action from the request attribute (`altair:http:action`). When that Action exposes a static `webhook()` accessor with `direction: in`, the middleware builds a per-request `WebhookVerifyMiddleware` from the policy (signer, secret name, dedupe TTL, timestamp window, header names — durations parsed by `DurationParser`). It passes through when there is no Action, no `webhook()` accessor, or the policy is outbound. This is the inbound equivalent of `ActionAwareIdempotencyMiddleware` (see [idempotency.md](./idempotency.md)).
+`ActionAwareWebhookVerifyMiddleware` reads the resolved Action from the request attribute (`altair:http:action`). When that Action exposes a static `webhook()` accessor with `direction: in`, the middleware builds a per-request `WebhookVerifyMiddleware` from the policy (signer, secret name, dedupe TTL, timestamp window, header names; durations parsed by `DurationParser`). It passes through when there is no Action, no `webhook()` accessor, or the policy is outbound. This is the inbound equivalent of `ActionAwareIdempotencyMiddleware` (see [idempotency.md](./idempotency.md)).
 
 ## Round-trip via OpenAPI
 
-When a spec carries `webhook:`, the forward emitter (`spec:emit-openapi`) writes an `x-altair-webhook` block on the operation; the reverse importer (`openapi:import`) reconstructs the `webhook:` block. `direction` and `signing` always travel; every other field is written only when it differs from its default, and the importer re-applies those defaults — so the block is byte-stable across the round-trip. The shared secret itself never appears in OpenAPI; only `secret_name` carries through.
+When a spec carries `webhook:`, the forward emitter (`spec:emit-openapi`) writes an `x-altair-webhook` block on the operation; the reverse importer (`openapi:import`) reconstructs the `webhook:` block. `direction` and `signing` always travel; every other field is written only when it differs from its default, and the importer re-applies those defaults, so the block is byte-stable across the round-trip. The shared secret itself never appears in OpenAPI; only `secret_name` carries through.
 
 The drift gate (`openapi:roundtrip`) compares `x-altair-webhook` on both sides; a regression that drops or changes the block produces a `kind: extension_drift` entry and fails CI in `--check` mode.
 
@@ -294,11 +294,11 @@ See [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) for the
 
 ## See also
 
-- [#184](https://github.com/univeros/framework/issues/184) — epic
-- [#185](https://github.com/univeros/framework/issues/185) — storage contracts + signers + adapters
-- [#186](https://github.com/univeros/framework/issues/186) — inbound verify middleware
-- [#187](https://github.com/univeros/framework/issues/187) — outbound dispatcher + retry / dead-letter / replay
-- [#188](https://github.com/univeros/framework/issues/188) — `webhook:` spec block + scaffolder
-- [#189](https://github.com/univeros/framework/issues/189) — `x-altair-webhook` round-trip activation
-- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) — the OpenAPI extension family
-- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) — the drift gate
+- [#184](https://github.com/univeros/framework/issues/184): epic
+- [#185](https://github.com/univeros/framework/issues/185): storage contracts + signers + adapters
+- [#186](https://github.com/univeros/framework/issues/186): inbound verify middleware
+- [#187](https://github.com/univeros/framework/issues/187): outbound dispatcher + retry / dead-letter / replay
+- [#188](https://github.com/univeros/framework/issues/188): `webhook:` spec block + scaffolder
+- [#189](https://github.com/univeros/framework/issues/189): `x-altair-webhook` round-trip activation
+- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md): the OpenAPI extension family
+- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md): the drift gate

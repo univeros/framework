@@ -10,13 +10,13 @@ PSR-6 and PSR-16 caching with pluggable storage backends for filesystem, Redis, 
 
 ## Introduction
 
-The Cache package gives you a single, unified caching API that works across multiple storage backends. You write your application against either the PSR-6 `CacheItemPoolInterface` or the simpler PSR-16 `CacheInterface`, then choose a backend — filesystem, Redis via ext-redis, Redis via Predis, or Memcached — by swapping one storage class and its configuration. No application code changes when you change backends.
+The Cache package gives you a single, unified caching API that works across multiple storage backends. You write your application against either the PSR-6 `CacheItemPoolInterface` or the simpler PSR-16 `CacheInterface`, then choose a backend (filesystem, Redis via ext-redis, Redis via Predis, or Memcached) by swapping one storage class and its configuration. No application code changes when you change backends.
 
 PSR-6 is the primary contract in this package. It gives you fine-grained control: you can read items, set values and expirations, and defer writes to storage until you call `commit()`. PSR-16 (`SimpleCache`) is a thin facade built on top of the same PSR-6 pool; it trades that control for a simpler `get`/`set`/`delete` interface. If you only need straightforward key-value reads and writes, use `SimpleCache`. If you need deferred saves, batch operations, or tag-aware invalidation, use `CacheItemPool` directly.
 
-The package sits between your application logic and whatever persistence layer you choose for caching. It does not know about HTTP, sessions, or your domain model. It stores serializable PHP values indexed by string keys, optionally with a time-to-live. It does not provide cache warming, HTTP-level cache headers, or distributed locking — those concerns belong to the layers above it.
+The package sits between your application logic and whatever persistence layer you choose for caching. It does not know about HTTP, sessions, or your domain model. It stores serializable PHP values indexed by string keys, optionally with a time-to-live. It does not provide cache warming, HTTP-level cache headers, or distributed locking; those concerns belong to the layers above it.
 
-Tag-aware invalidation is supported through `TagAwareCacheItemInterface` and `TagAwareCacheItemPoolInterface`. Items can carry one or more tags, and you can invalidate all items sharing a tag in a single call. This is implemented as a layer above the storage backends — not every storage backend natively supports tags, so the tag index is managed by the pool.
+Tag-aware invalidation is supported through `TagAwareCacheItemInterface` and `TagAwareCacheItemPoolInterface`. Items can carry one or more tags, and you can invalidate all items sharing a tag in a single call. This is implemented as a layer above the storage backends; not every storage backend natively supports tags, so the tag index is managed by the pool.
 
 ---
 
@@ -30,9 +30,9 @@ composer require univeros/cache
 
 The package requires **PHP 8.3 or later**. Storage-specific extensions are optional at install time but required at runtime if you use the corresponding backend:
 
-- **`ext-redis`** — needed for `RedisCacheItemStorage` (the ext-redis C extension communicates directly with Redis without a PHP client library)
-- **`ext-memcached`** — needed for `MemcachedCacheItemStorage`; version 2.2.0 or later is required
-- **`predis/predis`** — needed for `PredisCacheItemStorage` (a pure-PHP Redis client; use this when you cannot install ext-redis)
+- **`ext-redis`**: needed for `RedisCacheItemStorage` (the ext-redis C extension communicates directly with Redis without a PHP client library)
+- **`ext-memcached`**: needed for `MemcachedCacheItemStorage`; version 2.2.0 or later is required
+- **`predis/predis`**: needed for `PredisCacheItemStorage` (a pure-PHP Redis client; use this when you cannot install ext-redis)
 
 The `FilesystemCacheItemStorage` backend has no extension requirements beyond `univeros/filesystem`, which is pulled in automatically.
 
@@ -82,11 +82,11 @@ Both interfaces are versioned at `^3` (2022 updates), which introduced nullable 
 
 ### CacheItem
 
-`CacheItem` is the value object returned by the pool. Its internal state — `key`, `value`, `isHit`, `expirationTime`, and `defaultLifespan` — is `protected`. The pool populates these fields via `Closure::bind()` against the `CacheItem` class scope, which avoids exposing a public constructor while still keeping the class extensible. You set the value with `set()` and the expiration with `expiresAfter()` or `expiresAt()`.
+`CacheItem` is the value object returned by the pool. Its internal state (`key`, `value`, `isHit`, `expirationTime`, and `defaultLifespan`) is `protected`. The pool populates these fields via `Closure::bind()` against the `CacheItem` class scope, which avoids exposing a public constructor while still keeping the class extensible. You set the value with `set()` and the expiration with `expiresAfter()` or `expiresAt()`.
 
 ### Storage backends
 
-`CacheItemStorageInterface` is the internal contract between the pool and its backend. It defines `getItems`, `hasItem`, `clear`, `deleteItems`, and `save`. You never call this directly — the pool calls it on your behalf. Each concrete implementation handles one backend:
+`CacheItemStorageInterface` is the internal contract between the pool and its backend. It defines `getItems`, `hasItem`, `clear`, `deleteItems`, and `save`. You never call this directly; the pool calls it on your behalf. Each concrete implementation handles one backend:
 
 | Class | Backend | Extension |
 |---|---|---|
@@ -98,7 +98,7 @@ Both interfaces are versioned at `^3` (2022 updates), which introduced nullable 
 
 ### Namespaces
 
-A namespace string prefixes every cache key in storage. When you set `namespace: 'myapp'`, a key `user.42` is stored as `myapp:<hashed>:user.42`. This lets multiple applications share the same Redis instance or cache directory without key collisions. Clearing the pool with `clear()` only removes items under that namespace prefix — the rest of the storage is untouched.
+A namespace string prefixes every cache key in storage. When you set `namespace: 'myapp'`, a key `user.42` is stored as `myapp:<hashed>:user.42`. This lets multiple applications share the same Redis instance or cache directory without key collisions. Clearing the pool with `clear()` only removes items under that namespace prefix; the rest of the storage is untouched.
 
 For Redis and Predis backends, the namespace is also passed directly to the storage class, which uses it as a Redis key prefix during bulk operations. Namespace strings for these backends are restricted to the character set `[-+_.A-Za-z0-9]`; any other character throws `InvalidArgumentException`.
 
@@ -108,8 +108,8 @@ The `defaultLifespan` constructor argument sets the fallback TTL in seconds for 
 
 Per-item expiration overrides the default. You have two ways to set it:
 
-- `expiresAfter(int|DateInterval|null $time)` — relative to the current time
-- `expiresAt(?DateTimeInterface $expiration)` — absolute timestamp; pass `null` to fall back to the default lifespan
+- `expiresAfter(int|DateInterval|null $time)`: relative to the current time
+- `expiresAt(?DateTimeInterface $expiration)`: absolute timestamp; pass `null` to fall back to the default lifespan
 
 When `commit()` runs, the deferred merger closure converts each item's expiration into a lifespan in seconds (the difference between the item's `expirationTime` and `time()`). Items already past their expiration are collected into an `$expired` list and deleted before the remaining items are saved.
 
@@ -156,7 +156,7 @@ foreach ($items as $key => $item) {
 }
 ```
 
-`getItems()` returns a `Generator`. Items come back keyed by the original key you passed, not the internal namespaced ID. Any key not found in storage is still present in the generator — it simply returns an item where `isHit()` is `false`.
+`getItems()` returns a `Generator`. Items come back keyed by the original key you passed, not the internal namespaced ID. Any key not found in storage is still present in the generator; it simply returns an item where `isHit()` is `false`.
 
 ### PSR-6 pool: deferred saves
 
@@ -278,7 +278,7 @@ $client = new Client(['host' => '127.0.0.1', 'port' => 6379]);
 $storage = new PredisCacheItemStorage($client, namespace: 'myapp');
 ```
 
-The API is identical to `RedisCacheItemStorage` from the pool's perspective. Internally, `PredisCacheItemStorage` uses Predis pipelines where `RedisCacheItemStorage` uses `Redis::PIPELINE`. One important difference: `clear()` against a native Redis cluster (`RedisCluster` connection type) always returns `false` — flushing a native cluster must be done by other means. This is documented in the source with a comment.
+The API is identical to `RedisCacheItemStorage` from the pool's perspective. Internally, `PredisCacheItemStorage` uses Predis pipelines where `RedisCacheItemStorage` uses `Redis::PIPELINE`. One important difference: `clear()` against a native Redis cluster (`RedisCluster` connection type) always returns `false`; flushing a native cluster must be done by other means. This is documented in the source with a comment.
 
 `CacheItemPool` detects when its storage is a `PredisCacheItemStorage` and calls `useNamespace()` directly on the storage object in addition to the normal prefix logic. Avoid passing a `PredisCacheItemStorage` instance to a pool with a namespace that already contains the Redis prefix, or you will end up with a double prefix.
 
@@ -308,7 +308,7 @@ use Altair\Cache\Storage\NullCacheItemStorage;
 $pool = new CacheItemPool(new NullCacheItemStorage());
 ```
 
-Every `save()` call returns `false`, `hasItem()` always returns `false`, and `getItems()` always returns an empty array. The pool layer still operates normally — deferred queuing, commit, and logging all work — the items just never persist.
+Every `save()` call returns `false`, `hasItem()` always returns `false`, and `getItems()` always returns an empty array. The pool layer still operates normally (deferred queuing, commit, and logging all work); the items just never persist.
 
 ---
 
@@ -351,7 +351,7 @@ Environment variables consumed:
 
 ### PredisCacheItemStorageConfiguration
 
-Identical to `RedisCacheItemStorageConfiguration` in its implementation — both wire `PredisCacheItemStorage` against `CACHE_REDIS_HOST` and `CACHE_REDIS_PORT`. You'll typically use one or the other, not both.
+Identical to `RedisCacheItemStorageConfiguration` in its implementation; both wire `PredisCacheItemStorage` against `CACHE_REDIS_HOST` and `CACHE_REDIS_PORT`. You'll typically use one or the other, not both.
 
 ### MemcachedCacheItemStorageConfiguration
 
@@ -605,10 +605,10 @@ $htmlPurifier = new HTMLPurifier(HTMLPurifier_Config::create([
 
 ## Related packages
 
-- [Container](./container.md) — PSR-11 DI container used by the `Configuration/` classes to wire storage backends
-- [Configuration](./configuration.md) — `EnvAwareTrait` and `ConfigurationInterface` that the cache configurations implement
-- [Filesystem](./filesystem.md) — Flysystem v3 adapter used by `FilesystemCacheItemStorage`
-- [Session](./session.md) — Session handlers that can use Redis as a backend (separate from the cache namespace)
+- [Container](./container.md): PSR-11 DI container used by the `Configuration/` classes to wire storage backends
+- [Configuration](./configuration.md): `EnvAwareTrait` and `ConfigurationInterface` that the cache configurations implement
+- [Filesystem](./filesystem.md): Flysystem v3 adapter used by `FilesystemCacheItemStorage`
+- [Session](./session.md): Session handlers that can use Redis as a backend (separate from the cache namespace)
 
 ---
 
@@ -650,7 +650,7 @@ Items saved with `lifespan = 0` through the filesystem backend are stored with a
 - **No distributed locking.** Concurrent writes to the same key are not serialized. Use a Redis SETNX or similar pattern if you need cache stampede protection.
 - **No atomic compare-and-swap.** There is no `checkAndSet()` equivalent. The pool's `saveDeferred`/`commit` cycle is not atomic across multiple keys.
 - **Tag storage is not handled by the storage backends.** `TagAwareCacheItemInterface` and `TagAwareCacheItemPoolInterface` define the tag API contracts, but there is no concrete `TagAwareCacheItemPool` implementation shipped in this package. You would need to provide one that manages the tag index. The traits (`TagsAwareTrait`) and validators are available to build it with.
-- **Memcached `clear()` flushes the entire server.** `MemcachedCacheItemStorage::clear()` calls `flush()` on the Memcached client, which clears all keys on that server, regardless of any logical namespace. There is no namespace-scoped clear for Memcached — the protocol does not support it.
+- **Memcached `clear()` flushes the entire server.** `MemcachedCacheItemStorage::clear()` calls `flush()` on the Memcached client, which clears all keys on that server, regardless of any logical namespace. There is no namespace-scoped clear for Memcached; the protocol does not support it.
 - **Predis with native Redis Cluster cannot `clear()`.** As documented in the source, `PredisCacheItemStorage::clear()` returns `false` when the connection is a `RedisCluster`. You must flush the cluster nodes by other means.
 - **No PSR-14 event hooks.** Cache hits, misses, and evictions do not emit events. If you need observability hooks, wrap the pool in a decorator that emits events from your chosen PSR-14 dispatcher.
 - **`CacheItem` constructor is not public.** Items are produced exclusively by the pool via a bound closure. You cannot instantiate a `CacheItem` directly in application code, which means you cannot pre-build items outside a pool.

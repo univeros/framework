@@ -7,9 +7,9 @@
 
 ## Introduction
 
-PHP frameworks ship no native primitive for idempotency. Laravel has none. Symfony has none. Slim has none. Every team that needs the behaviour — and every team running a real payments / billing / ops surface eventually does — bolts on a middleware, picks a Redis schema, writes the storage code, wires the routes, and then hopes the next refactor doesn't quietly break replay semantics.
+PHP frameworks ship no native primitive for idempotency. Laravel has none. Symfony has none. Slim has none. Every team that needs the behaviour (and every team running a real payments / billing / ops surface eventually does) bolts on a middleware, picks a Redis schema, writes the storage code, wires the routes, and then hopes the next refactor doesn't quietly break replay semantics.
 
-The agent-era problem is sharper. Agents retry mutating requests by reflex. Without an idempotency contract, the second attempt at `POST /payments` is a duplicate charge; the third attempt at `POST /jobs` is a re-dispatched message; the fourth attempt at `POST /users` is a duplicate row. With one, the agent can retry safely — the framework deduplicates by header, byte-comparing the request body to refuse drift, replaying the original response so the consumer sees the same outcome it would have seen on the first call.
+The agent-era problem is sharper. Agents retry mutating requests by reflex. Without an idempotency contract, the second attempt at `POST /payments` is a duplicate charge; the third attempt at `POST /jobs` is a re-dispatched message; the fourth attempt at `POST /users` is a duplicate row. With one, the agent can retry safely: the framework deduplicates by header, byte-comparing the request body to refuse drift, replaying the original response so the consumer sees the same outcome it would have seen on the first call.
 
 This package ships the contract:
 
@@ -24,8 +24,8 @@ That YAML is the source of truth. Run `bin/altair spec:scaffold` and the generat
 
 Three pieces make the design honest:
 
-1. **Pluggable storage.** The `IdempotencyStoreInterface` has three contract operations — `claim`, `complete`, `release` — and the package ships three adapters: `InMemoryStore` for tests, `ApcuStore` for single-host production, `RedisStore` for multi-host. The atomic primitives are `apcu_add` and `SET key NX EX ttl` respectively; concurrent identical requests for the same key see exactly one execute and the others replay.
-2. **No hand-rolled middleware.** The PSR-15 middleware (`IdempotencyKeyMiddleware`) handles the entire behaviour matrix — header presence + validation, body hash, claim coordination, in-progress wait, replay, conflict, error rollback, streaming skip — in one place. The spec-driven scaffolder reaches it via the static accessor on the generated Action.
+1. **Pluggable storage.** The `IdempotencyStoreInterface` has three contract operations (`claim`, `complete`, `release`) and the package ships three adapters: `InMemoryStore` for tests, `ApcuStore` for single-host production, `RedisStore` for multi-host. The atomic primitives are `apcu_add` and `SET key NX EX ttl` respectively; concurrent identical requests for the same key see exactly one execute and the others replay.
+2. **No hand-rolled middleware.** The PSR-15 middleware (`IdempotencyKeyMiddleware`) handles the entire behaviour matrix (header presence + validation, body hash, claim coordination, in-progress wait, replay, conflict, error rollback, streaming skip) in one place. The spec-driven scaffolder reaches it via the static accessor on the generated Action.
 3. **Round-trips through OpenAPI.** The `x-altair-idempotency` extension carries `ttl` and `scope` through OpenAPI 3.1 (see [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
 
 What this package deliberately does **not** do:
@@ -121,11 +121,11 @@ $middleware->add(new \Altair\Idempotency\Middleware\ActionAwareIdempotencyMiddle
 ));
 ```
 
-That's the entire host wiring. The middleware reads each request's resolved Action via the `altair:http:action` attribute, looks for the static `idempotency()` accessor the scaffolder emits when a spec carries the `idempotency:` block, and configures a per-request `IdempotencyKeyMiddleware` with the spec's TTL and mode. Endpoints without the block see no behaviour change — the middleware passes them through.
+That's the entire host wiring. The middleware reads each request's resolved Action via the `altair:http:action` attribute, looks for the static `idempotency()` accessor the scaffolder emits when a spec carries the `idempotency:` block, and configures a per-request `IdempotencyKeyMiddleware` with the spec's TTL and mode. Endpoints without the block see no behaviour change; the middleware passes them through.
 
 #### Manual wiring (escape hatch)
 
-For endpoints that need a different policy than the spec declares — say, forcing `mode: required` globally even when individual specs say `optional` — use `IdempotencyKeyMiddleware` directly:
+For endpoints that need a different policy than the spec declares (say, forcing `mode: required` globally even when individual specs say `optional`), use `IdempotencyKeyMiddleware` directly:
 
 ```php
 // Manual per-route wiring — only when you need to override the spec-driven policy.
@@ -219,7 +219,7 @@ The middleware handles every meaningful state in one place:
 | Handler throws | Release claim; re-throw. Next attempt starts fresh. |
 | Streaming response (`chunked` or `text/event-stream`) | Pass through without caching. |
 
-Response headers are stored on an **allow-list** basis (default `Content-Type`, `Location`, `Link`) so that sensitive headers — `Set-Cookie`, `Authorization`, anything not on the list — never end up in shared storage. This is verified by test and is the package's strictest invariant.
+Response headers are stored on an **allow-list** basis (default `Content-Type`, `Location`, `Link`) so that sensitive headers (`Set-Cookie`, `Authorization`, anything not on the list) never end up in shared storage. This is verified by test and is the package's strictest invariant.
 
 ## Round-trip via OpenAPI
 
@@ -270,10 +270,10 @@ The framework's own test suite (e.g. `tests/Idempotency/Middleware/IdempotencyKe
 
 ## See also
 
-- [#171](https://github.com/univeros/framework/issues/171) — epic
-- [#172](https://github.com/univeros/framework/issues/172) — storage contract + adapters
-- [#173](https://github.com/univeros/framework/issues/173) — middleware
-- [#174](https://github.com/univeros/framework/issues/174) — spec block + scaffolder
-- [#175](https://github.com/univeros/framework/issues/175) — `x-altair-idempotency` round-trip activation
-- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md) — the OpenAPI extension family
-- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md) — the drift gate
+- [#171](https://github.com/univeros/framework/issues/171): epic
+- [#172](https://github.com/univeros/framework/issues/172): storage contract + adapters
+- [#173](https://github.com/univeros/framework/issues/173): middleware
+- [#174](https://github.com/univeros/framework/issues/174): spec block + scaffolder
+- [#175](https://github.com/univeros/framework/issues/175): `x-altair-idempotency` round-trip activation
+- [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md): the OpenAPI extension family
+- [docs/guides/openapi/roundtrip.md](../guides/openapi/roundtrip.md): the drift gate

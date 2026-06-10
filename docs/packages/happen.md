@@ -18,7 +18,7 @@ Requires:   php >=8.3, psr/event-dispatcher ^1.0
 
 Event-driven code becomes hard to follow when you wire listeners at the call site, mix notification logic with business logic, or use static singletons. Happen solves each of these problems through a clean dispatcher object, a priority queue, and a provider pattern that keeps registration separate from dispatch.
 
-Before reaching for this package, consider what kind of cross-component communication you need. Use Happen when a piece of code needs to announce that something occurred — a user registered, an order shipped, a payment failed — and it should not know or care who acts on that announcement. Use the [Courier](./courier.md) package when you need command-style semantics where one handler is expected, a return value matters, or you want a bus with middleware. Use a direct method call when the relationship is an internal implementation detail that will never need to be observed from outside the class.
+Before reaching for this package, consider what kind of cross-component communication you need. Use Happen when a piece of code needs to announce that something occurred (a user registered, an order shipped, a payment failed) and it should not know or care who acts on that announcement. Use the [Courier](./courier.md) package when you need command-style semantics where one handler is expected, a return value matters, or you want a bus with middleware. Use a direct method call when the relationship is an internal implementation detail that will never need to be observed from outside the class.
 
 Happen is PSR-14 compliant through its `EventInterface`, which extends `Psr\EventDispatcher\StoppableEventInterface`. The `Event` class implements `EventInterface` and can be passed to any PSR-14-compatible dispatcher. Any dispatcher that accepts a `Psr\EventDispatcher\StoppableEventInterface` can receive an `Event` from this package without additional adapters.
 
@@ -78,10 +78,10 @@ $dispatcher->dispatch('user.created'); // creates Event('user.created') internal
 
 An event is any object that implements `EventInterface`. The concrete `Event` class covers most use cases directly, but you can extend it or implement the interface yourself. Every event carries:
 
-- a **name** (string) — the dispatch key
-- an **arguments** map (array) — arbitrary key/value payload, always lowercased on read
-- an **occurredOn** timestamp (int) — set to midnight UTC today on construction via `Carbon::today('UTC')`
-- a **propagationStopped** flag (bool) — false by default
+- a **name** (string): the dispatch key
+- an **arguments** map (array): arbitrary key/value payload, always lowercased on read
+- an **occurredOn** timestamp (int): set to midnight UTC today on construction via `Carbon::today('UTC')`
+- a **propagationStopped** flag (bool): false by default
 
 Arguments are case-insensitive. `$event->getArgument('UserId')` retrieves the value stored under `userid`. This normalisation happens inside both `hasArgument` and `getArgument`.
 
@@ -91,7 +91,7 @@ Arguments are case-insensitive. `$event->getArgument('UserId')` retrieves the va
 
 Any PHP `callable` is a valid listener. The dispatcher accepts closures, static methods, invokable objects, and first-class callable syntax. The callable receives the `EventInterface` object as its sole argument.
 
-When you need to wrap an arbitrary callable in a typed `ListenerInterface` object — for example, to store it in a container as a tagged service — use `ListenerFactory::create`:
+When you need to wrap an arbitrary callable in a typed `ListenerInterface` object (for example, to store it in a container as a tagged service), use `ListenerFactory::create`:
 
 ```php
 use Altair\Happen\Factory\ListenerFactory;
@@ -115,7 +115,7 @@ Multiple providers can be added to a single dispatcher. Each one contributes its
 
 ### Dispatcher
 
-`EventDispatcher` is the central object. It manages the sorted listener registry, drives dispatch, and implements fluent chaining — every mutating method returns `$this`. The internal registry is a two-level map: `$listeners[eventName][priority][]`. The sorted cache is invalidated whenever a new listener is added to an event, ensuring the sort is always fresh.
+`EventDispatcher` is the central object. It manages the sorted listener registry, drives dispatch, and implements fluent chaining; every mutating method returns `$this`. The internal registry is a two-level map: `$listeners[eventName][priority][]`. The sorted cache is invalidated whenever a new listener is added to an event, ensuring the sort is always fresh.
 
 ### Priority queue ordering
 
@@ -129,7 +129,7 @@ Note that stopping propagation on named listeners (e.g. `user.created`) does not
 
 ### Wildcard listeners
 
-Any listener registered under the name `'*'` is invoked for every event, after that event's named listeners finish. Register global concerns — logging, metrics, audit trails — as wildcard listeners so they do not have to be attached individually to every event name.
+Any listener registered under the name `'*'` is invoked for every event, after that event's named listeners finish. Register global concerns (logging, metrics, audit trails) as wildcard listeners so they do not have to be attached individually to every event name.
 
 ---
 
@@ -208,7 +208,7 @@ $dispatcher->removeListener('order.shipped', $listener);
 $dispatcher->removeAllListeners('order.shipped');
 ```
 
-### Subscribers — declaring multiple listeners on a class
+### Subscribers: declaring multiple listeners on a class
 
 A subscriber keeps all listeners for a related set of events in one class, making it easy to register and unregister them together.
 
@@ -275,7 +275,7 @@ $dispatcher->addSubscriber($subscriber);
 $dispatcher->removeSubscriber($subscriber);
 ```
 
-### Providers — the PSR-14 way
+### Providers: the PSR-14 way
 
 A provider owns listener registration logic. Implement `ListenerProviderInterface` and call `addListener` (or `addSubscriber`) inside `provideListeners`.
 
@@ -309,7 +309,7 @@ $dispatcher->addListenerProvider(new OrderListenerProvider());
 $dispatcher->addListenerProvider(new AuditListenerProvider());
 ```
 
-Multiple providers accumulate their listeners in the same dispatcher. There is no conflict between them — they simply extend the listener registry.
+Multiple providers accumulate their listeners in the same dispatcher. There is no conflict between them; they simply extend the listener registry.
 
 ### Stoppable events
 
@@ -511,7 +511,7 @@ final class InstrumentedDispatcher extends EventDispatcher
 
 ### Implementing EventStackInterface without the trait
 
-`EventStackAwareTrait` provides a ready implementation of `EventStackInterface`. If you have an existing domain object — an aggregate root collecting domain events, for example — implement `getStack` and `addEvent` directly instead.
+`EventStackAwareTrait` provides a ready implementation of `EventStackInterface`. If you have an existing domain object (an aggregate root collecting domain events, for example), implement `getStack` and `addEvent` directly instead.
 
 ---
 
@@ -585,7 +585,7 @@ Note that `withArgument` returns a new instance and does not mutate the event in
 
 ### Subscriber hot-swap
 
-Replace a subscriber at runtime without restarting the dispatcher — useful in long-running processes that reload configuration.
+Replace a subscriber at runtime without restarting the dispatcher, useful in long-running processes that reload configuration.
 
 ```php
 $old = new EmailNotificationSubscriber($legacyMailer);
@@ -599,9 +599,9 @@ $dispatcher->addSubscriber($new);
 
 ## Related packages
 
-- [Courier](./courier.md) — command bus with middleware. Use Courier when one handler is expected and a return value is needed; use Happen when many observers react to a notification.
-- [Container](./container.md) — PSR-11 DI container. Resolve listener classes and providers through the container to inject their dependencies cleanly.
-- [Http](./http.md) — PSR-7/15 HTTP stack. Dispatch application events from HTTP middleware to decouple request handling from domain side effects.
+- [Courier](./courier.md): command bus with middleware. Use Courier when one handler is expected and a return value is needed; use Happen when many observers react to a notification.
+- [Container](./container.md): PSR-11 DI container. Resolve listener classes and providers through the container to inject their dependencies cleanly.
+- [Http](./http.md): PSR-7/15 HTTP stack. Dispatch application events from HTTP middleware to decouple request handling from domain side effects.
 
 ---
 

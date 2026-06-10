@@ -1,6 +1,6 @@
 # Filesystem
 
-A Flysystem v3 wrapper that gives you a single, swap-friendly API for local disks, S3, SFTP, FTP, and Dropbox — wired to the Altair container with zero boilerplate.
+A Flysystem v3 wrapper that gives you a single, swap-friendly API for local disks, S3, SFTP, FTP, and Dropbox, wired to the Altair container with zero boilerplate.
 
 ---
 
@@ -21,9 +21,9 @@ File storage is one of the first concerns that looks trivial and turns into a li
 
 [League Flysystem](https://flysystem.thephpleague.com/) solves this by providing a unified `FilesystemOperator` interface that works identically regardless of the storage backend. Your application code writes to `$fs->write('path/to/file.txt', $content)` whether the underlying medium is your local disk, an S3 bucket, or an SFTP server.
 
-This package builds on Flysystem v3 in three concrete ways. First, it provides `Altair\Filesystem\Adapter\FlysystemAdapter` — a decorator that wraps any `FilesystemOperator` and adds four methods that Flysystem's core interface deliberately omits: `exists()` (unified file-or-directory check), `prepend()`, `append()`, and `listDirectories()`. Second, it provides a set of `Configuration\*` classes that bind each supported adapter into the Altair DI container by reading environment variables, so you can swap adapters by changing `.env` entries rather than touching code. Third, it ships a standalone `Filesystem` class with PHP-native helpers (locking reads, chmod, glob, symlinks, recursive directory copy) that complement the Flysystem path for operations that are local-only by nature.
+This package builds on Flysystem v3 in three concrete ways. First, it provides `Altair\Filesystem\Adapter\FlysystemAdapter`, a decorator that wraps any `FilesystemOperator` and adds four methods that Flysystem's core interface deliberately omits: `exists()` (unified file-or-directory check), `prepend()`, `append()`, and `listDirectories()`. Second, it provides a set of `Configuration\*` classes that bind each supported adapter into the Altair DI container by reading environment variables, so you can swap adapters by changing `.env` entries rather than touching code. Third, it ships a standalone `Filesystem` class with PHP-native helpers (locking reads, chmod, glob, symlinks, recursive directory copy) that complement the Flysystem path for operations that are local-only by nature.
 
-Four adapter backends ship out of the box: **Local** (`league/flysystem` core), **AWS S3** (`league/flysystem-aws-s3-v3`), **SFTP** (`league/flysystem-sftp-v3` via phpseclib v3), **FTP** (`league/flysystem-ftp`), and **Dropbox** (`spatie/flysystem-dropbox`). The cloud adapters are `suggest`-ed, not required — install only what you need.
+Four adapter backends ship out of the box: **Local** (`league/flysystem` core), **AWS S3** (`league/flysystem-aws-s3-v3`), **SFTP** (`league/flysystem-sftp-v3` via phpseclib v3), **FTP** (`league/flysystem-ftp`), and **Dropbox** (`spatie/flysystem-dropbox`). The cloud adapters are `suggest`-ed, not required; install only what you need.
 
 ---
 
@@ -51,7 +51,7 @@ composer require league/flysystem-ftp
 composer require spatie/flysystem-dropbox
 ```
 
-When you install the full framework via `composer require univeros/framework`, these are already available as suggestions in the root manifest — run `composer require` on the individual bridge package to activate it.
+When you install the full framework via `composer require univeros/framework`, these are already available as suggestions in the root manifest; run `composer require` on the individual bridge package to activate it.
 
 ---
 
@@ -98,15 +98,15 @@ $fs->delete('uploads/hello.txt');
 
 The package exposes two separate classes with different scopes:
 
-- **`Altair\Filesystem\Filesystem`** — a local-only utility class built on PHP's native filesystem functions. Use it when you know the target is always a local disk and you need features like locking reads, symlinks, `require_once`, `chmod`, or pattern-based glob listing. It throws `Altair\Filesystem\Exception\FileNotFoundException` and `InvalidArgumentException` for invalid inputs.
+- **`Altair\Filesystem\Filesystem`**: a local-only utility class built on PHP's native filesystem functions. Use it when you know the target is always a local disk and you need features like locking reads, symlinks, `require_once`, `chmod`, or pattern-based glob listing. It throws `Altair\Filesystem\Exception\FileNotFoundException` and `InvalidArgumentException` for invalid inputs.
 
-- **`Altair\Filesystem\Adapter\FlysystemAdapter`** — a decorator around any Flysystem v3 `FilesystemOperator`. Use this when the storage backend might change, when you write tests with the in-memory adapter, or when you need the unified API across S3 / SFTP / FTP / Dropbox.
+- **`Altair\Filesystem\Adapter\FlysystemAdapter`**: a decorator around any Flysystem v3 `FilesystemOperator`. Use this when the storage backend might change, when you write tests with the in-memory adapter, or when you need the unified API across S3 / SFTP / FTP / Dropbox.
 
 In most application code you will use `FlysystemAdapter` exclusively. The `Filesystem` utility class is useful for bootstrap tasks, configuration loading, and other operations that are inherently tied to the local disk.
 
 ### `FilesystemAdapterInterface`
 
-`Altair\Filesystem\Contracts\FilesystemAdapterInterface` extends `League\Flysystem\FilesystemOperator` directly. This means any object that satisfies the interface also satisfies the full Flysystem operator contract — all core read/write/move/copy/list operations are available. The interface adds four methods on top:
+`Altair\Filesystem\Contracts\FilesystemAdapterInterface` extends `League\Flysystem\FilesystemOperator` directly. This means any object that satisfies the interface also satisfies the full Flysystem operator contract; all core read/write/move/copy/list operations are available. The interface adds four methods on top:
 
 | Method | Signature | What it adds |
 |---|---|---|
@@ -138,7 +138,7 @@ Each adapter configuration class implements `Altair\Configuration\Contracts\Conf
 
 ### Path semantics
 
-All paths passed to `FlysystemAdapter` are relative to the root configured for the adapter. A leading slash is not required and its presence or absence is normalized by Flysystem. Do not pass absolute paths — pass `'uploads/image.png'`, not `'/var/app/storage/uploads/image.png'`.
+All paths passed to `FlysystemAdapter` are relative to the root configured for the adapter. A leading slash is not required and its presence or absence is normalized by Flysystem. Do not pass absolute paths: pass `'uploads/image.png'`, not `'/var/app/storage/uploads/image.png'`.
 
 ---
 
@@ -315,21 +315,21 @@ $fs = new FlysystemAdapter(
 );
 ```
 
-### The decorator — what it adds
+### The decorator: what it adds
 
 The `FlysystemAdapter` decorator forwards every method from `FilesystemOperator` to the wrapped driver unchanged. On top of that it adds:
 
-**`exists(string $path): bool`** — Flysystem v3 splits existence checks into `fileExists()` and `directoryExists()`. This unified method returns `true` if either check passes, so you do not need to know the path type upfront.
+**`exists(string $path): bool`**: Flysystem v3 splits existence checks into `fileExists()` and `directoryExists()`. This unified method returns `true` if either check passes, so you do not need to know the path type upfront.
 
-**`prepend(string $path, string $data, string $separator = PHP_EOL): void`** — reads the current content (empty string if the file does not exist), then writes `$data . $separator . $existing` back. The file-does-not-exist case creates the file with `$data` as its only content.
+**`prepend(string $path, string $data, string $separator = PHP_EOL): void`**: reads the current content (empty string if the file does not exist), then writes `$data . $separator . $existing` back. The file-does-not-exist case creates the file with `$data` as its only content.
 
-**`append(string $path, string $data, string $separator = PHP_EOL): void`** — same pattern, but appends: writes `$existing . $separator . $data`. Creates the file if it does not exist.
+**`append(string $path, string $data, string $separator = PHP_EOL): void`**: same pattern, but appends: writes `$existing . $separator . $data`. Creates the file if it does not exist.
 
-**`listDirectories(string $directory = '', bool $recursive = false): array`** — calls `listContents` and filters to `DirectoryAttributes` entries, returning a `list<string>` of paths. Shallow by default; pass `true` for a recursive listing.
+**`listDirectories(string $directory = '', bool $recursive = false): array`**: calls `listContents` and filters to `DirectoryAttributes` entries, returning a `list<string>` of paths. Shallow by default; pass `true` for a recursive listing.
 
-**`publicUrl(string $path, array $config = []): string`** and **`temporaryUrl(string $path, \DateTimeInterface $expiresAt, array $config = []): string`** — forwarded directly to the underlying operator. These are not part of the interface because not all adapters support them (local disk does not produce meaningful public URLs).
+**`publicUrl(string $path, array $config = []): string`** and **`temporaryUrl(string $path, \DateTimeInterface $expiresAt, array $config = []): string`**: forwarded directly to the underlying operator. These are not part of the interface because not all adapters support them (local disk does not produce meaningful public URLs).
 
-**`checksum(string $path, array $config = []): string`** — forwarded to the underlying operator. On S3 this returns the ETag; on local filesystem it returns an MD5 hash.
+**`checksum(string $path, array $config = []): string`**: forwarded to the underlying operator. On S3 this returns the ETag; on local filesystem it returns an MD5 hash.
 
 ### Common operations
 
@@ -420,7 +420,7 @@ Swap `LocalAdapterConfiguration` for any of the other configuration classes to c
 
 | Variable | Default | Description |
 |---|---|---|
-| `FS_LOCAL_PATH` | — | **Required.** Absolute path to the storage root. |
+| `FS_LOCAL_PATH` | | **Required.** Absolute path to the storage root. |
 | `FS_LOCAL_LOCK` | `LOCK_EX` | File locking mode for writes. |
 | `FS_LOCAL_DISALLOW_LINKS` | `LocalFilesystemAdapter::DISALLOW_LINKS` | Symlink policy. |
 
@@ -428,10 +428,10 @@ Swap `LocalAdapterConfiguration` for any of the other configuration classes to c
 
 | Variable | Default | Description |
 |---|---|---|
-| `FS_AWS_S3_KEY` | — | **Required.** AWS access key ID. |
-| `FS_AWS_S3_SECRET` | — | **Required.** AWS secret access key. |
-| `FS_AWS_S3_REGION` | — | **Required.** AWS region (e.g. `eu-west-1`). |
-| `FS_AWS_S3_BUCKET` | — | **Required.** Bucket name. |
+| `FS_AWS_S3_KEY` | | **Required.** AWS access key ID. |
+| `FS_AWS_S3_SECRET` | | **Required.** AWS secret access key. |
+| `FS_AWS_S3_REGION` | | **Required.** AWS region (e.g. `eu-west-1`). |
+| `FS_AWS_S3_BUCKET` | | **Required.** Bucket name. |
 | `FS_AWS_S3_VERSION` | `latest` | S3 API version. |
 | `FS_AWS_S3_PREFIX` | `''` | Optional path prefix inside the bucket. |
 
@@ -439,40 +439,40 @@ Swap `LocalAdapterConfiguration` for any of the other configuration classes to c
 
 | Variable | Default | Description |
 |---|---|---|
-| `FS_SFTP_HOST` | — | **Required.** Hostname. |
-| `FS_SFTP_USERNAME` | — | **Required.** Username. |
-| `FS_SFTP_PASSWORD` | — | Password (or use a private key). |
-| `FS_SFTP_PRIVATE_KEY` | — | Path to private key file. |
-| `FS_SFTP_PASSPHRASE` | — | Passphrase for the private key. |
+| `FS_SFTP_HOST` | | **Required.** Hostname. |
+| `FS_SFTP_USERNAME` | | **Required.** Username. |
+| `FS_SFTP_PASSWORD` | | Password (or use a private key). |
+| `FS_SFTP_PRIVATE_KEY` | | Path to private key file. |
+| `FS_SFTP_PASSPHRASE` | | Passphrase for the private key. |
 | `FS_SFTP_PORT` | `22` | Port. |
 | `FS_SFTP_USE_AGENT` | `false` | Use SSH agent. |
 | `FS_SFTP_TIMEOUT` | `10` | Connection timeout in seconds. |
 | `FS_SFTP_MAX_TRIES` | `4` | Retry attempts. |
-| `FS_SFTP_HOST_FINGERPRINT` | — | Optional host fingerprint for verification. |
+| `FS_SFTP_HOST_FINGERPRINT` | | Optional host fingerprint for verification. |
 | `FS_SFTP_ROOT` | `/` | Root path on the remote server. |
 
 **FTP**
 
 | Variable | Default | Description |
 |---|---|---|
-| `FS_FTP_HOST` | — | **Required.** Hostname. |
+| `FS_FTP_HOST` | | **Required.** Hostname. |
 | `FS_FTP_ROOT` | `/` | Root path on the FTP server. |
-| `FS_FTP_USERNAME` | — | **Required.** Username. |
-| `FS_FTP_PASSWORD` | — | **Required.** Password. |
+| `FS_FTP_USERNAME` | | **Required.** Username. |
+| `FS_FTP_PASSWORD` | | **Required.** Password. |
 | `FS_FTP_PORT` | `21` | Port. |
 | `FS_FTP_SSL` | `false` | Enable FTPS. |
 | `FS_FTP_TIMEOUT` | `90` | Timeout in seconds. |
 | `FS_FTP_PASSIVE` | `true` | Passive mode. |
 | `FS_FTP_TRANSFER_MODE` | `FTP_BINARY` | Transfer mode. |
-| `FS_FTP_SYSTEM_TYPE` | — | Optional system type hint. |
-| `FS_FTP_IGNORE_PASSIVE_ADDRESS` | — | Ignore passive address from server. |
+| `FS_FTP_SYSTEM_TYPE` | | Optional system type hint. |
+| `FS_FTP_IGNORE_PASSIVE_ADDRESS` | | Ignore passive address from server. |
 | `FS_FTP_RECURSE_MANUALLY` | `false` | Manual recursive listings. |
 
 **Dropbox**
 
 | Variable | Default | Description |
 |---|---|---|
-| `FS_DROPBOX_ACCESS_TOKEN` | — | **Required.** Dropbox API access token. |
+| `FS_DROPBOX_ACCESS_TOKEN` | | **Required.** Dropbox API access token. |
 | `FS_DROPBOX_PREFIX` | `''` | Optional path prefix inside Dropbox. |
 
 ---
@@ -515,7 +515,7 @@ final class ReportWriterTest extends TestCase
 }
 ```
 
-The `InMemoryFilesystemAdapter` is provided by `league/flysystem` core — no extra package is needed. Because `FlysystemAdapter` accepts any `FilesystemOperator`, you can also inject a mock or stub of `FilesystemAdapterInterface` for unit tests that only need to assert calls were made.
+The `InMemoryFilesystemAdapter` is provided by `league/flysystem` core; no extra package is needed. Because `FlysystemAdapter` accepts any `FilesystemOperator`, you can also inject a mock or stub of `FilesystemAdapterInterface` for unit tests that only need to assert calls were made.
 
 For the native `Filesystem` utility class, use a real temporary directory and delete it in `tearDown`. The existing test suite in `tests/Filesystem/FilesystemTest.php` follows exactly this pattern.
 
@@ -667,7 +667,7 @@ function streamFileResponse(
 
 ### Atomic log appending
 
-When multiple processes write to the same log file, use `FlysystemAdapter::append()` for simplicity or — if you need true atomicity under concurrency — fall back to `Filesystem::put()` with `LOCK_EX` on a local disk.
+When multiple processes write to the same log file, use `FlysystemAdapter::append()` for simplicity or (if you need true atomicity under concurrency) fall back to `Filesystem::put()` with `LOCK_EX` on a local disk.
 
 ```php
 <?php
@@ -710,9 +710,9 @@ Note that `temporaryUrl` is not part of `FilesystemAdapterInterface`. If your co
 
 ## Related packages
 
-- **[Container](./container.md)** — the DI container that the `*AdapterConfiguration` classes target. Read this to understand how `delegate` and `alias` work.
-- **Http** — if you are building file-download endpoints, combine `readStream` with a PSR-7 response body as shown in the streaming recipe above.
-- **Security** — if you need signed download URLs backed by your own key material rather than S3 pre-signing, the Security package's HMAC utilities can sign path tokens.
+- **[Container](./container.md)**: the DI container that the `*AdapterConfiguration` classes target. Read this to understand how `delegate` and `alias` work.
+- **Http**: if you are building file-download endpoints, combine `readStream` with a PSR-7 response body as shown in the streaming recipe above.
+- **Security**: if you need signed download URLs backed by your own key material rather than S3 pre-signing, the Security package's HMAC utilities can sign path tokens.
 
 ---
 
@@ -720,7 +720,7 @@ Note that `temporaryUrl` is not part of `FilesystemAdapterInterface`. If your co
 
 This package was migrated from Flysystem v1 to v3 during the 2026-05 modernization (Phase 3c). If you have code written against the v1 API, these are the changes you are most likely to encounter:
 
-**Removed adapters.** The following adapters existed in v1 and are gone in v3 with no replacement in this package: Rackspace, Azure Blob Storage, WebDAV, ZipArchive, GridFS, and the cached adapter. Do not attempt to re-add them — Flysystem v3 removed them intentionally.
+**Removed adapters.** The following adapters existed in v1 and are gone in v3 with no replacement in this package: Rackspace, Azure Blob Storage, WebDAV, ZipArchive, GridFS, and the cached adapter. Do not attempt to re-add them; Flysystem v3 removed them intentionally.
 
 **`FilesystemInterface` → `FilesystemOperator`.** The `FilesystemAdapterInterface` previously extended `League\Flysystem\FilesystemInterface`. It now extends `League\Flysystem\FilesystemOperator`. Update type hints accordingly.
 

@@ -14,7 +14,7 @@ The command bus pattern separates intent from execution. Instead of calling a se
 
 This approach has a long lineage. Tactician (from The PHP League) popularised it in the PHP world. Symfony Messenger extends it with transport layers, retry logic, and async workers. Courier is a lighter take: no transports, no background workers, no serialization. It focuses on the synchronous dispatch case and lets you compose cross-cutting concerns through middleware.
 
-Why use a command bus over calling services directly? First, it centralises handler resolution — you change the mapping in one place instead of updating every call site. Second, it makes middleware straightforward: wrapping every handler dispatch with logging, locking, or validation is a one-liner because every dispatch passes through the same pipeline. Third, it decouples the caller from the implementation; swapping a handler from a plain class to a container-resolved service requires no changes outside the locator configuration.
+Why use a command bus over calling services directly? First, it centralises handler resolution: you change the mapping in one place instead of updating every call site. Second, it makes middleware straightforward: wrapping every handler dispatch with logging, locking, or validation is a one-liner because every dispatch passes through the same pipeline. Third, it decouples the caller from the implementation; swapping a handler from a plain class to a container-resolved service requires no changes outside the locator configuration.
 
 Courier expresses this design through two interchangeable execution strategies. The "exec" strategy resolves and calls a handler directly with no middleware involved. The "middleware" strategy routes the message through an ordered pipeline of `CommandMiddlewareInterface` objects before reaching the handler. You choose the strategy once, at construction time.
 
@@ -74,13 +74,13 @@ $bus->handle(new RegisterUserMessage('alice@example.com'));
 
 ### CommandMessageInterface
 
-A message is a plain PHP object that implements `CommandMessageInterface`. It carries the data needed to fulfil a request. It is not an event — it targets one handler, and that handler is expected to execute a side effect.
+A message is a plain PHP object that implements `CommandMessageInterface`. It carries the data needed to fulfil a request. It is not an event; it targets one handler, and that handler is expected to execute a side effect.
 
 The interface requires two methods:
 
-- `getName(): string` — returns the string key used to look up the handler.
-- `getLogMessage(): ?LogMessageInterface` — returns an optional log annotation the handler can attach after execution.
-- `withLogMessage(LogMessageInterface): CommandMessageInterface` — returns a copy (or `$this`) with a log annotation attached.
+- `getName(): string`: returns the string key used to look up the handler.
+- `getLogMessage(): ?LogMessageInterface`: returns an optional log annotation the handler can attach after execution.
+- `withLogMessage(LogMessageInterface): CommandMessageInterface`: returns a copy (or `$this`) with a log annotation attached.
 
 The `LogMessageTrait` in `Altair\Courier\Traits\` provides a default implementation of both log methods. Include it in your message class to avoid boilerplate.
 
@@ -112,15 +112,15 @@ A locator maps a string name to a `CommandInterface` instance. The interface dec
 
 Two implementations are provided:
 
-- `InMemoryCommandLocatorService` — backed by a `MessageCommandMap` (a `Map` from `univeros/structure`). Instantiates handlers lazily on first use and caches them in the map.
-- `CallableCommandLocatorService` — backed by any `callable` that accepts a name and returns a `CommandInterface` or `null`. Use this to integrate with a DI container without the full `MiddlewareResolver` machinery.
+- `InMemoryCommandLocatorService`: backed by a `MessageCommandMap` (a `Map` from `univeros/structure`). Instantiates handlers lazily on first use and caches them in the map.
+- `CallableCommandLocatorService`: backed by any `callable` that accepts a name and returns a `CommandInterface` or `null`. Use this to integrate with a DI container without the full `MiddlewareResolver` machinery.
 
 ### CommandMessageNameResolverInterface
 
 The name resolver turns a message object into the string key used for locator lookup. Two resolvers are provided:
 
-- `ClassCommandMessageNameResolver` — uses `$message::class`. The map key is the fully-qualified class name.
-- `CommandMessageNameResolver` — calls `$message->getName()`. The map key is whatever string your message returns.
+- `ClassCommandMessageNameResolver`: uses `$message::class`. The map key is the fully-qualified class name.
+- `CommandMessageNameResolver`: calls `$message->getName()`. The map key is whatever string your message returns.
 
 Choose one and use it consistently in both the locator's map and the bus configuration.
 
@@ -139,7 +139,7 @@ The middleware strategy can accept middleware as either objects or class-name st
 Naming conventions differ by resolver:
 
 - With `ClassCommandMessageNameResolver`: name your message `RegisterUserMessage` and your handler `RegisterUserCommand`. The map key is `RegisterUserMessage::class`.
-- With `CommandMessageNameResolver`: the map key is whatever `getName()` returns — typically a short string like `'register-user'`.
+- With `CommandMessageNameResolver`: the map key is whatever `getName()` returns, typically a short string like `'register-user'`.
 
 Keep messages in a `Message/` or `Command/` subdirectory and handlers alongside them or in a dedicated `Handler/` directory. There is no enforced convention; consistency within your project matters more than any external rule.
 
@@ -172,7 +172,7 @@ class PlaceOrderCommand implements CommandInterface
 
 ### Dispatching through the bus
 
-Call `$bus->handle($message)` from anywhere — a controller, a CLI command, an event listener. The bus returns `void`; side effects happen inside the handler.
+Call `$bus->handle($message)` from anywhere: a controller, a CLI command, an event listener. The bus returns `void`; side effects happen inside the handler.
 
 ```php
 // Every call site looks the same regardless of which handler runs.
@@ -201,11 +201,11 @@ $bus = new CommandBus($strategy);
 
 Three middleware ship with the package:
 
-**CommandHandlerMiddleware** — resolves and calls the handler, then calls `$next`. It must be the last content-producing step in the pipeline.
+**CommandHandlerMiddleware**: resolves and calls the handler, then calls `$next`. It must be the last content-producing step in the pipeline.
 
-**CommandLockerMiddleware** — ensures that commands dispatched while a handler is already running do not execute immediately. It queues them and drains the queue after the current handler finishes. This prevents re-entrant dispatch from interleaving execution. The test suite demonstrates this with `testItFinishesHandlingAMessageBeforeHandlingTheNext`.
+**CommandLockerMiddleware**: ensures that commands dispatched while a handler is already running do not execute immediately. It queues them and drains the queue after the current handler finishes. This prevents re-entrant dispatch from interleaving execution. The test suite demonstrates this with `testItFinishesHandlingAMessageBeforeHandlingTheNext`.
 
-**CommandLoggerMiddleware** — logs before and after handler execution. It accepts any `Psr\Log\LoggerInterface` and a default log level. After the handler runs, it reads `$message->getLogMessage()`. If the message carries a `LogMessageInterface` with a different level than the configured default, it uses that level for the "finished" log entry. This lets handlers signal elevated log levels (for example, `LogLevel::ERROR`) without changing the middleware configuration.
+**CommandLoggerMiddleware**: logs before and after handler execution. It accepts any `Psr\Log\LoggerInterface` and a default log level. After the handler runs, it reads `$message->getLogMessage()`. If the message carries a `LogMessageInterface` with a different level than the configured default, it uses that level for the "finished" log entry. This lets handlers signal elevated log levels (for example, `LogLevel::ERROR`) without changing the middleware configuration.
 
 ### Locator strategies
 
@@ -480,14 +480,14 @@ If a handler dispatches another command via the same bus, `CommandLockerMiddlewa
 
 ## Related packages
 
-- [container.md](./container.md) — `Altair\Container\Container` is used by `MiddlewareResolver` to instantiate middleware and by both configuration classes to wire the bus.
-- [middleware.md](./middleware.md) — Courier's `CommandMiddlewareInterface` is conceptually parallel to PSR-15 HTTP middleware in `Altair\Middleware\*`. The two pipelines are independent; HTTP middleware handles requests and responses, Courier middleware handles command messages.
-- [happen.md](./happen.md) — `Altair\Happen` is the event dispatcher. Courier does not fire events; if you need event dispatch after command execution, do so inside the handler or in a custom middleware.
+- [container.md](./container.md): `Altair\Container\Container` is used by `MiddlewareResolver` to instantiate middleware and by both configuration classes to wire the bus.
+- [middleware.md](./middleware.md): Courier's `CommandMiddlewareInterface` is conceptually parallel to PSR-15 HTTP middleware in `Altair\Middleware\*`. The two pipelines are independent; HTTP middleware handles requests and responses, Courier middleware handles command messages.
+- [happen.md](./happen.md): `Altair\Happen` is the event dispatcher. Courier does not fire events; if you need event dispatch after command execution, do so inside the handler or in a custom middleware.
 
 ## Limitations
 
 - **Synchronous only.** There is no transport layer, no queue, no async dispatch. Every `$bus->handle(...)` call blocks until the full pipeline completes.
 - **No retry semantics.** Exceptions thrown by handlers propagate up the call stack. There is no retry policy, dead-letter queue, or backoff.
 - **No result propagation.** `CommandBusInterface::handle` returns `void`. Handlers communicate outcomes through message annotations (`withLogMessage`) or injected services. If you need a return value, consider a query bus pattern instead.
-- **Middleware validation is class-based.** `withMiddlewares` checks that each entry is a subclass of `CommandMiddlewareInterface` using `is_subclass_of` with a class-name string. Passing an object that is already instantiated bypasses this check — use `add` for objects instead.
-- **`LogMessageTrait::withLogMessage` mutates `$this`** (tracked in [#47](https://github.com/univeros/framework/issues/47)). The trait assigns `$this->logMessage` and returns `$this` rather than a new instance — inconsistent with the framework's `with*` immutability convention. Until that is reconciled, expect the original message object to carry the log annotation after dispatch.
+- **Middleware validation is class-based.** `withMiddlewares` checks that each entry is a subclass of `CommandMiddlewareInterface` using `is_subclass_of` with a class-name string. Passing an object that is already instantiated bypasses this check; use `add` for objects instead.
+- **`LogMessageTrait::withLogMessage` mutates `$this`** (tracked in [#47](https://github.com/univeros/framework/issues/47)). The trait assigns `$this->logMessage` and returns `$this` rather than a new instance, inconsistent with the framework's `with*` immutability convention. Until that is reconciled, expect the original message object to carry the log annotation after dispatch.
