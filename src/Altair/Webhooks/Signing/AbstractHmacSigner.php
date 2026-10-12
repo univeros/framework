@@ -45,8 +45,10 @@ abstract class AbstractHmacSigner implements SignerInterface
     abstract protected function algo(): string;
 
     /**
-     * Accept either a bare hex MAC or Stripe's `t=<ts>,v1=<hex>` form (the v1=
-     * component is extracted). Keeps the middleware signer-agnostic.
+     * Accept a bare hex MAC, GitHub's `<algo>=<hex>` form (e.g. `sha256=<hex>`,
+     * only when the prefix names this signer's algorithm) or Stripe's
+     * `t=<ts>,v1=<hex>` form (the v1= component is extracted). Keeps the
+     * middleware signer-agnostic.
      */
     private function extractMac(string $signature): string
     {
@@ -55,11 +57,23 @@ abstract class AbstractHmacSigner implements SignerInterface
             return '';
         }
 
-        if (!str_contains($trimmed, 'v1=')) {
+        if (str_contains($trimmed, 'v1=')) {
+            return $this->extractStripeV1($trimmed);
+        }
+
+        if (!str_contains($trimmed, '=')) {
             return $trimmed;
         }
 
-        foreach (explode(',', $trimmed) as $part) {
+        // A prefix naming another algorithm (sha1= against hmac-sha256) fails.
+        [$algo, $mac] = explode('=', $trimmed, 2);
+
+        return strtolower($algo) === $this->algo() ? trim($mac) : '';
+    }
+
+    private function extractStripeV1(string $header): string
+    {
+        foreach (explode(',', $header) as $part) {
             [$key, $value] = array_pad(explode('=', trim($part), 2), 2, '');
             if ($key === 'v1') {
                 return trim($value);
