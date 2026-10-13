@@ -13,12 +13,19 @@ namespace Altair\AgentSpec\Cli;
 
 use Altair\AgentSpec\Generator\ManifestPipeline;
 use Altair\AgentSpec\Generator\ManifestPipelineOptions;
+use Altair\AgentSpec\Generator\ModuleManifests;
 use Altair\Cli\Attribute\Command;
 use Altair\Cli\Attribute\Option;
+use Altair\Container\Container;
 
 /**
  * Walks every framework sub-package, generates a Markdown manifest for each,
  * and writes them under `.agent/packages/` plus the index at `.agent/MANIFEST.md`.
+ *
+ * Run from a host's own console (a container with its modules applied), it
+ * also writes the section of every module implementing
+ * {@see \Altair\Module\Contracts\ManifestContributorInterface} under
+ * `.agent/modules/`.
  *
  * With `--check`, no files are written; the command exits non-zero if any
  * regenerated manifest differs from what is already on disk.
@@ -33,6 +40,7 @@ final readonly class ManifestGenerateCommand
         private ManifestPipeline $pipeline = new ManifestPipeline(),
         private PathResolver $paths = new PathResolver(),
         private ConsoleReporter $reporter = new ConsoleReporter(),
+        private ?Container $container = null,
     ) {}
 
     public function __invoke(
@@ -54,6 +62,7 @@ final readonly class ManifestGenerateCommand
             testsRoot: $resolved->testsRoot,
             outputRoot: $resolved->outputRoot,
             checkOnly: $check,
+            modules: ModuleManifests::collect($this->container),
         ));
 
         if ($check) {

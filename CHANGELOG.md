@@ -21,6 +21,12 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
   (`sha256=<hex>` for `hmac-sha256`, `sha512=<hex>` for `hmac-sha512`), so
   `WebhookVerifyMiddleware` verifies GitHub webhooks and Polaris audit drains as
   is. A prefix naming another algorithm fails verification. (#235, #237)
+- Modules can contribute a section to the AI-readable manifests: a module
+  implementing `Altair\Module\Contracts\ManifestContributorInterface` gets
+  `.agent/modules/<name>.md` and a row in `.agent/MANIFEST.md` when
+  `bin/altair manifest:generate` runs from the host's console. Without such
+  modules the output is unchanged; in a host without framework sources the
+  command now writes the module sections instead of failing. (#234, #236)
 
 ## [2.5.1] - 2026-06-06
 
