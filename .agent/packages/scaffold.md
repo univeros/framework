@@ -72,6 +72,7 @@
 - `RefBundler` _(final)_
 - `ReplayCommand` _(final)_
 - `RepositoryEmitter` _(final)_
+- `ResourceGrouping` _(final)_ — implements `BackedEnum`, `UnitEnum`
 - `ResponderEmitter`
 - `ResponseModel` _(final)_
 - `RewindCommand` _(final)_
@@ -138,6 +139,7 @@
 - `tests/Scaffold/Journal/JournalRewindTest.php`
 - `tests/Scaffold/Journal/Storage/FilesystemStorageTest.php`
 - `tests/Scaffold/Linter/DriftDetectorTest.php`
+- `tests/Scaffold/ResourceGroupingTest.php`
 - `tests/Scaffold/Sdk/CompileIntegrationTest.php`
 - `tests/Scaffold/Sdk/EmitSdkCommandTest.php`
 - `tests/Scaffold/Sdk/EmitterRegistryTest.php`

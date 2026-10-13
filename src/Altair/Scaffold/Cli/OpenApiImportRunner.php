@@ -203,7 +203,7 @@ final readonly class OpenApiImportRunner
         $warnings = [];
         foreach ($document->operations as $operation) {
             try {
-                $structure = $this->operationMapper->map($document, $operation);
+                $structure = $this->operationMapper->map($document, $operation, $options->groupBy);
             } catch (UnmappableSchemaException $unmappableSchemaException) {
                 if (!$options->skipUnmappable) {
                     throw $unmappableSchemaException;

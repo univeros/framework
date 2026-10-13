@@ -1,0 +1,8 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://univeros.io/openapi/extensions/x-altair-resource.schema.json",
+    "title": "x-altair-resource",
+    "description": "The spec's endpoint.resource: the PascalCase group that nests the generated Action/Input/Responder/test under a folder and namespace of that name. openapi:import always honors it, so a grouped spec round-trips even when its resource differs from the operation's first tag.",
+    "type": "string",
+    "pattern": "^[A-Z][A-Za-z0-9]*$"
+}

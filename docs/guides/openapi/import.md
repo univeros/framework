@@ -72,6 +72,7 @@ bin/altair openapi:import openapi.yaml --skip-unmappable
 | `--persistence=cycle` | enum | Inject a `persistence:` block for each POST-to-collection endpoint. |
 | `--queue=<transport>` | string | Reserved for the `x-altair-queue` extension in [#163](https://github.com/univeros/framework/issues/163); currently a no-op that surfaces a warning. |
 | `--root=<path>` | string | Override the project root used as base for emitted paths. |
+| `--group-by=none\|tag\|path` | enum | Fill each spec's `endpoint.resource` so the scaffolded Action/Input/Responder land in per-resource folders. Default `none` (flat, the pre-#227 layout). See [Grouping by resource](#grouping-by-resource). |
 
 ## JSON receipt
 
@@ -161,6 +162,33 @@ run succeeds (exit 0), and the mappable specs are written.
 > *validation rules* for nested members are not generated yet (the
 > nested shape and the object's own `required` flag are); add them by
 > hand if you need them.
+
+## Grouping by resource
+
+On a real document (the Swagger Petstore has ~19 operations), a flat `app/Http/Actions/` is hard to navigate. `--group-by` writes an `endpoint.resource` into each spec, and `spec:scaffold` nests the HTTP triple and its test by it:
+
+```bash
+bin/altair openapi:import petstore.yaml --scaffold --group-by=tag
+```
+
+```text
+app/Http/Actions/Pet/FindPetsByStatusAction.php     App\Http\Actions\Pet\FindPetsByStatusAction
+app/Http/Inputs/Pet/FindPetsByStatusInput.php       App\Http\Inputs\Pet\FindPetsByStatusInput
+app/Http/Responders/Pet/FindPetsByStatusResponder.php
+tests/Http/Actions/Pet/FindPetsByStatusActionTest.php
+app/Http/Actions/Store/GetInventoryAction.php
+app/Http/Actions/User/CreateUserAction.php
+```
+
+| Mode | Resource |
+|---|---|
+| `none` (default) | none: flat placement, so existing projects don't churn |
+| `tag` | the operation's **first** OpenAPI tag, singular PascalCase (`pet` → `Pet`, `pet-stores` → `PetStore`); falls back to the path noun when the operation has no usable tag |
+| `path` | the path noun, skipping RPC leaves (`/users/{id}` → `User`, `/pet/findByStatus` → `Pet`) |
+
+An operation carrying `x-altair-resource` (what `spec:emit-openapi` writes for a grouped spec) always uses it, whatever the mode, so a grouped project round-trips. The transform is pure and locale-independent (a deterministic suffix-stripping singularizer, no inflector), so the same document yields the same folders on every machine. The domain class is unaffected; it already lives under `App\<Resource>\`.
+
+The importer now also writes the operation's own OpenAPI `tags` into `endpoint.tags` (it used to write the path segment); operations without tags keep the path segment.
 
 ## Persistence inference
 

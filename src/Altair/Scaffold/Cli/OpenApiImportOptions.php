@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Altair\Scaffold\Cli;
 
+use Altair\Scaffold\Spec\Emitter\ResourceGrouping;
+
 /**
  * Resolved set of options for one `openapi:import` invocation.
  *
@@ -29,5 +31,6 @@ final readonly class OpenApiImportOptions
         public bool $skipUnmappable = false,
         public ?string $persistence = null,
         public ?string $queue = null,
+        public ResourceGrouping $groupBy = ResourceGrouping::None,
     ) {}
 }

@@ -184,6 +184,7 @@ final readonly class OpenApiRoundtripRunner
                 $projection[$key] = [
                     'summary' => isset($operation['summary']) && \is_string($operation['summary']) ? $operation['summary'] : '',
                     'x-altair-domain' => $operation['x-altair-domain'] ?? null,
+                    'x-altair-resource' => $operation['x-altair-resource'] ?? null,
                     'x-altair-persistence' => $operation['x-altair-persistence'] ?? null,
                     'x-altair-queue' => $operation['x-altair-queue'] ?? null,
                     'x-altair-idempotency' => $operation['x-altair-idempotency'] ?? null,

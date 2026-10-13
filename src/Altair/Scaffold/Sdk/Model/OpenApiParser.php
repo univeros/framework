@@ -150,7 +150,20 @@ final readonly class OpenApiParser
             summary: isset($operation['summary']) && \is_string($operation['summary']) ? $operation['summary'] : '',
             extensions: $this->extractExtensions($operation),
             parameters: $parameters,
+            tags: $this->parseTags($operation['tags'] ?? null),
         );
+    }
+
+    /**
+     * @return list<string>
+     */
+    private function parseTags(mixed $tags): array
+    {
+        if (!\is_array($tags)) {
+            return [];
+        }
+
+        return array_values(array_filter($tags, static fn(mixed $tag): bool => \is_string($tag) && $tag !== ''));
     }
 
     /**

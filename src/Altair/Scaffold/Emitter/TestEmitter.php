@@ -28,7 +28,7 @@ class TestEmitter
         $actionFqcn = $this->naming->actionFqcn($spec);
         $inputFqcn = $this->naming->inputFqcn($spec);
         $responderFqcn = $this->naming->responderFqcn($spec);
-        $testNamespace = 'Tests\\Http\\Actions';
+        $testNamespace = $this->naming->testNamespace($spec);
 
         $statusAssertions = $this->renderStatusAssertions($spec);
 
