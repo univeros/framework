@@ -81,6 +81,7 @@ final class ModuleManifestsTest extends TestCase
         yield 'three segments' => ['a/b/c'];
         yield 'uppercase' => ['Acme/Module'];
         yield 'empty' => [''];
+        yield 'trailing newline' => ["acme/x\n"];
     }
 
     public function testIndexIsUnchangedWithoutModules(): void

@@ -22,7 +22,7 @@ final readonly class ModuleManifest
     /**
      * `module` or `vendor/module`, lowercase; keeps the file path inside `modules/`.
      */
-    private const string NAME_PATTERN = '#^[a-z0-9]([_.-]?[a-z0-9]+)*(/[a-z0-9]([_.-]?[a-z0-9]+)*)?$#';
+    private const string NAME_PATTERN = '#^[a-z0-9]([_.-]?[a-z0-9]+)*(/[a-z0-9]([_.-]?[a-z0-9]+)*)?\z#';
 
     public string $contents;
 
