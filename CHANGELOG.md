@@ -17,6 +17,10 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
   up front: the naming rule, the `ModuleInterface` capability contracts, the
   Action/Input/Domain/Responder lifecycle, the isolated dev/test loop, and the
   `spec:scaffold` vocabulary caveat. (#230, #231)
+- The HMAC webhook signers accept GitHub's `<algo>=<hex>` signature form
+  (`sha256=<hex>` for `hmac-sha256`, `sha512=<hex>` for `hmac-sha512`), so
+  `WebhookVerifyMiddleware` verifies GitHub webhooks and Polaris audit drains as
+  is. A prefix naming another algorithm fails verification. (#235, #237)
 
 ## [2.5.1] - 2026-06-06
 

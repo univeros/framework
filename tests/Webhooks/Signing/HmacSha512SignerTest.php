@@ -48,4 +48,32 @@ final class HmacSha512SignerTest extends TestCase
 
         self::assertFalse($signer->verify(self::PAYLOAD, $corrupted, self::SECRET));
     }
+
+    public function testVerifyAcceptsItsOwnAlgorithmPrefix(): void
+    {
+        $signer = new HmacSha512Signer();
+        $mac = $signer->sign(self::PAYLOAD, self::SECRET);
+
+        self::assertTrue($signer->verify(self::PAYLOAD, 'sha512=' . $mac, self::SECRET));
+        self::assertTrue($signer->verify(self::PAYLOAD, 'SHA512=' . $mac, self::SECRET));
+    }
+
+    public function testVerifyRejectsItsOwnPrefixWithAWrongMac(): void
+    {
+        $signer = new HmacSha512Signer();
+        $mac = $signer->sign(self::PAYLOAD, self::SECRET);
+        $wrong = ($mac[0] === 'a' ? 'b' : 'a') . substr($mac, 1);
+
+        self::assertFalse($signer->verify(self::PAYLOAD, 'sha512=' . $wrong, self::SECRET));
+    }
+
+    public function testVerifyRejectsAPrefixNamingAnotherAlgorithm(): void
+    {
+        $signer = new HmacSha512Signer();
+        $mac = $signer->sign(self::PAYLOAD, self::SECRET);
+
+        self::assertFalse($signer->verify(self::PAYLOAD, 'sha256=' . $mac, self::SECRET));
+        self::assertFalse($signer->verify(self::PAYLOAD, 'sha1=' . $mac, self::SECRET));
+        self::assertFalse($signer->verify(self::PAYLOAD, 'sha512=', self::SECRET));
+    }
 }

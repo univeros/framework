@@ -38,7 +38,7 @@ That YAML is the source of truth. Run `bin/altair spec:scaffold` and the scaffol
 
 Four pieces make the design honest:
 
-1. **Multi-scheme signing.** `SignerInterface` has three operations (`name`, `sign`, `verify`) and the package ships `HmacSha256Signer`, `HmacSha512Signer` and `Ed25519Signer`. HMAC signatures are hex-encoded to match Stripe / GitHub; `verify()` is constant-time (`hash_equals` / libsodium) and tolerantly parses the Stripe `t=<ts>,v1=<hex>` header format as well as a bare hex digest.
+1. **Multi-scheme signing.** `SignerInterface` has three operations (`name`, `sign`, `verify`) and the package ships `HmacSha256Signer`, `HmacSha512Signer` and `Ed25519Signer`. HMAC signatures are hex-encoded to match Stripe / GitHub; `verify()` is constant-time (`hash_equals` / libsodium) and tolerantly parses a bare hex digest, GitHub's `sha256=<hex>` form and the Stripe `t=<ts>,v1=<hex>` header format.
 2. **Pluggable storage.** Inbound dedupe (`InboundDeduplicatorInterface`) and outbound delivery state (`DeliveryStoreInterface`) each ship an `InMemory` adapter for tests and a `Redis` adapter for production. The inbound dedupe primitive is `SET key value NX EX ttl`; concurrent identical deliveries see exactly one handler invocation.
 3. **No hand-rolled dispatcher.** `WebhookDispatcher` records a `Delivery`, dispatches a `WebhookMessage` over Symfony Messenger, and `WebhookHandler` performs the signed POST with retry + dead-letter. Delivery state (id, attempts, last response, status) is persisted so `webhook:replay` works.
 4. **Round-trips through OpenAPI.** The `x-altair-webhook` extension carries the policy through OpenAPI 3.1 (see [docs/guides/openapi/extensions.md](../guides/openapi/extensions.md)); the round-trip drift gate (`bin/altair openapi:roundtrip`) refuses to merge a regression that drops the block.
@@ -210,7 +210,29 @@ interface SignerInterface
 }
 ```
 
-`verify()` returns `false` rather than throwing on mismatch, and the HMAC signers accept either a bare hex digest or a Stripe-style `t=<ts>,v1=<hex>` header (the `v1=` component is extracted). Resolve a scheme by name through the registry:
+`verify()` returns `false` rather than throwing on mismatch. The HMAC signers accept three header shapes:
+
+- a bare hex digest;
+- GitHub's `<algo>=<hex>` form (`X-Hub-Signature-256: sha256=<hex>`), when the prefix names the signer's own algorithm: `sha256=` for `hmac-sha256`, `sha512=` for `hmac-sha512`. A prefix naming another algorithm (`sha1=<hex>` against `hmac-sha256`) fails verification;
+- a Stripe-style `t=<ts>,v1=<hex>` header (the `v1=` component is extracted).
+
+Senders using the `sha256=` convention (GitHub, Polaris audit drains) usually send no timestamp header, so build the middleware with `requireTimestamp: false` and point it at their headers:
+
+```php
+new \Altair\Webhooks\Middleware\WebhookVerifyMiddleware(
+    signer: new \Altair\Webhooks\Signing\HmacSha256Signer(),
+    secrets: $secrets,
+    deduplicator: $deduplicator,
+    responseFactory: $responseFactory,
+    streamFactory: $streamFactory,
+    secretName: 'polaris_audit',
+    requireTimestamp: false,
+    signatureHeader: 'X-Polaris-Signature', // GitHub: X-Hub-Signature-256
+    eventIdHeader: 'X-Polaris-Delivery',    // GitHub: X-GitHub-Delivery
+);
+```
+
+Without a timestamp there is no replay window; dedupe on the delivery id is the replay protection. Resolve a scheme by name through the registry:
 
 ```php
 $registry = \Altair\Webhooks\Signing\SignerRegistry::default(); // HMAC always; Ed25519 when ext-sodium is loaded
