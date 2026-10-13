@@ -15,18 +15,12 @@ class CacheItemKeyValidatorTest extends TestCase
         $this->validator = new CacheItemKeyValidator();
     }
 
-    /**
-     * @param mixed $key
-     */
     #[DataProvider('provideInvalidKey')]
     public function testInvalidKey(string|bool|int|float|\Exception|array|null $key): void
     {
         $this->assertFalse($this->validator->validate($key));
     }
 
-    /**
-     * @param mixed $key
-     */
     #[DataProvider('provideValidKey')]
     public function testValiddKey(string $key): void
     {

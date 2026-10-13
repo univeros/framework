@@ -13,9 +13,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 class RuleResolverTest extends TestCase
 {
-    /**
-     * @param mixed $entry
-     */
     #[DataProvider('rulesProvider')]
     public function testResolver(string|array $entry): void
     {

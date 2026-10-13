@@ -55,9 +55,7 @@ final readonly class TreeBuilder
         $cursor = &$node;
 
         foreach ($stack as $i => $frame) {
-            if (!isset($cursor['children'][$frame])) {
-                $cursor['children'][$frame] = ['name' => $frame, 'self' => 0, 'total' => 0, 'children' => []];
-            }
+            $cursor['children'][$frame] ??= ['name' => $frame, 'self' => 0, 'total' => 0, 'children' => []];
 
             /** @var array{name: string, self: int, total: int, children: array<string, array<string, mixed>>} $child */
             $child = &$cursor['children'][$frame];

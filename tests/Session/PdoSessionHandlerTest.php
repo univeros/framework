@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 class PdoSessionHandlerTest extends TestCase
 {
-    private $dbFile;
+    private string|bool|null $dbFile = null;
 
     private SqlitePdoSessionAdapter $adapter;
 

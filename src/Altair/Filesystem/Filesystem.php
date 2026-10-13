@@ -162,8 +162,6 @@ class Filesystem
     /**
      * Write the contents of a file.
      *
-     *
-     * @return int|false
      */
     public function put(string $path, string $contents, bool $lock = false): int|false
     {
@@ -174,7 +172,6 @@ class Filesystem
      * Prepend to a file.
      *
      * @throws FileNotFoundException
-     * @return false|int
      */
     public function prepend(string $path, string $data): int|false
     {
@@ -442,8 +439,6 @@ class Filesystem
     /**
      * Get the mime-type of a given file.
      *
-     *
-     * @return string|false
      */
     public function getFileMimeType(string $path): string|false
     {
@@ -479,8 +474,6 @@ class Filesystem
     /**
      * Get the file's last modification time.
      *
-     *
-     * @return int|false
      */
     public function getLastModified(string $path): int|false
     {

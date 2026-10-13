@@ -32,36 +32,24 @@ class InRuleTest extends AbstractRuleTest
         ];
     }
 
-    /**
-     * @param mixed $value
-     */
     #[DataProvider('trueProvider')]
     public function testPayloadTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertPayloadWithStringHaystack($value));
     }
 
-    /**
-     * @param mixed $value
-     */
     #[DataProvider('falseProvider')]
     public function testPayloadFalseWithStringHaystack(int|string $value): void
     {
         $this->assertFalse($this->assertPayloadWithStringHaystack($value));
     }
 
-    /**
-     * @param mixed $value
-     */
     #[DataProvider('trueProvider')]
     public function testValueTrueWithStringHaystack(string $value): void
     {
         $this->assertTrue($this->assertValueWithStringHaystack($value));
     }
 
-    /**
-     * @param mixed $value
-     */
     #[DataProvider('falseProvider')]
     public function testValueFalseWithStringHaystack(int|string $value): void
     {

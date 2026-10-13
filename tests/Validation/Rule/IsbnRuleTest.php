@@ -68,7 +68,6 @@ class IsbnRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $type
      */
     #[DataProvider('trueProvider')]
@@ -78,7 +77,6 @@ class IsbnRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $type
      */
     #[DataProvider('falseProvider')]
@@ -88,7 +86,6 @@ class IsbnRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $type
      */
     #[DataProvider('trueProvider')]
@@ -98,7 +95,6 @@ class IsbnRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $type
      */
     #[DataProvider('falseProvider')]

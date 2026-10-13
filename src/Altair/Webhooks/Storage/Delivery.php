@@ -90,7 +90,6 @@ final readonly class Delivery
             status: DeliveryStatus::Pending,
             attempts: 0,
             nextAttemptAtProvided: true,
-            nextAttemptAt: null,
         );
     }
 

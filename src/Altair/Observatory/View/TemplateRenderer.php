@@ -27,7 +27,7 @@ final readonly class TemplateRenderer
 
     public static function default(): self
     {
-        return new self(\dirname(__DIR__) . '/resources/views');
+        return new self(__DIR__ . '/../resources/views');
     }
 
     /**

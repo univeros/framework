@@ -45,9 +45,7 @@ class HkdfKey extends AbstractKey
     {
         $blocks = $this->length !== 0 ? ceil($this->length / $this->hashLength) : 1;
 
-        if ($this->salt === null) {
-            $this->salt = str_repeat("\0", $this->hashLength);
-        }
+        $this->salt ??= str_repeat("\0", $this->hashLength);
 
         $prKey = hash_hmac($this->algorithm, $this->key, $this->salt, true);
 

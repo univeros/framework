@@ -14,9 +14,6 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 class FilterResolverTest extends TestCase
 {
-    /**
-     * @param mixed $entry
-     */
     #[DataProvider('filterProvider')]
     public function testResolver(string|array $entry): void
     {

@@ -168,40 +168,24 @@ class ZipCodeRuleTest extends TestCase
         ];
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $country
-     */
     #[DataProvider('trueProvider')]
     public function testPayloadTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertPayload($value, $country));
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $country
-     */
     #[DataProvider('falseProvider')]
     public function testPayloadFalse(string $value, string $country): void
     {
         $this->assertFalse($this->assertPayload($value, $country));
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $country
-     */
     #[DataProvider('trueProvider')]
     public function testValueTrue(string $value, string $country): void
     {
         $this->assertTrue($this->assertValue($value, $country));
     }
 
-    /**
-     * @param mixed $value
-     * @param mixed $country
-     */
     #[DataProvider('falseProvider')]
     public function testValueFalse(string $value, string $country): void
     {

@@ -78,8 +78,6 @@ class Transliterator
 
     /**
      * Sets the transliterator when intl extension is available.
-     *
-     * @return Transliterator
      */
     public function setTransliterator(string $transliterator): Transliterator
     {
@@ -92,7 +90,6 @@ class Transliterator
      * intl extension available.
      *
      * @param array<string, string> $transliteration
-     * @return Transliterator
      */
     public function merge(array $transliteration): Transliterator
     {

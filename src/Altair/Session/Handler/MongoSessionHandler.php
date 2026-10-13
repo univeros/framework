@@ -145,9 +145,7 @@ class MongoSessionHandler implements SessionHandlerInterface
      */
     private function createUTCDateTime($seconds = null): UTCDateTime
     {
-        if (null === $seconds) {
-            $seconds = time();
-        }
+        $seconds ??= time();
 
         return new UTCDateTime($seconds * 1000);
     }
