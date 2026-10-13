@@ -9,7 +9,9 @@
     },
     "require": {
         "php": ">=8.3",
-        "univeros/cli": "^2.0"
+        "univeros/cli": "^2.0",
+        "univeros/container": "^2.0",
+        "univeros/module": "^2.0"
     },
     "autoload": {
         "psr-4": {

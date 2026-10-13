@@ -48,10 +48,6 @@ class PathResolver
             ? $this->canonical($outputOverride)
             : $monorepoRoot . DIRECTORY_SEPARATOR . '.agent';
 
-        if (!is_dir($sourceRoot)) {
-            throw new AgentSpecException(\sprintf("Source root '%s' does not exist.", $sourceRoot));
-        }
-
         return new ResolvedPaths($monorepoRoot, $sourceRoot, $testsRoot, $outputRoot);
     }
 

@@ -25,6 +25,7 @@ use Altair\Configuration\Contracts\ConfigurationInterface;
  *   - {@see MiddlewareProviderInterface}          — contribute PSR-15 middleware
  *   - {@see EntityDirectoriesProviderInterface}   — contribute Cycle entity dirs
  *   - {@see MigrationDirectoriesProviderInterface} — contribute migration dirs
+ *   - {@see ManifestContributorInterface}         — contribute an AgentSpec manifest section
  *
  * Consumers (the HTTP front controller, the schema provider, the migrate
  * commands) discover every registered module through the container tag

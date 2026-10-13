@@ -24,6 +24,7 @@ implementing the narrow provider contracts** — implement only what you ship:
 | `MiddlewareProviderInterface` | `middleware()` | PSR-15 middleware, ordered by priority |
 | `EntityDirectoriesProviderInterface` | `entityDirectories()` | Cycle entity dirs |
 | `MigrationDirectoriesProviderInterface` | `migrationDirectories()` | DB migrations |
+| `ManifestContributorInterface` | `manifestDescription()`, `manifest()` | A section in the host's `.agent/` manifests |
 
 Drop a capability by removing its interface from the `implements` list. A
 service-only module needs just `ModuleInterface` and `univeros/module`.

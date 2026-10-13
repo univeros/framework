@@ -155,6 +155,29 @@ $container->factory(
 
 It compiles the schema from your `baseDirectories` plus every registered module's `entityDirectories()`. This is the one capability that is a deliberate host choice rather than fully automatic, because the host owns how its schema is built (attribute discovery vs. a pre-compiled schema).
 
+### Agent manifest: automatic
+
+A module can describe its surface (routes, auth, permissions, commands) to agents working on the host by implementing `ManifestContributorInterface`:
+
+```php
+use Altair\Module\Contracts\ManifestContributorInterface;
+
+final class Module implements ModuleInterface, ManifestContributorInterface
+{
+    public function manifestDescription(): string
+    {
+        return 'User management: registration, login, password reset.';
+    }
+
+    public function manifest(): string
+    {
+        return "# acme/user-management\n\n## Routes\n\n| Method | Path | Action |\n|---|---|---|\n| POST | /users | `CreateUserAction` |\n";
+    }
+}
+```
+
+`bin/altair manifest:generate`, run from the host's own console (the entry point that builds `config/container.php`), writes it to `.agent/modules/acme/user-management.md` and lists it in `.agent/MANIFEST.md`. Keep the output byte-stable (no timestamps, sorted lists) so the host can gate it in CI with `manifest:generate --check`.
+
 ## 4. Test
 
 The scaffolded `tests/ModuleTest.php` constructs the module and asserts its routes, bindings, and directories. Grow it as you add behaviour; the host doesn't need to be involved to test a module in isolation.

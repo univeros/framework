@@ -29,6 +29,8 @@
 - `ManifestWriter`
 - `MarkdownPackageRenderer` — implements `ManifestRendererInterface`
 - `MethodSignature` _(final)_
+- `ModuleManifest` _(final)_
+- `ModuleManifests` _(final)_
 - `PackageDescriptor` _(final)_
 - `PackageManifest` _(final)_
 - `PackageManifestGenerator`
@@ -49,6 +51,7 @@
 - `tests/AgentSpec/IndexGeneratorTest.php`
 - `tests/AgentSpec/ManifestPipelineTest.php`
 - `tests/AgentSpec/MarkdownPackageRendererTest.php`
+- `tests/AgentSpec/ModuleManifestsTest.php`
 - `tests/AgentSpec/PackageManifestGeneratorTest.php`
 - `tests/AgentSpec/PackageScannerTest.php`
 - `tests/AgentSpec/Reflection/TypeStringRendererTest.php`
@@ -56,3 +59,5 @@
 ## Related packages
 
 - `univeros/cli`
+- `univeros/container`
+- `univeros/module`

@@ -21,7 +21,7 @@ use Altair\AgentSpec\Writer\ManifestWriter;
 
 /**
  * High-level orchestrator: discovers packages, runs the generator over each,
- * renders Markdown, and either writes manifests to disk or compares them to
+ * renders Markdown, adds the sections contributed by host modules, and either writes manifests to disk or compares them to
  * what is already on disk for the `--check` workflow.
  */
 class ManifestPipeline
@@ -59,7 +59,22 @@ class ManifestPipeline
             $touched[] = $this->relative($path, $options->outputRoot);
         }
 
-        $indexContents = $this->indexGenerator->render($packages);
+        foreach ($options->modules as $module) {
+            $path = $options->outputRoot . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $module->path());
+
+            if ($options->checkOnly) {
+                if (!$this->writer->check($path, $module->contents)) {
+                    $touched[] = $module->path();
+                }
+
+                continue;
+            }
+
+            $this->writer->write($path, $module->contents);
+            $touched[] = $module->path();
+        }
+
+        $indexContents = $this->indexGenerator->render($packages, modules: $options->modules);
         $indexPath = $options->outputRoot . DIRECTORY_SEPARATOR . 'MANIFEST.md';
 
         if ($options->checkOnly) {
@@ -81,9 +96,14 @@ class ManifestPipeline
      */
     private function discoverPackages(ManifestPipelineOptions $options): array
     {
+        // A host has no framework source tree; its modules' sections still render.
+        if ($options->modules !== [] && !is_dir($options->sourceRoot)) {
+            return [];
+        }
+
         $packages = $this->packageScanner->scan($options->sourceRoot, $options->monorepoRoot, $options->testsRoot);
 
-        if ($packages === []) {
+        if ($packages === [] && $options->modules === []) {
             throw new AgentSpecException(
                 \sprintf("No framework sub-packages found under '%s'.", $options->sourceRoot),
             );

@@ -70,6 +70,7 @@ A module advertises what it contributes by implementing extra interfaces. Consum
 | `MiddlewareProviderInterface` | `middleware(): list<array{middleware, priority}>` | the front controller, via `Altair\Http\Support\ModuleMiddleware::collect()` |
 | `EntityDirectoriesProviderInterface` | `entityDirectories(): list<string>` | `Altair\Persistence\Schema\ModuleAwareSchemaProvider` |
 | `MigrationDirectoriesProviderInterface` | `migrationDirectories(): list<MigrationSource>` | `bin/altair db:migrate` / `:status` / `:rollback` |
+| `ManifestContributorInterface` | `manifestDescription(): string`, `manifest(): string` | `bin/altair manifest:generate`, via `Altair\AgentSpec\Generator\ModuleManifests::collect()` |
 
 Routes use the same `[METHOD, PATH, Action::class]` shape as `config/routes.php`. Each `MigrationSource` pairs a directory with the migration namespace your classes are declared in (e.g. `Acme\UserManagement\Database\Migrations`); Cycle reads each migration's FQCN from the file, so per-module namespaces never collide. Middleware entries each pair a PSR-15 middleware (a `class-string` resolved through the container, or an instance) with an integer `priority`, ordered against the documented anchors in `Altair\Http\Support\MiddlewarePriority` (`EXCEPTION_HANDLER` = 0, `DISPATCHER` = 500, `ACTION` = 1000).
 
@@ -78,6 +79,7 @@ Routes use the same `[METHOD, PATH, Action::class]` shape as `config/routes.php`
 - **Routes:** the generated `public/index.php` calls `ModuleRoutes::collect($container, $hostRoutes)`, which appends every tagged module's `routes()` to the host's. Host routes come first, so a host can always override.
 - **Middleware:** the generated `public/index.php` calls `ModuleMiddleware::collect($container, $baseStages)`, which appends every tagged module's `middleware()` to the framework's base pipeline and stable-sorts the result by priority (equal priorities keep input order, so the merge is deterministic). The resulting queue is handed to Relay with a `ContainerResolver`, so class-string middleware are instantiated (and their dependencies autowired) at dispatch time. A module can thus register an auth / rate-limit / idempotency guard without the host editing `public/index.php`.
 - **Entities:** bind `SchemaProviderInterface` to `ModuleAwareSchemaProvider`; it compiles the schema from the host's entity directories plus every module's `entityDirectories()`.
+- **Agent manifests:** `bin/altair manifest:generate`, run from the host's own console, writes every contributing module's `manifest()` to `.agent/modules/<name>.md` and lists it in `.agent/MANIFEST.md` with its `manifestDescription()` (see [agent-spec.md](./agent-spec.md#module-sections-in-a-host)).
 - **Migrations:** the migrate commands pass each module's directory to Cycle's `MigrationConfig` as a `vendorDirectories` entry, so one migrator runs the host's `database/migrations` and every module's directory against the shared tracking table, with correct ordering, status, and rollback.
 
 ## Authoring a module

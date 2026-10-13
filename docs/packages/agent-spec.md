@@ -25,7 +25,7 @@ composer require --dev univeros/agent-spec
 
 You will almost always want this as a dev dependency: the manifests it emits target your *checkout*, not your runtime. If you install the full framework, `composer require univeros/framework` already bundles it.
 
-The package depends on `univeros/cli` because the CLI commands plug into the framework's attribute-driven command discovery; see [cli.md](./cli.md) for how `manifest:generate` is wired up. No PHP extensions beyond what core PHP 8.3 already requires.
+The package depends on `univeros/cli` because the CLI commands plug into the framework's attribute-driven command discovery, and on `univeros/module` + `univeros/container` to collect the sections host modules contribute; see [cli.md](./cli.md) for how `manifest:generate` is wired up. No PHP extensions beyond what core PHP 8.3 already requires.
 
 ## Quick start
 
@@ -171,6 +171,24 @@ file_put_contents(
 ```
 
 The output is grouped by attribute short-name with classes listed alphabetically under each. As richer attribute conventions land elsewhere in the framework (event subscribers, queued jobs, HTTP actions), pass them in the same list; the generator does not need to know about each individually.
+
+### Module sections in a host
+
+A module installed in a host application contributes its own manifest section by implementing `Altair\Module\Contracts\ManifestContributorInterface` (`manifestDescription()` for the index line, `manifest()` for the Markdown body). Run `manifest:generate` from the host's own console, the entry point that builds `config/container.php` with the modules applied, and the command collects every contributing module through the `altair.module` container tag (`Generator\ModuleManifests::collect()`):
+
+```text
+.agent/
+  MANIFEST.md                  # "## Modules" table: one row per contributing module
+  modules/univeros/polaris.md  # the module's manifest(), path from its name()
+```
+
+- The file path comes from the module's `name()`, which must be lowercase `module` or `vendor/module`; anything else (`..`, an absolute path, uppercase) is rejected with an `AgentSpecException`.
+- Modules are listed sorted by name, so registration order does not change the output.
+- A host has no framework source tree; with at least one contributing module the command writes only the module sections instead of failing on the missing `src/Altair`.
+- Without contributing modules the output is byte-for-byte what it was before, so the framework's own determinism gate is unaffected.
+- `--check` covers module files too: commit `.agent/` in the host and run `bin/altair manifest:generate --check` in CI.
+
+The framework's bare `vendor/bin/altair` has no modules applied, so it never sees module sections.
 
 ## Configuration
 
