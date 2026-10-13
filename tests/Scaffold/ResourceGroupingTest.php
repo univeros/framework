@@ -105,6 +105,7 @@ final class ResourceGroupingTest extends TestCase
         yield 'path' => ['../User'];
         yield 'leading digit' => ['2Fa'];
         yield 'space' => ['Pet Store'];
+        yield 'trailing newline' => ["User\n"];
     }
 
     public function testValidatorAcceptsAPascalCaseResource(): void

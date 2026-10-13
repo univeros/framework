@@ -71,7 +71,7 @@ class Validator
         }
 
         // Becomes a folder and a namespace segment: one PascalCase identifier.
-        if ($spec->endpoint->resource !== '' && preg_match('/^[A-Z][A-Za-z0-9]*$/', $spec->endpoint->resource) !== 1) {
+        if ($spec->endpoint->resource !== '' && preg_match('/^[A-Z][A-Za-z0-9]*\z/', $spec->endpoint->resource) !== 1) {
             $errors[] = \sprintf("endpoint.resource '%s' must be a PascalCase identifier (e.g. 'User').", $spec->endpoint->resource);
         }
 

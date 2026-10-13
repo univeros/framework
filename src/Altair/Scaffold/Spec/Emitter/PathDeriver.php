@@ -306,7 +306,7 @@ final readonly class PathDeriver
     {
         $pascal = $this->pascalCase($value);
 
-        return preg_match('/^[A-Z][A-Za-z0-9]*$/', $pascal) === 1 ? $pascal : '';
+        return preg_match('/^[A-Z][A-Za-z0-9]*\z/', $pascal) === 1 ? $pascal : '';
     }
 
     private function singularize(string $value): string
