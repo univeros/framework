@@ -11,6 +11,8 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-10-13
+
 ### Added
 - `bin/altair module:new` now scaffolds an `AGENT.md` agent guide alongside the
   README, so an agent working in a generated module gets the Univeros conventions
@@ -20,24 +22,28 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
 - The HMAC webhook signers accept GitHub's `<algo>=<hex>` signature form
   (`sha256=<hex>` for `hmac-sha256`, `sha512=<hex>` for `hmac-sha512`), so
   `WebhookVerifyMiddleware` verifies GitHub webhooks and Polaris audit drains as
-  is. A prefix naming another algorithm fails verification. (#235, #237)
+  is. A prefix naming another algorithm fails verification. (#235, #237, #238)
 - Modules can contribute a section to the AI-readable manifests: a module
   implementing `Altair\Module\Contracts\ManifestContributorInterface` gets
   `.agent/modules/<name>.md` and a row in `.agent/MANIFEST.md` when
   `bin/altair manifest:generate` runs from the host's console. Without such
   modules the output is unchanged; in a host without framework sources the
-  command now writes the module sections instead of failing. (#234, #236)
+  command now writes the module sections instead of failing. (#234, #236, #239)
 - Per-resource folders for scaffolded HTTP endpoints: an optional
   `endpoint.resource` (e.g. `User`) nests the Action/Input/Responder and their
   test under `.../Actions/User/` with matching namespaces; flat when unset.
   `openapi:import --group-by=tag|path` fills it (first OpenAPI tag, falling back
   to the path noun; default `none` keeps the flat layout), and it round-trips
-  through OpenAPI as `x-altair-resource`. (#227)
+  through OpenAPI as `x-altair-resource`. (#227, #240)
 
 ### Fixed
 - `openapi:import` writes each operation's own OpenAPI `tags` into
   `endpoint.tags` instead of the path segment (operations without tags keep the
-  path segment), so tags survive `openapi:import` -> `spec:emit-openapi`. (#227)
+  path segment), so tags survive `openapi:import` -> `spec:emit-openapi`. (#227, #240)
+
+### Changed
+- Development toolchain: Rector `^2.7` (2.7 removed a rule the config still
+  skipped, which broke static analysis), with its new cleanups applied. (#241)
 
 ## [2.5.1] - 2026-06-06
 
@@ -134,7 +140,8 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
   codebase to PHP 8.3+: PSR-7/15 single-pass middleware, readonly value objects,
   native types, and 35+ standalone `univeros/*` packages.
 
-[Unreleased]: https://github.com/univeros/framework/compare/v2.5.1...master
+[Unreleased]: https://github.com/univeros/framework/compare/v2.6.0...master
+[2.6.0]: https://github.com/univeros/framework/compare/v2.5.1...v2.6.0
 [2.5.1]: https://github.com/univeros/framework/compare/v2.5.0...v2.5.1
 [2.5.0]: https://github.com/univeros/framework/compare/v2.4.1...v2.5.0
 [2.4.1]: https://github.com/univeros/framework/compare/v2.4.0...v2.4.1
