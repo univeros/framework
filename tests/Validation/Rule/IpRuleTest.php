@@ -69,7 +69,6 @@ class IpRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
@@ -80,7 +79,6 @@ class IpRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
@@ -91,7 +89,6 @@ class IpRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */
@@ -102,7 +99,6 @@ class IpRuleTest extends TestCase
     }
 
     /**
-     * @param mixed $value
      * @param null|mixed $options
      * @param null|mixed $range
      */

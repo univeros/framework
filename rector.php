@@ -10,7 +10,6 @@ declare(strict_types=1);
  */
 
 use Rector\Config\RectorConfig;
-use Rector\Php81\Rector\ClassMethod\NewInInitializerRector;
 use Rector\Php84\Rector\Param\ExplicitNullableParamTypeRector;
 use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
@@ -29,12 +28,6 @@ return RectorConfig::configure()
         // Module skeleton emitted by `bin/altair module:new` — VendorModule-namespaced
         // template code, not framework source.
         __DIR__ . '/src/Altair/Bootstrap/resources/module-skeleton',
-        // Scope boundary for #93: making params explicitly `?Type` lets Rector
-        // collapse `?? new X()` bodies into promoted `= new X()` defaults. That
-        // narrows the constructor contract (an explicit `null` arg becomes a
-        // TypeError) — a behaviour change that belongs in its own PR, not the
-        // nullable-deprecation fix. Remove this skip to adopt it deliberately.
-        NewInInitializerRector::class,
         // A child constructor that only calls parent::__construct() is NOT dead when it
         // widens visibility (e.g. Altair\Cookie\Cookie exposes AbstractCookie's protected
         // constructor as public). Removing it breaks `new Cookie()`. The rule can't see the
@@ -52,6 +45,12 @@ return RectorConfig::configure()
         // references and incorrectly strip them.
         \Rector\DeadCode\Rector\Property\RemoveUnusedPrivatePropertyRector::class => [
             __DIR__ . '/src/Altair/Cache/CacheItem.php',
+        ],
+        // `@return $this` in a trait is not a duplicate of `: self`: PHPStan resolves it
+        // to the generic using class (Deque<T>, Map<K, V>), while bare `self` raises
+        // missingType.generics at level 8.
+        \Rector\DeadCode\Rector\ClassMethod\RemoveDuplicatedReturnSelfDocblockRector::class => [
+            __DIR__ . '/src/Altair/Structure/Traits',
         ],
         \Rector\Privatization\Rector\Property\PrivatizeFinalClassPropertyRector::class => [
             __DIR__ . '/src/Altair/Cache/CacheItem.php',

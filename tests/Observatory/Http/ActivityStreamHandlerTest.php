@@ -130,7 +130,6 @@ final class ActivityStreamHandlerTest extends TestCase
             kind: EventKind::Scaffold,
             status: EventStatus::Ok,
             durationMs: 5,
-            error: null,
         );
     }
 }

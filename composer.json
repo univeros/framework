@@ -66,7 +66,7 @@
         "predis/predis": "^2.2",
         "psy/psysh": "^0.12",
         "queue-interop/queue-interop": "^0.8.2",
-        "rector/rector": "^2.0",
+        "rector/rector": "^2.7",
         "roave/security-advisories": "dev-latest",
         "spatie/flysystem-dropbox": "^3.0",
         "squizlabs/php_codesniffer": "^3.10"

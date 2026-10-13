@@ -59,7 +59,7 @@ class DefaultErrorHandler implements ErrorHandlerInterface
     {
         $error = $request->getAttribute(MiddlewareInterface::ATTRIBUTE_EXCEPTION);
         $accept = (new MimeType())->getFromResponseHeaderLine($response);
-        $message = $error !== null ? $error->getMessage() : '';
+        $message = $error?->getMessage() ?? '';
         $response = (new Response('php://memory', $response->getStatusCode()));
 
         foreach ($this->handlers as $handler => $types) {

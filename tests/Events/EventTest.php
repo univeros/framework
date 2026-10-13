@@ -80,7 +80,6 @@ class EventTest extends TestCase
             kind: EventKind::Scaffold,
             status: EventStatus::Fail,
             durationMs: 5,
-            error: null,
         );
     }
 

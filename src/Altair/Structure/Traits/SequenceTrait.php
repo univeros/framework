@@ -414,7 +414,7 @@ trait SequenceTrait
      * {@inheritDoc}
      */
     #[ReturnTypeWillChange]
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         if ($offset < 0 || $offset >= \count($this)) {
             return false;

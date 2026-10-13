@@ -40,7 +40,7 @@ class InRule extends AbstractRule
         $encoding = mb_detect_encoding($value) ?: null;
 
         return $this->strict
-            ? false !== mb_strpos((string) $this->haystack, $value, 0, $encoding)
+            ? str_contains((string) $this->haystack, $value)
             : false !== mb_stripos((string) $this->haystack, $value, 0, $encoding);
     }
 

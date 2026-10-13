@@ -56,7 +56,7 @@ final class InMemoryRecorderTest extends TestCase
 
     public function testWithoutAnExporterTheBufferRollsTheOldestOffAtTheCap(): void
     {
-        $recorder = new InMemoryRecorder(exporter: null, maxBufferedSpans: 2, maxBufferedPoints: 1000);
+        $recorder = new InMemoryRecorder(maxBufferedSpans: 2, maxBufferedPoints: 1000);
 
         $recorder->recordSpan($this->makeSpan('old'));
         $recorder->recordSpan($this->makeSpan('mid'));

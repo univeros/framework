@@ -58,11 +58,11 @@ class IpRule extends AbstractRule
 
         $range = ['min' => null, 'max' => null, 'mask' => null];
 
-        if (mb_strpos($value, '-') !== false) {
+        if (str_contains($value, '-')) {
             [$range['min'], $range['max']] = explode('-', $value);
-        } elseif (mb_strpos($value, '*') !== false) {
+        } elseif (str_contains($value, '*')) {
             $range = $this->parseRangeUsingWildcards($value, $range);
-        } elseif (mb_strpos($value, '/') !== false) {
+        } elseif (str_contains($value, '/')) {
             $range = $this->parseRangeUsingCidr($value, $range);
         } else {
             throw new InvalidArgumentException('Invalid network range.');
@@ -102,7 +102,7 @@ class IpRule extends AbstractRule
     {
         [$min, $max] = explode('/', $value);
         $range['min'] = $this->fillAddress($min, '0');
-        $isMask = mb_strpos($max, '.') !== false;
+        $isMask = str_contains($max, '.');
         if ($isMask && $this->assertAddress($max)) {
             $range['mask'] = \sprintf('%032b', ip2long($max));
             return $range;

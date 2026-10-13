@@ -252,8 +252,6 @@ class EventDispatcher implements EventDispatcherInterface
     /**
      * Invokes all listeners of an event.
      *
-     *
-     * @return $this
      */
     protected function invokeListeners(string $name, EventInterface $event): self
     {
