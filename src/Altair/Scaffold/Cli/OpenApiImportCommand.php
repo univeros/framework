@@ -17,6 +17,7 @@ use Altair\Cli\Attribute\Option;
 use Altair\Events\Contracts\RecorderInterface;
 use Altair\Scaffold\Exception\ScaffoldException;
 use Altair\Scaffold\Journal\Journal;
+use Altair\Scaffold\Spec\Emitter\ResourceGrouping;
 
 /**
  * `bin/altair openapi:import <document>` — read an OpenAPI 3.1 YAML doc
@@ -63,6 +64,8 @@ final readonly class OpenApiImportCommand
         ?string $queue = null,
         #[Option(description: 'Override the project root used as base for emitted paths.')]
         ?string $root = null,
+        #[Option(description: 'Group Action/Input/Responder into per-resource folders (none|tag|path).', name: 'group-by')]
+        string $groupBy = 'none',
     ): int {
         $projectRoot = $this->paths->resolveProjectRoot($root);
 
@@ -71,6 +74,11 @@ final readonly class OpenApiImportCommand
                 "--persistence='%s' is not supported. Only 'cycle' is available in this release.",
                 $persistence,
             ));
+        }
+
+        $grouping = ResourceGrouping::tryFrom($groupBy);
+        if (!$grouping instanceof ResourceGrouping) {
+            throw new ScaffoldException(\sprintf("--group-by='%s' is not supported. Use 'none', 'tag' or 'path'.", $groupBy));
         }
 
         if ($format !== 'human' && $format !== 'json') {
@@ -87,6 +95,7 @@ final readonly class OpenApiImportCommand
             skipUnmappable: $skipUnmappable,
             persistence: $persistence,
             queue: $queue,
+            groupBy: $grouping,
         );
 
         $runner = new OpenApiImportRunner(

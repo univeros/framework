@@ -33,6 +33,7 @@ All keys live at the **operation** level (under
 | Key | Round-trips | Schema |
 |---|---|---|
 | `x-altair-domain` | Yes: `spec.domain.{class, invocation}` | [x-altair-domain.schema.json](./extensions/x-altair-domain.schema.json) |
+| `x-altair-resource` | Yes: `spec.endpoint.resource` (only emitted when set) | [x-altair-resource.schema.json](./extensions/x-altair-resource.schema.json) |
 | `x-altair-persistence` | Yes: `spec.persistence` | [x-altair-persistence.schema.json](./extensions/x-altair-persistence.schema.json) |
 | `x-altair-queue` | Yes: `spec.queue` | [x-altair-queue.schema.json](./extensions/x-altair-queue.schema.json) |
 | `x-altair-idempotency` | Yes: `spec.idempotency` (ttl, scope) | [x-altair-idempotency.schema.json](./extensions/x-altair-idempotency.schema.json) |

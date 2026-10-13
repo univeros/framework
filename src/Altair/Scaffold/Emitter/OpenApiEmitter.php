@@ -187,6 +187,10 @@ class OpenApiEmitter
             ],
         ];
 
+        if ($spec->endpoint->resource !== '') {
+            $extensions['x-altair-resource'] = $spec->endpoint->resource;
+        }
+
         if ($spec->persistence instanceof PersistenceSpec) {
             $extensions['x-altair-persistence'] = $this->renderPersistence($spec->persistence);
         }

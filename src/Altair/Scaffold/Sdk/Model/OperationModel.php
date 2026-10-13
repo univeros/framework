@@ -26,6 +26,7 @@ final readonly class OperationModel
      * @param list<ResponseModel>   $responses
      * @param array<string, mixed>  $extensions     `x-altair-*` keys carried verbatim from the OpenAPI document.
      * @param list<ParameterModel>  $parameters     Declared parameters (path/query/header/cookie) with schema + required.
+     * @param list<string>          $tags           The operation's OpenAPI `tags`, in document order.
      */
     public function __construct(
         public string $operationId,
@@ -37,6 +38,7 @@ final readonly class OperationModel
         public string $summary = '',
         public array $extensions = [],
         public array $parameters = [],
+        public array $tags = [],
     ) {}
 
     public function hasRequestBody(): bool

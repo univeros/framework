@@ -243,7 +243,9 @@ domain:
   class: App\User\CreateUser
 ```
 
-The validator will reject the spec if `method` is not a real HTTP verb, if `path` does not start with `/`, if any rule is not one of the known `Altair\Validation\Rule\*` rules (`required alpha alphanum between boolean callback creditcard datetime email iban in integer ip isbn max min regex swiftbic url zipcode`), if a response status is outside `100..599`, or if `domain.class` is not a well-formed FQCN. Mark any secret-bearing field `sensitive: true` so it is kept out of generated logging and journal snapshots.
+Add `resource: User` under `endpoint:` to nest the generated Action/Input/Responder and test one level deeper: `app/Http/Actions/User/CreateUserAction.php` in namespace `App\Http\Actions\User` (same for `Inputs/`, `Responders/` and `tests/Http/Actions/`). Without it the layout stays flat. The resource round-trips through OpenAPI as `x-altair-resource`, and `openapi:import --group-by=tag|path` fills it from the document (see [import.md](../guides/openapi/import.md#grouping-by-resource)).
+
+The validator will reject the spec if `method` is not a real HTTP verb, if `path` does not start with `/`, if `resource` is set but is not one PascalCase identifier, if any rule is not one of the known `Altair\Validation\Rule\*` rules (`required alpha alphanum between boolean callback creditcard datetime email iban in integer ip isbn max min regex swiftbic url zipcode`), if a response status is outside `100..599`, or if `domain.class` is not a well-formed FQCN. Mark any secret-bearing field `sensitive: true` so it is kept out of generated logging and journal snapshots.
 
 ### Scaffolding
 

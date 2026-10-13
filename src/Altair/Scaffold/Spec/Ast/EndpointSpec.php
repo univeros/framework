@@ -15,11 +15,15 @@ final readonly class EndpointSpec
 {
     /**
      * @param list<string> $tags
+     * @param string       $resource PascalCase group (e.g. `User`) that nests the
+     *                               Action/Input/Responder/test under a folder and
+     *                               namespace of that name; empty keeps them flat.
      */
     public function __construct(
         public string $method,
         public string $path,
         public string $summary,
         public array $tags,
+        public string $resource = '',
     ) {}
 }

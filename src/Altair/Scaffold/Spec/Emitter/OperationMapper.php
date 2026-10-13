@@ -29,10 +29,10 @@ final readonly class OperationMapper
     /**
      * @return array<string, mixed>
      */
-    public function map(OpenApiDocument $document, OperationModel $operation): array
+    public function map(OpenApiDocument $document, OperationModel $operation, ResourceGrouping $grouping = ResourceGrouping::None): array
     {
         $spec = [
-            'endpoint' => $this->endpoint($operation),
+            'endpoint' => $this->endpoint($operation, $grouping),
         ];
 
         $inputs = $this->schemaMapper->inputFields($document, $operation);
@@ -223,14 +223,21 @@ final readonly class OperationMapper
     /**
      * @return array<string, mixed>
      */
-    private function endpoint(OperationModel $operation): array
+    private function endpoint(OperationModel $operation, ResourceGrouping $grouping): array
     {
-        return [
+        $endpoint = [
             'method' => strtoupper($operation->method),
             'path' => $operation->path,
             'summary' => $operation->summary,
-            'tags' => [$this->pathDeriver->resourceDir($operation)],
+            'tags' => $operation->tags !== [] ? $operation->tags : [$this->pathDeriver->resourceDir($operation)],
         ];
+
+        $resource = $this->pathDeriver->resource($operation, $grouping);
+        if ($resource !== '') {
+            $endpoint['resource'] = $resource;
+        }
+
+        return $endpoint;
     }
 
     /**

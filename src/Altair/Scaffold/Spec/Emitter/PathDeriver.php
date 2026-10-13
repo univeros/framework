@@ -107,6 +107,28 @@ final readonly class PathDeriver
         return $this->singularize($this->resourceSegment($operation));
     }
 
+    /**
+     * The `endpoint.resource` for an operation: its `x-altair-resource` when
+     * present (the export of a grouped spec), otherwise derived per
+     * `$grouping`. Pure and locale-independent, so the same document always
+     * yields the same folders (#74). Empty means flat placement.
+     */
+    public function resource(OperationModel $operation, ResourceGrouping $grouping): string
+    {
+        $explicit = $operation->extensions['x-altair-resource'] ?? null;
+        if (\is_string($explicit) && $explicit !== '') {
+            return $explicit;
+        }
+
+        $fromPath = $this->identifier($this->resourceSingular($operation));
+
+        return match ($grouping) {
+            ResourceGrouping::None => '',
+            ResourceGrouping::Path => $fromPath,
+            ResourceGrouping::Tag => $this->identifier($this->singularize($operation->tags[0] ?? '')) ?: $fromPath,
+        };
+    }
+
     public function resourceDir(OperationModel $operation): string
     {
         return $this->resourceSegment($operation);
@@ -274,6 +296,17 @@ final readonly class PathDeriver
         $words = array_filter($words, static fn(string $w): bool => $w !== '');
 
         return implode('', array_map(static fn(string $w): string => ucfirst(strtolower($w)), $words));
+    }
+
+    /**
+     * PascalCase identifier, or '' when the value cannot form one (empty,
+     * non-ASCII only, leading digit).
+     */
+    private function identifier(string $value): string
+    {
+        $pascal = $this->pascalCase($value);
+
+        return preg_match('/^[A-Z][A-Za-z0-9]*$/', $pascal) === 1 ? $pascal : '';
     }
 
     private function singularize(string $value): string

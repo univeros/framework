@@ -17,7 +17,8 @@ use Altair\Scaffold\Spec\Ast\Spec;
 /**
  * Centralizes how artifact short-names, namespaces, and file paths are
  * derived from a Spec. Keeps the convention "PascalCase + suffix" consistent
- * across every emitter.
+ * across every emitter. A spec with an `endpoint.resource` nests its
+ * Action/Input/Responder/test one level deeper (`Http\Actions\User\...`).
  */
 final readonly class Naming
 {
@@ -59,17 +60,22 @@ final readonly class Naming
 
     public function actionFqcn(Spec $spec): string
     {
-        return $this->appNamespace . '\\Http\\Actions\\' . $this->actionShortName($spec);
+        return $this->appNamespace . '\\Http\\Actions\\' . $this->resourceNamespace($spec) . $this->actionShortName($spec);
     }
 
     public function inputFqcn(Spec $spec): string
     {
-        return $this->appNamespace . '\\Http\\Inputs\\' . $this->inputShortName($spec);
+        return $this->appNamespace . '\\Http\\Inputs\\' . $this->resourceNamespace($spec) . $this->inputShortName($spec);
     }
 
     public function responderFqcn(Spec $spec): string
     {
-        return $this->appNamespace . '\\Http\\Responders\\' . $this->responderShortName($spec);
+        return $this->appNamespace . '\\Http\\Responders\\' . $this->resourceNamespace($spec) . $this->responderShortName($spec);
+    }
+
+    public function testNamespace(Spec $spec): string
+    {
+        return rtrim('Tests\\Http\\Actions\\' . $this->resourceNamespace($spec), '\\');
     }
 
     public function domainFqcn(Spec $spec): string
@@ -79,17 +85,17 @@ final readonly class Naming
 
     public function actionPath(Spec $spec): string
     {
-        return $this->httpRelativeRoot . '/Actions/' . $this->actionShortName($spec) . '.php';
+        return $this->httpRelativeRoot . '/Actions/' . $this->resourceDirectory($spec) . $this->actionShortName($spec) . '.php';
     }
 
     public function inputPath(Spec $spec): string
     {
-        return $this->httpRelativeRoot . '/Inputs/' . $this->inputShortName($spec) . '.php';
+        return $this->httpRelativeRoot . '/Inputs/' . $this->resourceDirectory($spec) . $this->inputShortName($spec) . '.php';
     }
 
     public function responderPath(Spec $spec): string
     {
-        return $this->httpRelativeRoot . '/Responders/' . $this->responderShortName($spec) . '.php';
+        return $this->httpRelativeRoot . '/Responders/' . $this->resourceDirectory($spec) . $this->responderShortName($spec) . '.php';
     }
 
     public function domainPath(Spec $spec): string
@@ -101,7 +107,7 @@ final readonly class Naming
 
     public function testPath(Spec $spec): string
     {
-        return $this->testsRelativeRoot . '/Http/Actions/' . $this->testShortName($spec) . '.php';
+        return $this->testsRelativeRoot . '/Http/Actions/' . $this->resourceDirectory($spec) . $this->testShortName($spec) . '.php';
     }
 
     public function openApiPath(Spec $spec): string
@@ -235,6 +241,16 @@ final readonly class Naming
         $hash = hexdec(substr(hash('sha256', $spec->persistence->entity->table), 0, 8));
 
         return self::MIGRATION_STAMP_EPOCH + $hash % self::MIGRATION_STAMP_WINDOW;
+    }
+
+    private function resourceNamespace(Spec $spec): string
+    {
+        return $spec->endpoint->resource === '' ? '' : $spec->endpoint->resource . '\\';
+    }
+
+    private function resourceDirectory(Spec $spec): string
+    {
+        return $spec->endpoint->resource === '' ? '' : $spec->endpoint->resource . '/';
     }
 
     private function classFileRelativePath(string $fqcn): string

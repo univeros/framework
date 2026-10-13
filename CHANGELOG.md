@@ -27,6 +27,17 @@ have merged to `master` but are not yet tagged live under **\[Unreleased]**.
   `bin/altair manifest:generate` runs from the host's console. Without such
   modules the output is unchanged; in a host without framework sources the
   command now writes the module sections instead of failing. (#234, #236)
+- Per-resource folders for scaffolded HTTP endpoints: an optional
+  `endpoint.resource` (e.g. `User`) nests the Action/Input/Responder and their
+  test under `.../Actions/User/` with matching namespaces; flat when unset.
+  `openapi:import --group-by=tag|path` fills it (first OpenAPI tag, falling back
+  to the path noun; default `none` keeps the flat layout), and it round-trips
+  through OpenAPI as `x-altair-resource`. (#227)
+
+### Fixed
+- `openapi:import` writes each operation's own OpenAPI `tags` into
+  `endpoint.tags` instead of the path segment (operations without tags keep the
+  path segment), so tags survive `openapi:import` -> `spec:emit-openapi`. (#227)
 
 ## [2.5.1] - 2026-06-06
 

@@ -264,6 +264,7 @@ class Parser
             path: (string) ($data['path'] ?? ''),
             summary: (string) ($data['summary'] ?? ''),
             tags: array_values(array_map(strval(...), $tags)),
+            resource: (string) ($data['resource'] ?? ''),
         );
     }
 
