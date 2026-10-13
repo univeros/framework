@@ -174,7 +174,7 @@ The output is grouped by attribute short-name with classes listed alphabetically
 
 ### Module sections in a host
 
-A module installed in a host application contributes its own manifest section by implementing `Altair\Module\Contracts\ManifestContributorInterface` (`manifestDescription()` for the index line, `manifest()` for the Markdown body). Run `manifest:generate` from the host's own console, the entry point that builds `config/container.php` with the modules applied, and the command collects every contributing module through the `altair.module` container tag (`Generator\ModuleManifests::collect()`):
+A module installed in a host application contributes its own manifest section by implementing `Altair\Module\Contracts\ManifestContributorInterface` (`manifestDescription()` for the index line, `manifest(Container $container)` for the Markdown body, rendered from the host's container). Run `manifest:generate` from the host's own console, the entry point that builds `config/container.php` with the modules applied, and the command collects every contributing module through the `altair.module` container tag (`Generator\ModuleManifests::collect()`):
 
 ```text
 .agent/

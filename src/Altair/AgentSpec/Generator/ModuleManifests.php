@@ -48,7 +48,7 @@ final class ModuleManifests
                 continue;
             }
 
-            $manifests[] = new ModuleManifest($module->name(), $module->manifestDescription(), $module->manifest());
+            $manifests[] = new ModuleManifest($module->name(), $module->manifestDescription(), $module->manifest($container));
         }
 
         usort($manifests, static fn(ModuleManifest $a, ModuleManifest $b): int => strcmp($a->name, $b->name));

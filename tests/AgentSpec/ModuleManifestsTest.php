@@ -191,7 +191,7 @@ abstract readonly class ContributingModule implements ModuleInterface, ManifestC
     }
 
     #[Override]
-    public function manifest(): string
+    public function manifest(Container $container): string
     {
         return $this->body;
     }

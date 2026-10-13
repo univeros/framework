@@ -160,6 +160,7 @@ It compiles the schema from your `baseDirectories` plus every registered module'
 A module can describe its surface (routes, auth, permissions, commands) to agents working on the host by implementing `ManifestContributorInterface`:
 
 ```php
+use Altair\Container\Container;
 use Altair\Module\Contracts\ManifestContributorInterface;
 
 final class Module implements ModuleInterface, ManifestContributorInterface
@@ -169,7 +170,7 @@ final class Module implements ModuleInterface, ManifestContributorInterface
         return 'User management: registration, login, password reset.';
     }
 
-    public function manifest(): string
+    public function manifest(Container $container): string
     {
         return "# acme/user-management\n\n## Routes\n\n| Method | Path | Action |\n|---|---|---|\n| POST | /users | `CreateUserAction` |\n";
     }

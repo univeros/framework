@@ -7,7 +7,7 @@
 | Interface | Method | Returns | Notes |
 |---|---|---|---|
 | `EntityDirectoriesProviderInterface` | `entityDirectories()` | `array` |  |
-| `ManifestContributorInterface` | `manifest()` | `string` |  |
+| `ManifestContributorInterface` | `manifest(Container)` | `string` |  |
 |  | `manifestDescription()` | `string` |  |
 | `MiddlewareProviderInterface` | `middleware()` | `array` |  |
 | `MigrationDirectoriesProviderInterface` | `migrationDirectories()` | `array` |  |

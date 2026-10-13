@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace Altair\Module\Contracts;
 
+use Altair\Container\Container;
+
 /**
  * A module that contributes a section to the host's AI-readable manifests.
  *
@@ -33,7 +35,9 @@ interface ManifestContributorInterface
     public function manifestDescription(): string;
 
     /**
-     * Markdown body of the module's manifest file.
+     * Markdown body of the module's manifest file, rendered from the host's
+     * container so it can reflect the configured state (enabled plugins,
+     * path prefixes).
      */
-    public function manifest(): string;
+    public function manifest(Container $container): string;
 }

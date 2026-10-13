@@ -70,7 +70,7 @@ A module advertises what it contributes by implementing extra interfaces. Consum
 | `MiddlewareProviderInterface` | `middleware(): list<array{middleware, priority}>` | the front controller, via `Altair\Http\Support\ModuleMiddleware::collect()` |
 | `EntityDirectoriesProviderInterface` | `entityDirectories(): list<string>` | `Altair\Persistence\Schema\ModuleAwareSchemaProvider` |
 | `MigrationDirectoriesProviderInterface` | `migrationDirectories(): list<MigrationSource>` | `bin/altair db:migrate` / `:status` / `:rollback` |
-| `ManifestContributorInterface` | `manifestDescription(): string`, `manifest(): string` | `bin/altair manifest:generate`, via `Altair\AgentSpec\Generator\ModuleManifests::collect()` |
+| `ManifestContributorInterface` | `manifestDescription(): string`, `manifest(Container): string` | `bin/altair manifest:generate`, via `Altair\AgentSpec\Generator\ModuleManifests::collect()` |
 
 Routes use the same `[METHOD, PATH, Action::class]` shape as `config/routes.php`. Each `MigrationSource` pairs a directory with the migration namespace your classes are declared in (e.g. `Acme\UserManagement\Database\Migrations`); Cycle reads each migration's FQCN from the file, so per-module namespaces never collide. Middleware entries each pair a PSR-15 middleware (a `class-string` resolved through the container, or an instance) with an integer `priority`, ordered against the documented anchors in `Altair\Http\Support\MiddlewarePriority` (`EXCEPTION_HANDLER` = 0, `DISPATCHER` = 500, `ACTION` = 1000).
 
